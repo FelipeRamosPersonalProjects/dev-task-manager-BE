@@ -1,0 +1,7 @@
+{
+    "defaultLanguage": "en_US",
+    "database": {
+        "counterCollection": "counters",
+        "maxDeepLevels": {}
+    }
+}
