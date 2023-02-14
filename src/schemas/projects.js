@@ -5,7 +5,7 @@ module.exports = new Schema({
     name: 'projects',
     symbol: 'PRJ',
     schema: {
-        name: { type: SchemaTypes.String, required: true },
+        projectName: { type: SchemaTypes.String, required: true },
         description: { type: SchemaTypes.String, default: '' },
         links: { type: [Object], default: [] },
         tasks: { type: [Object], default: [] }
