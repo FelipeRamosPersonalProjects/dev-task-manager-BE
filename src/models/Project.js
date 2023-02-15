@@ -5,7 +5,7 @@ class Project extends _Global {
         ...this,
         projectName,
         description,
-        links,
+        urls,
         tasks
     }){
         try {
@@ -13,7 +13,7 @@ class Project extends _Global {
 
             this.projectName = projectName;
             this.description = description;
-            this.links = links;
+            this.urls = urls;
             this.tasks = tasks;
 
             this.placeDefault();
