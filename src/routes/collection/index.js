@@ -8,7 +8,7 @@ const update = require('./update');
 
 router.use('/get', get);
 router.use('/update', update);
-router.put('/create', ctrl.collection.create);
+router.post('/create', ctrl.collection.create);
 router.delete('/delete', ctrl.collection.delete);
 
 module.exports = router;
