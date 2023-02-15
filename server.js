@@ -16,7 +16,8 @@ app.use(express.json());
 
 // Server routes
 app.use('/collection', routes.collection);
+app.use('/projects', routes.projects);
 
-app.listen(80, ()=>{
+app.listen(80, () => {
     console.log('Server connected in http://localhost:80');
 });
