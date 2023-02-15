@@ -6,6 +6,16 @@ module.exports = new Schema({
     symbol: 'TSK',
     links: { project: 'tasks' },
     schema: {
-        project: { type: SchemaTypes.ObjectId, ref: 'projects' }
+        taskName: { type: SchemaTypes.String, required: true },
+        taskCod: { type: SchemaTypes.String },
+        description: { type: SchemaTypes.String },
+        notes: { type: [SchemaTypes.ObjectId], default: [] },
+        project: { type: SchemaTypes.ObjectId, ref: 'projects' },
+        assignedUser: { type: SchemaTypes.ObjectId, ref: 'users' },
+        tickets: { type: [SchemaTypes.ObjectId], default: [] },
+        dueDate: { type: SchemaTypes.Date },
+        sharedWith: { type: SchemaTypes.String },
+        pullRequests: { type: [SchemaTypes.ObjectId], default: [] },
+        configs: { type: [Object], default: [] }
     }
 });
