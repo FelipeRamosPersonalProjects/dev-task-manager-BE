@@ -1,11 +1,12 @@
 const _Global = require('./maps/_Global');
+const Task = require('./Task');
 
 class Project extends _Global {
     constructor(setup = {
         ...this,
         projectName,
         description,
-        links,
+        urls,
         tasks
     }){
         try {
@@ -13,8 +14,8 @@ class Project extends _Global {
 
             this.projectName = projectName;
             this.description = description;
-            this.links = links;
-            this.tasks = tasks;
+            this.urls = urls;
+            this.tasks = Array.isArray(tasks) && tasks.map(task => new Task(task));
 
             this.placeDefault();
         } catch(err) {
