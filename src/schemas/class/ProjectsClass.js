@@ -1,7 +1,7 @@
 const Project = require('../../models/Project');
 
 class ProjectsClass {
-    static BSModel = Project;
+    static Model = Project;
 }
 
 module.exports = ProjectsClass;

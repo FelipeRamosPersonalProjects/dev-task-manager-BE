@@ -1,7 +1,7 @@
 class GlobalClass {
     initialize() {
         try {
-            const Model = this.schema && this.schema.statics && this.schema.statics.BSModel;
+            const Model = this.schema && this.schema.statics && this.schema.statics.Model;
             if(Model) {
                 const builded = new Model(this.toObject(), this.master);
                 return builded;

@@ -4,7 +4,7 @@ class RequestAPI extends ValidateSchema {
     constructor(request, bodySchema) {
         super(bodySchema);
 
-        const Model = Boolean.isValid(this._schema).path('statics.BSModel').eval();
+        const Model = Boolean.isValid(this._schema).path('statics.Model').eval();
         this.originalRequest = request;
 
         if (Model) {
