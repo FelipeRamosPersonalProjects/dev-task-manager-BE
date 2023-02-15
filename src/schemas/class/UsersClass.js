@@ -1,6 +1,6 @@
 const User = require('../../models/User');
 class UsersClass {
-    static BSModel = User;
+    static Model = User;
 }
 
 module.exports = UsersClass;
