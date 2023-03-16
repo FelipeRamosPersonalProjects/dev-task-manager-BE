@@ -1,119 +1,99 @@
-const LogBase = require('../maps/LogMap');
-const ValidationError = require('mongoose/lib/error/validation');
-const CastError = require('mongoose/lib/error/cast');
+const {increaseLog} = require('../../helpers/database/dbHelpers');
 
-class ErrorLog extends LogBase {
-    constructor({
-        stack,
-        errorList
-    }, ...stringArgsParams) {
-        let args = arguments[0] || {};
-        let stringArgs;
-
-        if (Boolean.isValid(args).stringFilled()) {
-            try {
-                stringArgs = String(args);
-                args = Resource.error(args, ...stringArgsParams);
-            } catch(err) {
-                console.error(err);
-                throw err;
-            }
-        }
-    
-        super(args);
-        if (stringArgs) this.resource = stringArgs;
-
-        if (Boolean.isValid(args).stringFilled()) {
-            const errorData = Resource.error(args);
-
-            if (errorData) {
-                this.name = errorData.name;
-                this.message = errorData.message;
-            }
-        }
-
-        this.type = 'error';
-        this.stack = stack || `${this.name}: ${this.message}`;
-        this.errorList = errorList || [{ name: this.name, message: this.message }];
-        this.validationErrors = args.validationErrors || [];
-
-        // Checking if it's a database error
-        if (Boolean.isValid(args).filled().object().eval()) {
-            if (args instanceof ValidationError) {
-                if (Boolean.isValid(args).path('errors').object().eval()) {
-                    this.validationErrors = [...Object.keys(args.errors).map(key => args.errors[key]), ...this.validationErrors];
-                }
-            }
-            if (args instanceof CastError) {
-                this.validationErrors = [args, ...this.validationErrors];
-            }
-        }
-
-        this.consolePrint();
+class LogBase {
+    static warn = (setup = LogBase.prototype) => {
+        return new LogBase({...setup, type: 'warn'});
     }
+
+    constructor({
+        type,
+        name,
+        message,
+        resource,
+        slot,
+        position,
+        master,
+        additionalData
+    }) {
+        this.type = type || 'log';
+        this.name = name;
+        this.message = message;
+        this.resource = resource;
+        this.slot = slot;
+        this.position = position;
+        this.master = master;
+
+        if (typeof additionalData === 'string') {
+            this.additionalData = JSON.parse(additionalData);
+        } else if (typeof additionalData === 'string' && !Array.isArray(additionalData)) {
+            this.additionalData = additionalData;
+        }
+    }
+
+    notify() {}
+
+    emailNotify() {}
+
+    suspendSlot() {}
 
     async saveLog() {
         const schemas = require('../../schemas');
+        const {name, message, type, resource, _id} = Logger.lastLogSaved || {};
+        const isTheSame = [
+            (this.type === type),
+            (this.name === name),
+            (this.message === message),
+            (this.resource === resource)
+        ].every(item => item);
+
+        if (isTheSame) {
+            try {
+                _id && await increaseLog(_id.toString());
+                return this;
+            } catch(err) {
+                throw Resource.error('logs.duplicated_log');
+            }
+        } else {
+            try {
+                const newLog = new schemas.logs.DB({
+                    type: this.type,
+                    name: this.name,
+                    message: this.message,
+                    resource: this.resource,
+                    stack: this.stack,
+                    errorList: JSON.stringify(this.errorList || []),
+                    validationErrors: JSON.stringify(this.validationErrors || []),
+                    slot: this.slot && (this.slot.UID || this.slot._id) || this.slot,
+                    position: this.position && (this.position.UID || this.position._id) || this.position,
+                    master: this.master && (this.master.UID || this.master._id) || this.master,
+                    additionalData: JSON.stringify(
+                        typeof this.additionalData === 'object' && !Array.isArray(this.additionalData) ? 
+                        this.additionalData : {}
+                    )
+                });
+                const saved = await newLog.save();
+    
+                Logger.lastLogSaved = saved.toObject();
+                return this;
+            } catch(err) {
+                throw Resource.error('database.saving_log', err.name, err.message);
+            }
+        }
         
+    }
+
+    async stopSlot(slotUID) {
         try {
-            const newLog = new schemas.logs.DB({
-                type: this.type,
-                name: this.name,
-                message: this.message,
-                resource: this.resource,
-                stack: this.stack,
-                errorList: JSON.stringify(this.errorList),
-                validationErrors: JSON.stringify(this.validationErrors),
-                slot: this.slot && this.slot.UID,
-                position: this.position && this.position.UID,
-                master: this.master && this.master.UID
-            });
-            await newLog.save();
-            return this;
+            if (!Boolean.isValid(slotUID).stringFilled()) {
+                throw new Error.Log('common.bad_format_param', 'slotUID', 'LogBase.stopSlot()', 'slot UID (string)', slotUID, 'LogBase.js');    
+            }
+
+            return await botRunner.turnOffSlot(slotUID, true);
         } catch(err) {
-            throw Resource.error('database.saving_log', err.name, err.message);
+            this.emailNotify();
+            throw new Error.Log(err).append('botRunner.error_during_emergency_stop', slotUID);
         }
-    }
-
-    append(append, ...params) {
-        if (Boolean.isValid(append).filled().eval()) {
-            if (Boolean.isValid(append).filled().string().eval()) {
-                const errorData = Resource.error(append, ...params);
-
-                if (errorData) {
-                    this.resource = append;
-                    errorData.errorPath = this.resource;
-                    append = errorData;
-                }
-            }
-
-            if (Boolean.isValid(append).filled().object().eval()) {
-                this.errorList = [append, ...this.errorList];
-                this.stack = `${append.name}: ${append.message}\n` + this.stack;
-            }
-        }
-
-        return this;
-    }
-
-    response() {
-        return {
-            success: false,
-            code: this.code,
-            resource: this.resource,
-            name: this.name,
-            message: this.message,
-            errors: this.errorList,
-            validationErrors: this.validationErrors
-        }
-    }
-
-    consolePrint() {
-        console.error('---------------------------------------------------------------');
-        console.error(this.stack);
-        console.error('---------------------------------------------------------------');
-        return this;
     }
 }
 
-module.exports = ErrorLog;
+module.exports = LogBase;

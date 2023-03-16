@@ -22,6 +22,10 @@ module.exports = new Schema({
         code: {
             type: SchemaTypes.String
         },
+        groupedLogs: {
+            type: SchemaTypes.Number,
+            default: 0
+        },
         resource: {
             type: SchemaTypes.String
         },
@@ -38,6 +42,10 @@ module.exports = new Schema({
         },
         validationErrors: {
             type: SchemaTypes.String
+        },
+        additionalData: {
+            type: SchemaTypes.String,
+            default: '{}'
         }
     }
 });
