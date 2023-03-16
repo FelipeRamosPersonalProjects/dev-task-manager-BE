@@ -10,5 +10,22 @@
     "trades": {
         "minStoploss": 0.04,
         "minTakeprofit": 0.04
-    }
+    },
+    "filePath": "C:/Users/Felipe/Documents/osf/drschar-sfcc/sites/site_template/meta/system-objecttype-extensions.xml",
+    "toUpdate": [
+        {
+            "groupId": "Salesforce_Identity",
+            "groupName": "Salesforce Identity",
+            "id": "loyaltyLoginURL",
+            "displayName": "Loyalty Login URL",
+            "valueType": "string"
+        },
+        {
+            "groupId": "Salesforce_Identity",
+            "groupName": "Salesforce Identity",
+            "id": "loyaltyRegisterURL",
+            "displayName": "Loyalty Register URL",
+            "valueType": "string"
+        }
+    ]
 }
