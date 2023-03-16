@@ -315,6 +315,24 @@ module.exports = {
             message: `The string path "${pathString}" provided at Error.Log don't exist!`
         }}
     },
+    services: {
+        XMLManager: {
+            loading_file: (filePath, fileName) => { return {
+                name: 'ServicesXMLManagerLoadingFile',
+                message: `Error caught during xml file loading!\Path: ${filePath}\nFile:${fileName}.`
+            }},
+
+            parsing_xml: (filePath, fileName) => { return {
+                name: 'ServicesXMLManagerParsingFile',
+                message: `Error caught while the xml file was being parsed!\Path: ${filePath}\nFile:${fileName}.`
+            }},
+
+            saving_file: (filePath, fileName) => { return {
+                name: 'ServicesXMLManagerSavingFile',
+                message: `Error caught during xml file was being parsed!\Path: ${filePath}\nFile:${fileName}.`
+            }}
+        }
+    },
     user: {
         get_master_account: (userUID, userName) => { return {
             name: 'UserGetMasterAccount',
