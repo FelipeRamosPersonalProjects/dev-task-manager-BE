@@ -1,4 +1,4 @@
-const source = require('../resources');
+const source = require('.');
 const ErrorLog = require('../models/logs/ErrorLog');
 
 class Resources {
