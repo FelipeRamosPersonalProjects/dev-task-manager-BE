@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 
 // Declaring globals
-require('./src/core/globals');
+require('./src/_globals');
 // Initializing MongoDB
 require('./src/services/database/init');
 

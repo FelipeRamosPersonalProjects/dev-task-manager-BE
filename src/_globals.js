@@ -1,8 +1,8 @@
-const Utils = require('../utils');
-const ResourceCenter = require('./Resources');
-const validation = require('../validation');
-const ErrorLog = require('../models/logs/ErrorLog');
-const configs = require('../../config.json');
+const Utils = require('./utils');
+const ResourceCenter = require('./resources/Resources');
+const validation = require('./validation');
+const ErrorLog = require('./models/logs/ErrorLog');
+const configs = require('../config.json');
 
 // Resources
 global.Resource = new ResourceCenter(configs.defaultLanguage);
