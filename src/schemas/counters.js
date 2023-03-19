@@ -1,4 +1,4 @@
-const Schema = require('../models/database/SchemaDB');
+const Schema = require('../models/collections/SchemaDB');
 const SchemaTypes = Schema.mongoSchema.Types;
 const config = require('../../config.json');
 const collectionName = config.database.counterCollection;

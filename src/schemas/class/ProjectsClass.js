@@ -1,4 +1,4 @@
-const Project = require('../../models/database/Project');
+const Project = require('../../models/collections/Project');
 
 class ProjectsClass {
     static Model = Project;

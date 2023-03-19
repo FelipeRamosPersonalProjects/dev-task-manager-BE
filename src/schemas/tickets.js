@@ -1,4 +1,4 @@
-const Schema = require('../models/database/SchemaDB');
+const Schema = require('../models/collections/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 const { SLA } = require('./map');
 
