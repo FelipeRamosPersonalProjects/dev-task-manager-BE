@@ -1,4 +1,4 @@
-const User = require('../../models/database/User');
+const User = require('../../models/collections/User');
 class UsersClass {
     static Model = User;
 }

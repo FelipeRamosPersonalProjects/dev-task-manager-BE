@@ -1,4 +1,4 @@
-const Ticket = require('../../models/database/Ticket');
+const Ticket = require('../../models/collections/Ticket');
 
 class TicketsClass {
     static Model = Ticket;

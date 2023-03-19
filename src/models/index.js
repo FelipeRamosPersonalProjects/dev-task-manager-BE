@@ -1,9 +1,9 @@
 const routes = require('./routes');
-const Project = require('./database/Project');
-const Task = require('./database/Task');
-const PullRequest = require('./database/PullRequest');
-const Ticket = require('./database/Ticket');
-const User = require('./database/User');
+const Project = require('./collections/Project');
+const Task = require('./collections/Task');
+const PullRequest = require('./collections/PullRequest');
+const Ticket = require('./collections/Ticket');
+const User = require('./collections/User');
 
 module.exports = {
     routes,

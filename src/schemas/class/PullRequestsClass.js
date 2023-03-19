@@ -1,4 +1,4 @@
-const PullRequest = require('../../models/database/PullRequest');
+const PullRequest = require('../../models/collections/PullRequest');
 
 class PullRequestsClass {
     static Model = PullRequest;
