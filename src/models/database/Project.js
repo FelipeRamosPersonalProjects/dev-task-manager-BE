@@ -1,4 +1,4 @@
-const _Global = require('./maps/_Global');
+const _Global = require('../maps/_Global');
 const Task = require('./Task');
 
 class Project extends _Global {
