@@ -1,4 +1,4 @@
-const Task = require('../../models/Task');
+const Task = require('../../models/database/Task');
 
 class TasksClass {
     static Model = Task;

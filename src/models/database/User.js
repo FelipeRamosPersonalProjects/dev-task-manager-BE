@@ -1,4 +1,4 @@
-const _Global = require('../models/maps/_Global');
+const _Global = require('../maps/_Global');
 
 class User extends _Global {
     constructor(setup = {

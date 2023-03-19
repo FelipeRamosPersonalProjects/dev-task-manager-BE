@@ -1,6 +1,6 @@
 const routes = require('./routes');
-const Project = require('./Project');
-const Task = require('./Task');
+const Project = require('./database/Project');
+const Task = require('./database/Task');
 
 module.exports = {
     routes,

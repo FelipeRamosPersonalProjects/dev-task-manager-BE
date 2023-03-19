@@ -1,4 +1,4 @@
-const _Global = require('./maps/_Global');
+const _Global = require('../maps/_Global');
 
 class Task extends _Global {
     constructor(setup = {
