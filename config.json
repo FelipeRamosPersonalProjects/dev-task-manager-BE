@@ -3,12 +3,6 @@
     "database": {
         "counterCollection": "counters",
         "logCollection": "logs",
-        "maxDeepLevels": {
-            "threadBlock": 5
-        }
-    },
-    "trades": {
-        "minStoploss": 0.04,
-        "minTakeprofit": 0.04
+        "maxDeepLevels": {}
     }
 }
