@@ -4,5 +4,9 @@
         "counterCollection": "counters",
         "logCollection": "logs",
         "maxDeepLevels": {}
+    },
+    "github": {
+        "apiHostURL": "https://api.github.com",
+        "testUser": "FelipeRamos1202"
     }
 }
