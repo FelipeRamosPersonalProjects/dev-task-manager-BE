@@ -1,5 +1,4 @@
 const ajax = require('./ajax');
-const Utils = require('../utils');
 const ResourceCenter = require('../resources/Resources');
 const validation = require('../validation');
 const ErrorLog = require('../models/logs/ErrorLog');
@@ -13,5 +12,3 @@ global.Resource = new ResourceCenter(configs.defaultLanguage);
 global.Error.Log = ErrorLog;
 // Utils
 Boolean.isValid = validation.base.build;
-Date.calcTimestamp = Utils.calcTimestamp;
-Date.getStringDate = Utils.getStringDate;
