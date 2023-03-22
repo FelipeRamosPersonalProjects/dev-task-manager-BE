@@ -10,10 +10,14 @@ class Prompt {
         this.goTo(rootPath);
     }
 
-    cmd(command) {
+    cmd(command, arg, options) {
         try {
             if (command) {
-                return spawnSync(`${command}`);
+                const cmd = spawnSync(command, arg, options);
+                return {
+                    success: true,
+                    out: cmd.stdout.toString()
+                };
             } else {
                 return '>> No command provided!'
             }
@@ -32,11 +36,11 @@ class Prompt {
                         return reject(new Error.Log(err));
                     }
     
-                    console.log('>> Executed: ', cmd);
-                    console.log(`>>>> ${stdout}`);
-                    console.error(`stderr: ${stderr}`);
-    
-                    return resolve(child);
+                    return resolve({
+                        success: true,
+                        out: stdout,
+                        prompt: child
+                    });
                 });
             } catch(err) {
                 return reject(new Error.Log(err));
@@ -46,7 +50,37 @@ class Prompt {
 
     goTo(path) {
         try {
-            return this.cmd(`cd ${path || this.rootPath}`);
+            const options = { cwd: this.repoPath, env: process.env };
+            return this.cmd('cmd', ['/c', `cd ${path}`], options);
+        } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    strigifyParams(params) {
+        let stringParams = '';
+
+        if (!params) {
+            return '';
+        }
+
+        try {
+            if (Array.isArray(params)) {
+                for (let i = 0; params.length; i = i + 2) {
+                    const [key, value] = params;
+                    stringParams += ' --' + key + '=' + value;
+                }
+            } else if (typeof params === 'object') {
+                Object.keys(params || {}).map(key => {
+                    stringParams += ' --' + key + '=' + params[key];
+                });
+            } 
+            
+            if (typeof params === 'string') {
+                stringParams = params;
+            }
+    
+            return stringParams;
         } catch(err) {
             throw new Error.Log(err);
         }
