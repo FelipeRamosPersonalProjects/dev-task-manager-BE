@@ -1,4 +1,4 @@
-const { spawnSync, exec } = require('child_process');
+const { execSync, exec, spawn } = require('child_process');
 
 class Prompt {
     constructor(setup = {
@@ -7,22 +7,26 @@ class Prompt {
         const {rootPath} = setup || {};
 
         this.rootPath = rootPath;
-        this.goTo(rootPath);
     }
 
-    cmd(command, arg, options) {
+    cmd(command, options) {
         try {
             if (command) {
-                const cmd = spawnSync(command, arg, options);
-                return {
-                    success: true,
-                    out: cmd.stdout.toString()
-                };
+                const cmd = execSync(command, {cwd: this.rootPath, ...options});
+
+                if (cmd) {
+                    return {
+                        success: true,
+                        out: cmd.toString()
+                    };
+                }
+
+                return new Error.Log(cmd);
             } else {
                 return '>> No command provided!'
             }
         } catch(err) {
-            throw new Error.Log(err);
+            return new Error.Log(err);
         }
     }
 
@@ -31,8 +35,9 @@ class Prompt {
 
         return new Promise((resolve, reject) => {
             try {
-                const child = exec(cmd, (err, stdout, stderr) => {
+                const child = exec(cmd, {cwd: this.rootPath}, (err, stdout, stderr) => {
                     if (err) {
+                        console.error(stderr);
                         return reject(new Error.Log(err));
                     }
     
@@ -46,15 +51,6 @@ class Prompt {
                 return reject(new Error.Log(err));
             }
         });
-    }
-
-    goTo(path) {
-        try {
-            const options = { cwd: this.repoPath, env: process.env };
-            return this.cmd('cmd', ['/c', `cd ${path}`], options);
-        } catch(err) {
-            throw new Error.Log(err);
-        }
     }
 
     strigifyParams(params) {

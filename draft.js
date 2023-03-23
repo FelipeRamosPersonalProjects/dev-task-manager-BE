@@ -1,12 +1,15 @@
 require('./src/global');
+const config = require('./config.json');
+const { RepoManager } = require('./src/services/GitHubAPI');
+const repo = new RepoManager({
+    userName: 'FelipeRamos1202',
+    ...config.projects[0].repos[0]
+});
 
-const RepoManager = require('./src/services/GitHubAPI/RepoManager');
-console.log('RepoManager', RepoManager);
-// const repo = new RepoManager({
-//     repoName: 'FelipeRamosLab/nodejs-lab',
-//     localPath: 'C:/Users/Felipe/Documents/my-lab/nodejs-lab'
-// });
+(async () => {
+    // const branch = await repo.checkout('feature/testing1');
+    // const fileChanges = await repo.currentChanges();
+    // const commit = await repo.commit();
+    // const push = await repo.push('feature/testing1');
+})()
 
-// repo.createBranch('feature/SBBW-225-v2', 'support').then(response => {
-//     console.log(response)
-// });
