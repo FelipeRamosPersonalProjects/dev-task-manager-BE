@@ -1,4 +1,4 @@
-const { Prompt } = require('..');
+const Prompt = require('../Prompt');
 const GitHubConnection = require('./GitHubConnection');
 class RepoManager extends GitHubConnection {
     constructor(setup = {

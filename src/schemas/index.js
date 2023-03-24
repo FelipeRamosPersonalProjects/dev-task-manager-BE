@@ -4,6 +4,7 @@ const projects = require('./projects');
 const tasks = require('./tasks');
 const tickets = require('./tickets');
 const pull_requests = require('./pull_requests');
+const repos = require('./repos');
 const users = require('./users');
 
 module.exports = {
@@ -13,5 +14,6 @@ module.exports = {
     tasks,
     tickets,
     pull_requests,
+    repos,
     users
 };
