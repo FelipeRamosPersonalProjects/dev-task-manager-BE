@@ -33,6 +33,7 @@ class ErrorLog extends LogBase {
         }
 
         this.type = 'error';
+        this.error = true;
         this.stack = stack || `${this.name}: ${this.message}`;
         this.errorList = errorList || [{ name: this.name, message: this.message }];
         this.validationErrors = args.validationErrors || [];
@@ -48,8 +49,6 @@ class ErrorLog extends LogBase {
                 this.validationErrors = [args, ...this.validationErrors];
             }
         }
-
-        this.consolePrint();
     }
 
     async saveLog() {

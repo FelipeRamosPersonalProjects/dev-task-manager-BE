@@ -12,7 +12,7 @@ class GlobalMap extends ValidateSchema {
         super(setup.validationRules || {});
 
         try {
-            this.UID = setup._id && setup._id.toString();
+            this._id = setup._id && setup._id.toString();
             this._id = setup._id;
             this.index = setup.index;
             this.author = setup.author;

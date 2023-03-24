@@ -8,5 +8,61 @@
     "github": {
         "apiHostURL": "https://api.github.com",
         "testUser": "FelipeRamos1202"
-    }
+    },
+    "organizations": [
+        {
+            "name": "OSFDigital",
+            "type": "company"
+        },
+        {
+            "name": "FelipeRamos1202",
+            "type": "user"
+        }
+    ],
+    "projects": [
+        {
+            "name": "NodeJS Lab",
+            "templates": [
+                {
+                    "name": "PR description",
+                    "text": [
+                        "## File changes\n",
+                        "- file_path/here\n"
+                    ]
+                },
+                {
+                    "name": "Commit description",
+                    "text": [
+                        "**File changes:**\n",
+                        "- file_path/here\n"
+                    ]
+                }
+            ],
+            "repos": [
+                {
+                    "nodeVersion": "14.17.3",
+                    "baseBranch": "develop",
+                    "organization": "FelipeRamos1202",
+                    "repoName": "nodejs-lab",
+                    "repoPath": "FelipeRamos1202/nodejs-lab",
+                    "localPath": "C:/Users/Felipe/Documents/my-lab/nodejs-lab",
+                    "url": "https://github.com/FelipeRamos1202/nodejs-lab"
+                }
+            ]
+        },
+        {
+            "name": "KalTire",
+            "repos": [
+                {
+                    "nodeVersion": "8.17.0",
+                    "baseBranch": "develop",
+                    "organization": "OSFDigital",
+                    "repoName": "ca-kt-ifb-kaltire-dw",
+                    "repoPath": "OSFDigital/ca-kt-ifb-kaltire-dw",
+                    "localPath": "C:/Users/Felipe/Documents/GitHub/Kaltire/ca-kt-ifb-kaltire-dw",
+                    "url": "https://github.com/OSFDigital/ca-kt-ifb-kaltire-dw"
+                }
+            ]
+        }
+    ]
 }
