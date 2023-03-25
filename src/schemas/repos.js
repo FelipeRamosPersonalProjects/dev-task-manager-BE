@@ -23,10 +23,10 @@ module.exports = new Schema({
         url: {
             type: String
         },
-        users: {
-            type: [ObjectId],
-            default: [],
-            ref: 'users'
+        owner: {
+            type: ObjectId,
+            ref: 'users',
+            required: true
         },
         collaborators: {
             type: [ObjectId],
