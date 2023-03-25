@@ -40,6 +40,7 @@ class SchemaDB {
 
     init() {
         try {
+            if (!global.initializedCollections) global.initializedCollections = [];
             if (this.name !== configs.database.counterCollection) dbHelpers.createCounter(this);
 
             const isDup = mongoose.modelNames().find(key => key === this.name);
