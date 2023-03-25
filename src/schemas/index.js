@@ -1,21 +1,25 @@
 const counters = require('./counters');
-const logs = require('./logs');
-const projects = require('./projects');
-const tasks = require('./tasks');
-const tickets = require('./tickets');
-const pull_requests = require('./pull_requests');
-const repos = require('./repos');
-const components = require('./components');
 const users = require('./users');
+const space_desks = require('./space_desks');
+const repos = require('./repos');
+const projects = require('./projects');
+const tickets = require('./tickets');
+const tasks = require('./tasks');
+const pull_requests = require('./pull_requests');
+const comments = require('./comments');
+const components = require('./components');
+const logs = require('./logs');
 
 module.exports = {
-    components,
     counters,
-    logs,
-    projects,
-    tasks,
-    tickets,
-    pull_requests,
+    users,
+    space_desks,
     repos,
-    users
+    projects,
+    tickets,
+    tasks,
+    pull_requests,
+    comments,
+    components,
+    logs
 };
