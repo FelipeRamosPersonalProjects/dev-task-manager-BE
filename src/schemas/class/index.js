@@ -2,6 +2,7 @@ const GlobalClass = require('./GlobalClass');
 const logs = require('./LogsClass');
 const users = require('./UsersClass');
 const space_desks = require('./SpaceDesksClass');
+const organizations = require('./OrganizationsClass');
 const tickets = require('./TicketsClass');
 const comments = require('./CommentsClass');
 const projects = require('./ProjectsClass');
@@ -14,6 +15,7 @@ module.exports = {
     GlobalClass,
     logs,
     space_desks,
+    organizations,
     tickets,
     comments,
     projects,
