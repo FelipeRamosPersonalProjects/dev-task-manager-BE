@@ -1,24 +1,24 @@
 const ValidateSchema = require('../validation/validateSchema');
 
 const defaultRules = {
-    title: { type: String, required: true },
+    componentName: { type: String, required: true },
     description: { type: String },
-    outputModel: { type: String, default: '' }
+    outputModel: { type: String, default: ''}
 }
 
 class Component extends ValidateSchema {
     constructor(setup = {
-        title: '',
+        componentName: '',
         description: '',
-        outputModel: '',
+        outputModel: ''
     }, validationRules){
         super(typeof validationRules === 'string' ? validationRules : {...defaultRules, ...validationRules});
         const self = this;
 
         try {
-            const { title, description, outputModel } = setup || {};
+            const { componentName, description, outputModel } = setup || {};
 
-            this.title = title;
+            this.componentName = componentName;
             this.description = description;
             this.outputModel = outputModel;
 
@@ -28,11 +28,40 @@ class Component extends ValidateSchema {
 
             this.placeDefault();
         } catch(err) {
-            const error = new Error.Log(err).append('common.required_params', err.validationErrors, this.title || 'Component Instance');
+            const error = new Error.Log(err).append('common.required_params', err.validationErrors, this.componentName);
 
             Object.keys(self).map(key => delete self[key]);
             Object.keys(error).map(key => self[key] = error[key]);
             throw error.stack;
+        }
+    }
+
+    string(value = '') {
+        if (typeof value === 'string' || typeof value === 'number') {
+            return String(value);
+        } else {
+            throw new Error.Log('common.bad_format_param', 'value', 'StringComponent', 'string', value, 'StringComponent.js');
+        }
+    }
+
+    array(value = [], Child = () => {}) {
+        let result = '';
+
+        if (Array.isArray(value) && typeof Child === 'function') {
+            value.map((item) => {
+                result += Child(item);
+            });
+        }
+
+        return result;
+    }
+
+    date(value) {
+        try {
+            const localString = new Date(value).toLocaleString();
+            return localString;
+        } catch(err) {
+            return '--invalid-date-format--';
         }
     }
 
@@ -53,12 +82,18 @@ class Component extends ValidateSchema {
             let toReplaceString;
 
             if (type === 'string') {
-                value = String(params[key]);
+                value = this.string(params[key]);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (type === 'array') {
+                value = this.array(params[key]);
+                toReplaceString = `##{{${sub}}}##`;
+            }
 
+            if (type === 'date') {
+                value = this.date(params[key]);
+                toReplaceString = `##{{${sub}}}##`;
             }
 
             if (value) {
