@@ -30,6 +30,15 @@ module.exports = {
         }
     },
     common: {
+        required_params: (validationErrors, functionName) => {
+            const validationMessages = validationErrors.map(item => '- ' + item.message).join('\n');
+
+            return {
+                name: 'RequiredParams',
+                message: `at "${functionName || '--unknown-method--'}":\n${validationMessages}\n\n`
+            }
+        },
+
         missing_params: (paramName, at, file) => { return {
             name: 'CommonMissingParams',
             message: `The param(s) "${Array.isArray(paramName) ? paramName.join(', ') : paramName}" is required at ${at} file "${file}"!`
