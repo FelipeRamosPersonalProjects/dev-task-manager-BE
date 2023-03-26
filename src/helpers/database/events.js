@@ -47,47 +47,23 @@ async function postSave() {
     }
 }
 
-async function postDelete() {
+async function preDelete(next) {
     try {
         const collection = this._collection.collectionName;
-        const schemas = require('../../schemas');
-        const CRUD = require('../../services/database/crud');
-        const deletedUID = this._conditions._id.toString();
 
-        for (let key in schemas) {
-            const currSchema = schemas[key].schema;
-            const paths = currSchema.paths;
-
-            for (let path in paths) {
-                const currPath = paths[path];
-                const ref = currPath.options.ref;
-
-                if (ref === collection) {
-                    const type = currPath.options.type;
-
-                    if (Array.isArray(type) && type.length) {
-                        const updated = await CRUD.update({
-                            type: 'many',
-                            collectionName: key,
-                            filter: { [path]: { $elemMatch: { $eq: deletedUID } }},
-                            data: { $pull: {[path]: deletedUID}}
-                        });
-                        
-                        if(!updated.acknowledged) throw new Error.Log('database.events.post_delete_not_acknowledged');
-                        return updated;
-                    } else {
-                        const updated = await CRUD.update({
-                            type: 'many',
-                            collectionName: key,
-                            filter: { [path]: deletedUID },
-                            data: { [path]: null }
-                        });
-                        if(!updated.acknowledged) throw new Error.Log('database.events.post_delete_not_acknowledged');
-                        return updated;
-                    }
-                }
-            };
+        if (collection !== config.database.counterCollection) {
+            await relationalHelper.onDelete.call(this);
         }
+        
+        next();
+    } catch(err) {
+        throw new Error.Log('database.events.pre_delete');
+    }
+}
+
+async function postDelete() {
+    try {
+        return;
     } catch(err) {
         throw new Error.Log('database.events.post_delete');
     }
@@ -97,5 +73,6 @@ module.exports = {
     preSave,
     preUpdateOne,
     postSave,
+    preDelete,
     postDelete
 };
