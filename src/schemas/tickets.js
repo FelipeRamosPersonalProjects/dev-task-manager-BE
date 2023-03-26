@@ -5,6 +5,13 @@ const { SLA } = require('./map');
 module.exports = new Schema({
     name: 'tickets',
     symbol: 'TICK',
+    links: {
+        project: 'tickets',
+        pullRequests: 'ticket',
+        tasks: 'ticket',
+        assignedUsers: 'tickets',
+        comments: 'ticket'
+    },
     schema: {
         ticketID: {
             type: String,
@@ -15,6 +22,11 @@ module.exports = new Schema({
         ticketURL: {
             type: String,
             required: true
+        },
+        assignedUsers: {
+            type: [ObjectId],
+            default: [],
+            ref: 'users'
         },
         project: {
             type: ObjectId,
@@ -41,6 +53,11 @@ module.exports = new Schema({
             type: [ObjectId],
             default: [],
             ref: 'tasks'
+        },
+        comments: {
+            type: [ObjectId],
+            default: [],
+            ref: 'comments'
         },
         pullRequests: {
             type: [ObjectId],

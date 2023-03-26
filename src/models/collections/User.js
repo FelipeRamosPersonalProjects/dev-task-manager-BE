@@ -1,30 +1,60 @@
 const _Global = require('../maps/_Global');
+const Repo = require('./Repo');
+const SpaceDesk = require('./SpaceDesk');
+const Task = require('./Task');
+const Ticket = require('./Ticket');
+const PullRequest = require('./PullRequest');
+const Comment = require('./Comment');
 
 class User extends _Global {
     constructor(setup = {
         ...this,
-        auth_UID: '',
         firstName: '',
         lastName: '',
         fullName: '',
         email: '',
-        cellphone: '',
-        birthdate: Date(),
-        address: Object(),
-        binanceConfig: BinanceConfig.prototype
+        phone: '',
+        repos: [Repo.prototype],
+        spaceDesks: [SpaceDesk.prototype],
+        tickets: [Ticket.prototype],
+        tasks: [Task.prototype],
+        myPullRequests: [PullRequest.prototype],
+        myReviews: [User.prototype],
+        pullRequestsAssigned: [PullRequest.prototype],
+        comments: [Repo.prototype]
     }){
         try {
             super({...setup, validationRules: 'users'});
+            const {
+                firstName,
+                lastName,
+                fullName,
+                email,
+                phone,
+                repos,
+                spaceDesks,
+                tickets,
+                tasks,
+                myPullRequests,
+                myReviews,
+                pullRequestsAssigned,
+                comments,
+            } = setup || {};
     
             // Database exported properties
-            this.auth_UID = setup.auth_UID;
-            this.fullName = setup.fullName;
-            this.firstName = setup.firstName;
-            this.lastName = setup.lastName;
-            this.email = setup.email;
-            this.cellphone = setup.cellphone;
-            this.birthdate = setup.birthdate;
-            this.address = setup.address;
+            this.fullName = fullName;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+            this.phone = phone;
+            this.repos = Array.isArray(repos) && repos.map(item => new Repo(item));
+            this.spaceDesks = Array.isArray(spaceDesks) && spaceDesks.map(item => new SpaceDesk(item));
+            this.tickets = Array.isArray(tickets) && tickets.map(item => new Ticket(item));
+            this.tasks = Array.isArray(tasks) && tasks.map(item => new Task(item));
+            this.myPullRequests = Array.isArray(myPullRequests) && myPullRequests.map(item => new PullRequest(item));
+            this.myReviews = Array.isArray(myReviews) && myReviews.map(item => new User(item));
+            this.pullRequestsAssigned = Array.isArray(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
+            this.comments = Array.isArray(comments) && comments.map(item => new Comment(item));
 
             this.placeDefault();
         } catch(err) {

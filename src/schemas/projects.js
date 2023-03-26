@@ -1,14 +1,45 @@
 const Schema = require('../models/collections/SchemaDB');
-const SchemaTypes = Schema.mongoSchema.Types;
+const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'projects',
     symbol: 'PRJ',
-    links: { tasks: 'project' },
+    links: {
+        tasks: 'project',
+        repos: 'projects',
+        tickets: 'project',
+        spaceDesks: 'projects'
+    },
     schema: {
-        projectName: { type: SchemaTypes.String, required: true },
-        description: { type: SchemaTypes.String, default: '' },
-        urls: { type: [SchemaTypes.ObjectId], default: [] },
-        tasks: { type: [SchemaTypes.ObjectId], default: [], ref: 'tasks' }
+        projectName: {
+            type: String,
+            required: true
+        },
+        description: {
+            type: String
+        },
+        urls: {
+            type: Array,
+            default: []
+        },
+        tickets: {
+            type: [ObjectId],
+            ref: 'tickets'
+        },
+        tasks: {
+            type: [ObjectId],
+            default: [],
+            ref: 'tasks'
+        },
+        repos: {
+            type: [ObjectId],
+            default: true,
+            ref: 'repos'
+        },
+        spaceDesks: {
+            type: [ObjectId],
+            default: [],
+            ref: 'space_desks'
+        }
     }
 });

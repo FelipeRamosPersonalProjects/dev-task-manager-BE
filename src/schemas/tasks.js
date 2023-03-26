@@ -1,21 +1,59 @@
 const Schema = require('../models/collections/SchemaDB');
-const SchemaTypes = Schema.mongoSchema.Types;
+const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'tasks',
     symbol: 'TSK',
-    links: { project: 'tasks' },
+    links: {
+        project: 'tasks',
+        assignedUsers: 'tasks',
+        ticket: 'tasks',
+        pullRequests: 'task',
+        comments: 'task'
+    },
     schema: {
-        taskName: { type: SchemaTypes.String, required: true },
-        taskCod: { type: SchemaTypes.String },
-        description: { type: SchemaTypes.String },
-        notes: { type: [SchemaTypes.ObjectId], default: [] },
-        project: { type: SchemaTypes.ObjectId, ref: 'projects' },
-        assignedUser: { type: SchemaTypes.ObjectId, ref: 'users' },
-        tickets: { type: [SchemaTypes.ObjectId], default: [] },
-        dueDate: { type: SchemaTypes.Date },
-        sharedWith: { type: SchemaTypes.String },
-        pullRequests: { type: [SchemaTypes.ObjectId], default: [] },
-        configs: { type: [Object], default: [] }
+        taskName: {
+            type: String,
+            required: true
+        },
+        taskCod: {
+            type: String
+        },
+        description: {
+            type: String
+        },
+        project: {
+            type: ObjectId,
+            ref: 'projects'
+        },
+        assignedUsers: {
+            type: [ObjectId],
+            default: [],
+            ref: 'users'
+        },
+        ticket: {
+            type: ObjectId,
+            ref: 'tickets'
+        },
+        dueDate: {
+            type: Date
+        },
+        sharedWith: {
+            type: String
+        },
+        pullRequests: {
+            type: [ObjectId],
+            default: [],
+            ref: 'pull_requests'
+        },
+        comments: {
+            type: [ObjectId],
+            default: [],
+            ref: 'comments'
+        },
+        configs: {
+            type: [Object],
+            default: []
+        }
     }
 });

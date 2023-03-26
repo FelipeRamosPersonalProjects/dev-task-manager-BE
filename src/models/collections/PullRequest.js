@@ -1,31 +1,40 @@
 const _Global = require('../maps/_Global');
 const User = require('./User');
+const Comment = require('./Comment');
+const Ticket = require('./Ticket');
+const Task = require('./Task');
 
 class PullRequests extends _Global {
     constructor(setup = {
-        prName: String,
-        prGitHubID: String,
-        description: String,
-        fileChanges: [Object],
+        owner: User.prototype,
+        prName: '',
+        prGitHubID: '',
+        description: '',
+        fileChanges: [],
         assignedUsers: [User.prototype],
         reviewers: [User.prototype],
-        labels: [String],
-        bmConfigs: [Object],
-        comments: [Object],
+        labels: [],
+        bmConfigs: [],
+        comments: [Comment.prototype],
+        ticket: Ticket.prototype,
+        task: Task.prototype
     }){
         super({...setup, validationRules: 'pull_requests'});
         const { prName, prGitHubID, description, fileChanges, assignedUsers, reviewers, labels, bmConfigs, comments } = setup || {};
 
         try {
-           this.prName = prName; 
-           this.prGitHubID = prGitHubID; 
-           this.description = description; 
-           this.fileChanges = fileChanges; 
-           this.assignedUsers = assignedUsers; 
-           this.reviewers = reviewers; 
-           this.labels = labels; 
-           this.bmConfigs = bmConfigs; 
-           this.comments = comments; 
+            this.owner = owner && new User(owner);
+            this.prName = prName;
+            this.prGitHubID = prGitHubID;
+            this.description = description;
+            this.fileChanges = fileChanges;
+            this.assignedUsers = Array.isArray(assignedUsers) && assignedUsers.map(user => User(user));
+            this.reviewers = Array.isArray(reviewers) && reviewers.map(user => User(user));
+            this.labels = labels;
+            this.bmConfigs = bmConfigs;
+            this.comments = Array.isArray(comments) && comments.map(comment => Comment(comment));
+            this.ticket = ticket && new Ticket(ticket);
+            this.task = task && new Task(task);
 
             this.placeDefault();
         } catch(err) {

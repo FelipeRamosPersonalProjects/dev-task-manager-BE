@@ -1,15 +1,20 @@
 const _Global = require('../maps/_Global');
+const User = require('./User');
+const Project = require('./Project');
 
 class SpaceDesk extends _Global {
     constructor(setup = {
         ...SpaceDesk.prototype,
+        owner: User.prototype,
+        projects: [Project.prototype]
     }){
         try {
             super({...setup, validationRules: 'space_desks'});
-            const { spaceName, owner } = setup || {};
+            const { spaceName, owner, projects } = setup || {};
 
             this.spaceName = spaceName;
-            this.owner = owner;
+            this.owner = owner && new User(owner);
+            this.projects = Array.isArray(projects) && projects.map(project => new Project(project));
 
             this.placeDefault();
         } catch(err) {

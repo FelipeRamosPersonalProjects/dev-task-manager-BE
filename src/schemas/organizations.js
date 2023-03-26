@@ -4,6 +4,10 @@ const { ObjectId } = Schema.mongoSchema.Types;
 module.exports = new Schema({
     name: 'organizations',
     symbol: 'ORG',
+    links: {
+        repos: 'organization',
+        projects: 'organization',
+    },
     schema: {
         name: {
             type: String,
@@ -17,11 +21,6 @@ module.exports = new Schema({
             type: [ObjectId],
             default: [],
             ref: 'repos'
-        },
-        projects: {
-            type: [ObjectId],
-            default: [],
-            ref: 'projects'
         }
     }
 });
