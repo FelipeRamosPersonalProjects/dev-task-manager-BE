@@ -1,4 +1,5 @@
 const dbHelpers = require('./dbHelpers');
+const relationalHelper = require('./relationalFields');
 const config = require('../../../config.json');
 
 async function preSave(next) {
@@ -37,31 +38,12 @@ async function postSave() {
         const collection = this.collection.collectionName;
 
         if (collection !== config.database.counterCollection) {
-            const schemas = require('../../schemas');
-            const selfSchema = schemas && schemas[collection];
-            const links = selfSchema && selfSchema.links || {};
-            const thisDoc = this;
-
-            for (let link in links) {
-                const linkedValue = thisDoc[link];
-                const currLink = links[link];
-                const relRef = schemas[collection].schema.obj[link].ref;
-
-                if (Array.isArray(linkedValue)) {
-                    // It's missing to finish here
-                } else if (typeof linkedValue === 'object') {
-                    const relSchema = schemas[relRef]
-                    const relType = relSchema && schemas[relRef].schema && schemas[relRef].schema.obj[currLink];
-
-                    if (relType && relType.type) {
-                        if (Array.isArray(relType.type)) await relSchema.DB.findOneAndUpdate({_id: linkedValue}, {$addToSet: {[currLink]: thisDoc._id}});
-                        else await relSchema.DB.findOneAndUpdate(linkedValue, {[currLink]: thisDoc._id});
-                    }
-                }
-            }
+            await relationalHelper.onCreate.call(this);
         }
+
+        return;
     } catch(err) {
-        throw new Error.Log(err).append('database.events.post_save')
+        throw new Error.Log(err).append('database.events.post_save');
     }
 }
 
