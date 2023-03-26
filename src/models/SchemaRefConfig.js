@@ -1,12 +1,14 @@
 class SchemaRefConfig {
     constructor(setup = {
+        type,
         relatedField: '',
-        type
+        toDelete: false
     }) {
-        const {relatedField, type} = setup || {};
+        const {relatedField, type, toDelete} = setup || {};
 
-        this.relatedField = relatedField;
         this.type = type;
+        this.relatedField = relatedField;
+        this.toDelete = Boolean(toDelete);
     }
 }
 

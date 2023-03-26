@@ -78,7 +78,10 @@ class SchemaDB {
             this.schema.pre('save', events.preSave);
             this.schema.post('save', events.postSave);
             this.schema.pre(['updateOne', 'findOneAndUpdate'], events.preUpdateOne);
+            this.schema.pre(['deleteOne', 'deleteMany'], events.preDelete);
             this.schema.post(['deleteOne', 'deleteMany'], events.postDelete);
+
+            // Adding custom events for the schema
             if (this.events.postSave) this.schema.post('save', this.events.postSave);
             if (this.events.postUpdate) this.schema.post(['updateOne', 'findOneAndUpdate'], this.events.postUpdate);
         } catch(err) {
