@@ -35,31 +35,57 @@ async function preUpdateOne(next) {
 async function postSave() {
     try {
         const collection = this.collection.collectionName;
+        const promises = [];
 
-        if (collection !== config.database.counterCollection) {
-            const schemas = require('../../schemas');
-            const selfSchema = schemas && schemas[collection];
-            const links = selfSchema && selfSchema.links || {};
-            const thisDoc = this;
-
-            for (let link in links) {
-                const linkedValue = thisDoc[link];
-                const currLink = links[link];
-                const relRef = schemas[collection].schema.obj[link].ref;
-
-                if (Array.isArray(linkedValue)) {
-                    // It's missing to finish here
-                } else if (typeof linkedValue === 'object') {
-                    const relSchema = schemas[relRef]
-                    const relType = relSchema && schemas[relRef].schema && schemas[relRef].schema.obj[currLink];
-
-                    if (relType && relType.type) {
-                        if (Array.isArray(relType.type)) await relSchema.DB.findOneAndUpdate({_id: linkedValue}, {$addToSet: {[currLink]: thisDoc._id}});
-                        else await relSchema.DB.findOneAndUpdate(linkedValue, {[currLink]: thisDoc._id});
-                    }
-                }
-            }
+        if (collection === config.database.counterCollection) {
+            return;
         }
+
+        // Iterate each field of the current document being created
+        Object.entries(this.schema.obj).map(([key, value]) => {
+            if (!value.refConfig || !this[key]) return;
+
+            const currType = value.type;
+            const {relatedField, type} = value.refConfig;
+            const isCurrentAnArray = (Array.isArray(currType) && currType.length && currType[0].schemaName === 'ObjectId');
+            const isCurrentAnObjectId = (currType.schemaName === 'ObjectId');
+            const isRelatedAnArray = (type === 'array-oid');
+            const isRelatedAnObjectId = (type === 'ObjectId');
+
+            if (isCurrentAnArray && !this[key].length) {
+                return;
+            }
+
+            if (isCurrentAnArray && isRelatedAnArray) {
+                const toUpdate = new Promise((resolve, reject) => {
+                    this.model(value.ref).updateMany(
+                        { _id: { $in: [...this[key]] } },
+                        { $addToSet: { [relatedField]: this.id } },
+                        (err, result) => {
+                            if (err) return reject(new Error.Log(err));
+                            return resolve(result);
+                        }
+                    );
+                });
+
+                promises.push(toUpdate);
+            }
+
+            if (isCurrentAnArray && isRelatedAnObjectId) {
+                debugger
+            }
+
+            if (isCurrentAnObjectId && isRelatedAnArray) {
+                const toUpdate = this.model(value.ref).findOneAndUpdate({ _id: this[key].toString() }, {$addToSet: { [relatedField]: this.id }});
+                promises.push(toUpdate);
+            }
+
+            if (isCurrentAnObjectId && isRelatedAnObjectId) {
+                debugger
+            }
+        });
+
+        const updated = await Promise.all(promises);
     } catch(err) {
         throw new Error.Log(err).append('database.events.post_save')
     }
