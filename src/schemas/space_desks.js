@@ -1,13 +1,9 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'space_desks',
     symbol: 'SPDK',
-    links: {
-        owner: 'spaceDesks',
-        projects: 'spaceDesks'
-    },
     schema: {
         spaceName: {
             type: String,
@@ -16,12 +12,20 @@ module.exports = new Schema({
         owner: {
             type: ObjectId,
             ref: 'users',
-            required: true
+            required: true,
+            refConfig: new Schema.RefConfig({
+                relatedField: 'spaceDesks',
+                type: 'array-oid'
+            })
         },
         projects: {
             type: [ObjectId],
             default: [],
-            ref: 'projects'
+            ref: 'projects',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'spaceDesks',
+                type: 'array-oid'
+            })
         }
     }
 });

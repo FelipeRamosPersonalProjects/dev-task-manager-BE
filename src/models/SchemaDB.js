@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
-const {getGlobalSchema} = require('../../schemas/_globals');
-const schemasClass = require('../../schemas/class');
-const {database: {dbHelpers, queries, events}} = require('../../helpers');
-const configs = require('../../../config.json');
+const {getGlobalSchema} = require('../schemas/_globals');
+const schemasClass = require('../schemas/class');
+const RefConfig = require('./SchemaRefConfig');
+const {database: {dbHelpers, queries, events}} = require('../helpers');
+const configs = require('../../config.json');
 const GlobalClass = schemasClass.GlobalClass;
 
 class SchemaDB {
+    static RefConfig = RefConfig;
+
     constructor(setup = {
         name: String(),
         symbol: String(),
