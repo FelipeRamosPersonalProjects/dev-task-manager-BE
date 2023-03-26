@@ -24,6 +24,7 @@ module.exports = new Schema({
         },
         tickets: {
             type: [ObjectId],
+            default: [],
             ref: 'tickets'
         },
         tasks: {
@@ -33,7 +34,7 @@ module.exports = new Schema({
         },
         repos: {
             type: [ObjectId],
-            default: true,
+            default: [],
             ref: 'repos'
         },
         spaceDesks: {
