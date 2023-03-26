@@ -1,17 +1,9 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'pull_requests',
     symbol: 'PR',
-    links: {
-        ticket: 'pullRequests',
-        task: 'pullRequests',
-        owner: 'myPullRequests',
-        assignedUsers: 'pullRequests',
-        reviewers: 'myReviews',
-        comments: 'pullRequest'
-    },
     schema: {
         prName: {
             type: String,
@@ -30,17 +22,29 @@ module.exports = new Schema({
         owner: {
             type: ObjectId,
             ref: 'users',
-            required: true
+            required: true,
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
         },
         assignedUsers: {
             type: [ObjectId],
             default: [],
-            ref: 'users'
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
         },
         reviewers: {
             type: [ObjectId],
             default: [],
-            ref: 'users'
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'myReviews',
+                type: 'array-oid'
+            })
         },
         labels: {
             type: [String]
@@ -52,15 +56,27 @@ module.exports = new Schema({
         comments: {
             type: [ObjectId],
             default: [],
-            ref: 'comments'
+            ref: 'comments',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequest',
+                type: 'ObjectId'
+            })
         },
         ticket: {
             type: ObjectId,
-            ref: 'tickets'
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
         },
         task: {
             type: ObjectId,
-            ref: 'tasks'
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
         }
     }
 });

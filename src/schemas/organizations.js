@@ -1,13 +1,9 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'organizations',
     symbol: 'ORG',
-    links: {
-        repos: 'organization',
-        projects: 'organization',
-    },
     schema: {
         name: {
             type: String,
@@ -15,12 +11,30 @@ module.exports = new Schema({
         },
         owner: {
             type: ObjectId,
-            required: true
+            required: true,
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'myOrganizations',
+                type: 'array-oid'
+            })
         },
         repos: {
             type: [ObjectId],
             default: [],
-            ref: 'repos'
+            ref: 'repos',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'organization',
+                type: 'ObjectId'
+            })
+        },
+        projects: {
+            type: [ObjectId],
+            default: [],
+            ref: 'projects',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'organization',
+                type: 'ObjectId'
+            })
         }
     }
 });
