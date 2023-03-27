@@ -28,9 +28,20 @@ async function preSave(next) {
 }
 
 async function preUpdateOne(next) {
-    // Updating the modifiedAt timestamp
-    this._update.modifiedAt = Date.now();
-    next();
+    try {
+        const collection = this._collection.collectionName;
+
+        // Updating the modifiedAt timestamp
+        this._update.modifiedAt = Date.now();
+        
+        if (!this._update.onlyAct && collection !== config.database.counterCollection) {
+            await relationalHelper.onUpdate.call(this);
+        }
+
+        next();
+    } catch(err) {
+        throw new Error.Log(err).append('database.events.post_save');
+    }
 }
 
 async function postSave() {
