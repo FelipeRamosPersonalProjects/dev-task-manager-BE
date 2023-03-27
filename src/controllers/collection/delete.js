@@ -23,11 +23,11 @@ module.exports = async function (req, res) {
         if (deleted){
             return res.status(200).json(new Response(deleted));
         } else {
-            const error = new Error.Log('collection.delete');
+            const error = new Error.Log('apiResponse.collection.delete');
             return res.status(500).json(error.response());
         }
     } catch(err) {
-        const error = new Error.Log(err).append('collection.delete');
+        const error = new Error.Log(err).append('apiResponse.collection.delete');
         return res.status(500).json(error.response());
     }
 }

@@ -1,15 +1,9 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'projects',
     symbol: 'PRJ',
-    links: {
-        tasks: 'project',
-        repos: 'projects',
-        tickets: 'project',
-        spaceDesks: 'projects'
-    },
     schema: {
         projectName: {
             type: String,
@@ -25,22 +19,46 @@ module.exports = new Schema({
         tickets: {
             type: [ObjectId],
             default: [],
-            ref: 'tickets'
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'project',
+                type: 'ObjectId'
+            })
         },
         tasks: {
             type: [ObjectId],
             default: [],
-            ref: 'tasks'
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'project',
+                type: 'ObjectId'
+            })
         },
         repos: {
             type: [ObjectId],
             default: [],
-            ref: 'repos'
+            ref: 'repos',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'projects',
+                type: 'array-oid'
+            })
         },
         spaceDesks: {
             type: [ObjectId],
             default: [],
-            ref: 'space_desks'
-        }
+            ref: 'space_desks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'projects',
+                type: 'array-oid'
+            })
+        },
+        organization: {
+            type: ObjectId,
+            ref: 'organizations',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'projects',
+                type: 'array-oid'
+            })
+        },
     }
 });

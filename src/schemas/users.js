@@ -1,18 +1,9 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'users',
     symbol: 'U',
-    links: {
-        repos: 'owner',
-        spaceDesks: 'owner',
-        tasks: 'assignedUsers',
-        tickets: 'assignedUsers',
-        myPullRequests: 'owner',
-        pullRequestsAssigned: 'assignedUsers',
-        comments: 'user'
-    },
     schema: {
         firstName: {
             type: String,
@@ -32,42 +23,83 @@ module.exports = new Schema({
         repos: {
             type: [ObjectId],
             default: [],
-            ref: 'repos'
+            ref: 'repos',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'owner',
+                type: 'ObjectId'
+            })
         },
         spaceDesks: {
             type: [ObjectId],
             default: [],
-            ref: 'space_desks'
+            ref: 'space_desks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'owner',
+                type: 'ObjectId'
+            })
         },
         tickets: {
             type: [ObjectId],
             default: [],
-            ref: 'tickets'
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'assignedUsers',
+                type: 'array-oid'
+            })
         },
         tasks: {
             type: [ObjectId],
             default: [],
-            ref: 'tasks'
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'assignedUsers',
+                type: 'array-oid'
+            })
         },
         myPullRequests: {
             type: [ObjectId],
             default: [],
-            ref: 'pull_requests'
+            ref: 'pull_requests',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'owner',
+                type: 'ObjectId'
+            })
         },
         myReviews: {
             type: [ObjectId],
             default: [],
-            ref: 'pull_requests'
+            ref: 'pull_requests',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'reviewers',
+                type: 'array-oid'
+            })
         },
         pullRequestsAssigned: {
             type: [ObjectId],
             default: [],
-            ref: 'pull_requests'
+            ref: 'pull_requests',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'assignedUsers',
+                type: 'array-oid'
+            })
         },
         comments: {
             type: [ObjectId],
             default: [],
-            ref: 'comments'
+            ref: 'comments',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'user',
+                type: 'ObjectId'
+            })
+        },
+        myOrganizations: {
+            type: [ObjectId],
+            default: [],
+            ref: 'organizations',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'owner',
+                type: 'ObjectId'
+            })
         }
     }
 });

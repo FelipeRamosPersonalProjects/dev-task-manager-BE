@@ -1,25 +1,26 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'comments',
     symbol: 'COMM',
-    links: {
-        pullRequest: 'comments',
-        user: 'comments',
-        ticket: 'comments',
-        task: 'comments',
-        parent: 'replies'
-    },
     schema: {
         user: {
             type: ObjectId,
             required: true,
-            ref: 'users'
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'comments',
+                type: 'array-oid'
+            })
         },
         parent: {
             type: ObjectId,
-            ref: 'comments'
+            ref: 'comments',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'replies',
+                type: 'array-oid'
+            })
         },
         replies: {
             type: ObjectId,
@@ -31,15 +32,27 @@ module.exports = new Schema({
         },
         pullRequest: {
             type: ObjectId,
-            ref: 'pull_requests'
+            ref: 'pull_requests',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'comments',
+                type: 'array-oid'
+            })
         },
         ticket: {
             type: ObjectId,
-            ref: 'tickets'
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'comments',
+                type: 'array-oid'
+            })
         },
         task: {
             type: ObjectId,
-            ref: 'tasks'
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'comments',
+                type: 'array-oid'
+            })
         }
     }
 });

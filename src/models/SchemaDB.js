@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
-const {getGlobalSchema} = require('../../schemas/_globals');
-const schemasClass = require('../../schemas/class');
-const {database: {dbHelpers, queries, events}} = require('../../helpers');
-const configs = require('../../../config.json');
+const {getGlobalSchema} = require('../schemas/_globals');
+const schemasClass = require('../schemas/class');
+const RefConfig = require('./SchemaRefConfig');
+const {database: {dbHelpers, queries, events}} = require('../helpers');
+const configs = require('../../config.json');
 const GlobalClass = schemasClass.GlobalClass;
 
 class SchemaDB {
+    static RefConfig = RefConfig;
+
     constructor(setup = {
         name: String(),
         symbol: String(),
@@ -75,7 +78,10 @@ class SchemaDB {
             this.schema.pre('save', events.preSave);
             this.schema.post('save', events.postSave);
             this.schema.pre(['updateOne', 'findOneAndUpdate'], events.preUpdateOne);
+            this.schema.pre(['deleteOne', 'deleteMany'], events.preDelete);
             this.schema.post(['deleteOne', 'deleteMany'], events.postDelete);
+
+            // Adding custom events for the schema
             if (this.events.postSave) this.schema.post('save', this.events.postSave);
             if (this.events.postUpdate) this.schema.post(['updateOne', 'findOneAndUpdate'], this.events.postUpdate);
         } catch(err) {

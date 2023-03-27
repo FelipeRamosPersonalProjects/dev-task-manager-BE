@@ -251,6 +251,11 @@ module.exports = {
                 message: `Error caught on "postSave" event of database!`
             }},
 
+            pre_delete: () => { return {
+                name: 'DatabaseEventsPreDelete',
+                message: `Error caught during the preDelete event!`
+            }},
+
             post_delete: () => { return {
                 name: 'DatabaseEventsPostDelete',
                 message: `Error caught during the postDelete event!`
