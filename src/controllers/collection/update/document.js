@@ -34,9 +34,10 @@ const bodySchema = {
 };
 
 module.exports = async function (req, res) {
+    const request = new Request(req, bodySchema);
+    const body = request.getBody();
+
     try {
-        const request = new Request(req, bodySchema);
-        const body = request.getBody();
         const updated = await CRUD.update(body);        
         const response = new Response(updated, body.collection);
 

@@ -1,4 +1,4 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const SchemaTypes = Schema.mongoSchema.Types;
 
 module.exports = new Schema({

@@ -1,34 +1,41 @@
 const _Global = require('../maps/_Global');
 const Project = require('./Project');
 const Task = require('./Task');
+const PullRequest = require('./PullRequest');
+const User = require('./User');
+const Comment = require('./Comment');
 const SLAModel = require('../maps/SLA');
 
 class Ticket extends _Global {
     constructor(setup = {
         ...this,
-        ticketID: String,
-        ticketURL: String,
+        ticketID: '',
+        ticketURL: '',
+        title: '',
+        description: '',
+        status: '',
         project: Project.prototype,
-        title: String,
-        description: String,
-        status: String,
         sla: SLAModel.prototype,
         tasks: [Task.prototype],
-        pullRequests: [Object] // To create the model for PRs when the PR schema be ready
+        pullRequests: [PullRequest.prototype],
+        assignedUsers: [User.prototype],
+        comments: [Comment.prototype]
     }){
         super({...setup, validationRules: 'tickets'});
-        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests} = setup || {};
+        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = setup || {};
 
         try {
             this.ticketID = ticketID;
             this.ticketURL = ticketURL;
-            this.project = project;
             this.title = title;
             this.description = description;
             this.status = status;
-            this.sla = sla;
-            this.tasks = tasks;
-            this.pullRequests = pullRequests;
+            this.project = project && new Project(project);
+            this.sla = sla && new SLAModel(sla);
+            this.tasks = Array.isArray(tasks) && tasks.map(task => new Task(task));
+            this.pullRequests = Array.isArray(pullRequests) && pullRequests.map(pr => new PullRequest(pr));
+            this.assignedUsers = Array.isArray(assignedUsers) && assignedUsers.map(user => new User(user));
+            this.comments = Array.isArray(comments) && comments.map(comment => new Comment(comment));
 
             this.placeDefault();
         } catch(err) {

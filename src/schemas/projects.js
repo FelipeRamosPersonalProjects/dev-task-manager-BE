@@ -1,14 +1,64 @@
-const Schema = require('../models/collections/SchemaDB');
-const SchemaTypes = Schema.mongoSchema.Types;
+const Schema = require('../models/SchemaDB');
+const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'projects',
     symbol: 'PRJ',
-    links: { tasks: 'project' },
     schema: {
-        projectName: { type: SchemaTypes.String, required: true },
-        description: { type: SchemaTypes.String, default: '' },
-        urls: { type: [SchemaTypes.ObjectId], default: [] },
-        tasks: { type: [SchemaTypes.ObjectId], default: [], ref: 'tasks' }
+        projectName: {
+            type: String,
+            required: true
+        },
+        description: {
+            type: String
+        },
+        urls: {
+            type: Array,
+            default: []
+        },
+        tickets: {
+            type: [ObjectId],
+            default: [],
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'project',
+                type: 'ObjectId'
+            })
+        },
+        tasks: {
+            type: [ObjectId],
+            default: [],
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'project',
+                type: 'ObjectId'
+            })
+        },
+        repos: {
+            type: [ObjectId],
+            default: [],
+            ref: 'repos',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'projects',
+                type: 'array-oid'
+            })
+        },
+        spaceDesks: {
+            type: [ObjectId],
+            default: [],
+            ref: 'space_desks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'projects',
+                type: 'array-oid'
+            })
+        },
+        organization: {
+            type: ObjectId,
+            ref: 'organizations',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'projects',
+                type: 'array-oid'
+            })
+        },
     }
 });

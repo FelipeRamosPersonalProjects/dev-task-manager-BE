@@ -63,6 +63,20 @@
                     "url": "https://github.com/OSFDigital/ca-kt-ifb-kaltire-dw"
                 }
             ]
+        },
+        {
+            "name": "Stonewall Kitchen",
+            "repos": [
+                {
+                    "nodeVersion": "12.13.0",
+                    "baseBranch": "develop",
+                    "organization": "OSFDigital",
+                    "repoName": "US-STONE-IFB-Stonewall-Kitchen-SFRA-Redesign",
+                    "repoPath": "OSFDigital/US-STONE-IFB-Stonewall-Kitchen-SFRA-Redesign",
+                    "localPath": "C:/Users/Felipe/Documents/osf/US-STONE-IFB-Stonewall-Kitchen-SFRA-Redesign",
+                    "url": "https://github.com/OSFDigital/US-STONE-IFB-Stonewall-Kitchen-SFRA-Redesign"
+                }
+            ]
         }
     ]
 }

@@ -1,18 +1,82 @@
-const Schema = require('../models/collections/SchemaDB');
-const SchemaTypes = Schema.mongoSchema.Types;
+const Schema = require('../models/SchemaDB');
+const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'pull_requests',
     symbol: 'PR',
     schema: {
-        prName: { type: SchemaTypes.String, required: true },
-        prGitHubID: { type: SchemaTypes.String, required: true },
-        description: { type: SchemaTypes.String },
-        fileChanges: { type: [SchemaTypes.ObjectId], ref: 'files' },
-        assignedUsers: { type: [SchemaTypes.ObjectId], ref: 'users' },
-        reviewers: { type: [SchemaTypes.ObjectId], default: [], ref: 'users' },
-        labels: { type: [String] },
-        bmConfigs: { type: [SchemaTypes.ObjectId], default: [], ref: 'bm_configs' },
-        comments: { type: [SchemaTypes.ObjectId], default: [], ref: 'comments' }
+        prName: {
+            type: String,
+            required: true
+        },
+        prGitHubID: {
+            type: String,
+            required: true
+        },
+        description: {
+            type: String
+        },
+        fileChanges: {
+            type: [Object]
+        },
+        owner: {
+            type: ObjectId,
+            ref: 'users',
+            required: true,
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
+        },
+        assignedUsers: {
+            type: [ObjectId],
+            default: [],
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
+        },
+        reviewers: {
+            type: [ObjectId],
+            default: [],
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'myReviews',
+                type: 'array-oid'
+            })
+        },
+        labels: {
+            type: [String]
+        },
+        bmConfigs: {
+            type: [Object],
+            default: []
+        },
+        comments: {
+            type: [ObjectId],
+            default: [],
+            ref: 'comments',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequest',
+                type: 'ObjectId'
+            })
+        },
+        ticket: {
+            type: ObjectId,
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
+        },
+        task: {
+            type: ObjectId,
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'pullRequests',
+                type: 'array-oid'
+            })
+        }
     }
 });

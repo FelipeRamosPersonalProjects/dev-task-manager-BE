@@ -1,4 +1,4 @@
-const Schema = require('../models/collections/SchemaDB');
+const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 const { SLA } = require('./map');
 
@@ -16,10 +16,23 @@ module.exports = new Schema({
             type: String,
             required: true
         },
+        assignedUsers: {
+            type: [ObjectId],
+            default: [],
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'tickets',
+                type: 'array-oid'
+            })
+        },
         project: {
             type: ObjectId,
             required: true,
-            ref: 'projects'
+            ref: 'projects',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'tickets',
+                type: 'array-oid'
+            })
         },
         title: {
             type: String,
@@ -40,12 +53,29 @@ module.exports = new Schema({
         tasks: {
             type: [ObjectId],
             default: [],
-            ref: 'tasks'
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            })
+        },
+        comments: {
+            type: [ObjectId],
+            default: [],
+            ref: 'comments',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            })
         },
         pullRequests: {
             type: [ObjectId],
             default: [],
-            ref: 'pull_requests'
+            ref: 'pull_requests',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            })
         }
     }
 });
