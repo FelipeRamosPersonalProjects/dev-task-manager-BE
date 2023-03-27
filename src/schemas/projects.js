@@ -54,7 +54,6 @@ module.exports = new Schema({
         },
         organization: {
             type: ObjectId,
-            default: [],
             ref: 'organizations',
             refConfig: new Schema.RefConfig({
                 relatedField: 'projects',

@@ -12,7 +12,6 @@ module.exports = new Schema({
         owner: {
             type: ObjectId,
             ref: 'users',
-            required: true,
             refConfig: new Schema.RefConfig({
                 relatedField: 'spaceDesks',
                 type: 'array-oid'
