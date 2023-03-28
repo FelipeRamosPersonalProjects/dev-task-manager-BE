@@ -69,9 +69,9 @@ class Component extends ValidateSchema {
         let stringResult = '';
 
         if (Array.isArray(children)) {
-            children.map(child => stringResult += child.toString());
+            children.map(child => stringResult += child.getString());
         } else {
-            stringResult += children.toString();
+            stringResult += children.getString();
         }
 
         return stringResult;

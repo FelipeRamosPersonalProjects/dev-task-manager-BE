@@ -22,11 +22,11 @@ class DashedHeaderLayout extends Component {
         this.headerDescription = headerDescription;
     }
 
-    toString() {
+    getString() {
         const header = new DashedHeader({
             headerText: this.headerText,
             headerDescription: this.headerDescription
-        }).toString();
+        }).getString();
         return new StringTemplateBuilder()
             .text(header)
             .newLine()
@@ -36,7 +36,7 @@ class DashedHeaderLayout extends Component {
     }
 
     async render() {
-        console.log(this.toString());
+        console.log(this.getString());
         return this;
     }
 }
