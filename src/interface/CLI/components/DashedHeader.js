@@ -14,7 +14,7 @@ class DashedHeader extends Component {
         this.headerDescription = headerDescription;
     }
 
-    toString(params) {
+    getString(params) {
         const {headerText, headerDescription} = params || {};
 
         return new StringTemplateBuilder()
@@ -31,7 +31,7 @@ class DashedHeader extends Component {
     }
 
     async render() {
-        console.log(this.toString());
+        console.log(this.getString());
     }
 }
 
