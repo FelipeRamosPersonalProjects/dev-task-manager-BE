@@ -1,7 +1,7 @@
 const ValidateSchema = require('../validation/validateSchema');
 
 const defaultRules = {
-    componentName: { type: String, required: true },
+    componentName: { type: String, default: (() => 'comp-' + Date.now())()},
     description: { type: String },
     outputModel: { type: String, default: ''}
 }
@@ -22,7 +22,7 @@ class Component extends ValidateSchema {
             this.description = description;
             this.outputModel = outputModel;
 
-            if (this.validate()) {
+            if (this.validate({...this, ...setup})) {
                 throw new Error.Log(this.validationResult);
             }
 
@@ -63,6 +63,18 @@ class Component extends ValidateSchema {
         } catch(err) {
             return '--invalid-date-format--';
         }
+    }
+
+    children(children) {
+        let stringResult = '';
+
+        if (Array.isArray(children)) {
+            children.map(child => stringResult += child.toString());
+        } else {
+            stringResult += children.toString();
+        }
+
+        return stringResult;
     }
 
     render(params) {

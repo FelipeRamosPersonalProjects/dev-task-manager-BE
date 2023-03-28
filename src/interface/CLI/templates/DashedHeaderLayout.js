@@ -1,24 +1,43 @@
 const Component = require('../../Component');
+const StringTemplateBuilder = require('../../StringTemplateBuilder');
+const DashedHeader = require('../components/DashedHeader');
 
 class DashedHeaderLayout extends Component {
     constructor(settings = {
         ...Component.prototype,
         headerText: '',
-        Content: Component,
+        Content: [Component],
         contentSettings: {}
     }) {
         super(settings, {
             headerText: { type: String, required: true },
-            Content: { type: settings.Content, required: true }
+            Content: { type: [Object], required: true }
         });
 
-        const {contentSettings} = settings || {};
+        const {contentSettings, headerText, headerDescription, Content} = settings || {};
 
         this.contentSettings = contentSettings;
+        this.Content = Content;
+        this.headerText = headerText;
+        this.headerDescription = headerDescription;
     }
 
-    async render(settings = this.contentSettings) {
-        
+    toString() {
+        const header = new DashedHeader({
+            headerText: this.headerText,
+            headerDescription: this.headerDescription
+        }).toString();
+        return new StringTemplateBuilder()
+            .text(header)
+            .newLine()
+            .text(this.children(this.Content))
+            .newLine()
+        .end();
+    }
+
+    async render() {
+        console.log(this.toString());
+        return this;
     }
 }
 
