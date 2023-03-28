@@ -17,8 +17,7 @@ class CLI extends ToolsCLI {
     }
 
     async init() {
-        const loaded = await this.loadView(this.startView);
-        loaded.render();
+        await this.loadView(this.startView);
         return this;
     }
 
@@ -35,9 +34,9 @@ class CLI extends ToolsCLI {
             const loadedView = View.call(this);
             
             this.setCurrentView(loadedView);
-            console.log('[dev-task]: View "' + viewName + '" was loaded!');
+            loadedView.render();
 
-            return loadedView;
+            return this;
         } else {
             debugger;
         }

@@ -35,7 +35,10 @@ class SchemaDB {
             // Initializing the collection
             this.init();
             const date = new Date();
-            console.log(`[${date.toLocaleDateString()} ${date.toLocaleTimeString()}] Collection "${this.name}" was successful initialized!`)
+
+            if (configs.database.consoleLogs.collectionLoaded) {
+                console.log(`[${date.toLocaleDateString()} ${date.toLocaleTimeString()}] Collection "${this.name}" was successful initialized!`)
+            }
         } catch(err) {
             throw new Error.Log(err);
         }

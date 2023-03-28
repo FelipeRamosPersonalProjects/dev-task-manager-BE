@@ -3,7 +3,9 @@ class ToolsCLI {
 
     }
 
-    printTemplate() {
-        
+    printTemplate(stringContent) {
+        console.log(stringContent);
     }
 }
+
+module.exports = ToolsCLI;
