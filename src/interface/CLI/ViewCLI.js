@@ -7,21 +7,21 @@ class ViewCLI extends ToolsCLI {
 
     constructor(setup = {
         name: '',
-        questions: Questions.prototype,
+        questions: PoolForm.prototype,
         navigator: ViewNavigator.prototype,
         Template
     }, cli) {
         super(setup);
-        const Questions = require('./Questions');
+        const PoolForm = require('./PoolForm');
         const { name, questions, navigator, Template } = setup || {};
 
         this.name = name;
         this.Template = Template;
-        this.questions = questions && new Questions(questions, this);
+        this.questions = questions && new PoolForm(questions, this);
         this.navigator = navigator && new ViewNavigator(navigator, this);
         
         if (!this.questions) {
-            this.questions = new Questions(ViewNavigator.navDefaultQuestions, this);
+            this.questions = new PoolForm(ViewNavigator.navDefaultQuestions, this);
             this.questions.setListener('onAnswer', (_, answer) => {
                 this.navigator.navTo(answer);
             });

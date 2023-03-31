@@ -14,7 +14,7 @@ class ToolsCLI {
     }
 
     printTable(data, headers) {
-        if (Array.isArray(data)) {
+        if (typeof data === 'object') {
             console.table(data, headers);
         }
     }
