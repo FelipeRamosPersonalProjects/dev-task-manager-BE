@@ -3,6 +3,10 @@ class ToolsCLI {
         console.log('[dev-task]: ' + txt);
     }
 
+    printError(err) {
+        console.error('[ERROR][dev-task]: ' + err.message + '\n');
+    }
+
     printTemplate(stringContent) {
         if (typeof stringContent === 'string') {
             console.log(stringContent || '');
