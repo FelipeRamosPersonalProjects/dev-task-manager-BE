@@ -11,7 +11,7 @@ class QuestionModel {
         required: false,
         next: '',
         events: EventsHandlers.prototype,
-        formCtrl: Questions.prototype
+        formCtrl: PoolForm.prototype
     }, ctrl) {
         const {id, type, text, required, events, next, formCtrl} = setup || {};
 
@@ -22,8 +22,9 @@ class QuestionModel {
         this.next = next;
         this.ctrl = () => ctrl;
 
-        if (this.type === 'form-control') {
-            this.formCtrl = new Questions(formCtrl, this)
+        if (formCtrl) {
+            this.type = 'form-control';
+            this.formCtrl = new PoolForm(formCtrl, this);
         }
 
         this.prompt = new Prompt({ rootPath: __dirname });
@@ -54,10 +55,18 @@ class QuestionModel {
     async trigger() {
         try {
             await this.events.trigger(this);
-            const answer = await this.prompt.question(this.text);
+
+            if (this.text) {
+                const answer = await this.prompt.question(this.text);
+                
+                this.answer = answer;
+                await this.events.triggerEvent('answer', this, answer);
+            }
             
-            this.answer = answer;
-            await this.events.triggerEvent('answer', this, answer);
+
+            if (this.formCtrl) {
+                await this.formCtrl.startPool();
+            }
 
             if (this.next) {
                 return await this.goToNext();
@@ -115,7 +124,6 @@ class EventsHandlers {
 
     async start (ev) {
         await this.triggerEvent('onStart', ev);
-        console.log('>> onStart');
         return ev;
     }
 
@@ -132,12 +140,6 @@ class EventsHandlers {
     async back (ev) {
         await this.triggerEvent('onBack', ev);
         console.log('>> onBack');
-        return ev;
-    }
-
-    async change (ev) {
-        await this.triggerEvent('onChange', ev);
-        console.log('>> onChange');
         return ev;
     }
 
@@ -176,7 +178,7 @@ class EventsHandlers {
     }
 }
 
-class Questions extends FormCtrlCLI {
+class PoolForm extends FormCtrlCLI {
     static QuestionModel = QuestionModel;
     static EventsHandlers = EventsHandlers;
 
@@ -189,6 +191,7 @@ class Questions extends FormCtrlCLI {
         const { startQuestion, questions, events, values } = setup || {};
 
         this.current = null;
+        this.prompt = new Prompt({ rootPath: __dirname });
         this.startQuestion = startQuestion;
         this.events = new EventsHandlers(events);
         this.questions = Array.isArray(questions) && questions.map(question => new QuestionModel(question, this));
@@ -198,7 +201,35 @@ class Questions extends FormCtrlCLI {
     }
 
     getQuestion(id) {
-        return this.questions.find(item => item.id === id);
+        return Array.isArray(this.questions) && this.questions.find(item => item.id === id);
+    }
+
+    setQuestion(setup = QuestionModel.prototype) {
+        if (setup && Array.isArray(this.questions)) {
+            this.questions.push(new QuestionModel(setup));
+        }
+    }
+
+    async startPool() {
+        for (let i = 0; i < this.formFields.length; i++) {
+            const currKey = this.formFields[i];
+            const answer = await this.prompt.question(currKey + ': ');
+            const fieldSchema = this.getFieldSchema(currKey);
+            
+            if (answer) {
+                switch(fieldSchema.type.name) {
+                    case 'String': {
+                        this.setField(currKey, answer);
+                        break;
+                    }
+                    case 'Object': {
+                        this.setField(currKey, JSON.parse(answer));
+                        break;
+                    }
+                }
+            }
+        }
+        return this.formData;
     }
 
     getValue(keyPath) {
@@ -224,29 +255,30 @@ class Questions extends FormCtrlCLI {
         }
     }
 
-    start() {
+    async start() {
         try {
+            await this.events.triggerEvent('start', this); 
             this.goTo(this.startQuestion);
         } catch(err) {
-            this.events.error(this, err)
+            this.events.triggerEvent('error', this, err);
         }
     }
 
     async next() {
         try {
-            await this.events.next(this);
+            await this.events.triggerEvent('next', this);
             return await this.goTo(this.current.next);
         } catch(err) {
-            this.events.error(this, err);
+            this.events.triggerEvent('error', this, err);
         }
     }
 
     async back() {
         try {
-            await this.events.back(this);
+            await this.events.triggerEvent('back', this);
             return await this.goTo(this.current.back);
         } catch(err) {
-            this.events.error(this, err);
+            this.events.triggerEvent('error', this, err);
         }
     }
 
@@ -256,15 +288,15 @@ class Questions extends FormCtrlCLI {
         if (question) {
             this.current = question;
 
-            return  await question.trigger();
+            return await question.trigger();
         } else {
-            this.events.error(question)
+            tools.print('You need to provide at least one question to the PoolForm instance! The questionID receive is not valid! ['+questionID+']');
         }
     }
 
     async repeate() {
         try {
-            await this.events.onRepeate(this);
+            await this.events.triggerEvent('repeate', this);
             return await this.goTo(this.current.id);
         } catch(err) {
             this.events.error(this, err);
@@ -286,8 +318,8 @@ class Questions extends FormCtrlCLI {
     }
 
     end() {
-        this.events.triggerEvent('end');
+        this.events.triggerEvent('end', this);
     }
 }
 
-module.exports = Questions;
+module.exports = PoolForm;

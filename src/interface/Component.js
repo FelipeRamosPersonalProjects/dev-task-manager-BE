@@ -70,7 +70,7 @@ class Component extends ValidateSchema {
 
         if (Array.isArray(children)) {
             children.map(child => stringResult += child.getString());
-        } else {
+        } else if (children) {
             stringResult += children.getString();
         }
 

@@ -13,7 +13,7 @@ function CreateView() {
     return new ViewCLI({
         name: 'crud/create',
         Template,
-        questions: {
+        poolForm: {
             startQuestion: 'collectionName',
             questions: [
                 {
@@ -46,8 +46,8 @@ function CreateView() {
                         onTrigger: async (ev) => {
                             const schema = ev.getValue('schema');
 
-                            ev.formCtrl.setForm(schema);
-                            const formData = await ev.formCtrl.startForm();
+                            ev.ctrl().setForm(schema);
+                            const formData = await ev.ctrl().startPool();
                             ev.setValue('data', formData);
                         }
                     }

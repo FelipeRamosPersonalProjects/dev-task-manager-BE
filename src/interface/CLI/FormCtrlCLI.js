@@ -7,26 +7,18 @@ class FormCtrlCLI {
 
         this.schema = schema;
         this.exclude = exlude || ['_id', 'createdAt', 'modifiedAt', 'index', 'cod'];
-        this.formData = schema ? this.buildFormData() : {};
         this.formFields = [];
+        this.formData = {};
+
+        if (schema) {
+            this.setForm(schema);
+        }
 
         this.parent = () => parent;
     }
 
     setField(key, value) {
         this.formData[key] = value;
-    }
-
-    async startForm() {
-        for (let i = 0; i < this.formFields.length; i++) {
-            const currKey = this.formFields[i];
-            const answer = await this.parent().prompt.question(currKey + ': ');
-            
-            if (answer) {
-                this.setField(currKey, answer);
-            }
-        }
-        return this.formData;
     }
 
     buildFormData() {
@@ -50,6 +42,17 @@ class FormCtrlCLI {
         if (schema) {
             this.schema = schema;
         }
+    }
+
+    getFieldSchema(path) {
+        const parsedPath = path.split('.');
+        let result = this.schema.obj;
+
+        parsedPath.map(item => {
+            if (result) result = result[item];
+        });
+
+        if (result) return result;
     }
 
     setForm(schema) {
