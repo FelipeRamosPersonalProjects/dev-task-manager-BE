@@ -1,36 +1,69 @@
 const Prompt = require('../../services/Prompt');
 const ToolsCLI = require('./ToolsCLI');
+const FormCtrlCLI = require('./FormCtrlCLI');
 const tools = new ToolsCLI();
 
 class QuestionModel {
     constructor(setup = {
         id: '',
+        type: '',
         text: '',
         required: false,
         next: '',
-        events: {}
-    }, questions) {
-        const {id, text, required, events} = setup || {};
+        events: EventsHandlers.prototype,
+        formCtrl: Questions.prototype
+    }, ctrl) {
+        const {id, type, text, required, events, next, formCtrl} = setup || {};
 
         this.id = id;
+        this.type = type || 'default'; // default, multiple-choice, form-control
         this.text = text;
         this.required = required;
+        this.next = next;
+        this.ctrl = () => ctrl;
+
+        if (this.type === 'form-control') {
+            this.formCtrl = new Questions(formCtrl, this)
+        }
 
         this.prompt = new Prompt({ rootPath: __dirname });
         this.events = new EventsHandlers({
-            ...(questions && questions.events),
+            ...(ctrl.questions && ctrl.questions.events),
             ...events
         });
     }
 
+    setValue(key, value) {
+        return this.ctrl().setValue(key, value);
+    }
+
+    getValue(key) {
+        return this.ctrl().getValue(key);
+    }
+
+    getQuestion(id) {
+        return this.ctrl().getQuestion(id);
+    }
+
+    async goToNext() {
+        const nextQ = this.ctrl().getQuestion(this.next);
+        await this.events.triggerEvent('next', nextQ);
+        await nextQ.trigger();
+    }
+
     async trigger() {
         try {
-            this.events.trigger(this);
+            await this.events.trigger(this);
             const answer = await this.prompt.question(this.text);
             
             this.answer = answer;
-            this.events.answer(this, answer);
-            return answer;
+            await this.events.triggerEvent('answer', this, answer);
+
+            if (this.next) {
+                return await this.goToNext();
+            } else {
+                return this.ctrl().end();
+            }
         } catch(err) {
             this.events.error(this, err);
         }
@@ -83,30 +116,35 @@ class EventsHandlers {
     async start (ev) {
         await this.triggerEvent('onStart', ev);
         console.log('>> onStart');
+        return ev;
     }
 
     async trigger (ev) {
         await this.triggerEvent('onTrigger', ev);
+        return ev;
     }
 
     async next (ev) {
         await this.triggerEvent('onNext', ev);
-        console.log('>> onNext');
+        return ev;
     }
 
     async back (ev) {
         await this.triggerEvent('onBack', ev);
         console.log('>> onBack');
+        return ev;
     }
 
     async change (ev) {
         await this.triggerEvent('onChange', ev);
         console.log('>> onChange');
+        return ev;
     }
 
     async repeate (ev) {
         await this.triggerEvent('onRepeate', ev);
         console.log('>> onRepeate');
+        return ev;
     }
 
     async answer (ev, answer) {
@@ -122,41 +160,68 @@ class EventsHandlers {
             return ev.trigger();
         }
 
-        return answer;
+        return ev;
     }
 
     async error (ev, err) {
         await this.triggerEvent('onError', ev);
         tools.printError(err);
         await ev.trigger();
+        return ev;
     }
 
     async end (ev) {
         await this.triggerEvent('onEnd', ev);
-        console.log('>> onEnd');
+        return ev;
     }
 }
 
-class Questions {
+class Questions extends FormCtrlCLI {
     static QuestionModel = QuestionModel;
     static EventsHandlers = EventsHandlers;
 
     constructor(setup = {
         startQuestion: '',
-        questions: []
+        questions: [],
+        values: {}
     }, view) {
-        const { startQuestion, questions, events } = setup || {};
+        super(setup, view);
+        const { startQuestion, questions, events, values } = setup || {};
 
         this.current = null;
         this.startQuestion = startQuestion;
         this.events = new EventsHandlers(events);
-        this.questions = Array.isArray(questions) && questions.map(question => new QuestionModel(question, questions));
+        this.questions = Array.isArray(questions) && questions.map(question => new QuestionModel(question, this));
+        this.values = values || {};
         
         this.view = () => view;
     }
 
     getQuestion(id) {
         return this.questions.find(item => item.id === id);
+    }
+
+    getValue(keyPath) {
+        const parsedPath = keyPath.split('.');
+        let currentValue = this.values;
+
+        parsedPath.map(path => {
+            if (currentValue) {
+                currentValue = currentValue[path];
+            }
+        });
+
+        return currentValue;
+    }
+
+    setValue(keyPath, value) {
+        let currentValue = this.getValue(keyPath)
+
+        if (typeof value === 'object' && !Array.isArray(value)) {
+            this.values[keyPath] = {...currentValue, ...value};
+        } else {
+            this.values[keyPath] = value;
+        }
     }
 
     start() {
@@ -221,7 +286,7 @@ class Questions {
     }
 
     end() {
-        this.events.end(this);
+        this.events.triggerEvent('end');
     }
 }
 
