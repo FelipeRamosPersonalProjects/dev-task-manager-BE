@@ -1,19 +1,18 @@
 const StringTemplateBuilder = require('../StringTemplateBuilder');
 const ToolsCLI = require('./ToolsCLI');
 const ViewNavigator = require('./ViewNavigator');
-const Questions = require('./Questions');
 
 class ViewCLI extends ToolsCLI {
     static ViewNavigator = ViewNavigator;
-    static Questions = Questions;
 
     constructor(setup = {
         name: '',
-        questions: {},
+        questions: Questions.prototype,
         navigator: ViewNavigator.prototype,
         Template
     }, cli) {
         super(setup);
+        const Questions = require('./Questions');
         const { name, questions, navigator, Template } = setup || {};
 
         this.name = name;
@@ -31,9 +30,9 @@ class ViewCLI extends ToolsCLI {
         this.cli = () => cli;
     }
 
-    goToView(viewName) {
+    goToView(viewPath) {
         try {
-            this.cli().loadView(viewName);
+            this.cli().loadView(viewPath);
         } catch(err) {
             throw new Error.Log(err);
         }
@@ -52,6 +51,9 @@ class ViewCLI extends ToolsCLI {
 
             if (this.navigator) {
                 this.navigator.render(tableHeaders);
+            }
+
+            if (this.questions) {
                 this.questions.start();
             }
         } catch(err) {

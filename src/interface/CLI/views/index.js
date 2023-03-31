@@ -1,7 +1,5 @@
-const home = require('./home');
-const test = require('./test');
+const crud = require('./crud');
 
 module.exports = {
-    home,
-    test
+    crud
 };
