@@ -1,7 +1,7 @@
 const ViewCLI = require('../../ViewCLI');
 const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
 const MainMenuDescription = require('../../components/MainMenuDescription');
-const StringTemplateBuilder = require('../../../StringTemplateBuilder');
+const CRUD = require('../../../../services/database/crud');
 const ToolsCLI = require('../../ToolsCLI');
 const tools = new ToolsCLI();
 
@@ -39,10 +39,9 @@ function ReadView() {
         Template: new DashedHeaderLayout({
             componentName: 'CRUD view template',
             headerText: 'Read - CRUD',
-            description: `Read you documents' collections.`,
-            Content: new MainMenuDescription()
+            description: `Read you documents' collections.`
         }),
-        questions: {
+        poolForm: {
             startQuestion: 'read-doc-form',
             events: {
                 onStart: (ev) => {
@@ -51,9 +50,9 @@ function ReadView() {
                 onEnd: async (ev) => {
                     try {
                         const data = ev.current.formCtrl.formData;
-                        const response = await ajax(process.env.API_SERVER_HOST + '/collection/get/doc', data).get();
+                        const response = await CRUD.getDoc(data);
     
-                        tools.printTable(response.doc);
+                        tools.print(response.initialize())
                     } catch(err) {
                         debugger;
                         throw new Error.Log(err);

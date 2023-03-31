@@ -17,7 +17,7 @@ const bodySchema = {
         default: {},
         type: {
             paginate: { type: Object, default: {} },
-            populate: { type: Object, default: {} },
+            populate: { type: Boolean, default: {} },
             readable: { type: Boolean },
             select: { type: [String], default: [] }
         }

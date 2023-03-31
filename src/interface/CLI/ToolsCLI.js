@@ -13,9 +13,12 @@ class ToolsCLI {
         }
     }
 
-    printTable(data, headers) {
-        if (typeof data === 'object') {
-            console.table(data, headers);
+    printTable(data, options) {
+        const {headers} = options || {};
+        let tableData = {...data};
+        
+        if (typeof tableData === 'object') {
+            console.table(tableData, headers);
         }
     }
 }

@@ -191,6 +191,7 @@ class PoolForm extends FormCtrlCLI {
         const { startQuestion, questions, events, values } = setup || {};
 
         this.current = null;
+        this.prompt = new Prompt({ rootPath: __dirname });
         this.startQuestion = startQuestion;
         this.events = new EventsHandlers(events);
         this.questions = Array.isArray(questions) && questions.map(question => new QuestionModel(question, this));
@@ -212,7 +213,7 @@ class PoolForm extends FormCtrlCLI {
     async startPool() {
         for (let i = 0; i < this.formFields.length; i++) {
             const currKey = this.formFields[i];
-            const answer = await this.parent().prompt.question(currKey + ': ');
+            const answer = await this.prompt.question(currKey + ': ');
             const fieldSchema = this.getFieldSchema(currKey);
             
             if (answer) {
