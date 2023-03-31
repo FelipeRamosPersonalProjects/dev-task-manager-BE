@@ -1,5 +1,5 @@
 if not "%1"=="" (
-    npm run %1 
+    cd C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE && npm run %1
 ) else (
-    npm run cli
+    cd C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE && npm run cli
 )

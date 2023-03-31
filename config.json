@@ -3,7 +3,10 @@
     "database": {
         "counterCollection": "counters",
         "logCollection": "logs",
-        "maxDeepLevels": {}
+        "maxDeepLevels": {},
+        "consoleLogs": {
+            "collectionLoaded": false
+        }
     },
     "github": {
         "apiHostURL": "https://api.github.com",
