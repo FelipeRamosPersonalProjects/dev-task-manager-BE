@@ -1,7 +1,20 @@
 const ToolsCLI = require('./ToolsCLI');
 const NavigatorOption = require('./NavigatorOption');
 
+const navDefaultQuestions = {
+    startQuestion: 'navigation',
+    questions: [
+        {
+            id: 'navigation',
+            text: 'Which option do you want to use? (Type the index): ',
+            required: true
+        }
+    ]
+};
+
 class ViewNavigator extends ToolsCLI {
+    static navDefaultQuestions = navDefaultQuestions;
+
     constructor(setup = {
         options: [],
         navSuccessCallback,
@@ -18,8 +31,12 @@ class ViewNavigator extends ToolsCLI {
         Array.isArray(options) && options.map((opt) => this.addOption(opt));
     }
 
-    navTo(viewName) {
-        this.parentView.goToView(viewName);
+    navTo(index) {
+        const opt = this.getOption(index);
+
+        if (opt && opt.targetView){
+            this.parentView.goToView(opt.targetView);
+        }
     }
 
     getOption(index) {

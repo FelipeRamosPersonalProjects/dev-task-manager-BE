@@ -1,4 +1,5 @@
 const { execSync, exec, spawn } = require('child_process');
+const readline = require('readline');
 
 class Prompt {
     constructor(setup = {
@@ -49,6 +50,24 @@ class Prompt {
                 });
             } catch(err) {
                 return reject(new Error.Log(err));
+            }
+        });
+    }
+
+    async question(questionText) {
+        return new Promise((resolve, reject) => {
+            try {
+                const rl = readline.createInterface({
+                    input: process.stdin,
+                    output: process.stdout
+                });
+    
+                rl.question(questionText, (answer) => {
+                    rl.close();
+                    resolve(answer);
+                });
+            } catch(err) {
+                reject(err);
             }
         });
     }

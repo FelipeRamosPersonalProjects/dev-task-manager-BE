@@ -26,12 +26,7 @@ function HomeView() {
     });
     
     const navigator = new ViewCLI.ViewNavigator({ options: [
-        { title: 'Option 1', description: 'This is the first option!' },
-        { title: 'Option 2', description: 'This is the second option!' },
-        { title: 'Option 3', description: 'This is the third option!' },
-        { title: 'Option 4', description: 'This is the fourth option!' },
-        { title: 'Option 5', description: 'This is the fiveth option!' },
-        { title: 'Option 6', description: 'This is the sixth option!' },
+        { title: 'Test view', description: 'This is the first test!', targetView: 'test' }
     ], navSuccessCallback, navErrorCallback});
 
     return new ViewCLI({
