@@ -27,6 +27,7 @@ class DashedHeaderLayout extends Component {
             headerText: this.headerText,
             headerDescription: this.headerDescription
         }).getString();
+
         return new StringTemplateBuilder()
             .text(header)
             .newLine()
