@@ -31,8 +31,13 @@ class DisplayDocument extends Component {
             }
 
             if (!isToExclude && !isNotAllowedType) {
-                result = result.indent().text(`${key}: `).newLine();
-                result = result.indent().text(`${value.replace(/\\n/g, '\n    ').replace(/\\/g, '')}`).newLine().newLine();
+                if (key) {
+                    result = result.indent().text(`${key}: `).newLine();
+                }
+
+                if (value) {
+                    result = result.indent().text(`${value.replace(/\\n/g, '\n    ').replace(/\\/g, '')}`).newLine().newLine();
+                }
             }
         });
 

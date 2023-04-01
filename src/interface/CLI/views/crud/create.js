@@ -33,7 +33,7 @@ function CreateView() {
 
                         const created = await CRUD.create(docFilter.collectionName, newDoc);
 
-                        ev.view().print('Document create successfully!');
+                        ev.view().print('Document created successfully!');
                         return created;
                     } catch(err) {
                         throw new Error.Log(err);

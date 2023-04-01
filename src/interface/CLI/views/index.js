@@ -1,7 +1,7 @@
 const crud = require('./crud');
-const ticketRead = require('./ticketRead');
+const docDisplay = require('./docDisplay');
 
 module.exports = {
     crud,
-    ticketRead
+    docDisplay
 };
