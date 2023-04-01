@@ -52,9 +52,8 @@ function ReadView() {
                         const data = ev.current.formCtrl.formData;
                         const response = await CRUD.getDoc(data);
     
-                        tools.print(response.initialize())
+                        tools.printTable(response.initialize())
                     } catch(err) {
-                        debugger;
                         throw new Error.Log(err);
                     }
                 }

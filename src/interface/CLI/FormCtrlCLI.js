@@ -1,10 +1,12 @@
 class FormCtrlCLI {
     constructor(setup = {
+        mode,
         schema: {},
         exclude: []
     }, parent) {
-        const { schema, exlude } = setup || {};
+        const { mode, schema, exlude } = setup || {};
 
+        this.mode = mode || 'create'; // 'edit' | 'create'
         this.schema = schema;
         this.exclude = exlude || ['_id', 'createdAt', 'modifiedAt', 'index', 'cod'];
         this.formFields = [];
@@ -28,7 +30,9 @@ class FormCtrlCLI {
         if (schemaObj) {
             Object.entries(schemaObj).map(([key, value]) => {
                 if (!this.exclude.find(item => item === key)){
-                    result[key] = value.default;
+                    if (this.mode === 'create') {
+                        result[key] = value.default;
+                    }
                     this.formFields.push(key);
                 }
             });

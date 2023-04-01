@@ -1,6 +1,7 @@
 const Prompt = require('../../services/Prompt');
 const ToolsCLI = require('./ToolsCLI');
 const FormCtrlCLI = require('./FormCtrlCLI');
+const StringTemplateBuilder = require('../StringTemplateBuilder');
 const tools = new ToolsCLI();
 
 class QuestionModel {
@@ -211,24 +212,44 @@ class PoolForm extends FormCtrlCLI {
     }
 
     async startPool() {
+        await this.events.triggerEvent('start', this);
+
         for (let i = 0; i < this.formFields.length; i++) {
             const currKey = this.formFields[i];
-            const answer = await this.prompt.question(currKey + ': ');
             const fieldSchema = this.getFieldSchema(currKey);
-            
+            const currentDoc = this.view().getValue('currentDoc');
+            let answer = '';
+
+            if (currentDoc) {
+                answer = await this.prompt.question(new StringTemplateBuilder()
+                    .newLine()
+                    .text(`Field -> ${currKey} : ${fieldSchema.type.name}`).newLine()
+                    .text(`Current value:`).newLine()
+                    .text('- ' + (currentDoc[currKey] || 'EMPTY')).newLine()
+                    .newLine()
+                    .text(`Enter the new value: `)
+                .end());
+            } else {
+                answer = await this.prompt.question(currKey + ': ');
+            }
+
             if (answer) {
                 switch(fieldSchema.type.name) {
-                    case 'String': {
-                        this.setField(currKey, answer);
-                        break;
-                    }
                     case 'Object': {
                         this.setField(currKey, JSON.parse(answer));
                         break;
                     }
+                    default: {
+                        this.setField(currKey, answer);
+                        break
+                    }
                 }
+
+                await this.events.triggerEvent('answer', this, answer);
             }
         }
+
+        await this.events.triggerEvent('end', this);
         return this.formData;
     }
 
@@ -260,7 +281,7 @@ class PoolForm extends FormCtrlCLI {
             await this.events.triggerEvent('start', this); 
             this.goTo(this.startQuestion);
         } catch(err) {
-            this.events.triggerEvent('error', this, err);
+            await this.events.triggerEvent('error', this, err);
         }
     }
 
@@ -269,7 +290,7 @@ class PoolForm extends FormCtrlCLI {
             await this.events.triggerEvent('next', this);
             return await this.goTo(this.current.next);
         } catch(err) {
-            this.events.triggerEvent('error', this, err);
+            await this.events.triggerEvent('error', this, err);
         }
     }
 
@@ -278,7 +299,7 @@ class PoolForm extends FormCtrlCLI {
             await this.events.triggerEvent('back', this);
             return await this.goTo(this.current.back);
         } catch(err) {
-            this.events.triggerEvent('error', this, err);
+            await this.events.triggerEvent('error', this, err);
         }
     }
 
@@ -299,7 +320,7 @@ class PoolForm extends FormCtrlCLI {
             await this.events.triggerEvent('repeate', this);
             return await this.goTo(this.current.id);
         } catch(err) {
-            this.events.error(this, err);
+            await this.events.error(this, err);
         }
     }
 
@@ -317,8 +338,8 @@ class PoolForm extends FormCtrlCLI {
         }
     }
 
-    end() {
-        this.events.triggerEvent('end', this);
+    async end() {
+        await this.events.triggerEvent('end', this);
     }
 }
 
