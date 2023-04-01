@@ -17,7 +17,7 @@ class CLI extends ToolsCLI {
     }
 
     async init() {
-        this.loadView(this.startView);
+        await this.loadView(this.startView);
         return this;
     }
 
@@ -26,7 +26,7 @@ class CLI extends ToolsCLI {
         return this._currView;
     }
 
-    loadView(viewPath) {
+    async loadView(viewPath) {
         console.log('[dev-task]: Loading view "' + viewPath + '"...');
         const parsedPath = viewPath.split('/');
         let View = views;
@@ -38,7 +38,7 @@ class CLI extends ToolsCLI {
         });
 
         if (typeof View === 'function') {
-            const loadedView = View.call(this);
+            const loadedView = await View.call(this);
             
             this.setCurrentView(loadedView);
             loadedView.render();
@@ -52,8 +52,8 @@ class CLI extends ToolsCLI {
         }
     }
 
-    goToStart() {
-        return this.loadView(this.startView);
+    async goToStart() {
+        return await this.loadView(this.startView);
     }
 }
 
