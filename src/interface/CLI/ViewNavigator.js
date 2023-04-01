@@ -1,5 +1,6 @@
 const ToolsCLI = require('./ToolsCLI');
 const NavigatorOption = require('./NavigatorOption');
+const StringTemplateBuilder = require('../StringTemplateBuilder')
 
 const navDefaultQuestions = {
     startQuestion: 'navigation',
@@ -16,19 +17,22 @@ class ViewNavigator extends ToolsCLI {
     static navDefaultQuestions = navDefaultQuestions;
 
     constructor(setup = {
-        options: [],
+        ...this,
+        type: '', // nav or doc-list
+        options: [NavigatorOption.prototype],
         navSuccessCallback,
         navErrorCallback
     }, parentView) {
         super();
-        const {options, navSuccessCallback, navErrorCallback} = setup || {};
+        const {type, options, navSuccessCallback, navErrorCallback} = setup || {};
 
-        this.options = [];
+        this.type = type || 'nav';
+        this.options = Array.isArray(options) && options.map((opt) => new NavigatorOption(opt)) || [];
         this.navSuccessCallback = navSuccessCallback && navSuccessCallback.bind(this);
         this.navErrorCallback = navErrorCallback && navErrorCallback.bind(this);
         this.parentView = parentView;
 
-        Array.isArray(options) && options.map((opt) => this.addOption(opt));
+        Array.isArray(options) && options.map((opt) => new NavigatorOption(opt));
     }
 
     navTo(index) {
@@ -46,6 +50,7 @@ class ViewNavigator extends ToolsCLI {
     addOption(data) {
         const newOption = new NavigatorOption(data);
 
+        newOption.type = this.type;
         this.options.push(newOption);
         return this;
     }
@@ -60,9 +65,34 @@ class ViewNavigator extends ToolsCLI {
         }
     }
 
-    render(headers) {
+    render(params) {
+        let { headers, exclude } = params || {};
+        let options = [];
+
+        if (this.type === 'doc-list') {
+            this.options.map(opt => options.push(opt.doc));
+        } else {
+            options = this.options;
+            exclude = ['type', 'targetView'];
+        }
+
         try {
-            this.printTable(this.options, headers);
+            let template = new StringTemplateBuilder();
+            
+            options.map((opt, i) => {
+                if (opt._schema) {
+                    let title = '';
+
+                    if (Array.isArray(headers)) {
+                        title = headers.map(item => opt[item]).join(' | ');
+                    }
+                    template = template.indent().text(`${i}. ${title}`).newLine().newLine();
+                } else {
+                    template = template.indent().text(`${i}. ${opt.title}`).newLine().newLine();
+                }
+            });
+
+            console.log(template.end() || '--no-records--');
         } catch (err) {
             throw new Error.Log(err);
         }

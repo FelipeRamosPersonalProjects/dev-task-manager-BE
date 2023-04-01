@@ -6,6 +6,7 @@ class DashedHeaderLayout extends Component {
     constructor(settings = {
         ...Component.prototype,
         headerText: '',
+        headerDescription: '',
         Content: [Component],
         contentSettings: {}
     }) {
@@ -27,6 +28,7 @@ class DashedHeaderLayout extends Component {
             headerText: this.headerText,
             headerDescription: this.headerDescription
         }).getString();
+
         return new StringTemplateBuilder()
             .text(header)
             .newLine()

@@ -26,11 +26,18 @@ class CLI extends ToolsCLI {
         return this._currView;
     }
 
-    loadView(viewName) {
-        console.log('[dev-task]: Loading view "' + viewName + '"...');
-        const View = views[viewName];
+    loadView(viewPath) {
+        console.log('[dev-task]: Loading view "' + viewPath + '"...');
+        const parsedPath = viewPath.split('/');
+        let View = views;
 
-        if (View) {
+        parsedPath.map(path => {
+            if (View) {
+                View = View[path];
+            }
+        });
+
+        if (typeof View === 'function') {
             const loadedView = View.call(this);
             
             this.setCurrentView(loadedView);
@@ -38,7 +45,10 @@ class CLI extends ToolsCLI {
 
             return this;
         } else {
-            debugger;
+            this.printError(new Error.Log({
+                name: 'LoadingView',
+                message: `View path not found! ${viewPath}`
+            }));
         }
     }
 

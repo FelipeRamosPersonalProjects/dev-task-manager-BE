@@ -19,6 +19,7 @@ class Project extends _Global {
             super({...setup, validationRules: 'projects'});
             const {projectName, description, tickets, tasks, urls} = setup || {};
 
+            this.displayName = `[${this.cod}] ${projectName}`;
             this.projectName = projectName;
             this.description = description;
             this.urls = urls;

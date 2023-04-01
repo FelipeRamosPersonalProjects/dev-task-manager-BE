@@ -2,17 +2,25 @@ const ToolsCLI = require('./ToolsCLI');
 
 class NavigatorOption extends ToolsCLI {
     constructor(setup = {
+        ...this,
+        type: '', // nav or doc-list
         title: '',
         description: '',
-        targetView: ''
+        targetView: '',
+        doc: {}
     }, index) {
         super();
-        const { title, description, targetView } = setup || {};
+        const { type, title, description, targetView, doc } = setup || {};
 
         if (index) this.index = String(index);
+        this.type = type || 'nav';
         this.title = title;
         this.description = description;
         this.targetView = targetView;
+
+        if (type === 'doc-list') {
+            this.doc = doc;
+        }
     }
 
     async trigger() {
