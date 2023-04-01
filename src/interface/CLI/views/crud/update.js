@@ -1,0 +1,99 @@
+const ToolsCLI = require('../../ToolsCLI');
+const ViewCLI = require('../../ViewCLI');
+const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
+const CRUD = require('../../../../services/database/crud');
+
+const tools = new ToolsCLI();
+const bodySchema = {
+    collectionName: {
+        type: String,
+        required: true
+    },
+    filter: {
+        type: Object,
+        required: true
+    },
+    options: {
+        default: {},
+        type: {
+            paginate: {
+                views: { type: Number },
+                page: { type: Number },
+                seeMore: { type: Boolean }
+            },
+            select: {
+                default: [],
+                type: Array
+            },
+            populate: {
+                type: Object
+            }
+        }
+    }
+};
+
+function UpdateView() {
+    return new ViewCLI({
+        name: 'crud/update',
+        Template: new DashedHeaderLayout({
+            headerText: 'Update - CRUD',
+            description: 'Update your documents'
+        }),
+        poolForm: {
+            startQuestion: 'fetching-document',
+            events: {
+                onEnd: async (ev) => {
+                    try {
+                        const docFilter = ev.getValue('docFilter');
+                        const updates = ev.getValue('updates');
+                        const success = await CRUD.update({...docFilter, data: updates});
+                        debugger
+                    } catch(err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            },
+            questions: [
+                {
+                    id: 'fetching-document',
+                    next: 'updating-data',
+                    formCtrl: {
+                        schema: { obj: bodySchema },
+                        events: {
+                            onStart: async (ev) => {
+                                tools.print('Starting "fetching-document"');
+                            },
+                            onEnd: async (ev) => {
+                                try {
+                                    const currentDoc = await CRUD.getDoc(ev.formData);
+                                    
+                                    ev.view().setValue('docFilter', ev.formData);
+                                    ev.view().setValue('currentDoc', currentDoc.initialize());
+                                } catch (err) {
+                                    throw new Error.Log(err);
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: 'updating-data',
+                    formCtrl: {
+                        mode: 'edit',
+                        events: {
+                            onStart: async (ev) => {
+                                const currentDoc = ev.view().getValue('currentDoc');
+                                ev.setForm(currentDoc._schema);
+                            },
+                            onEnd: async (ev) => {
+                                ev.view().setValue('updates', ev.formData);
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }, this);
+}
+
+module.exports = UpdateView;
