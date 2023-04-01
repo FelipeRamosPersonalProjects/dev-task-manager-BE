@@ -5,7 +5,11 @@ require('./src/services/database/init').then(async (started) => {
     try {
         const CLI = require('./src/interface/CLI');
         await new CLI({
-            startView: 'ticketRead'
+            startView: 'docDisplay',
+            startViewParams: {
+                collectionName: 'tasks',
+                filter: '64289add3818fa7d00371f06'
+            }
         }).init();
     } catch(err) {
         console.error(err.stack);
