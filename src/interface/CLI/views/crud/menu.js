@@ -20,7 +20,7 @@ function CRUDView() {
         { title: 'Search documents', description: 'Search for documents in a collection.', targetView: 'crud/search' },
         { title: 'Read a document', description: 'Read a document under a collection.', targetView: 'crud/read' },
         { title: 'Update a document', description: 'Update a document under a collection.', targetView: 'crud/update' },
-        { title: 'Delete a document', description: 'Delete a document under a collection.', targetView: 'crud/delete' },
+        { title: 'Delete a document', description: 'Delete a document under a collection.', targetView: 'crud/remove' },
     ]});
 
     return new ViewCLI({
