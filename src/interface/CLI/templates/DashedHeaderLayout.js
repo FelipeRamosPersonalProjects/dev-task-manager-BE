@@ -6,6 +6,7 @@ class DashedHeaderLayout extends Component {
     constructor(settings = {
         ...Component.prototype,
         headerText: '',
+        headerDescription: '',
         Content: [Component],
         contentSettings: {}
     }) {

@@ -6,10 +6,27 @@ class StringTemplateBuilder {
 
         this.result = '';
         this.indentation = indentation;
+        this.textColumnLength = 40;
     }
 
     text(value) {
         this.result += String(value);
+        return this;
+    }
+
+    textColumn(text, length) {
+        if (!length) length = this.textColumnLength;
+        let parsed = String(text).substring(0, length);
+
+        if (text && text.length > length) {
+            parsed += '...';
+        } else if (text) {
+            for (let i = text.length; i <= length; i++) {
+                parsed += ' ';
+            }
+        }
+
+        this.result += parsed;
         return this;
     }
 

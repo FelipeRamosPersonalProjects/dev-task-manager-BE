@@ -37,7 +37,7 @@ function UpdateView() {
         name: 'crud/update',
         Template: new DashedHeaderLayout({
             headerText: 'Update - CRUD',
-            description: 'Update your documents'
+            headerDescription: 'Update your documents'
         }),
         poolForm: {
             startQuestion: 'fetching-document',
@@ -46,8 +46,8 @@ function UpdateView() {
                     try {
                         const docFilter = ev.getValue('docFilter');
                         const updates = ev.getValue('updates');
-                        const success = await CRUD.update({...docFilter, data: updates});
-                        debugger
+
+                        await CRUD.update({...docFilter, data: updates});
                     } catch(err) {
                         throw new Error.Log(err);
                     }
@@ -79,7 +79,6 @@ function UpdateView() {
                 {
                     id: 'updating-data',
                     formCtrl: {
-                        mode: 'edit',
                         events: {
                             onStart: async (ev) => {
                                 const currentDoc = ev.view().getValue('currentDoc');

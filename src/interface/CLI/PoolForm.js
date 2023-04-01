@@ -217,7 +217,7 @@ class PoolForm extends FormCtrlCLI {
         for (let i = 0; i < this.formFields.length; i++) {
             const currKey = this.formFields[i];
             const fieldSchema = this.getFieldSchema(currKey);
-            const currentDoc = this.view().getValue('currentDoc');
+            const currentDoc = this.view().getValue && this.view().getValue('currentDoc');
             let answer = '';
 
             if (currentDoc) {
