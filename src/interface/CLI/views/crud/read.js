@@ -39,7 +39,7 @@ function ReadView() {
         Template: new DashedHeaderLayout({
             componentName: 'CRUD view template',
             headerText: 'Read - CRUD',
-            description: `Read you documents' collections.`
+            headerDescription: `Read you documents' collections.`
         }),
         poolForm: {
             startQuestion: 'read-doc-form',

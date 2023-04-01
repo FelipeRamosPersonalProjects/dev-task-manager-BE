@@ -26,7 +26,7 @@ function SearchView() {
         name: 'crud/search',
         Template: new DashedHeaderLayout({
             headerText: 'Search - CRUD',
-            description: 'Search for documents on your collections.'
+            headerDescription: 'Search for documents on your collections.'
         }),
         poolForm: {
             startQuestion: 'search-document',
@@ -45,7 +45,7 @@ function SearchView() {
                             nav.addOption({type: 'doc-list', doc});
                         });
 
-                        nav.render();
+                        nav.render({headers: ['displayName']});
                     } catch (err) {
                         throw new Error.Log('database.querying_collection', data);
                     }

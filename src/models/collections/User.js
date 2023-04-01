@@ -42,6 +42,7 @@ class User extends _Global {
             } = setup || {};
     
             // Database exported properties
+            this.displayName = `${firstName} ${lastName} (${email})`;
             this.fullName = fullName;
             this.firstName = firstName;
             this.lastName = lastName;

@@ -1,12 +1,22 @@
 const ViewCLI = require('../../ViewCLI');
 const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
 const MainMenuDescription = require('../../components/MainMenuDescription');
+const ToolsCLI = require('../../ToolsCLI');
 const schemas = require('../../../../schemas');
+const CRUD = require('../../../../services/database/crud');
+
+const tools = new ToolsCLI();
+const bodySchema = {
+    collectionName: { type: String, required: true },
+    data: { type: Object, required: true },
+    options: { type: Object, default: {} }
+};
 
 function CreateView() {
     const Template = new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'Create - CRUD',
+        headerDescription: 'Create your documents under collections.',
         Content: new MainMenuDescription()
     });
 
@@ -14,74 +24,61 @@ function CreateView() {
         name: 'crud/create',
         Template,
         poolForm: {
-            startQuestion: 'collectionName',
+            startQuestion: 'build-params',
+            events: {
+                onEnd: async (ev) => {
+                    try {
+                        const docFilter = ev.getValue('docFilter');
+                        const newDoc = ev.getValue('newDoc');
+
+                        const created = await CRUD.create(docFilter.collectionName, newDoc);
+
+                        ev.view().print('Document create successfully!');
+                        return created;
+                    } catch(err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            },
             questions: [
                 {
-                    id: 'collectionName',
-                    required: true,
-                    text: 'Choose a collection to create the document: ',
-                    next: 'data',
-                    events: {
-                        onAnswer: (ev, reply) => {
-                            ev.setValue('collectionName', reply);
-                            return reply;
-                        },
-                        onNext: async (ev) => {
-                            const collection = schemas[ev.getValue('collectionName')];
-
-                            if (collection) {
-                                ev.setValue('schema', collection.schema);
-                            }
-
-                            return ev;
-                        }
-                    }
-                },
-                {
-                    id: 'data',
-                    type: 'form-control',
-                    next: 'confirmation',
-                    text: `Fill the following form sequence to create the document:`,
-                    events: {
-                        onTrigger: async (ev) => {
-                            const schema = ev.getValue('schema');
-
-                            ev.ctrl().setForm(schema);
-                            const formData = await ev.ctrl().startPool();
-                            ev.setValue('data', formData);
-                        }
-                    }
-                },
-                {
-                    id: 'confirmation',
-                    required: true,
-                    text: 'Do you confirm to create the document above? yes (y) no (n): ',
-                    events: {
-                        onAnswer: async (ev, reply) => {
-                            try {
-                                const ajaxBody = {
-                                    collectionName: ev.getValue('collectionName'),
-                                    data: ev.getValue('data')
-                                };
-
-                                if (reply === 'y') {
-                                    const response = await ajax(process.env.API_SERVER_HOST + '/collection/create', ajaxBody).post();
-                                    console.table(response.createdDoc);
-                                } else {
-                                    console.log('Canceled!');
+                    id: 'build-params',
+                    next: 'collecting-data',
+                    formCtrl: {
+                        schema: { obj: bodySchema },
+                        events: {
+                            onStart: async (ev) => {
+                                tools.print('Starting "build-params"...');
+                            },
+                            onEnd: async (ev) => {
+                                try {
+                                    ev.view().setValue('docFilter', ev.formData);
+                                } catch (err) {
+                                    throw new Error.Log(err);
                                 }
-                            } catch (err) {
-                                debugger
+                            }
+                        }
+                    }
+                },
+                {
+                    id: 'collecting-data',
+                    formCtrl: {
+                        events: {
+                            onStart: async (ev) => {
+                                const filter = ev.view().getValue('docFilter');
+
+                                if (filter) {
+                                    const documentSchema = schemas[filter.collectionName];
+                                    documentSchema && ev.setForm(documentSchema.schema);
+                                }
+                            },
+                            onEnd: async (ev) => {
+                                ev.view().setValue('newDoc', ev.formData);
                             }
                         }
                     }
                 }
-            ],
-            events: {
-                onEnd: () => {
-                    console.log('finished');
-                }
-            }
+            ]
         }
     }, this);
 }

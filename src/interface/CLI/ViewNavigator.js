@@ -1,5 +1,6 @@
 const ToolsCLI = require('./ToolsCLI');
 const NavigatorOption = require('./NavigatorOption');
+const StringTemplateBuilder = require('../StringTemplateBuilder')
 
 const navDefaultQuestions = {
     startQuestion: 'navigation',
@@ -76,7 +77,22 @@ class ViewNavigator extends ToolsCLI {
         }
 
         try {
-            this.printTable(options, {headers, exclude});
+            let template = new StringTemplateBuilder();
+            
+            options.map((opt, i) => {
+                if (opt._schema) {
+                    let title = '';
+
+                    if (Array.isArray(headers)) {
+                        title = headers.map(item => opt[item]).join(' | ');
+                    }
+                    template = template.indent().text(`${i}. ${title}`).newLine().newLine();
+                } else {
+                    template = template.indent().text(`${i}. ${opt.title}`).newLine().newLine();
+                }
+            });
+
+            console.log(template.end() || '--no-records--');
         } catch (err) {
             throw new Error.Log(err);
         }
