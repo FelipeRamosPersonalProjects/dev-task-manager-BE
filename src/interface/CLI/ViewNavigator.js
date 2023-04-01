@@ -7,7 +7,7 @@ const navDefaultQuestions = {
     questions: [
         {
             id: 'navigation',
-            text: 'Which option do you want to use? (Type the index): ',
+            text: 'Choose an option above to navigate between the views, type the index of the shoosed option: ',
             required: true
         }
     ]
@@ -27,7 +27,8 @@ class ViewNavigator extends ToolsCLI {
         const {type, options, navSuccessCallback, navErrorCallback} = setup || {};
 
         this.type = type || 'nav';
-        this.options = Array.isArray(options) && options.map((opt) => new NavigatorOption(opt)) || [];
+        this.options = [];
+        this.options = Array.isArray(options) && options.map((opt) => new NavigatorOption(opt));
         this.navSuccessCallback = navSuccessCallback && navSuccessCallback.bind(this);
         this.navErrorCallback = navErrorCallback && navErrorCallback.bind(this);
         this.parentView = parentView;
@@ -77,7 +78,7 @@ class ViewNavigator extends ToolsCLI {
         }
 
         try {
-            let template = new StringTemplateBuilder();
+            let template = new StringTemplateBuilder().newLine();
             
             options.map((opt, i) => {
                 if (opt._schema) {
@@ -86,9 +87,9 @@ class ViewNavigator extends ToolsCLI {
                     if (Array.isArray(headers)) {
                         title = headers.map(item => opt[item]).join(' | ');
                     }
-                    template = template.indent().text(`${i}. ${title}`).newLine().newLine();
+                    template = template.indent().text(`${i}. ${title}`).newLine();
                 } else {
-                    template = template.indent().text(`${i}. ${opt.title}`).newLine().newLine();
+                    template = template.indent().text(`${i}. ${opt.title}`).newLine();
                 }
             });
 
