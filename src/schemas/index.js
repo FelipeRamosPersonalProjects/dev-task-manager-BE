@@ -9,6 +9,7 @@ const tasks = require('./tasks');
 const pull_requests = require('./pull_requests');
 const comments = require('./comments');
 const components = require('./components');
+const estimations = require('./estimations');
 const logs = require('./logs');
 
 module.exports = {
@@ -23,5 +24,6 @@ module.exports = {
     pull_requests,
     comments,
     components,
+    estimations,
     logs
 };

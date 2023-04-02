@@ -12,27 +12,12 @@ const bodySchema = {
     filter: {
         type: Object,
         required: true
-    },
-    options: {
-        default: {},
-        type: {
-            paginate: {
-                views: { type: Number },
-                page: { type: Number },
-                seeMore: { type: Boolean }
-            },
-            select: {
-                default: [],
-                type: Array
-            },
-            populate: {
-                type: Object
-            }
-        }
     }
 };
 
-function UpdateView() {
+async function UpdateView(params) {
+    const { defaultData } = params || {};
+
     return new ViewCLI({
         name: 'crud/update',
         Template: new DashedHeaderLayout({
@@ -59,6 +44,7 @@ function UpdateView() {
                     next: 'updating-data',
                     formCtrl: {
                         schema: { obj: bodySchema },
+                        defaultData,
                         events: {
                             onStart: async (ev) => {
                                 tools.print('Starting "fetching-document"');

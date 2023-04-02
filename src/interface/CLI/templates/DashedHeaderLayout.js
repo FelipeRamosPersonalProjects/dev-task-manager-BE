@@ -34,6 +34,8 @@ class DashedHeaderLayout extends Component {
             .newLine()
             .text(this.children(this.Content))
             .newLine()
+            .text('------------------------------------------------------------------------------')
+            .text('------------------------------------------------------------------------------')
         .end();
     }
 

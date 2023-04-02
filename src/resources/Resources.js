@@ -11,12 +11,20 @@ class Resources {
         return Boolean.isValid(current).function().eval() && current(...params);
     }
 
+    templates(path, ...params) {
+        const current = this.getPath('templates.' + path);
+
+        if (Boolean.isValid(current).function().eval()) {
+            return async () => await current(...params);
+        }
+    }
+
     error(path, ...params) {
         try {
             const current = this.getPath('errors.' + path);
             return Boolean.isValid(current).function().eval() && current(...params);
         } catch(err) {
-            return new ErrorLog(err).consolePrint();
+            return new Error.Log(err).consolePrint();
         }
     }
     
