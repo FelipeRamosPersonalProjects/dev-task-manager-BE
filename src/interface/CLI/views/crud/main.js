@@ -16,15 +16,15 @@ function CRUDView() {
     });
     
     const navigator = new ViewCLI.ViewNavigator({ options: [
-        { title: 'Create a document', description: 'Create a document under a collection.', targetView: 'crud/create' },
-        { title: 'Search documents', description: 'Search for documents in a collection.', targetView: 'crud/search' },
-        { title: 'Read a document', description: 'Read a document under a collection.', targetView: 'crud/read' },
-        { title: 'Update a document', description: 'Update a document under a collection.', targetView: 'crud/update' },
-        { title: 'Delete a document', description: 'Delete a document under a collection.', targetView: 'crud/remove' },
+        { title: 'Create', description: 'Create documents under a collection.', targetView: 'crud/create' },
+        { title: 'Search', description: 'Search for documents in a collection.', targetView: 'crud/search' },
+        { title: 'Read', description: 'Read documents under a collection.', targetView: 'crud/read' },
+        { title: 'Update', description: 'Update documents under a collection.', targetView: 'crud/update' },
+        { title: 'Delete', description: 'Delete documents under a collection.', targetView: 'crud/remove' },
     ]});
 
     return new ViewCLI({
-        name: 'crud/menu',
+        name: 'crud/main',
         Template,
         navigator
     }, this);

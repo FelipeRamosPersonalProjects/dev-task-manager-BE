@@ -7,7 +7,7 @@ const navDefaultQuestions = {
     questions: [
         {
             id: 'navigation',
-            text: 'Choose an option above to navigate between the views, type the index of the shoosed option: ',
+            text: 'Choose an option above to navigate, type the index of the choosed option: ',
             required: true
         }
     ]
@@ -87,9 +87,9 @@ class ViewNavigator extends ToolsCLI {
                     if (Array.isArray(headers)) {
                         title = headers.map(item => opt[item]).join(' | ');
                     }
-                    template = template.indent().text(`${i}. ${title}`).newLine();
+                    template = template.indent().text(`${i}. ${title} - ${opt.description}`).newLine();
                 } else {
-                    template = template.indent().text(`${i}. ${opt.title}`).newLine();
+                    template = template.indent().text(`${i}. ${opt.title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
                 }
             });
 

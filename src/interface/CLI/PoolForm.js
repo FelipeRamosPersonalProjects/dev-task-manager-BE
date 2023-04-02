@@ -315,6 +315,10 @@ class PoolForm extends FormCtrlCLI {
         }
     }
 
+    async goToView(viewPath, params) {
+        await this.view().goToView(viewPath, params)
+    }
+
     async repeate() {
         try {
             await this.events.triggerEvent('repeate', this);

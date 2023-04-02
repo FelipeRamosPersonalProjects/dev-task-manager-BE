@@ -50,9 +50,7 @@ function ReadView() {
                 onEnd: async (ev) => {
                     try {
                         const data = ev.current.formCtrl.formData;
-                        const response = await CRUD.getDoc(data);
-    
-                        tools.printTable(response.initialize())
+                        await ev.goToView('docDisplay', data);
                     } catch(err) {
                         throw new Error.Log(err);
                     }
@@ -61,14 +59,7 @@ function ReadView() {
             questions: [
                 {
                     id: 'read-doc-form',
-                    formCtrl: {
-                        schema: { obj: bodySchema },
-                        events: {
-                            onEnd: (ev) => {
-                                debugger
-                            }
-                        }
-                    }
+                    formCtrl: { schema: { obj: bodySchema } }
                 }
             ]
         }
