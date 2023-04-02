@@ -3,13 +3,11 @@ const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
 const CRUD = require('../../../../services/database/crud');
 
 const bodySchema = {
-    deleteType: { type: String, default: 'one', enum: ['one', 'many'] },
     collectionName: { type: String, required: true },
-    filter: { type: Object, required: true }, 
-    options: { type: Object, default: {} } 
+    filter: { type: Object, required: true }
 };
 
-function RemoveView() {
+async function RemoveView() {
     return new ViewCLI({
         name: 'crud/remove',
         Template: new DashedHeaderLayout({

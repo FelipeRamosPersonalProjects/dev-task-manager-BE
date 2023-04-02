@@ -28,19 +28,28 @@ class ViewNavigator extends ToolsCLI {
 
         this.type = type || 'nav';
         this.options = [];
-        this.options = Array.isArray(options) && options.map((opt) => new NavigatorOption(opt));
         this.navSuccessCallback = navSuccessCallback && navSuccessCallback.bind(this);
         this.navErrorCallback = navErrorCallback && navErrorCallback.bind(this);
         this.parentView = parentView;
 
-        Array.isArray(options) && options.map((opt) => new NavigatorOption(opt));
+        if (Array.isArray(options)) {
+            this.options = options.map((opt) => new NavigatorOption(opt));
+        }
     }
 
-    navTo(index) {
+    async navTo(index, params) {
         const opt = this.getOption(index);
 
-        if (opt && opt.targetView){
-            this.parentView.goToView(opt.targetView);
+        if (typeof opt.trigger === 'function') {
+            return await opt.trigger.call(opt, this);
+        }
+
+        if (this.parentView && opt && opt.targetView){
+            return await this.parentView.goToView(opt.targetView, {
+                ...opt.viewParams,
+                ...params,
+                defaultData: opt.defaultData
+            });
         }
     }
 
@@ -87,7 +96,7 @@ class ViewNavigator extends ToolsCLI {
                     if (Array.isArray(headers)) {
                         title = headers.map(item => opt[item]).join(' | ');
                     }
-                    template = template.indent().text(`${i}. ${title} - ${opt.description}`).newLine();
+                    template = template.indent().text(`${i}. ${title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
                 } else {
                     template = template.indent().text(`${i}. ${opt.title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
                 }

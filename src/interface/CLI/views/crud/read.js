@@ -1,7 +1,5 @@
 const ViewCLI = require('../../ViewCLI');
 const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const MainMenuDescription = require('../../components/MainMenuDescription');
-const CRUD = require('../../../../services/database/crud');
 const ToolsCLI = require('../../ToolsCLI');
 const tools = new ToolsCLI();
 
@@ -33,7 +31,9 @@ const bodySchema = {
     }
 };
 
-function ReadView() {
+async function ReadView(params) {
+    const { defaultData } = params || {};
+
     return new ViewCLI({
         name: 'crud/read',
         Template: new DashedHeaderLayout({
@@ -59,7 +59,10 @@ function ReadView() {
             questions: [
                 {
                     id: 'read-doc-form',
-                    formCtrl: { schema: { obj: bodySchema } }
+                    formCtrl: {
+                        defaultData,
+                        schema: { obj: bodySchema }
+                    }
                 }
             ]
         }

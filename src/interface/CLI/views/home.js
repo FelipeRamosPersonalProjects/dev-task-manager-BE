@@ -3,7 +3,7 @@ const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
 const StringTemplateBuilder = require('../../StringTemplateBuilder');
 const MainMenuDescription = require('../components/MainMenuDescription');
 
-function HomeView() {
+async function HomeView() {
     const headerDescription = new StringTemplateBuilder()
         .text(`It's an application to automate and help the developer in organization and procedures such as:`)
         .newLine()
@@ -18,7 +18,8 @@ function HomeView() {
             Content: new MainMenuDescription()
         }, this),
         navigator: { options: [
-            { title: 'Database CRUD operations', targetView: 'crud/main' }
+            { title: 'CRUD             ', description: 'Database CRUD operations', targetView: 'crud/main' },
+            { title: 'Tickets and Tasks', description: 'Manage your tickets and tasks', targetView: 'ticketsAndTasks' }
         ]}
     }, this);
 }
