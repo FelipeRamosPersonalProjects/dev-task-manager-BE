@@ -93,8 +93,7 @@ function treatFilter(filter) {
             throw new Error.Log('common.bad_format_param',
                 'filter',
                 'treatFilter',
-                ['String(ObjectId._id)',
-                'Object'],
+                ['String(ObjectId._id)', 'Object'],
                 filter,
                 'dbHelpers.js'
             );

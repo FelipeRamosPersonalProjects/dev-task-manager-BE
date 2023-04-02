@@ -17,7 +17,7 @@ class QuestionModel {
         const {id, type, text, required, events, next, formCtrl} = setup || {};
 
         this.id = id;
-        this.type = type || 'default'; // default, multiple-choice, form-control
+        this.type = type || 'default'; // default, form-control
         this.text = text;
         this.required = required;
         this.next = next;
@@ -49,6 +49,7 @@ class QuestionModel {
 
     async goToNext() {
         const nextQ = this.ctrl().getQuestion(this.next);
+
         await this.events.triggerEvent('next', nextQ);
         await nextQ.trigger();
     }
@@ -63,7 +64,6 @@ class QuestionModel {
                 this.answer = answer;
                 await this.events.triggerEvent('answer', this, answer);
             }
-            
 
             if (this.formCtrl) {
                 await this.formCtrl.startPool();
@@ -75,7 +75,7 @@ class QuestionModel {
                 return this.ctrl().end();
             }
         } catch(err) {
-            this.events.error(this, err);
+            this.events.triggerEvent('error', this, err);
         }
     }
 
@@ -97,19 +97,19 @@ class EventsHandlers {
         onNext: async () => {},
         onBack: async () => {},
         onChange: async () => {},
-        onRepeate: async () => {},
+        onRepeat: async () => {},
         onAnswer: async () => {},
         onError: async () => {},
         onEnd: async () => {}
     }) {
-        const {onStart, onTrigger, onNext, onBack, onChange, onRepeate, onAnswer, onError, onEnd} = setup || {};
+        const {onStart, onTrigger, onNext, onBack, onChange, onRepeat, onAnswer, onError, onEnd} = setup || {};
 
         this.onStart = onStart;
         this.onTrigger = onTrigger;
         this.onNext = onNext;
         this.onBack = onBack;
         this.onChange = onChange;
-        this.onRepeate = onRepeate;
+        this.onRepeat = onRepeat;
         this.onAnswer = onAnswer;
         this.onError = onError;
         this.onEnd = onEnd;
@@ -144,9 +144,9 @@ class EventsHandlers {
         return ev;
     }
 
-    async repeate (ev) {
-        await this.triggerEvent('onRepeate', ev);
-        console.log('>> onRepeate');
+    async repeat (ev) {
+        await this.triggerEvent('onRepeat', ev);
+        console.log('>> onRepeat');
         return ev;
     }
 
@@ -184,6 +184,7 @@ class PoolForm extends FormCtrlCLI {
     static EventsHandlers = EventsHandlers;
 
     constructor(setup = {
+        ...this,
         startQuestion: '',
         questions: [],
         values: {}
@@ -212,45 +213,53 @@ class PoolForm extends FormCtrlCLI {
     }
 
     async startPool() {
-        await this.events.triggerEvent('start', this);
-
-        for (let i = 0; i < this.formFields.length; i++) {
-            const currKey = this.formFields[i];
-            const fieldSchema = this.getFieldSchema(currKey);
-            const currentDoc = this.view().getValue && this.view().getValue('currentDoc');
-            let answer = '';
-
-            if (currentDoc) {
-                answer = await this.prompt.question(new StringTemplateBuilder()
-                    .newLine()
-                    .text(`Field -> ${currKey} : ${fieldSchema.type.name}`).newLine()
-                    .text(`Current value:`).newLine()
-                    .text('- ' + (currentDoc[currKey] || 'EMPTY')).newLine()
-                    .newLine()
-                    .text(`Enter the new value: `)
-                .end());
-            } else {
-                answer = await this.prompt.question(currKey + ': ');
-            }
-
-            if (answer) {
-                switch(fieldSchema.type.name) {
-                    case 'Object': {
-                        this.setField(currKey, JSON.parse(answer));
-                        break;
-                    }
-                    default: {
-                        this.setField(currKey, answer);
-                        break
+        try {
+            await this.events.triggerEvent('start', this);
+    
+            for (let i = 0; i < this.formFields.length; i++) {
+                const currKey = this.formFields[i];
+                const fieldSchema = this.getFieldSchema(currKey);
+                const currentDoc = this.view().getValue && this.view().getValue('currentDoc');
+                let answer = '';
+    
+                if (currentDoc) {
+                    answer = await this.prompt.question(new StringTemplateBuilder()
+                        .newLine()
+                        .text(`Field -> ${currKey} : ${fieldSchema.type.name}`).newLine()
+                        .text(`Current value:`).newLine()
+                        .text('- ' + (currentDoc[currKey] || 'EMPTY')).newLine()
+                        .newLine()
+                        .text(`Enter the new value: `)
+                    .end());
+                } else {
+                    if (this.defaultData && this.mode === 'create' && this.defaultData[currKey]) {
+                        answer = this.defaultData[currKey];
+                    } else {
+                        answer = await this.prompt.question(currKey + ': ');
                     }
                 }
-
-                await this.events.triggerEvent('answer', this, answer);
+    
+                if (answer) {
+                    switch(fieldSchema.type.name) {
+                        case 'Object': {
+                            this.setField(currKey, JSON.parse(answer));
+                            break;
+                        }
+                        default: {
+                            this.setField(currKey, answer);
+                            break
+                        }
+                    }
+    
+                    await this.events.triggerEvent('answer', this, answer);
+                }
             }
+    
+            await this.events.triggerEvent('end', this);
+            return this.formData;
+        } catch(err) {
+            throw new Error.Log(err);
         }
-
-        await this.events.triggerEvent('end', this);
-        return this.formData;
     }
 
     getValue(keyPath) {
@@ -267,7 +276,7 @@ class PoolForm extends FormCtrlCLI {
     }
 
     setValue(keyPath, value) {
-        let currentValue = this.getValue(keyPath)
+        const currentValue = this.getValue(keyPath)
 
         if (typeof value === 'object' && !Array.isArray(value)) {
             this.values[keyPath] = {...currentValue, ...value};
@@ -279,7 +288,7 @@ class PoolForm extends FormCtrlCLI {
     async start() {
         try {
             await this.events.triggerEvent('start', this); 
-            this.goTo(this.startQuestion);
+            await this.goTo(this.startQuestion);
         } catch(err) {
             await this.events.triggerEvent('error', this, err);
         }
@@ -319,9 +328,9 @@ class PoolForm extends FormCtrlCLI {
         await this.view().goToView(viewPath, params)
     }
 
-    async repeate() {
+    async repeat() {
         try {
-            await this.events.triggerEvent('repeate', this);
+            await this.events.triggerEvent('repeat', this);
             return await this.goTo(this.current.id);
         } catch(err) {
             await this.events.error(this, err);

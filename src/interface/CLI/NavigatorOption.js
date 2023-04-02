@@ -7,18 +7,22 @@ class NavigatorOption extends ToolsCLI {
         title: '',
         description: '',
         targetView: '',
+        viewParams: {},
+        defaultData: {},
         trigger: () => {},
         doc: {}
     }, index) {
         super();
-        const { type, title, description, targetView, doc, trigger } = setup || {};
+        const { type, title, description, targetView, doc, viewParams, defaultData, trigger } = setup || {};
 
         if (index) this.index = String(index);
         this.type = type || 'nav';
         this.title = title;
         this.description = description;
         this.targetView = targetView;
-        this.trigger = () => trigger && trigger();
+        this.viewParams = viewParams;
+        this.trigger = trigger;
+        this.defaultData = defaultData;
 
         if (type === 'doc-list') {
             this.doc = doc;

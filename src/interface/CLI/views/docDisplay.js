@@ -9,8 +9,8 @@ async function DocDisplay(params) {
     tools.print(`Loading view's resources from database...`);
     const { collectionName, filter, headerText, headerDescription } = params || {};
 
-    if (!filter) {
-        throw new Error.Log('common.missing_params', 'filter', 'DocDisplay', 'docDisplay.js');
+    if (!collectionName || !filter) {
+        throw new Error.Log('common.missing_params', ['collectionName', 'filter'], 'DocDisplay', 'docDisplay.js');
     }
 
     try {
