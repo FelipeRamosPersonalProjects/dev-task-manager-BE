@@ -50,6 +50,15 @@ module.exports = new Schema({
             type: SLA,
             default: {}
         },
+        estimations: {
+            type: [ObjectId],
+            default: [],
+            ref: 'estimations',
+            refConfig: new Schema.RefConfig({
+                type: 'ObjectId',
+                relatedField: 'ticket'
+            })
+        },
         tasks: {
             type: [ObjectId],
             default: [],

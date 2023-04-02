@@ -9,6 +9,7 @@ const projects = require('./ProjectsClass');
 const pull_requests = require('./PullRequestsClass');
 const repos = require('./ReposClass');
 const components = require('./ComponentsClass');
+const estimations = require('./EstimationsClass');
 const tasks = require('./TasksClass');
 
 module.exports = {
@@ -22,6 +23,7 @@ module.exports = {
     pull_requests,
     repos,
     components,
+    estimations,
     tasks,
     users
 };
