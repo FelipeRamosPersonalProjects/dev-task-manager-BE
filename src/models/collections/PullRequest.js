@@ -41,6 +41,18 @@ class PullRequests extends _Global {
             new Error.Log(err).append('common.model_construction', 'PullRequests');
         }
     }
+
+    createPullRequest() {
+        
+    }
+
+    buildTitle() {
+
+    }
+
+    buildDescription() {
+
+    }
 }
 
 module.exports = PullRequests;
