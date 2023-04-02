@@ -7,12 +7,12 @@ const CRUD = require('../../../../services/database/crud');
 
 const tools = new ToolsCLI();
 const bodySchema = {
-    collectionName: { type: String, required: true },
-    data: { type: Object, required: true },
-    options: { type: Object, default: {} }
+    collectionName: { type: String, required: true }
 };
 
-function CreateView() {
+async function CreateView(params) {
+    const { defaultData } = params || {};
+
     const Template = new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'Create - CRUD',
@@ -33,7 +33,7 @@ function CreateView() {
 
                         const created = await CRUD.create(docFilter.collectionName, newDoc);
 
-                        ev.view().print('Document create successfully!');
+                        ev.view().print('Document created successfully!');
                         return created;
                     } catch(err) {
                         throw new Error.Log(err);
@@ -46,6 +46,7 @@ function CreateView() {
                     next: 'collecting-data',
                     formCtrl: {
                         schema: { obj: bodySchema },
+                        defaultData,
                         events: {
                             onStart: async (ev) => {
                                 tools.print('Starting "build-params"...');

@@ -2,15 +2,17 @@ class FormCtrlCLI {
     constructor(setup = {
         mode,
         schema: {},
+        defaultData: {},
         exclude: []
     }, parent) {
-        const { mode, schema, exlude } = setup || {};
+        const { mode, schema, exclude, defaultData } = setup || {};
 
         this.mode = mode || 'create'; // 'edit' | 'create'
         this.schema = schema;
-        this.exclude = exlude || ['_id', 'createdAt', 'modifiedAt', 'index', 'cod'];
+        this.exclude = exclude || ['_id', 'createdAt', 'modifiedAt', 'index', 'cod'];
         this.formFields = [];
         this.formData = {};
+        this.defaultData = defaultData;
 
         if (schema) {
             this.setForm(schema);
