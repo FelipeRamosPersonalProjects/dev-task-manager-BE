@@ -3,24 +3,27 @@ const ValidateSchema = require('../validation/validateSchema');
 const defaultRules = {
     componentName: { type: String, default: (() => 'comp-' + Date.now())()},
     description: { type: String },
-    outputModel: { type: String, default: ''}
+    outputModel: { type: String, default: ''},
+    types: { type: Object, default: {} }
 }
 
 class Component extends ValidateSchema {
     constructor(setup = {
         componentName: '',
         description: '',
-        outputModel: ''
+        outputModel: '',
+        types: {}
     }, validationRules){
         super(typeof validationRules === 'string' ? validationRules : {...defaultRules, ...validationRules});
         const self = this;
 
         try {
-            const { componentName, description, outputModel } = setup || {};
+            const { componentName, description, outputModel, types } = setup || {};
 
             this.componentName = componentName;
             this.description = description;
             this.outputModel = outputModel;
+            this.types = types;
 
             if (this.validate({...this, ...setup})) {
                 throw new Error.Log(this.validationResult);
@@ -44,12 +47,13 @@ class Component extends ValidateSchema {
         }
     }
 
-    array(value = [], Child = () => {}) {
+    array(value = [], childTypeName) {
+        const Child = this.types[childTypeName];
         let result = '';
 
-        if (Array.isArray(value) && typeof Child === 'function') {
+        if (Array.isArray(value)) {
             value.map((item) => {
-                result += Child(item);
+                result += Child.toMarkdown(item);
             });
         }
 
@@ -77,7 +81,7 @@ class Component extends ValidateSchema {
         return stringResult;
     }
 
-    render(params) {
+    toMarkdown(params) {
         // Find substrings between ##{{ and }}## and replace by the param value
         const regex = /##{{(.*?)}}##/g;
         const substrings = [];
@@ -89,7 +93,7 @@ class Component extends ValidateSchema {
         }
 
         substrings.map(sub => {
-            const [key, type] = sub.split(':');
+            const [key, type, child] = sub.split(':');
             let value;
             let toReplaceString;
 
@@ -99,7 +103,7 @@ class Component extends ValidateSchema {
             }
 
             if (type === 'array') {
-                value = this.array(params[key]);
+                value = this.array(params[key], child);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
