@@ -32,9 +32,9 @@ class ViewCLI extends ToolsCLI {
         this.cli = () => cli;
     }
 
-    goToView(viewPath) {
+    goToView(viewPath, params) {
         try {
-            this.cli().loadView(viewPath);
+            this.cli().loadView(viewPath, params);
         } catch(err) {
             throw new Error.Log(err);
         }

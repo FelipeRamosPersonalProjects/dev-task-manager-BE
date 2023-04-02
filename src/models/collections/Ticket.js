@@ -28,6 +28,7 @@ class Ticket extends _Global {
             this.ticketID = ticketID;
             this.ticketURL = ticketURL;
             this.title = title;
+            this.displayName = `[${ticketID}] ${title}`;
             this.description = description;
             this.status = status;
             this.project = project && new Project(project);

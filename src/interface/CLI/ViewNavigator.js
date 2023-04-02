@@ -7,7 +7,7 @@ const navDefaultQuestions = {
     questions: [
         {
             id: 'navigation',
-            text: 'Which option do you want to use? (Type the index): ',
+            text: 'Choose an option above to navigate, type the index of the choosed option: ',
             required: true
         }
     ]
@@ -27,19 +27,29 @@ class ViewNavigator extends ToolsCLI {
         const {type, options, navSuccessCallback, navErrorCallback} = setup || {};
 
         this.type = type || 'nav';
-        this.options = Array.isArray(options) && options.map((opt) => new NavigatorOption(opt)) || [];
+        this.options = [];
         this.navSuccessCallback = navSuccessCallback && navSuccessCallback.bind(this);
         this.navErrorCallback = navErrorCallback && navErrorCallback.bind(this);
         this.parentView = parentView;
 
-        Array.isArray(options) && options.map((opt) => new NavigatorOption(opt));
+        if (Array.isArray(options)) {
+            this.options = options.map((opt) => new NavigatorOption(opt));
+        }
     }
 
-    navTo(index) {
+    async navTo(index, params) {
         const opt = this.getOption(index);
 
-        if (opt && opt.targetView){
-            this.parentView.goToView(opt.targetView);
+        if (typeof opt.trigger === 'function') {
+            return await opt.trigger.call(opt, this);
+        }
+
+        if (this.parentView && opt && opt.targetView){
+            return await this.parentView.goToView(opt.targetView, {
+                ...opt.viewParams,
+                ...params,
+                defaultData: opt.defaultData
+            });
         }
     }
 
@@ -77,7 +87,7 @@ class ViewNavigator extends ToolsCLI {
         }
 
         try {
-            let template = new StringTemplateBuilder();
+            let template = new StringTemplateBuilder().newLine();
             
             options.map((opt, i) => {
                 if (opt._schema) {
@@ -86,9 +96,9 @@ class ViewNavigator extends ToolsCLI {
                     if (Array.isArray(headers)) {
                         title = headers.map(item => opt[item]).join(' | ');
                     }
-                    template = template.indent().text(`${i}. ${title}`).newLine().newLine();
+                    template = template.indent().text(`${i}. ${title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
                 } else {
-                    template = template.indent().text(`${i}. ${opt.title}`).newLine().newLine();
+                    template = template.indent().text(`${i}. ${opt.title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
                 }
             });
 

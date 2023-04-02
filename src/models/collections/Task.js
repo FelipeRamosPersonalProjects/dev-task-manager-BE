@@ -25,6 +25,7 @@ class Task extends _Global {
 
             this.taskName = taskName;
             this.taskCod = taskCod;
+            this.displayName = taskName;
             this.description = description;
             this.dueDate = dueDate;
             this.project = project && new Project(project);

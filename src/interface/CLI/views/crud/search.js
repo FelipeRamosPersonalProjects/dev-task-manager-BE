@@ -21,7 +21,7 @@ const bodySchema = {
     }
 };
 
-function SearchView() {
+async function SearchView() {
     return new ViewCLI({
         name: 'crud/search',
         Template: new DashedHeaderLayout({
