@@ -5,7 +5,7 @@ require('./src/services/database/init').then(async (started) => {
     try {
         const CLI = require('./src/interface/CLI');
         await new CLI({
-            startView: 'docDisplay',
+            startView: 'home',
             startViewParams: {
                 collectionName: 'tasks',
                 filter: '64289add3818fa7d00371f06'
