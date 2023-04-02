@@ -43,6 +43,15 @@ module.exports = new Schema({
         dueDate: {
             type: Date
         },
+        estimations: {
+            type: [ObjectId],
+            default: [],
+            ref: 'estimations',
+            refConfig: new Schema.RefConfig({
+                type: 'ObjectId',
+                relatedField: 'task'
+            })
+        },
         sharedWith: {
             type: String
         },
