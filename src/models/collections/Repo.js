@@ -1,5 +1,5 @@
 const _Global = require('../maps/_Global');
-const mongoose = require('mongoose');
+const RepoManager = require('../../services/GitHubAPI/RepoManager');
 
 class Repo extends _Global {
     constructor(setup = {
@@ -8,12 +8,14 @@ class Repo extends _Global {
         baseBranch: '',
         url: '',
         localPath: '',
-        collaborators: [User.prototype],
-        projects: [Project.prototype],
-        owner: User.prototype
+        collaborators: [Object],
+        projects: [Object],
+        owner: Object,
+        repoManager: RepoManager.prototype
     }){
         super({...setup, validationRules: 'repos'}, setup);
         if (!setup.isComplete) return;
+
         const User = require('./User');
         const Project = require('./Project');
 
@@ -32,7 +34,7 @@ class Repo extends _Global {
                 const separateHost = url.split('https://github.com/');
                 const repoPathArray = separateHost[1] && separateHost[1].split('/');
 
-                if (repoPathArray.length <= 2) return;
+                if (repoPathArray.length < 2) return;
 
                 this.organization = repoPathArray[0];
                 this.repoName = repoPathArray[1];
@@ -42,6 +44,14 @@ class Repo extends _Global {
                 this.repoName = repoName;
                 this.repoPath = repoPath;
             }
+
+            this.displayName = this.repoPath;
+            this.repoManager = new RepoManager({
+                localPath: this.localPath,
+                repoName: this.repoName,
+                repoPath: this.repoPath,
+                organization: this.organization
+            });
 
             this.placeDefault();
         } catch(err) {
