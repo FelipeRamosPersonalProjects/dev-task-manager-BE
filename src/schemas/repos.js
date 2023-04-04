@@ -1,14 +1,11 @@
 const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
+const queries = require('./queries');
 
 module.exports = new Schema({
     name: 'repos',
     symbol: 'REPO',
-    links: {
-        owner: 'repos',
-        organization: 'repos',
-        projects: 'repos'
-    },
+    queries: queries.repos,
     schema: {
         nodeVersion: {
             type: String
@@ -31,7 +28,11 @@ module.exports = new Schema({
         },
         owner: {
             type: ObjectId,
-            ref: 'users'
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'repos',
+                type: 'array-oid'
+            })
         },
         collaborators: {
             type: [ObjectId],
@@ -44,7 +45,11 @@ module.exports = new Schema({
         },
         organization: {
             type: ObjectId,
-            ref: 'organizations'
+            ref: 'organizations',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'repos',
+                type: 'array-oid'
+            })
         },
         projects: {
             type: [ObjectId],

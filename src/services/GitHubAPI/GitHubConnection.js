@@ -9,7 +9,7 @@ class GitHubConnection {
         const { GITHUB_USER_TOKEN, userName, organization } = setup || {};
 
         this.getGITHUB_USER_TOKEN = () => GITHUB_USER_TOKEN || process.env.GITHUB_USER_TOKEN;
-        this.userName = userName || organization;
+        this.userName = process.env.GITHUB_USER;
         this.organization = organization || userName;
 
         this.apiHostURL = config.github.apiHostURL;
