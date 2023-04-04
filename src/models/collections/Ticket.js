@@ -22,6 +22,7 @@ class Ticket extends _Global {
         comments: [Comment.prototype]
     }){
         super({...setup, validationRules: 'tickets'});
+        if (!setup.isComplete) return;
         const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = setup || {};
 
         try {

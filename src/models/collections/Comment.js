@@ -15,8 +15,10 @@ class Comment extends _Global {
         ticket: Ticket.prototype,
         task: Task.prototype,
     }){
+        super({...setup, validationRules: 'comments'});
+        if (!setup.isComplete) return;
+
         try {
-            super({...setup, validationRules: 'comments'});
             const { message, parent, user, pullRequest, ticket, task } = setup || {};
 
             this.user = user && new User(user);

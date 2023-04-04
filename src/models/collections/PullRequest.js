@@ -7,8 +7,9 @@ const Task = require('./Task');
 class PullRequests extends _Global {
     constructor(setup = {
         owner: User.prototype,
-        prName: '',
-        prGitHubID: '',
+        name: '',
+        remoteID: '',
+        summary: '',
         description: '',
         fileChanges: [],
         assignedUsers: [User.prototype],
@@ -20,12 +21,14 @@ class PullRequests extends _Global {
         task: Task.prototype
     }){
         super({...setup, validationRules: 'pull_requests'});
-        const { prName, prGitHubID, description, fileChanges, assignedUsers, reviewers, labels, bmConfigs, comments } = setup || {};
+        if (!setup.isComplete) return;
+        const { name, remoteID, summary, description, fileChanges, assignedUsers, reviewers, labels, bmConfigs, comments } = setup || {};
 
         try {
             this.owner = owner && new User(owner);
-            this.prName = prName;
-            this.prGitHubID = prGitHubID;
+            this.name = name;
+            this.remoteID = remoteID;
+            this.summary = summary;
             this.description = description;
             this.fileChanges = fileChanges;
             this.assignedUsers = Array.isArray(assignedUsers) && assignedUsers.map(user => User(user));
@@ -40,18 +43,6 @@ class PullRequests extends _Global {
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'PullRequests');
         }
-    }
-
-    createPullRequest() {
-        
-    }
-
-    buildTitle() {
-
-    }
-
-    buildDescription() {
-
     }
 }
 

@@ -1,6 +1,5 @@
 const _Global = require('../maps/_Global');
-const User = require('./User');
-const Project = require('./Project');
+const mongoose = require('mongoose');
 
 class Repo extends _Global {
     constructor(setup = {
@@ -13,17 +12,21 @@ class Repo extends _Global {
         projects: [Project.prototype],
         owner: User.prototype
     }){
+        super({...setup, validationRules: 'repos'}, setup);
+        if (!setup.isComplete) return;
+        const User = require('./User');
+        const Project = require('./Project');
+
         try {
-            super({...setup, validationRules: 'repos'});
             const { nodeVersion, baseBranch, url, repoName, repoPath, localPath, owner, collaborators, organization, projects } = setup || {};
 
             this.nodeVersion = nodeVersion;
             this.baseBranch = baseBranch;
             this.url = url;
             this.localPath = localPath;
-            this.collaborators = Array.isArray(collaborators) && collaborators.map(collab => new User(collab));
-            this.projects = Array.isArray(projects) && projects.map(project => new Project(project));
-            this.owner = owner && new User(owner);
+            this.collaborators = Array.isArray(collaborators) ? collaborators.map(collab => new User(collab)) : [];
+            this.projects = Array.isArray(projects) ? projects.map(project => new Project(project)) : [];
+            this.owner = owner ? new User(owner) : {};
 
             if (url) {
                 const separateHost = url.split('https://github.com/');

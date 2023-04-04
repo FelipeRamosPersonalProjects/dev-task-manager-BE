@@ -3,7 +3,7 @@
 - Jira Task: ##{{taskURL:string}}##
 
 ### Bug or Enhancement Description
-##{{description:string}}##
+##{{summary:string}}##
 
 ### Changes
 ##{{fileChanges:array:FileChange}}##

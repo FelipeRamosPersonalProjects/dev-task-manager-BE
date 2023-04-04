@@ -8,8 +8,10 @@ class SpaceDesk extends _Global {
         owner: User.prototype,
         projects: [Project.prototype]
     }){
+        super({...setup, validationRules: 'space_desks'});
+        if (!setup.isComplete) return;
+
         try {
-            super({...setup, validationRules: 'space_desks'});
             const { spaceName, owner, projects } = setup || {};
 
             this.spaceName = spaceName;

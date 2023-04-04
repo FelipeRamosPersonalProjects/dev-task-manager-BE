@@ -170,8 +170,17 @@ async function onDelete() {
     }
 }
 
+function isObjectID(value) {
+    if (Array.isArray(value)) {
+        return Boolean(value[0]._bsontype === 'ObjectId');
+    } else {
+        return Boolean(value._bsontype === 'ObjectId');
+    }
+}
+
 module.exports = {
     onCreate,
     onUpdate,
-    onDelete
+    onDelete,
+    isObjectID
 }

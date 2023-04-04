@@ -5,11 +5,11 @@ module.exports = new Schema({
     name: 'pull_requests',
     symbol: 'PR',
     schema: {
-        prName: {
+        name: {
             type: String,
             required: true
         },
-        prGitHubID: {
+        remoteID: {
             type: String,
             required: true
         },

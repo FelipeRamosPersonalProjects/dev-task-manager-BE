@@ -23,8 +23,10 @@ class User extends _Global {
         pullRequestsAssigned: [PullRequest.prototype],
         comments: [Repo.prototype]
     }){
+        super({...setup, validationRules: 'users'});
+        if (!setup.isComplete) return;
+
         try {
-            super({...setup, validationRules: 'users'});
             const {
                 firstName,
                 lastName,

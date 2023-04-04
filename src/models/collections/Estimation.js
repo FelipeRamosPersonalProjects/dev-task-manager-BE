@@ -6,6 +6,7 @@ class Estimation extends _Global {
     }){
         try {
             super({...setup, validationRules: 'estimations'});
+            if (!setup.isComplete) return;
             const {  } = setup || {};
 
             this.placeDefault();
