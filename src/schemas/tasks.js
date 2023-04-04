@@ -1,9 +1,11 @@
 const Schema = require('../models/SchemaDB');
+const queries = require('./queries');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'tasks',
     symbol: 'TSK',
+    queries: queries.tasks,
     schema: {
         taskName: {
             type: String,

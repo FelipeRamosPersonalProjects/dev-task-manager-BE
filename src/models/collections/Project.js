@@ -1,6 +1,5 @@
 const _Global = require('../maps/_Global');
 const Ticket = require('./Ticket');
-const Task = require('./Task');
 const Repo = require('./Repo');
 const SpaceDesk = require('./SpaceDesk');
 
@@ -15,18 +14,21 @@ class Project extends _Global {
         repos: [Repo.prototype],
         spaceDesks: [SpaceDesk.prototype],
     }){
+        super({...setup, validationRules: 'projects'});
+        if (!setup.isComplete) return;
+        const Task = require('./Task');
+
         try {
-            super({...setup, validationRules: 'projects'});
-            const {projectName, description, tickets, tasks, urls} = setup || {};
+            const {projectName, description, tickets, repos, tasks, urls, spaceDesks} = setup || {};
 
             this.displayName = `[${this.cod}] ${projectName}`;
             this.projectName = projectName;
             this.description = description;
             this.urls = urls;
-            this.tickets = Array.isArray(tickets) && tickets.map(ticket => new Ticket(ticket));
-            this.tasks = Array.isArray(tasks) && tasks.map(task => new Task(task));
-            this.repos = Array.isArray(repos) && repos.map(repo => new Repo(repo));
-            this.spaceDesks = Array.isArray(spaceDesks) && spaceDesks.map(spaceDesk => new SpaceDesk(spaceDesk));
+            this.tickets = Array.isArray(tickets) ? tickets.map(ticket => new Ticket(ticket)) : [];
+            this.tasks = Array.isArray(tasks) ? tasks.map(task => new Task(task)) : [];
+            this.repos = Array.isArray(repos) ? repos.map(repo => new Repo(repo)) : [];
+            this.spaceDesks = Array.isArray(spaceDesks) ? spaceDesks.map(spaceDesk => new SpaceDesk(spaceDesk)) : [];
 
             this.placeDefault();
         } catch(err) {

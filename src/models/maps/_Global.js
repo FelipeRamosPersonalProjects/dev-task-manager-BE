@@ -10,15 +10,15 @@ class GlobalMap extends ValidateSchema {
         modifiedAt: Date()
     }, parent) {
         super(setup.validationRules || {});
+        if (!setup.isComplete) return;
 
         try {
             this._id = setup._id && setup._id.toString();
-            this._id = setup._id;
             this.index = setup.index;
             this.author = setup.author;
             this.cod = setup.cod;
-            this.createdAt = setup.createdAt;
-            this.modifiedAt = setup.modifiedAt;
+            this.createdAt = new Date(setup.createdAt).toLocaleString();
+            this.modifiedAt = new Date(setup.modifiedAt).toLocaleString();
     
             this.getParent = () => parent;
         } catch (err) {

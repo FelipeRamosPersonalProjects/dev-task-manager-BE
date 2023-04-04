@@ -14,7 +14,7 @@ async function DocDisplay(params) {
     }
 
     try {
-        const document = await CRUD.getDoc({ collectionName, filter }).initialize();
+        const document = await CRUD.getDoc({ collectionName, filter }).defaultPopulate().initialize();
     
         return new ViewCLI({
             name: 'docDisplay',
