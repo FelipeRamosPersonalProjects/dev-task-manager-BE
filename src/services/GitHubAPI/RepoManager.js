@@ -33,22 +33,58 @@ class RepoManager extends GitHubConnection {
             }
 
             return branch;
-        } catch(err) {
+        } catch (err) {
             throw new Error.Log(err);
         }
     }
 
     async isBranchExist(branchName) {
         try {
-            const out = this.prompt.cmd('git show-ref --verify --quiet refs/heads/' + branchName);
+            const isLocalExist = this.isLocalBranchExist(branchName);
+            const isRemoteExist = await this.isRemoteBranchExist(branchName);
 
-            if (out.error) {
+            return {
+                isExist: (isLocalExist || isRemoteExist),
+                isRemoteExist: isRemoteExist.success || false,
+                remoteData: isRemoteExist.branchData,
+                isLocalExist
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    isLocalBranchExist(branchName) {
+        try {
+            const isLocalExist = this.prompt.cmd('git show-ref --verify --quiet refs/heads/' + branchName);
+
+            if (isLocalExist.error) {
                 return false
             }
 
             return true;
         } catch (err) {
             throw new Error.Log(err);
+        }
+    }
+
+    async isRemoteBranchExist(branchName) {
+        try {
+            const response = await this.ajax(`/repos/${this.repoPath}/branches/${branchName}`);
+            
+            return {
+                success: true,
+                branchData: response
+            }
+        } catch (err) {
+            if (err.status === 404 && err.name === 'Not Found') {
+                return false;
+            } else {
+                throw new Error.Log(err).append({
+                    name: 'RepoManagerIsRemoteBranchExist',
+                    message: `Error caught during remote branch check existence!`
+                });
+            }
         }
     }
 
@@ -74,7 +110,7 @@ class RepoManager extends GitHubConnection {
                     return reject(err);
                 }
             });
-        } catch(err) {
+        } catch (err) {
             throw new Error.Log({});
         }
     }
@@ -89,7 +125,7 @@ class RepoManager extends GitHubConnection {
                     return reject(err);
                 }
             });
-        } catch(err) {
+        } catch (err) {
             throw new Error.Log({});
         }
     }
@@ -122,7 +158,7 @@ class RepoManager extends GitHubConnection {
             } else {
                 return new Error.Log(consoleResult);
             }
-        } catch(err) {
+        } catch (err) {
             throw new Error.Log(err);
         }
     }
@@ -157,7 +193,7 @@ class RepoManager extends GitHubConnection {
         try {
             const out = await this.prompt.exec(`git push origin ${branchName}${this.prompt.strigifyParams(params)}`);
             return out;
-        } catch(err) {
+        } catch (err) {
             return new Error.Log(err);
         }
     }
