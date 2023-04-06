@@ -19,6 +19,25 @@ class RepoManager extends GitHubConnection {
         });
     }
 
+    async getCurrentBranch() {
+        try {
+            const branch = this.prompt.cmd('git branch --show-current');
+            const regex = /[\n\t\r ]/g;
+
+            if (branch.error) {
+                throw new Error.Log(branch);
+            }
+
+            if (branch.out) {
+                branch.out = branch.out.replace(regex, '');
+            }
+
+            return branch;
+        } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
     async isBranchExist(branchName) {
         try {
             const out = this.prompt.cmd('git show-ref --verify --quiet refs/heads/' + branchName);

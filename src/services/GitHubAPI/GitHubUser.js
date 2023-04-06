@@ -1,9 +1,7 @@
-const GitHubConnection = require('./GitHubConnection');
 const config = require('../../../config.json');
 
-class GitHubUser extends GitHubConnection {
+class GitHubUser {
     constructor (setup) {
-        super(setup);
     }
 
     async getUser() {
