@@ -24,7 +24,17 @@ module.exports = (url, data) => {
                     return new Error.Log(response);
                 }
             } catch(err) {
-                throw new Error.Log(err);
+                const errorRes = err && err.response;
+
+                if (errorRes) {
+                    throw new Error.Log({
+                        status: errorRes.status,
+                        name: errorRes.statusText,
+                        message: errorRes.data ? errorRes.data.message : ''
+                    });
+                } else {
+                    throw new Error.Log(err);
+                }
             }
         }, 
         post: async (config, getAxiosResponse) => {
