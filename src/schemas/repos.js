@@ -59,6 +59,14 @@ module.exports = new Schema({
                 relatedField: 'repos',
                 type: 'array-oid'
             })
+        },
+        stashes: {
+            type: [ObjectId],
+            ref: 'stashes',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'repo',
+                type: 'ObjectId'
+            })
         }
     }
 });
