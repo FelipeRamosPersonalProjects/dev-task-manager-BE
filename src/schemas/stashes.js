@@ -5,6 +5,14 @@ module.exports = new Schema({
     name: 'stashes',
     symbol: 'STSH',
     schema: {
+        author: {
+            type: ObjectId,
+            ref: 'users',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'stashes',
+                type: 'array-oid'
+            })
+        },
         type: {
             type: String,
             required: true,

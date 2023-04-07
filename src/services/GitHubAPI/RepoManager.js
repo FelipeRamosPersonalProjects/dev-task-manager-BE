@@ -173,36 +173,65 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    // getLocalStash(filter) {
-    //     const stashesList = this.prompt.cmd(`git stash list`);
-    //     const listParsed = stashesList.out.split('\n').filter(item => item).map(item => {
-    //         if (item) {
-    //             const [prefix, branch, type] = item.split(': ');
-    //             const nameParsed = type.split('__');
-    //             const itemObj = new Stash({
-    //                 stashIndex: prefix.replace('stash@{', '').replace('}', ''),
-    //                 branch: branch.replace('On ', ''),
-    //                 _id: nameParsed[0],
-    //                 type: nameParsed[1]
-    //             });
+    async getStash(filter) {
+        const stashesList = this.prompt.cmd(`git stash list`);
+        const validFilter = stashesList.out.split('\n').filter(item => item);
+        const stashes = await Stash.load(filter);
 
-    //             return itemObj
-    //         }
-    //     });
+        for (const stash of stashes) {
+            validFilter.map(item =>{
+                const [prefix, _, name] = item.split(': ');
+                const stashIndex = prefix.replace('stash@{', '').replace('}', '');
+                const [_id] = name.split('__');
 
-    //     if (typeof filter === 'string') {
-    //         return listParsed.find(item => item._id === filter);
-    //     } else {
-    //         let result = [];
+                if (stash._id === _id) {
+                    return stash.setIndex(stashIndex);
+                }
+            });
+        }
 
-    //         Object.entries(filter).map(([key, value]) => {
-    //             result = [...result, ...listParsed.filter((item) => item[key] === value)];
-    //         });
+        if (typeof filter === 'string') {
+            const stash = stashes.find(item => item._id === filter);
+            return stash;
+        } else {
+            return stashes;
+        }
+    }
 
-    //         return result;
-    //     }
+    async applyStash(filter) {
+        try {
+            const currentChanges = await this.currentChanges();
 
-    // }
+            if (currentChanges instanceof Error.Log) {
+                return currentChanges;
+            }
+
+            if (currentChanges.changes.length) {
+                await this.createStash({
+                    type: 'backup',
+                    name: 'auto-backup-' + Date.now(),
+                    description: `Autostash done to avoid loose unstashed changes when it's applying another stash`,
+                    repoUID: this.parent()._id
+                });
+            }
+
+            const { stashIndex } = await this.getStash(filter) || {};
+            const applied = await this.prompt.exec(`git stash apply${stashIndex ? ` --index ${stashIndex}` : ''}`);
+
+            if (applied instanceof Error.Log) {
+                return applied;
+            }
+
+            if (applied.success) {
+                return applied;
+            }
+        } catch (err) {
+            return new Error.Log(err).append({
+                name: '',
+                message: ``
+            });
+        }
+    }
 
     async stash(stashName) {
         try {
@@ -217,27 +246,6 @@ class RepoManager extends GitHubConnection {
             }
         } catch (err) {
             throw new Error.Log(err).append({
-                name: '',
-                message: ``
-            });
-        }
-    }
-
-    async applyStash(setup) {
-        const { stashIndex } = this.getLocalStash(setup) || {};
-
-        try {
-            const stashed = await this.prompt.exec(`git stash apply${stashIndex ? ` --index ${stashIndex}` : ''}`);
-            
-            if (stashed instanceof Error.Log) {
-                return stashed;
-            }
-
-            if (stashed.success) {
-                return stashed;
-            }
-        } catch (err) {
-            return new Error.Log(err).append({
                 name: '',
                 message: ``
             });
@@ -345,6 +353,7 @@ class RepoManager extends GitHubConnection {
                     
                     if (match && match[1]) {
                         const url = match[1];
+
                         result.changes.push({
                             filePath: url
                         });
