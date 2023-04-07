@@ -15,7 +15,7 @@ class Task extends _Global {
         comments: [Comment.prototype]
     }){
         super({...setup, validationRules: 'tasks'});
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
 
         const Ticket = require('./Ticket');
         const User = require('./User');

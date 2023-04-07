@@ -3,29 +3,55 @@ const _Global = require('../maps/_Global');
 class Stash extends _Global {
     constructor(setup = {
         ...this,
-        user: Object,
+        stashIndex: String,
+        type: String,
+        name: String,
+        description: String,
         task: Object,
+        repo: Object
     }){
         super({...setup, validationRules: 'stashes'});
-        const User = require('./User');
         const Task = require('./Task');
         const Repo = require('./Repo');
 
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
 
         try {
-            const { stashIndex, name, branch, user, task, repo } = setup || {};
+            const { stashIndex, type, name, description, branch, task, repo } = setup || {};
+            const isIndexNaN = isNaN(stashIndex);
 
-            this.stashIndex = stashIndex;
+            this.stashIndex = !isIndexNaN ? String(stashIndex) : '';
+            this.type = type;
             this.name = name;
+            this.description = description;
             this.branch = branch;
-            this.user = user && new User(user);
-            this.task = task && new Task(task);
-            this.repo = repo && new Repo(repo);
+
+            if (!this.isNew) {
+                this.task = task && new Task(task);
+                this.repo = repo && new Repo(repo);
+            } else {
+                this.task = task;
+                this.repo = repo;
+            }
 
             this.placeDefault();
         } catch(err) {
-            new Error.Log(err).append('common.model_construction', 'Stash');
+            throw new Error.Log(err).append('common.model_construction', 'Stash');
+        }
+    }
+
+    static async create(setup = Stash.prototype) {
+        try {
+            const newStash = new Stash({...setup, isNew: true});
+            const created = await newStash.saveDB('stashes');
+
+            if (created.error) {
+                return new Error.Log(created.error);
+            }
+
+            return created;
+        } catch (err) {
+            throw new Error.Log(err);
         }
     }
 }

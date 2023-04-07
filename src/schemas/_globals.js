@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 function getGlobalSchema(exclude) {
     const out = {...getGlobalSchema.standardGlobal};
 
@@ -13,11 +11,27 @@ function getGlobalSchema(exclude) {
 
     return out;
 }
+
 getGlobalSchema.standardGlobal = {
-    index: { type: mongoose.Schema.Types.Number, unique: true, immutable: true },
-    cod: { type: mongoose.Schema.Types.String, unique: true, immutable: true },
-    createdAt: { type: mongoose.Schema.Types.Date, immutable: true, default: Date.now },
-    modifiedAt: { type: mongoose.Schema.Types.Date, default: Date.now }
+    index: {
+        type: Number,
+        unique: true,
+        immutable: true
+    },
+    cod: {
+        type: String,
+        unique: true,
+        immutable: true
+    },
+    createdAt: {
+        type: Date,
+        immutable: true,
+        default: Date.now
+    },
+    modifiedAt: {
+        type: Date,
+        default: Date.now
+    }
 }
 
 module.exports = {

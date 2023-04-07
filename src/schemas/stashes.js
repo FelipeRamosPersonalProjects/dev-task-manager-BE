@@ -5,26 +5,21 @@ module.exports = new Schema({
     name: 'stashes',
     symbol: 'STSH',
     schema: {
-        stashIndex: {
+        type: {
             type: String,
-            required: true
+            required: true,
+            default: 'draft',
+            enum: ['draft', 'bring', 'backup']
         },
         name: {
-            type: String,
-            required: true
+            type: String
+        },
+        description: {
+            type: String
         },
         branch: {
             type: String,
             required: true
-        },
-        user: {
-            type: ObjectId,
-            required: true,
-            ref: 'users',
-            refConfig: new Schema.RefConfig({
-                relatedField: 'stashes',
-                type: 'array-oid'
-            })
         },
         task: {
             type: ObjectId,
