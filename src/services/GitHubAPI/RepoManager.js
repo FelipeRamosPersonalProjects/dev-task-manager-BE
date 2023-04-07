@@ -1,5 +1,6 @@
 const Prompt = require('../Prompt');
 const GitHubConnection = require('./GitHubConnection');
+const Stash = require('../../models/collections/Stash');
 
 class RepoManager extends GitHubConnection {
     constructor(setup = {
@@ -7,7 +8,7 @@ class RepoManager extends GitHubConnection {
         repoName: '',
         repoPath: '',
         localPath: ''
-    }) {
+    }, parent) {
         super(setup);
         const { repoName, repoPath, localPath } = setup || {};
 
@@ -17,6 +18,8 @@ class RepoManager extends GitHubConnection {
         this.prompt = new Prompt({
             rootPath: this.localPath
         });
+
+        this.parent = () => parent;
     }
 
     getCurrentBranch() {
@@ -127,6 +130,80 @@ class RepoManager extends GitHubConnection {
         }
     }
 
+    buildStashName({_id, type}) {
+        return `${_id}__${type}`;
+    }
+
+    async createStash(setup) {
+        const { type, name, description, taskUID, repoUID } = setup || {};
+
+        try {
+            const currentBranch = this.getCurrentBranch();
+            const parent = this.parent();
+            const repo = repoUID || parent && parent._id;
+
+            if (!repo) {
+                throw new Error.Log({
+                    name: '',
+                    message: ``
+                });
+            }
+
+            // Creating stash on database
+            const newStash = await Stash.create({ type, name, description, repo, branch: currentBranch, task: taskUID });
+            if (newStash instanceof Error.Log) {
+                throw newStash;
+            }
+
+            // Adding changes
+            const added = this.addChanges();
+            if (added instanceof Error.Log) {
+                throw added;
+            }
+
+            // Creating stash
+            const stashed = await this.stash(this.buildStashName(newStash));
+            if (stashed instanceof Error.Log) {
+                throw stashed;
+            }
+
+            return newStash;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    // getLocalStash(filter) {
+    //     const stashesList = this.prompt.cmd(`git stash list`);
+    //     const listParsed = stashesList.out.split('\n').filter(item => item).map(item => {
+    //         if (item) {
+    //             const [prefix, branch, type] = item.split(': ');
+    //             const nameParsed = type.split('__');
+    //             const itemObj = new Stash({
+    //                 stashIndex: prefix.replace('stash@{', '').replace('}', ''),
+    //                 branch: branch.replace('On ', ''),
+    //                 _id: nameParsed[0],
+    //                 type: nameParsed[1]
+    //             });
+
+    //             return itemObj
+    //         }
+    //     });
+
+    //     if (typeof filter === 'string') {
+    //         return listParsed.find(item => item._id === filter);
+    //     } else {
+    //         let result = [];
+
+    //         Object.entries(filter).map(([key, value]) => {
+    //             result = [...result, ...listParsed.filter((item) => item[key] === value)];
+    //         });
+
+    //         return result;
+    //     }
+
+    // }
+
     async stash(stashName) {
         try {
             const stashed = await this.prompt.exec(`git stash save "${stashName}"`);
@@ -146,9 +223,11 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async applyStash(index) {
+    async applyStash(setup) {
+        const { stashIndex } = this.getLocalStash(setup) || {};
+
         try {
-            const stashed = await this.prompt.exec(`git stash apply${index ? ` --index ${index}` : ''}`);
+            const stashed = await this.prompt.exec(`git stash apply${stashIndex ? ` --index ${stashIndex}` : ''}`);
             
             if (stashed instanceof Error.Log) {
                 return stashed;
@@ -193,12 +272,12 @@ class RepoManager extends GitHubConnection {
                 });
             }
 
-            const stashed = await this.stash(bringChanges ? branchName + '-b' : currentBranch);
+            const stashed = await this.createStash({ type: bringChanges && 'bring' });
 
             if (stashed instanceof Error.Log || !stashed.success) {
                 throw stashed.append({
-                    name: '',
-                    message: ``
+                    name: 'RepoManagerCheckoutStashingError',
+                    message: `An error was caught during the stash creation!`
                 });
             }
 
@@ -212,8 +291,8 @@ class RepoManager extends GitHubConnection {
                 });
             }
             
-            if (bringChanges) {
-                const apply = await this.applyStash();
+            if (bringChanges && stashed.type === 'bring') {
+                const apply = await this.applyStash(stashed._id);
                 
                 if (apply instanceof Error.Log) {
                     const isNoEntriesError = apply.message.indexOf('Command failed: git stash apply\nNo stash entries found.\n') > -1;
@@ -239,18 +318,12 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async addChanges(params) {
+    addChanges() {
         try {
-            return new Promise((resolve, reject) => {
-                try {
-                    const out = this.prompt.cmd(`git add .${this.prompt.strigifyParams(params)}`);
-                    return resolve(out);
-                } catch(err) {
-                    return reject(err);
-                }
-            });
+            const out = this.prompt.cmd(`git add .`);
+            return out;
         } catch (err) {
-            throw new Error.Log({});
+            throw new Error.Log(err);
         }
     }
 
@@ -320,10 +393,6 @@ class RepoManager extends GitHubConnection {
         } catch (err) {
             return new Error.Log(err);
         }
-    }
-
-    createPullRequest() {
-        return Object;
     }
 }
 

@@ -15,7 +15,7 @@ class Project extends _Global {
         spaceDesks: [SpaceDesk.prototype],
     }){
         super({...setup, validationRules: 'projects'});
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
         const Task = require('./Task');
 
         try {

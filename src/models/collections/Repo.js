@@ -14,7 +14,7 @@ class Repo extends _Global {
         repoManager: RepoManager.prototype
     }){
         super({...setup, validationRules: 'repos'}, setup);
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
 
         const User = require('./User');
         const Project = require('./Project');
@@ -51,7 +51,7 @@ class Repo extends _Global {
                 repoName: this.repoName,
                 repoPath: this.repoPath,
                 organization: this.organization
-            });
+            }, this);
 
             this.placeDefault();
         } catch(err) {
