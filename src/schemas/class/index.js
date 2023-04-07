@@ -11,6 +11,7 @@ const repos = require('./ReposClass');
 const components = require('./ComponentsClass');
 const estimations = require('./EstimationsClass');
 const tasks = require('./TasksClass');
+const stashes = require('./StashesClass');
 
 module.exports = {
     GlobalClass,
@@ -25,5 +26,6 @@ module.exports = {
     components,
     estimations,
     tasks,
+    stashes,
     users
 };
