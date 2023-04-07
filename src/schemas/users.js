@@ -105,7 +105,7 @@ module.exports = new Schema({
             type: [ObjectId],
             ref: 'stashes',
             refConfig: new Schema.RefConfig({
-                relatedField: 'user',
+                relatedField: 'author',
                 type: 'ObjectId'
             })
         }

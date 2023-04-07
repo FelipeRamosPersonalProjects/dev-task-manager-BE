@@ -1,5 +1,6 @@
 const Prompt = require('../Prompt');
 const GitHubConnection = require('./GitHubConnection');
+const Stash = require('../../models/collections/Stash');
 
 class RepoManager extends GitHubConnection {
     constructor(setup = {
@@ -7,7 +8,7 @@ class RepoManager extends GitHubConnection {
         repoName: '',
         repoPath: '',
         localPath: ''
-    }) {
+    }, parent) {
         super(setup);
         const { repoName, repoPath, localPath } = setup || {};
 
@@ -17,6 +18,8 @@ class RepoManager extends GitHubConnection {
         this.prompt = new Prompt({
             rootPath: this.localPath
         });
+
+        this.parent = () => parent;
     }
 
     getCurrentBranch() {
@@ -127,6 +130,109 @@ class RepoManager extends GitHubConnection {
         }
     }
 
+    buildStashName({_id, type}) {
+        return `${_id}__${type}`;
+    }
+
+    async createStash(setup) {
+        const { type, name, description, taskUID, repoUID } = setup || {};
+
+        try {
+            const currentBranch = this.getCurrentBranch();
+            const parent = this.parent();
+            const repo = repoUID || parent && parent._id;
+
+            if (!repo) {
+                throw new Error.Log({
+                    name: '',
+                    message: ``
+                });
+            }
+
+            // Creating stash on database
+            const newStash = await Stash.create({ type, name, description, repo, branch: currentBranch, task: taskUID });
+            if (newStash instanceof Error.Log) {
+                throw newStash;
+            }
+
+            // Adding changes
+            const added = this.addChanges();
+            if (added instanceof Error.Log) {
+                throw added;
+            }
+
+            // Creating stash
+            const stashed = await this.stash(this.buildStashName(newStash));
+            if (stashed instanceof Error.Log) {
+                throw stashed;
+            }
+
+            return newStash;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async getStash(filter) {
+        const stashesList = this.prompt.cmd(`git stash list`);
+        const validFilter = stashesList.out.split('\n').filter(item => item);
+        const stashes = await Stash.load(filter);
+
+        for (const stash of stashes) {
+            validFilter.map(item =>{
+                const [prefix, _, name] = item.split(': ');
+                const stashIndex = prefix.replace('stash@{', '').replace('}', '');
+                const [_id] = name.split('__');
+
+                if (stash._id === _id) {
+                    return stash.setIndex(stashIndex);
+                }
+            });
+        }
+
+        if (typeof filter === 'string') {
+            const stash = stashes.find(item => item._id === filter);
+            return stash;
+        } else {
+            return stashes;
+        }
+    }
+
+    async applyStash(filter) {
+        try {
+            const currentChanges = await this.currentChanges();
+
+            if (currentChanges instanceof Error.Log) {
+                return currentChanges;
+            }
+
+            if (currentChanges.changes.length) {
+                await this.createStash({
+                    type: 'backup',
+                    name: 'auto-backup-' + Date.now(),
+                    description: `Autostash done to avoid loose unstashed changes when it's applying another stash`,
+                    repoUID: this.parent()._id
+                });
+            }
+
+            const { stashIndex } = await this.getStash(filter) || {};
+            const applied = await this.prompt.exec(`git stash apply${stashIndex ? ` --index ${stashIndex}` : ''}`);
+
+            if (applied instanceof Error.Log) {
+                return applied;
+            }
+
+            if (applied.success) {
+                return applied;
+            }
+        } catch (err) {
+            return new Error.Log(err).append({
+                name: '',
+                message: ``
+            });
+        }
+    }
+
     async stash(stashName) {
         try {
             const stashed = await this.prompt.exec(`git stash save "${stashName}"`);
@@ -140,25 +246,6 @@ class RepoManager extends GitHubConnection {
             }
         } catch (err) {
             throw new Error.Log(err).append({
-                name: '',
-                message: ``
-            });
-        }
-    }
-
-    async applyStash(index) {
-        try {
-            const stashed = await this.prompt.exec(`git stash apply${index ? ` --index ${index}` : ''}`);
-            
-            if (stashed instanceof Error.Log) {
-                return stashed;
-            }
-
-            if (stashed.success) {
-                return stashed;
-            }
-        } catch (err) {
-            return new Error.Log(err).append({
                 name: '',
                 message: ``
             });
@@ -193,12 +280,12 @@ class RepoManager extends GitHubConnection {
                 });
             }
 
-            const stashed = await this.stash(bringChanges ? branchName + '-b' : currentBranch);
+            const stashed = await this.createStash({ type: bringChanges && 'bring' });
 
             if (stashed instanceof Error.Log || !stashed.success) {
                 throw stashed.append({
-                    name: '',
-                    message: ``
+                    name: 'RepoManagerCheckoutStashingError',
+                    message: `An error was caught during the stash creation!`
                 });
             }
 
@@ -212,8 +299,8 @@ class RepoManager extends GitHubConnection {
                 });
             }
             
-            if (bringChanges) {
-                const apply = await this.applyStash();
+            if (bringChanges && stashed.type === 'bring') {
+                const apply = await this.applyStash(stashed._id);
                 
                 if (apply instanceof Error.Log) {
                     const isNoEntriesError = apply.message.indexOf('Command failed: git stash apply\nNo stash entries found.\n') > -1;
@@ -239,18 +326,12 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async addChanges(params) {
+    addChanges() {
         try {
-            return new Promise((resolve, reject) => {
-                try {
-                    const out = this.prompt.cmd(`git add .${this.prompt.strigifyParams(params)}`);
-                    return resolve(out);
-                } catch(err) {
-                    return reject(err);
-                }
-            });
+            const out = this.prompt.cmd(`git add .`);
+            return out;
         } catch (err) {
-            throw new Error.Log({});
+            throw new Error.Log(err);
         }
     }
 
@@ -272,6 +353,7 @@ class RepoManager extends GitHubConnection {
                     
                     if (match && match[1]) {
                         const url = match[1];
+
                         result.changes.push({
                             filePath: url
                         });
@@ -320,10 +402,6 @@ class RepoManager extends GitHubConnection {
         } catch (err) {
             return new Error.Log(err);
         }
-    }
-
-    createPullRequest() {
-        return Object;
     }
 }
 

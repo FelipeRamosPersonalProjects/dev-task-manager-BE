@@ -23,7 +23,7 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
         const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = setup || {};
 
         try {

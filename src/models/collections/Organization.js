@@ -13,7 +13,7 @@ class Organization extends _Global {
     }){
         try {
             super({...setup, validationRules: 'organizations'});
-            if (!setup.isComplete) return;
+            if (!setup.isComplete && !setup.isNew) return;
             const { name, owner, repos, projects } = setup || {};
 
             this.name = name;
