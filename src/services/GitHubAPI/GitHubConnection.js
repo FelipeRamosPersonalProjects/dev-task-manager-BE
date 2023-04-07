@@ -47,7 +47,7 @@ class GitHubConnection extends GitHubUser {
             
             return response;
         } catch(err) {
-            throw new Error.Log(err).append({
+            return new Error.Log(err).append({
                 name: 'GitHubConnectionAjax',
                 message: `An error occured during the GitHubConnection.ajax call for the URL: ${url}`
             });

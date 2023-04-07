@@ -1,6 +1,7 @@
 const LogBase = require('../maps/LogMap');
 const ValidationError = require('mongoose/lib/error/validation');
 const CastError = require('mongoose/lib/error/cast');
+const config = require('../../../config.json');
 
 class ErrorLog extends LogBase {
     constructor({
@@ -90,6 +91,7 @@ class ErrorLog extends LogBase {
             }
         }
 
+        if (config.mode === 'development') this.consolePrint(this);
         return this;
     }
 

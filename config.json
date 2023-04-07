@@ -1,4 +1,5 @@
 {
+    "mode": "development",
     "defaultLanguage": "en_US",
     "database": {
         "counterCollection": "counters",
