@@ -60,6 +60,20 @@ class GlobalMap extends ValidateSchema {
             throw new Error.Log(err);
         }
     }
+
+    async loadDB(collectionName) {
+        try {
+            const loaded = await CRUD.getDoc({collectionName, filter: this._id});
+            
+            if (loaded instanceof Error.Log || loaded.error) {
+                throw new Error.Log(loaded);
+            }
+
+            return loaded.initialize();
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = GlobalMap;

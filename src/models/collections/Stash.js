@@ -1,4 +1,5 @@
 const _Global = require('../maps/_Global');
+const CRUD = require('../../services/database/crud');
 
 class Stash extends _Global {
     constructor(setup = {
@@ -40,6 +41,19 @@ class Stash extends _Global {
         }
     }
 
+    setIndex(index) {
+        const isIndexNaN = isNaN(index);
+
+        if (isIndexNaN) {
+            throw new Error.Log({
+                name: '',
+                message: ``
+            });
+        }
+
+        this.stashIndex = !isIndexNaN ? String(index) : '';
+    }
+
     static async create(setup = Stash.prototype) {
         try {
             const newStash = new Stash({...setup, isNew: true});
@@ -50,6 +64,20 @@ class Stash extends _Global {
             }
 
             return created;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    static async load(filter) {
+        try {
+            const stash = await CRUD.query({ collectionName: 'stashes', filter }).initialize();
+
+            if (stash instanceof Error.Log) {
+                return new Error.Log(stash);
+            }
+
+            return stash;
         } catch (err) {
             throw new Error.Log(err);
         }
