@@ -9,7 +9,7 @@ class SpaceDesk extends _Global {
         projects: [Project.prototype]
     }){
         super({...setup, validationRules: 'space_desks'});
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
 
         try {
             const { spaceName, owner, projects } = setup || {};

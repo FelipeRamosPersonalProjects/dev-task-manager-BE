@@ -16,7 +16,7 @@ class Comment extends _Global {
         task: Task.prototype,
     }){
         super({...setup, validationRules: 'comments'});
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
 
         try {
             const { message, parent, user, pullRequest, ticket, task } = setup || {};
