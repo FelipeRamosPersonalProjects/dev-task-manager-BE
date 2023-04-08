@@ -406,6 +406,44 @@ class RepoManager extends GitHubConnection {
             return new Error.Log(err);
         }
     }
+
+    async createPullRequest(data) {
+        try {
+            const PR = await this.ajax(
+                `/repos/${this.repoPath}/pulls`,
+                data,
+                'POST'
+            );
+
+            if (PR instanceof Error.Log) {
+                throw PR;
+            }
+
+            if (Array.isArray(data.assignees)) {
+                const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
+                    assignees: data.assignees
+                }, 'POST');
+
+                if (addAssignees instanceof Error.Log) {
+                    throw addAssignees;
+                }
+            }
+            
+            if (Array.isArray(data.labels)) {
+                const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
+                    labels: data.labels
+                }, 'POST');
+
+                if (addLabels instanceof Error.Log) {
+                    throw addLabels;
+                }
+            }
+
+            return PR;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = RepoManager;

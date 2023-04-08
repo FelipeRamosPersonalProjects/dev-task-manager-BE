@@ -14,15 +14,11 @@ module.exports = (url, data) => {
                     httpsAgent: agent
                 });
 
-                if (response.status === 200) {
-                    if (!getAxiosResponse) {
-                        return response.data;
-                    }
-
-                    return response;
-                } else {
-                    return new Error.Log(response);
+                if (!getAxiosResponse) {
+                    return response.data;
                 }
+
+                return response;
             } catch(err) {
                 const errorRes = err && err.response;
 
@@ -44,15 +40,11 @@ module.exports = (url, data) => {
                     httpsAgent: agent
                 });
 
-                if (response.status === 200) {
-                    if (!getAxiosResponse) {
-                        return response.data;
-                    }
-
-                    return response;
-                } else {
-                    return new Error.Log(response);
+                if (!getAxiosResponse) {
+                    return response.data;
                 }
+
+                return response;
             } catch(err) {
                 throw new Error.Log(err);
             }
@@ -64,15 +56,11 @@ module.exports = (url, data) => {
                     httpsAgent: agent
                 });
 
-                if (response.status === 200) {
-                    if (!getAxiosResponse) {
-                        return response.data;
-                    }
-
-                    return response;
-                } else {
-                    throw new Error.Log(response);
+                if (!getAxiosResponse) {
+                    return response.data;
                 }
+
+                return response;
             } catch(err) {
                 throw new Error.Log(err);
             }
@@ -85,15 +73,11 @@ module.exports = (url, data) => {
                     httpsAgent: agent
                 });
 
-                if (response.status === 200) {
-                    if (!getAxiosResponse) {
-                        return response.data;
-                    }
-
-                    return new Error.Log(response);
-                } else {
-                    throw new Error.Log(response);
+                if (!getAxiosResponse) {
+                    return response.data;
                 }
+
+                return new Error.Log(response);
             } catch(err) {
                 throw new Error.Log(err);
             }

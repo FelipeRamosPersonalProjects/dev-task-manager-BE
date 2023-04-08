@@ -21,7 +21,7 @@ class GitHubConnection extends GitHubUser {
         return this.repoHostURL + path;
     }
 
-    async ajax(path, method) {
+    async ajax(path, data, method) {
         const url = this.buildURL(path);
 
         if (!method) {
@@ -38,7 +38,7 @@ class GitHubConnection extends GitHubUser {
         }
 
         try {
-            const response = await ajax(url)[method]({
+            const response = await ajax(url, data)[method]({
                 headers: {
                     'Authorization': `Token ${this.getGITHUB_USER_TOKEN()}`,
                     "Content-Type": "application/json"
