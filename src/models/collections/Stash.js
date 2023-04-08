@@ -45,10 +45,7 @@ class Stash extends _Global {
         const isIndexNaN = isNaN(index);
 
         if (isIndexNaN) {
-            throw new Error.Log({
-                name: '',
-                message: ``
-            });
+            throw new Error.Log('common.number_expected', index);
         }
 
         this.stashIndex = !isIndexNaN ? String(index) : '';
@@ -59,13 +56,13 @@ class Stash extends _Global {
             const newStash = new Stash({...setup, isNew: true});
             const created = await newStash.saveDB('stashes');
 
-            if (created.error) {
-                return new Error.Log(created.error);
+            if (created instanceof Error.Log) {
+                return created;
             }
 
             return created;
         } catch (err) {
-            throw new Error.Log(err);
+            throw new Error.Log(err).append('stash.creating_loading');
         }
     }
 
@@ -74,12 +71,12 @@ class Stash extends _Global {
             const stash = await CRUD.query({ collectionName: 'stashes', filter }).initialize();
 
             if (stash instanceof Error.Log) {
-                return new Error.Log(stash);
+                throw stash;
             }
 
             return stash;
         } catch (err) {
-            throw new Error.Log(err);
+            throw new Error.Log(err).append('stash.creating_loading');
         }
     }
 }

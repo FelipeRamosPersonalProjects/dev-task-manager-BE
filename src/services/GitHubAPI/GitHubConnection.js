@@ -47,10 +47,7 @@ class GitHubConnection extends GitHubUser {
             
             return response;
         } catch(err) {
-            return new Error.Log(err).append({
-                name: 'GitHubConnectionAjax',
-                message: `An error occured during the GitHubConnection.ajax call for the URL: ${url}`
-            });
+            return new Error.Log(err).append('services.GitHubAPI.GitHubConnection.ajax', url);
         }
     }
 }
