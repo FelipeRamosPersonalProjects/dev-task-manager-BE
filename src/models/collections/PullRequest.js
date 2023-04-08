@@ -21,7 +21,7 @@ class PullRequests extends _Global {
         task: Task.prototype
     }){
         super({...setup, validationRules: 'pull_requests'});
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
         const { name, remoteID, summary, description, fileChanges, assignedUsers, reviewers, labels, bmConfigs, comments } = setup || {};
 
         try {

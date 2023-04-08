@@ -78,6 +78,14 @@ module.exports = new Schema({
         configs: {
             type: [Object],
             default: []
+        },
+        stashes: {
+            type: [ObjectId],
+            ref: 'stashes',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'task',
+                type: 'ObjectId'
+            })
         }
     }
 });

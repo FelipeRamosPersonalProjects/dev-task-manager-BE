@@ -1,10 +1,4 @@
 const _Global = require('../maps/_Global');
-const Project = require('./Project');
-const Task = require('./Task');
-const PullRequest = require('./PullRequest');
-const User = require('./User');
-const Comment = require('./Comment');
-const SLAModel = require('../maps/SLA');
 
 class Ticket extends _Global {
     constructor(setup = {
@@ -22,7 +16,14 @@ class Ticket extends _Global {
         comments: [Comment.prototype]
     }){
         super({...setup, validationRules: 'tickets'});
-        if (!setup.isComplete) return;
+        const Project = require('./Project');
+        const Task = require('./Task');
+        const PullRequest = require('./PullRequest');
+        const User = require('./User');
+        const Comment = require('./Comment');
+        const SLAModel = require('../maps/SLA');
+
+        if (!setup.isComplete && !setup.isNew) return;
         const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = setup || {};
 
         try {

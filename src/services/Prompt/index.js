@@ -1,5 +1,7 @@
 const { execSync, exec, spawn } = require('child_process');
 const readline = require('readline');
+const ToolsCLI = require('../../interface/CLI/ToolsCLI');
+const toolsCLI = new ToolsCLI();
 
 class Prompt {
     constructor(setup = {
@@ -16,9 +18,12 @@ class Prompt {
                 const cmd = execSync(command, {cwd: this.rootPath, ...options});
 
                 if (cmd) {
+                    const output = cmd.toString();
+                    
+                    output && toolsCLI.print(output);
                     return {
                         success: true,
-                        out: cmd.toString()
+                        out: output
                     };
                 }
 
@@ -42,6 +47,7 @@ class Prompt {
                         return reject(new Error.Log(err));
                     }
     
+                    toolsCLI.print(stdout);
                     return resolve({
                         success: true,
                         out: stdout,

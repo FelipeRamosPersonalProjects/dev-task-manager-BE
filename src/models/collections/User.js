@@ -24,7 +24,7 @@ class User extends _Global {
         comments: [Repo.prototype]
     }){
         super({...setup, validationRules: 'users'});
-        if (!setup.isComplete) return;
+        if (!setup.isComplete && !setup.isNew) return;
 
         try {
             const {

@@ -100,6 +100,14 @@ module.exports = new Schema({
                 relatedField: 'owner',
                 type: 'ObjectId'
             })
+        },
+        stashes: {
+            type: [ObjectId],
+            ref: 'stashes',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'author',
+                type: 'ObjectId'
+            })
         }
     }
 });
