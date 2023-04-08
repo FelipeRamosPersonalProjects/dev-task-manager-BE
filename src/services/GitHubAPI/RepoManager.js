@@ -1,6 +1,7 @@
 const Prompt = require('../Prompt');
 const GitHubConnection = require('./GitHubConnection');
 const Stash = require('../../models/collections/Stash');
+const StringTemplateBuilder = require('../../interface/StringTemplateBuilder');
 
 class RepoManager extends GitHubConnection {
     constructor(setup = {
@@ -282,7 +283,7 @@ class RepoManager extends GitHubConnection {
 
             const stashed = await this.createStash({ type: bringChanges && 'bring' });
 
-            if (stashed instanceof Error.Log || !stashed.success) {
+            if (stashed instanceof Error.Log) {
                 throw stashed.append({
                     name: 'RepoManagerCheckoutStashingError',
                     message: `An error was caught during the stash creation!`
@@ -369,17 +370,18 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async commit(description, params) {
+    async commit(title, description, params) {
         try {
+            let stringFilesList = new StringTemplateBuilder().text(description).newLine().newLine();
+
             const fileChanges = await this.currentChanges();
-            let stringFilesList = description || '';
-            
             fileChanges.changes.map(item => {
-                stringFilesList += '- ' + item.filePath + '\n'
+                stringFilesList = stringFilesList.text(`### ${item.filePath}:`).newLine().newLine();
             });
+            stringFilesList = stringFilesList.end();
 
             const added = await this.addChanges();
-            const out = await this.prompt.cmd(`git commit -m "${stringFilesList}"${this.prompt.strigifyParams(params)}`);
+            const out = await this.prompt.exec(`git commit -m "${title}" -m "${stringFilesList}"${this.prompt.strigifyParams(params)}`);
 
             if ([
                 fileChanges.success,
@@ -395,9 +397,10 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async push(branchName, params) {
+    async push(params) {
         try {
-            const out = await this.prompt.exec(`git push origin ${branchName}${this.prompt.strigifyParams(params)}`);
+            const branchName = this.getCurrentBranch();
+            const out = await this.prompt.exec(`git push --set-upstream origin ${branchName}${this.prompt.strigifyParams(params)}`);
             return out;
         } catch (err) {
             return new Error.Log(err);

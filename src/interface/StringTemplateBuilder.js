@@ -30,8 +30,8 @@ class StringTemplateBuilder {
         return this;
     }
 
-    newLine() {
-        this.result += '\n';
+    newLine(char) {
+        this.result += char || '\n';
         return this;
     }
 
