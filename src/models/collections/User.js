@@ -8,20 +8,20 @@ const Comment = require('./Comment');
 
 class User extends _Global {
     constructor(setup = {
-        ...this,
+        ..._Global.prototype,
         firstName: '',
         lastName: '',
         fullName: '',
         email: '',
         phone: '',
-        repos: [Repo.prototype],
-        spaceDesks: [SpaceDesk.prototype],
-        tickets: [Ticket.prototype],
-        tasks: [Task.prototype],
-        myPullRequests: [PullRequest.prototype],
-        myReviews: [User.prototype],
-        pullRequestsAssigned: [PullRequest.prototype],
-        comments: [Repo.prototype]
+        repos: [Object],
+        spaceDesks: [Object],
+        tickets: [Object],
+        tasks: [Object],
+        myPullRequests: [Object],
+        myReviews: [Object],
+        pullRequestsAssigned: [Object],
+        comments: [Object]
     }){
         super({...setup, validationRules: 'users'});
         if (!setup.isComplete && !setup.isNew) return;
@@ -50,14 +50,14 @@ class User extends _Global {
             this.lastName = lastName;
             this.email = email;
             this.phone = phone;
-            this.repos = Array.isArray(repos) && repos.map(item => new Repo(item));
-            this.spaceDesks = Array.isArray(spaceDesks) && spaceDesks.map(item => new SpaceDesk(item));
-            this.tickets = Array.isArray(tickets) && tickets.map(item => new Ticket(item));
-            this.tasks = Array.isArray(tasks) && tasks.map(item => new Task(item));
-            this.myPullRequests = Array.isArray(myPullRequests) && myPullRequests.map(item => new PullRequest(item));
-            this.myReviews = Array.isArray(myReviews) && myReviews.map(item => new User(item));
-            this.pullRequestsAssigned = Array.isArray(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
-            this.comments = Array.isArray(comments) && comments.map(item => new Comment(item));
+            this.repos = !isObjectID(repos) && repos.map(item => new Repo(item));
+            this.spaceDesks = !isObjectID(spaceDesks) && spaceDesks.map(item => new SpaceDesk(item));
+            this.tickets = !isObjectID(tickets) && tickets.map(item => new Ticket(item));
+            this.tasks = !isObjectID(tasks) && tasks.map(item => new Task(item));
+            this.myPullRequests = !isObjectID(myPullRequests) && myPullRequests.map(item => new PullRequest(item));
+            this.myReviews = !isObjectID(myReviews) && myReviews.map(item => new User(item));
+            this.pullRequestsAssigned = isObjectID(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
+            this.comments = !isObjectID(comments) && comments.map(item => new Comment(item));
 
             this.placeDefault();
         } catch(err) {

@@ -10,10 +10,20 @@ module.exports = new Schema({
             required: true
         },
         remoteID: {
+            type: String
+        },
+        base: {
+            type: String,
+            required: true
+        },
+        head: {
             type: String,
             required: true
         },
         description: {
+            type: String
+        },
+        summary: {
             type: String
         },
         fileChanges: {

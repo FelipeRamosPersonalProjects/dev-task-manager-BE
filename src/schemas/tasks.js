@@ -7,11 +7,24 @@ module.exports = new Schema({
     symbol: 'TSK',
     queries: queries.tasks,
     schema: {
+        source: {
+            type: String,
+            default: 'jira',
+            enum: ['jira', 'github']
+        },
         taskName: {
             type: String,
             required: true
         },
-        taskCod: {
+        taskID: {
+            type: String,
+            required: true
+        },
+        taskURL: {
+            type: String,
+            required: true
+        },
+        taskBranch: {
             type: String
         },
         description: {
@@ -85,6 +98,14 @@ module.exports = new Schema({
             refConfig: new Schema.RefConfig({
                 relatedField: 'task',
                 type: 'ObjectId'
+            })
+        },
+        repo: {
+            type: ObjectId,
+            ref: 'repos',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'tasks',
+                type: 'array-oid'
             })
         }
     }

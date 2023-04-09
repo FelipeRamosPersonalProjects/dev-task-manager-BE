@@ -1,5 +1,7 @@
 const _Global = require('../maps/_Global');
 const RepoManager = require('../../services/GitHubAPI/RepoManager');
+const FS = require('../../services/FS');
+const CRUD = require('../../services/database/crud');
 
 class Repo extends _Global {
     constructor(setup = {
@@ -12,9 +14,9 @@ class Repo extends _Global {
         projects: [Object],
         owner: Object,
         repoManager: RepoManager.prototype
-    }){
+    }, parentTask){
         super({...setup, validationRules: 'repos'}, setup);
-        if (!setup.isComplete && !setup.isNew) return;
+        if (isObjectID(setup)) return;
 
         const User = require('./User');
         const Project = require('./Project');
@@ -54,8 +56,207 @@ class Repo extends _Global {
             }, this);
 
             this.placeDefault();
+            this._parentTask = () => parentTask;
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'Repo');
+        }
+    }
+
+    get parentTask() {
+        return this._parentTask();
+    }
+
+    getProjectTemplate(templateName) {
+        const task = this.parentTask;
+        const project = task && task.project;
+        const template = project && project.getTemplate(templateName);
+
+        return template;
+    }
+
+    getTaskCod() {
+        const task = this.parentTask;
+        return task && task.taskID;
+    }
+
+    getTicketCod() {
+        const task = this.parentTask;
+        const ticket = task && task.ticket;
+        return ticket && ticket.ticketID;
+    }
+
+    buildBranchBackupPath(currentBranch) {
+        const date = new Date();
+        const repo = this.cod;
+        const ticket = this.getTicketCod();
+        const task = this.getTaskCod();
+        const branch = currentBranch;
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const day = date.getDay();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+
+        return `temp/${repo}/${ticket}/${branch}/${year}-${month}-${day}__${hour}_${minute}`;
+    }
+
+    isCurrentBranchValid() {
+        const task = this.parentTask || {};
+
+        try {
+            const currentBranch = this.repoManager.getCurrentBranch();
+            const {parent, path} = this.parseBranchName(currentBranch) || {};
+
+            const isParentValid = [
+                (parent === 'develop'),
+                (parent === 'feature'),
+                (parent === 'release'),
+                (parent === 'bugfix')
+            ].some(item => item);
+    
+            if (!isParentValid) {
+                throw new Error.Log({
+                    name: 'RepoParseBranchName',
+                    message: `The parent branch is not valid, it should be: 'develop', 'feature', 'release' or 'bugfix'!\nBut received "${parent}".`
+                });
+            }
+    
+            if (path.length > 1) {
+                const match = path.find(item => item === task.taskID);
+    
+                if (match) {
+                    return true;
+                }
+            }
+    
+            return false;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    parseBranchName(name) {
+        if (typeof name !== 'string') return {};
+
+        const splitted = name.split('/');
+        const parent = splitted.length && splitted[0];
+
+        return {
+            parent,
+            path: splitted,
+            branch: splitted.length > 1 ? splitted[1] : ''
+        }
+    }
+
+    async createBranchBackup() {
+        try {
+            const currentBranch = this.repoManager.getCurrentBranch();
+            const current = await this.repoManager.currentChanges();
+
+            if (currentBranch instanceof Error.Log) {
+                throw currentBranch;
+            }
+            if (current instanceof Error.Log) {
+                throw current;
+            }
+
+            const filesToCopy = current.success && current.changes || [];
+            const destDir = this.buildBranchBackupPath(currentBranch);
+
+            await FS.copyFiles(filesToCopy, this.localPath, destDir);
+            return current;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async createFinalBranch() {
+        try {
+            const task = this.parentTask;
+            const project = task && task.project;
+            
+            if (project) {
+                const branchTemplate = project.getTemplate('branchName');
+                const template = await branchTemplate();
+                const branchName = template.toMarkdown({taskID: task.taskID})
+                const newBranch = await this.repoManager.createBranch(branchName, this.baseBranch, {bringChanges: true});
+
+                if (newBranch instanceof Error.Log) {
+                    throw newBranch;
+                }
+    
+                return newBranch;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+    
+    async commitChanges() {
+        try {
+            const isValidBranch = this.isCurrentBranchValid();
+            const task = this.parentTask;
+            const titleTemplate = await this.getProjectTemplate('prTitle')();
+            const title = titleTemplate.toMarkdown({taskID: task.taskID, taskTitle: task.taskName});
+
+            if (isValidBranch) {
+                const commit = await this.repoManager.commit(title, task.ticket.description);
+                if (commit instanceof Error.Log) {
+                    throw commit;
+                }
+
+                toolsCLI.print(commit.out);
+                const push = await this.repoManager.push();
+                if (push instanceof Error.Log) {
+                    throw push;
+                }
+
+                toolsCLI.print(push.out);
+                return {
+                    success: true,
+                    commit: commit.out,
+                    push: push.out
+                }
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async buildPR() {
+        try {
+            const user = await this.getCurrentUser();
+            const task = this.parentTask;
+            const ticket = task && task.ticket;
+
+            if (task) {
+                const compared = await this.repoManager.compareBranches(this.baseBranch);
+                const prTitleTemplate = await this.getProjectTemplate('prTitle')();
+                const description = await this.getProjectTemplate('prDescription')();
+
+                const title = prTitleTemplate.toMarkdown({taskID: task.taskID, taskTitle: task.taskName});
+                const objData = {
+                    taskID: task.taskID,
+                    taskURL: task.taskURL,
+                    ticketURL: ticket.ticketURL,
+                    isNew: true,
+                    assignedUsers: [user._id],
+                    name: title,
+                    summary: task.description,
+                    owner: user._id,
+                    fileChanges: compared.files,
+                    task: task._id,
+                    ticket: ticket._id,
+                    base: this.parentTask.project.baseBranch || this.baseBranch,
+                    head: this.parentTask.taskBranch,
+                    labels: []
+                };
+                objData.description = description.toMarkdown(objData);
+
+                return objData;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
         }
     }
 }

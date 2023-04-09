@@ -1,5 +1,6 @@
 const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
+const TemplateOptionsMap = require('./map/TemplatesOptions');
 
 module.exports = new Schema({
     name: 'space_desks',
@@ -25,6 +26,10 @@ module.exports = new Schema({
                 relatedField: 'spaceDesks',
                 type: 'array-oid'
             })
+        },
+        templates: {
+            type: TemplateOptionsMap,
+            default: {}
         }
     }
 });

@@ -1,5 +1,5 @@
-const pullRequests = require('./pullRequests');
+const osf = require('./osf');
 
 module.exports = {
-    pullRequests
+    osf
 }

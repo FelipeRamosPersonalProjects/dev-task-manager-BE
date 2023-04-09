@@ -6,6 +6,11 @@ module.exports = new Schema({
     name: 'tickets',
     symbol: 'TICK',
     schema: {
+        source: {
+            type: String,
+            default: 'jira',
+            enum: ['jira', 'github']
+        },
         ticketID: {
             type: String,
             required: true,

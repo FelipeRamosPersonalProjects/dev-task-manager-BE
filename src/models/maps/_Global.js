@@ -1,6 +1,7 @@
 const ValidateSchema = require('../../validation/validateSchema');
 const CRUD = require('../../services/database/crud');
 const config = require('../../../config.json');
+const { isObjectID } = require('../../helpers/database/relationalFields');
 
 class GlobalMap extends ValidateSchema {
     constructor(setup = {
@@ -11,8 +12,8 @@ class GlobalMap extends ValidateSchema {
         createdAt: Date(),
         modifiedAt: Date()
     }, parent) {
+        if (isObjectID(setup)) return;
         super(setup.validationRules || {});
-        if (!setup.isComplete && !setup.isNew) return;
 
         try {
             this.isNew = setup.isNew;
@@ -34,9 +35,9 @@ class GlobalMap extends ValidateSchema {
         const user = await CRUD.getDoc({
             collectionName: 'users',
             filter: UID
-        });
+        }).initialize();
 
-        return user.doc;
+        return user;
     }
 
     async saveDB(collectionName) {
