@@ -8,12 +8,12 @@ async function CRUDView() {
         .text(`Create, Read, Update or Delete your document on database collections`)
     .end();
     
-    const Template = new DashedHeaderLayout({
+    const Template = await new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'DevDESK CLI - CRUD',
         headerDescription,
         Content: new MainMenuDescription()
-    });
+    }).init();
     
     const navigator = new ViewCLI.ViewNavigator({ options: [
         { title: 'Create', description: 'Create documents under a collection.', targetView: 'crud/create' },

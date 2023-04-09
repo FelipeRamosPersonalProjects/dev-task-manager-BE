@@ -1,4 +1,6 @@
 const ValidateSchema = require('../validation/validateSchema');
+const FS = require('../services/FS');
+const ToolsCLI = require('./CLI/ToolsCLI');
 
 const defaultRules = {
     componentName: { type: String, default: (() => 'comp-' + Date.now())()},
@@ -16,6 +18,7 @@ class Component extends ValidateSchema {
     }, validationRules){
         super(typeof validationRules === 'string' ? validationRules : {...defaultRules, ...validationRules});
         const self = this;
+        this.tools = new ToolsCLI();
 
         try {
             const { componentName, description, outputModel, types } = setup || {};
@@ -36,6 +39,32 @@ class Component extends ValidateSchema {
             Object.keys(self).map(key => delete self[key]);
             Object.keys(error).map(key => self[key] = error[key]);
             throw error.stack;
+        }
+    }
+
+    async init() {
+        try {
+            this.outputModel = await this.loadSourceFile();
+            return this;
+        } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async loadSourceFile(path) {
+        try {
+            if (!path && !this.SOURCE_PATH) {
+                return this.outputModel;
+            }
+
+            const loaded = await FS.readFile(path || this.SOURCE_PATH);
+            if (loaded instanceof Error.Log) {
+                throw loaded;
+            }
+
+            return loaded.toString();
+        } catch(err) {
+            throw new Error.Log(err);
         }
     }
 
@@ -81,7 +110,7 @@ class Component extends ValidateSchema {
         return stringResult;
     }
 
-    toMarkdown(params) {
+    async toMarkdown(params) {
         // Find substrings between ##{{ and }}## and replace by the param value
         const regex = /##{{(.*?)}}##/g;
         const substrings = [];
@@ -92,32 +121,60 @@ class Component extends ValidateSchema {
             substrings.push(match[1]);
         }
 
-        substrings.map(sub => {
+        for (let sub of substrings) {
             const [key, type, child] = sub.split(':');
+            const paramValue = params && params[key] || this[key];
             let value;
             let toReplaceString;
 
             if (type === 'string') {
-                value = this.string(params[key]);
+                value = this.string(paramValue);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (type === 'array') {
-                value = this.array(params[key], child);
+                value = this.array(paramValue, child);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (type === 'date') {
-                value = this.date(params[key]);
+                value = this.date(paramValue);
+                toReplaceString = `##{{${sub}}}##`;
+            }
+
+            if (type === 'component') {
+                value = paramValue ? await paramValue.renderToString() : ' ';
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (value) {
                 result = result.replace(new RegExp(toReplaceString, 'g'), value);
             }
-        });
+        }
 
         return result;
+    }
+
+    async renderToString(params) {
+        try {
+            const stringResult = await this.toMarkdown(params);
+            if (stringResult instanceof Error.Log) {
+                throw stringResult;
+            }
+
+            return stringResult;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async printOnScreen(params) {
+        try {
+            const stringResult = await this.renderToString(params);
+            this.tools.printTemplate(stringResult);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 }
 

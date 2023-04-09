@@ -9,17 +9,19 @@ async function HomeView() {
         .newLine()
         .indent().text(`Pull Requests, Reviews, Testing Steps, etc.`)
     .end();
+    const templateInit = await new DashedHeaderLayout({
+        headerText: 'DevDESK CLI - Home',
+        headerDescription,
+        Content: new MainMenuDescription()
+    }, this).init();
 
     return new ViewCLI({
         name: 'home',
-        Template: new DashedHeaderLayout({
-            headerText: 'DevDESK CLI - Home',
-            headerDescription,
-            Content: new MainMenuDescription()
-        }, this),
+        Template: templateInit,
         navigator: { options: [
-            { title: 'CRUD             ', description: 'Database CRUD operations', targetView: 'crud/main' },
-            { title: 'Tickets and Tasks', description: 'Manage your tickets and tasks', targetView: 'ticketsAndTasks' }
+            { title: 'CRUD                ', description: 'Database CRUD operations', targetView: 'crud/main' },
+            { title: 'Tickets and Tasks   ', description: 'Manage your tickets and tasks', targetView: 'ticketsAndTasks' },
+            { title: 'Pull Requests       ', description: 'Manage your pull requests', targetView: 'prs_menu' },
         ]}
     }, this);
 }

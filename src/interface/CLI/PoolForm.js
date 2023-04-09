@@ -35,6 +35,10 @@ class QuestionModel {
         });
     }
 
+    get tools() {
+        return tools;
+    }
+
     setValue(key, value) {
         return this.ctrl().setValue(key, value);
     }
@@ -275,11 +279,11 @@ class PoolForm extends FormCtrlCLI {
         return currentValue;
     }
 
-    setValue(keyPath, value) {
+    setValue(keyPath, value, override) {
         const currentValue = this.getValue(keyPath)
 
-        if (typeof value === 'object' && !Array.isArray(value)) {
-            this.values[keyPath] = {...currentValue, ...value};
+        if (typeof value === 'object' && !Array.isArray(value) ) {
+            this.values[keyPath] = override ? {...currentValue, ...value} : value;
         } else {
             this.values[keyPath] = value;
         }

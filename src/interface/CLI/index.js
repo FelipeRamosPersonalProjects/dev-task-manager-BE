@@ -43,7 +43,7 @@ class CLI extends ToolsCLI {
             const loadedView = await View.call(this, viewParams);
             
             this.setCurrentView(loadedView);
-            loadedView.render();
+            await loadedView.render();
 
             return this;
         } else {
