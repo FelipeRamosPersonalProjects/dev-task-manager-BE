@@ -13,12 +13,12 @@ const bodySchema = {
 async function CreateView(params) {
     const { defaultData } = params || {};
 
-    const Template = new DashedHeaderLayout({
+    const Template = await new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'Create - CRUD',
         headerDescription: 'Create your documents under collections.',
         Content: new MainMenuDescription()
-    });
+    }).init();
 
     return new ViewCLI({
         name: 'crud/create',

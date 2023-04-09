@@ -14,16 +14,22 @@ async function DocDisplay(params) {
     }
 
     try {
-        const document = await CRUD.getDoc({ collectionName, filter }).defaultPopulate().initialize();
+        let document = await CRUD.getDoc({ collectionName, filter });
+
+        if (document.defaultPopulate) {
+            document = document.defaultPopulate().initialize();
+        } else {
+            document = document.initialize();
+        }
     
         return new ViewCLI({
             name: 'docDisplay',
-            Template: new DashedHeaderLayout({
+            Template: await new DashedHeaderLayout({
                 componentName: 'Document View',
                 headerText: headerText || document.displayName,
                 headerDescription: headerDescription,
                 Content: new DisplayDocument({ document })
-            }),
+            }).init(),
             navigator: new ViewCLI.ViewNavigator({ options: [
                 {
                     title: 'Go back to home view',

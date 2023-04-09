@@ -87,7 +87,7 @@ class ViewNavigator extends ToolsCLI {
         }
 
         try {
-            let template = new StringTemplateBuilder().newLine();
+            let template = new StringTemplateBuilder();
             
             options.map((opt, i) => {
                 if (opt._schema) {

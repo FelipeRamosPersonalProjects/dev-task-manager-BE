@@ -10,10 +10,10 @@ const bodySchema = {
 async function RemoveView() {
     return new ViewCLI({
         name: 'crud/remove',
-        Template: new DashedHeaderLayout({
+        Template: await new DashedHeaderLayout({
             headerText: 'Delete - CRUD',
             description: 'Delete your document under your collections.'
-        }),
+        }).init(),
         poolForm: {
             startQuestion: 'delete-form',
             events: {

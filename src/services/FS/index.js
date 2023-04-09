@@ -2,6 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 class FileSystemService {
+    static async readFile(path) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(path, (err, dataBuff) => {
+                if (err) throw reject(new Error.Log(err));
+                
+                return resolve(dataBuff);
+            });
+        });
+    }
+
     static async copyFiles(filesToCopy, sourceDir, destDir) {
         if (!Array.isArray(filesToCopy)) {
             throw new Error.Log({
