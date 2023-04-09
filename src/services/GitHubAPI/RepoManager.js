@@ -2,10 +2,12 @@ const Prompt = require('../Prompt');
 const GitHubConnection = require('./GitHubConnection');
 const Stash = require('../../models/collections/Stash');
 const StringTemplateBuilder = require('../../interface/StringTemplateBuilder');
+const Compare = require('./Compare');
+const FileChange = require('./FileChange');
 
 class RepoManager extends GitHubConnection {
     constructor(setup = {
-        ...this,
+        ...GitHubConnection.prototype,
         repoName: '',
         repoPath: '',
         localPath: ''
@@ -123,7 +125,7 @@ class RepoManager extends GitHubConnection {
     }
 
     buildStashName({_id, type}) {
-        return `${_id}__${type}`;
+        return `[dev-desk]${_id}__${type}`;
     }
 
     async createStash(setup) {
@@ -308,6 +310,11 @@ class RepoManager extends GitHubConnection {
 
     async currentChanges(params) {
         try {
+            const added = this.addChanges();
+            if (added instanceof Error.Log) {
+                return added;
+            }
+
             const consoleResult = await this.prompt.exec(`git --no-pager diff --staged${this.prompt.strigifyParams(params)}`);
             const regex = /diff --git a\/(.*?)\s/;
 
@@ -325,9 +332,9 @@ class RepoManager extends GitHubConnection {
                     if (match && match[1]) {
                         const url = match[1];
 
-                        result.changes.push({
-                            filePath: url
-                        });
+                        result.changes.push(new FileChange({
+                            filename: url
+                        }));
                     }
                 });
 
@@ -350,7 +357,7 @@ class RepoManager extends GitHubConnection {
             }
 
             fileChanges.changes.map(item => {
-                stringFilesList = stringFilesList.text(`### ${item.filePath}:`).newLine().newLine();
+                stringFilesList = stringFilesList.text(`### ${item.filename}:`).newLine().newLine();
             });
             stringFilesList = stringFilesList.end();
 
@@ -380,6 +387,26 @@ class RepoManager extends GitHubConnection {
         }
     }
 
+    async compareBranches(base, head) {
+        try {
+            if (!base) {
+                throw new Error.Log({
+                    name: 'dfsdf',
+                    message: 'gsfzfdbf'
+                });
+            }
+
+            if (!head) {
+                head = this.getCurrentBranch();
+            }
+
+            const compared = await this.ajax(`/repos/${this.repoPath}/compare/${base}...${head}`);
+            return new Compare(compared);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     async createPullRequest(data) {
         try {
             const PR = await this.ajax(
@@ -392,9 +419,9 @@ class RepoManager extends GitHubConnection {
                 throw PR;
             }
 
-            if (Array.isArray(data.assignees)) {
+            if (Array.isArray(data.assignedUsers)) {
                 const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                    assignees: data.assignees
+                    assignees: data.assignedUsers
                 }, 'POST');
 
                 if (addAssignees instanceof Error.Log) {
@@ -404,7 +431,10 @@ class RepoManager extends GitHubConnection {
             
             if (Array.isArray(data.labels)) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
-                    labels: data.labels
+                    labels: [
+                        'bug',
+                        'enhancement'
+                    ],
                 }, 'POST');
 
                 if (addLabels instanceof Error.Log) {
@@ -414,7 +444,7 @@ class RepoManager extends GitHubConnection {
 
             return PR;
         } catch (err) {
-            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.creating_pull_request');
+            return new Error.Log(err).append('services.GitHubAPI.RepoManager.creating_pull_request');
         }
     }
 }

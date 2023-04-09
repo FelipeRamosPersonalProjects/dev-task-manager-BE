@@ -3,10 +3,16 @@ function defaultPopulate() {
         {
             path: 'project',
             model: 'projects',
-            populate: [{
-                path: 'repos',
-                model: 'repos',
-            }]
+            populate: [
+                {
+                    path: 'repos',
+                    model: 'repos'
+                },
+                {
+                    path: 'spaceDesk',
+                    model: 'space_desks'
+                }
+            ]
         },
         {
             path: 'assignedUsers',
@@ -27,6 +33,10 @@ function defaultPopulate() {
         {
             path: 'comments',
             model: 'comments'
+        },
+        {
+            path: 'repo',
+            model: 'repos'
         }
     ];
 

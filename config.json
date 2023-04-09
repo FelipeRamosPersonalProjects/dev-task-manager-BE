@@ -1,7 +1,7 @@
 {
     "mode": "development",
     "defaultLanguage": "en_US",
-    "testUser": "6429fd97efc546991a344131",
+    "testUser": "64312c951465bc5d22f26abe",
     "database": {
         "counterCollection": "counters",
         "logCollection": "logs",

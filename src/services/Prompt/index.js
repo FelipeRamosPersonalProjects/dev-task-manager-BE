@@ -47,7 +47,6 @@ class Prompt {
                         return reject(new Error.Log(err));
                     }
     
-                    toolsCLI.print(stdout);
                     return resolve({
                         success: true,
                         out: stdout,

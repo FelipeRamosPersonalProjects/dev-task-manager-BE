@@ -90,6 +90,18 @@ class ValidationBase {
         if (!this.success) return false;
         return dontReturnValue ? true : this.value; 
     }
+
+    static isObjectID(obj) {
+        if (typeof obj === 'object') {
+            if (Array.isArray(obj) && obj.length) {
+                return isObjectID(obj[0]);
+            }
+
+            return Boolean(obj._bsontype === 'ObjectID');
+        }
+    
+        return false
+    }
 }
 
 function build(value) {
