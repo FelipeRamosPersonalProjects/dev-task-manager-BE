@@ -38,7 +38,7 @@ async function RemoveView() {
                     id: 'confirmation',
                     text: `Are you sure that you want to delete this document?\n>> (y) or (n): `,
                     events: {
-                        onAnswer: async (ev, answer) => {
+                        onAnswer: async (ev, _, answer) => {
                             const deleteFilter = ev.ctrl().getValue('deleteFilter');
 
                             if (answer === 'y') {
