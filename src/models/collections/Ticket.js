@@ -27,10 +27,9 @@ class Ticket extends _Global {
         const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = setup || {};
 
         try {
-            this.ticketID = ticketID;
             this.ticketURL = ticketURL;
+            this.ticketID = ticketID;
             this.title = title;
-            this.displayName = `[${ticketID}] ${title}`;
             this.description = description;
             this.status = status;
             this.project = project && new Project(project);
@@ -44,6 +43,10 @@ class Ticket extends _Global {
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'Ticket');
         }
+    }
+
+    get displayName() {
+        return `[${this.ticketID}] ${this.title}`;
     }
 }
 

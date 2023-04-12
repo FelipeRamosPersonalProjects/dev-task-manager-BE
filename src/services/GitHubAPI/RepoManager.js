@@ -421,7 +421,7 @@ class RepoManager extends GitHubConnection {
 
             if (Array.isArray(data.assignedUsers)) {
                 const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                    assignees: data.assignedUsers
+                    assignees: ['FelipeRamos1202']
                 }, 'POST');
 
                 if (addAssignees instanceof Error.Log) {
@@ -431,10 +431,7 @@ class RepoManager extends GitHubConnection {
             
             if (Array.isArray(data.labels)) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
-                    labels: [
-                        'bug',
-                        'enhancement'
-                    ],
+                    labels: ['support'],
                 }, 'POST');
 
                 if (addLabels instanceof Error.Log) {
