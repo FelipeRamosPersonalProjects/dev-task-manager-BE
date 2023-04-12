@@ -24,8 +24,8 @@ class ViewCLI extends ToolsCLI {
         
         if (!this.poolForm) {
             this.poolForm = new PoolForm(ViewNavigator.navDefaultQuestions, this);
-            this.poolForm.setListener('onAnswer', (_, answer) => {
-                this.navigator.navTo(answer);
+            this.poolForm.setListener('onAnswer', (ev) => {
+                this.navigator.navTo(ev.answer);
             });
         }
 

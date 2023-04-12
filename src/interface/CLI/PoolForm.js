@@ -117,6 +117,8 @@ class EventsHandlers {
         this.onAnswer = onAnswer;
         this.onError = onError;
         this.onEnd = onEnd;
+
+        this.tools = new ToolsCLI();
     }
 
     async triggerEvent(...args) {
@@ -128,57 +130,53 @@ class EventsHandlers {
     }
 
     async start (ev) {
-        await this.triggerEvent('onStart', ev);
+        await this.triggerEvent('onStart', ev, this.tools);
         return ev;
     }
 
     async trigger (ev) {
-        await this.triggerEvent('onTrigger', ev);
+        await this.triggerEvent('onTrigger', ev, this.tools);
         return ev;
     }
 
     async next (ev) {
-        await this.triggerEvent('onNext', ev);
+        await this.triggerEvent('onNext', ev, this.tools);
         return ev;
     }
 
     async back (ev) {
-        await this.triggerEvent('onBack', ev);
+        await this.triggerEvent('onBack', ev, this.tools);
         console.log('>> onBack');
         return ev;
     }
 
     async repeat (ev) {
-        await this.triggerEvent('onRepeat', ev);
+        await this.triggerEvent('onRepeat', ev, this.tools);
         console.log('>> onRepeat');
         return ev;
     }
 
-    async answer (ev, answer) {
-        await this.triggerEvent('onAnswer', ev, answer);
-
-        if (!answer && ev.required) {
+    async answer (ev) {
+        if (!ev.answer && ev.required) {
             const error = new Error.Log({
                 name: 'AnswerRequired',
                 message: `The answer for this question is required!`
             });
 
-            await this.triggerEvent('error', this, error);
             return ev.trigger();
         }
 
+        await this.triggerEvent('onAnswer', ev, this.tools, ev.answer);
         return ev;
     }
 
     async error (ev, err) {
-        await this.triggerEvent('onError', ev);
-        tools.printError(err);
-        await ev.trigger();
+        await this.triggerEvent('onError', ev, this.tools);
         return ev;
     }
 
     async end (ev) {
-        await this.triggerEvent('onEnd', ev);
+        await this.triggerEvent('onEnd', ev, this.tools);
         return ev;
     }
 }
