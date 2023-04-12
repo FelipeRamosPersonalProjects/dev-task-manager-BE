@@ -108,9 +108,7 @@ class ErrorLog extends LogBase {
     }
 
     consolePrint() {
-        console.error('---------------------------------------------------------------');
-        console.error(this.stack);
-        console.error('---------------------------------------------------------------');
+        toolsCLI.printError(this);
         return this;
     }
 }

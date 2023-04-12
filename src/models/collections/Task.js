@@ -27,14 +27,28 @@ class Task extends _Global {
         const Repo = require('./Repo');
 
         try {
-            const { source, taskBranch, taskName, taskID, taskURL, description, project, assignedUser, ticket, dueDate, sharedWith, pullRequests, comments, repo } = setup || {};
+            const {
+                source,
+                taskBranch,
+                taskName,
+                taskID,
+                taskURL,
+                description,
+                project,
+                assignedUser,
+                ticket,
+                dueDate,
+                sharedWith,
+                pullRequests,
+                comments,
+                repo
+            } = setup || {};
 
             this.source = source;
             this.taskName = taskName;
             this.taskID = taskID;
             this.taskURL = taskURL;
             this.taskBranch = taskBranch;
-            this.displayName = taskName;
             this.description = description;
             this.dueDate = dueDate;
             this.assignedUser = !isObjectID(assignedUser) ? new User(assignedUser) : {};
@@ -52,6 +66,10 @@ class Task extends _Global {
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Task');
         }
+    }
+
+    get displayName() {
+        return this.taskName;
     }
 
     get repoManager() {
@@ -128,6 +146,10 @@ class Task extends _Global {
                 isReady: true
             }
         } catch (err) {
+            if (err.name === 'GitHubAPIRepoManagerBranchIsExist') {
+                return err;
+            }
+
             throw new Error.Log(err);
         }
     }
