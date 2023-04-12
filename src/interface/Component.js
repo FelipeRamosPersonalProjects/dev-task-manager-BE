@@ -3,7 +3,7 @@ const FS = require('../services/FS');
 const ToolsCLI = require('./CLI/ToolsCLI');
 
 const defaultRules = {
-    componentName: { type: String, default: (() => 'comp-' + Date.now())()},
+    componentName: { type: String, default: () => 'comp-' + Date.now()},
     description: { type: String },
     outputModel: { type: String, default: ''},
     types: { type: Object, default: {} }
@@ -28,10 +28,6 @@ class Component extends ValidateSchema {
             this.outputModel = outputModel;
             this.types = types;
 
-            if (this.validate({...this, ...setup})) {
-                throw new Error.Log(this.validationResult);
-            }
-
             this.placeDefault();
         } catch(err) {
             const error = new Error.Log(err).append('common.required_params', err.validationErrors, this.componentName);
@@ -45,6 +41,13 @@ class Component extends ValidateSchema {
     async init() {
         try {
             this.outputModel = await this.loadSourceFile();
+            const keys = Object.keys(this.types);
+
+            for (let key of keys) {
+                const Type = this.types[key];
+                this.types[key] = await new Type().init();
+            }
+
             return this;
         } catch(err) {
             throw new Error.Log(err);
@@ -76,14 +79,14 @@ class Component extends ValidateSchema {
         }
     }
 
-    array(value = [], childTypeName) {
+    async array(value = [], childTypeName) {
         const Child = this.types[childTypeName];
         let result = '';
 
         if (Array.isArray(value)) {
-            value.map((item) => {
-                result += Child.toMarkdown(item);
-            });
+            for (let item of value) {
+                result += await Child.renderToString(item);
+            }
         }
 
         return result;
@@ -115,6 +118,10 @@ class Component extends ValidateSchema {
         const regex = /##{{(.*?)}}##/g;
         const substrings = [];
         let result = this.outputModel;
+        
+        if (this.validate({...this, ...params})) {
+            throw new Error.Log(this.validationResult);
+        }
 
         let match;
         while (match = regex.exec(this.outputModel)) {
@@ -133,7 +140,7 @@ class Component extends ValidateSchema {
             }
 
             if (type === 'array') {
-                value = this.array(paramValue, child);
+                value = await this.array(paramValue, child);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
