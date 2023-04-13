@@ -130,54 +130,86 @@ class EventsHandlers {
     }
 
     async start (ev) {
-        await this.triggerEvent('onStart', ev, this.tools);
-        return ev;
+        try {
+            await this.triggerEvent('onStart', ev, this.tools);
+            return ev;
+        } catch (err) {
+            this.triggerEvent('error', this, err);
+        }
     }
 
     async trigger (ev) {
-        await this.triggerEvent('onTrigger', ev, this.tools);
-        return ev;
+        try {
+            await this.triggerEvent('onTrigger', ev, this.tools);
+            return ev;
+        } catch (err) {
+            this.triggerEvent('error', this, err);
+        }
     }
 
     async next (ev) {
-        await this.triggerEvent('onNext', ev, this.tools);
-        return ev;
+        try {
+            await this.triggerEvent('onNext', ev, this.tools);
+            return ev;
+        } catch (err) {
+            this.triggerEvent('error', this, err);
+        }
     }
 
     async back (ev) {
-        await this.triggerEvent('onBack', ev, this.tools);
-        console.log('>> onBack');
-        return ev;
+        try {
+            await this.triggerEvent('onBack', ev, this.tools);
+            console.log('>> onBack');
+            return ev;
+        } catch (err) {
+            this.triggerEvent('error', this, err);
+        }
     }
 
     async repeat (ev) {
-        await this.triggerEvent('onRepeat', ev, this.tools);
-        console.log('>> onRepeat');
-        return ev;
+        try {
+            await this.triggerEvent('onRepeat', ev, this.tools);
+            console.log('>> onRepeat');
+            return ev;
+        } catch (err) {
+            this.triggerEvent('error', this, err);
+        }
     }
 
     async answer (ev) {
-        if (!ev.answer && ev.required) {
-            const error = new Error.Log({
-                name: 'AnswerRequired',
-                message: `The answer for this question is required!`
-            });
-
-            return ev.trigger();
+        try {
+            if (!ev.answer && ev.required) {
+                const error = new Error.Log({
+                    name: 'AnswerRequired',
+                    message: `The answer for this question is required!`
+                });
+    
+                return ev.trigger();
+            }
+    
+            await this.triggerEvent('onAnswer', ev, this.tools, ev.answer);
+            return ev;
+        } catch (err) {
+            this.triggerEvent('error', this, err);
         }
-
-        await this.triggerEvent('onAnswer', ev, this.tools, ev.answer);
-        return ev;
     }
 
     async error (ev, err) {
-        await this.triggerEvent('onError', ev, this.tools);
-        return ev;
+        try {
+            await this.triggerEvent('onError', ev, this.tools, new Error.Log(err));
+            return ev;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     async end (ev) {
-        await this.triggerEvent('onEnd', ev, this.tools);
-        return ev;
+        try {
+            await this.triggerEvent('onEnd', ev, this.tools);
+            return ev;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 }
 

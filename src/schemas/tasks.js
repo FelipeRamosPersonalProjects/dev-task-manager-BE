@@ -30,8 +30,9 @@ module.exports = new Schema({
             immutable: true,
             unique: true
         },
-        taskBranch: {
-            type: String
+        branchVersion: {
+            type: Number,
+            default: 1
         },
         description: {
             type: String

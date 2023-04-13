@@ -109,7 +109,8 @@ class Repo extends _Global {
                 (parent === 'develop'),
                 (parent === 'feature'),
                 (parent === 'release'),
-                (parent === 'bugfix')
+                (parent === 'bugfix'),
+                (parent === this.baseBranch)
             ].some(item => item);
     
             if (!isParentValid) {

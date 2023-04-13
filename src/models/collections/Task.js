@@ -29,7 +29,7 @@ class Task extends _Global {
         try {
             const {
                 source,
-                taskBranch,
+                branchVersion,
                 taskName,
                 taskID,
                 taskURL,
@@ -48,7 +48,7 @@ class Task extends _Global {
             this.taskName = taskName;
             this.taskID = taskID;
             this.taskURL = taskURL;
-            this.taskBranch = taskBranch;
+            this.branchVersion = branchVersion;
             this.description = description;
             this.dueDate = dueDate;
             this.assignedUser = !isObjectID(assignedUser) ? new User(assignedUser) : {};
@@ -74,6 +74,27 @@ class Task extends _Global {
 
     get repoManager() {
         return (typeof this.repo === 'object') && this.repo.repoManager;
+    }
+
+    get ticketID() {
+        return this.ticket && this.ticket.ticketID;
+    }
+
+    get taskBranch() {
+        try {
+            const prCount = this.pullRequests.length + 1;
+            const versionCount = ((prCount > this.branchVersion) || !this.branchVersion) ? prCount : this.branchVersion;
+
+            if (this.taskID) {
+                if (this.pullRequests.length || versionCount > 1) {
+                    return `feature/${this.taskID}-v${versionCount}`;
+                } else {
+                    return `feature/${this.taskID}`;
+                }
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     async createPR () {

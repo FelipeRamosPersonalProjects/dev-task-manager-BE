@@ -99,14 +99,17 @@ class RepoManager extends GitHubConnection {
 
         try {
             const branch = await this.isBranchExist(name);
-            const currentBranch = this.getCurrentBranch();
-
-            if (currentBranch !== baseName) {
-                return new Error.Log('services.GitHubAPI.RepoManager.base_branch_is_not_current');
+            if (branch.isExist) {
+                const isExistError = new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
+                ToolsCLI.print(isExistError.message, 'INFO');
+                return isExistError;
             }
 
-            if (branch.isExist) {
-                return new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
+            const currentBranch = this.getCurrentBranch();
+            if (currentBranch !== baseName) {
+                const currentError = new Error.Log('services.GitHubAPI.RepoManager.base_branch_is_not_current');
+                ToolsCLI.print(currentError.message, 'WARN');
+                return currentError;
             }
 
             const prompt = await this.prompt.exec(`git branch ${name} ${baseName}`);
@@ -333,7 +336,8 @@ class RepoManager extends GitHubConnection {
                         const url = match[1];
 
                         result.changes.push(new FileChange({
-                            filename: url
+                            filename: url,
+                            patch: item
                         }));
                     }
                 });
