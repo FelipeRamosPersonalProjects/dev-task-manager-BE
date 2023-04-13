@@ -26,15 +26,18 @@ async function CreatePRsView({ defaultData }) {
                     text: `Please, enter the task id that you want to create a PR (eg: TASK-4297): `,
                     events: {
                         onAnswer: async (ev, {print}, answer) => {
-                            print('Loading the task document from database...');
+                            print('Loading the task document from database...\n\n');
                             onAnswerDefault(ev, answer);
 
                             try {
-                                const task = await CRUD.getDoc({collectionName: 'tasks', filter: {taskID: answer}}).defaultPopulate().initialize();
+                                const taskQuery = await CRUD.getDoc({collectionName: 'tasks', filter: {taskID: answer}}).defaultPopulate();
+                                if (!taskQuery) {
+                                    print(`The task "${answer}" provided, wasn't found! Please try again...`, 'TASK-NOT-FOUND');
+                                    return ev.trigger();
+                                }
+                                
+                                const task = taskQuery.initialize();
                                 if (task instanceof Error.Log) {
-                                    print(`\nThe task "${answer}" wasn't found!`);
-                                    print(`Please try again...\n\n`);
-
                                     task.consolePrint();
                                     return ev.trigger();
                                 }
@@ -42,9 +45,14 @@ async function CreatePRsView({ defaultData }) {
                                 if (task) {
                                     ev.setValue('task', task, true);
                                     return task;
+                                } else {
+                                    throw new Error.Log({
+                                        name: 'TASK-LOADING-ERROR',
+                                        message: `Error caugth on task loading process!`
+                                    });
                                 }
                             } catch (err) {
-                                ev.events.triggerEvent('error', ev, err);
+                                throw new Error.Log(err);
                             }
                         }
                     }
@@ -57,25 +65,32 @@ async function CreatePRsView({ defaultData }) {
                     events: {
                         onTrigger: async (ev) => {
                             const task = ev.getValue('task');
-                            const Component = await new TaskDocument().init(task)
+                            const Component = await new TaskDocument().init();
                             
                             await Component.printOnScreen(task);
                         },
                         onAnswer: async (ev, { boolAnswer }, answer) => {
-                            onAnswerDefault(ev, answer);
-                            const task = ev.getValue('task');
-
-                            if (boolAnswer(answer)) {
-                                const pullRequest = await task.createPR();
-                                if (pullRequest instanceof Error.Log) {
-                                    pullRequest.consolePrint();
-                                    return ev.trigger();
+                            try {
+                                onAnswerDefault(ev, answer);
+                                const task = ev.getValue('task');
+    
+                                if (boolAnswer(answer)) {
+                                    const pullRequest = await task.createPR();
+                                    if (pullRequest instanceof Error.Log) {
+                                        pullRequest.consolePrint();
+                                        return ev.trigger();
+                                    }
+    
+                                    return pullRequest;
                                 }
-
-                                return pullRequest;
+    
+                                return;
+                            } catch (err) {
+                                throw new Error.Log(err).append({
+                                    name: 'PR-AUTOCONFIRM',
+                                    message: `Error caught during the complete automation PR processs!`
+                                });
                             }
-
-                            return;
                         }
                     }
                 },

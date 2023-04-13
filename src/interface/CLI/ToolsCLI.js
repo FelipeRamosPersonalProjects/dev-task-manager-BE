@@ -1,15 +1,17 @@
+const config = require('../../../config.json');
+
 class ToolsCLI {
-    print(txt) {
-        console.log('[dev-desk]: ' + txt);
+    print(txt, addHeader) {
+        console.log(`${addHeader ? `[${addHeader}]` : ''}[${config.projectName.toUpperCase()}] -> ${txt}`);
     }
 
     printError(err) {
-        console.error(`[ERROR][dev-desk][${err.name}]:\n${err.message}\n\n${err.stack}`);
+        console.error(`[ERROR][${config.projectName.toUpperCase()}][${err.name}] -> ${err.message}\nERROR-STACK:\n${err.stack}`);
     }
 
     printTemplate(stringContent) {
         if (typeof stringContent === 'string') {
-            console.log(stringContent || '');
+            console.log(`\n${stringContent || ''}`);
         }
     }
 
