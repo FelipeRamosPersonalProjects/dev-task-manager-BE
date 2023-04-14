@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@src/*": ["./src/*"],
+            "@controllers/*": ["./src/controllers/*"],
+            "@global/*": ["./src/global/*"],
+            "@helpers/*": ["./src/helpers/*"],
+            "@interface/*": ["./src/interface/*"],
+            "@models/*": ["./src/models/*"],
+            "@resources/*": ["./src/resources/en_US/*"],
+            "@routes/*": ["./src/routes/*"],
+            "@schemas/*": ["./src/schemas/*"],
+            "@services/*": ["./src/services/*"],
+            "@validation/*": ["./src/validation/*"],
+            "@CLI/*": ["./src/interface/CLI/*"],
+            "@templates/*": ["./src/resources/en_US/templates/*"]
+        }
+    }
+}
