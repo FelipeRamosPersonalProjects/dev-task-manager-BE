@@ -62,6 +62,17 @@ async function increaseLog(logUID) {
     }
 }
 
+async function increaseDocProp(collectionName, filter, data) {   
+    try {
+        const DBModel = mongoose.model(collectionName);
+        const doc = await DBModel.findOneAndUpdate(filter, { $inc: data });
+
+        return doc.initialize();
+    } catch(err) {
+        throw new Error.Log(err).append('helpers.increase_doc_prop', collectionName, filter, data);
+    }
+}
+
 function pickQueryType(filter, type) {
     let filterType = typeof filter;
 
@@ -153,6 +164,7 @@ module.exports = {
     createCounter,
     increaseCounter,
     increaseLog,
+    increaseDocProp,
     isCollectionExist,
     getCollectionModel,
     pickQueryType,
