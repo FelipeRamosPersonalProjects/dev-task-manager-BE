@@ -41,7 +41,7 @@ class ViewNavigator extends ToolsCLI {
         const opt = this.getOption(index);
 
         if (typeof opt.trigger === 'function') {
-            return await opt.trigger.call(opt, this);
+            return opt.trigger.call(opt, this);
         }
 
         if (this.parentView && opt && opt.targetView){

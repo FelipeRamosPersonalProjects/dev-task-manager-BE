@@ -4,7 +4,7 @@ const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
 async function TicketsAndTasksView() {
     return new ViewCLI({
         name: 'ticketsAndTasks',
-        Template: await new DashedHeaderLayout({
+        Template: new DashedHeaderLayout({
             headerText: 'DevDESK CLI - Tickets and Tasks',
             headerDescription: `Manage your tickets and tasks.`
         }, this).init(),

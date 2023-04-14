@@ -24,10 +24,10 @@ const bodySchema = {
 async function SearchView() {
     return new ViewCLI({
         name: 'crud/search',
-        Template: await new DashedHeaderLayout({
+        Template: new DashedHeaderLayout({
             headerText: 'Search - CRUD',
             headerDescription: 'Search for documents on your collections.'
-        }).init(),
+        }),
         poolForm: {
             startQuestion: 'search-document',
             events: {

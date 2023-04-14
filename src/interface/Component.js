@@ -38,14 +38,18 @@ class Component extends ValidateSchema {
         }
     }
 
-    async init() {
+    get TEMPLATE_STRING() {
+        return FS.readFileSync(this.SOURCE_PATH);
+    }
+
+    init() {
         try {
-            this.outputModel = await this.loadSourceFile();
+            this.outputModel = this.loadSourceFile();
             const keys = Object.keys(this.types);
 
             for (let key of keys) {
                 const Type = this.types[key];
-                this.types[key] = await new Type().init();
+                this.types[key] = Type;
             }
 
             return this;
@@ -54,18 +58,18 @@ class Component extends ValidateSchema {
         }
     }
 
-    async loadSourceFile(path) {
+    loadSourceFile(path) {
         try {
             if (!path && !this.SOURCE_PATH) {
                 return this.outputModel;
             }
 
-            const loaded = await FS.readFile(path || this.SOURCE_PATH);
+            const loaded = this.TEMPLATE_STRING;
             if (loaded instanceof Error.Log) {
                 throw loaded;
             }
 
-            return loaded.toString();
+            return loaded;
         } catch(err) {
             throw new Error.Log(err);
         }
@@ -79,13 +83,13 @@ class Component extends ValidateSchema {
         }
     }
 
-    async array(value = [], childTypeName) {
+    array(value = [], childTypeName) {
         const Child = this.types[childTypeName];
         let result = '';
 
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && Child) {
             for (let item of value) {
-                result += await Child.renderToString(item);
+                result += new Child(item).renderToString();
             }
         }
 
@@ -113,7 +117,7 @@ class Component extends ValidateSchema {
         return stringResult;
     }
 
-    async toMarkdown(params) {
+    toMarkdown(params) {
         // Find substrings between ##{{ and }}## and replace by the param value
         const regex = /##{{(.*?)}}##/g;
         const substrings = [];
@@ -140,7 +144,7 @@ class Component extends ValidateSchema {
             }
 
             if (type === 'array') {
-                value = await this.array(paramValue, child);
+                value = this.array(paramValue, child);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
@@ -150,7 +154,7 @@ class Component extends ValidateSchema {
             }
 
             if (type === 'component') {
-                value = paramValue ? await paramValue.renderToString() : ' ';
+                value = paramValue ? paramValue.renderToString(params) : ' ';
                 toReplaceString = `##{{${sub}}}##`;
             }
 
@@ -162,9 +166,9 @@ class Component extends ValidateSchema {
         return result;
     }
 
-    async renderToString(params) {
+    renderToString(params) {
         try {
-            const stringResult = await this.toMarkdown(params);
+            const stringResult = this.toMarkdown(params);
             if (stringResult instanceof Error.Log) {
                 throw stringResult;
             }
@@ -175,9 +179,9 @@ class Component extends ValidateSchema {
         }
     }
 
-    async printOnScreen(params) {
+    printOnScreen(params) {
         try {
-            const stringResult = await this.renderToString(params);
+            const stringResult = this.renderToString(params);
             this.tools.printTemplate(stringResult);
         } catch (err) {
             throw new Error.Log(err);

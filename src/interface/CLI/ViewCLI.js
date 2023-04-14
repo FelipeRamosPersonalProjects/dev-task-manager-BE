@@ -40,17 +40,17 @@ class ViewCLI extends ToolsCLI {
         }
     }
 
-    async getString() {
+    getString() {
         if (this.Template) {
-            return await this.Template.renderToString();
+            return this.Template.renderToString();
         } else {
             return '';
         }
     }
 
-    async render(tableHeaders) {
+    render(tableHeaders) {
         try {
-            this.cli().printTemplate(await this.getString());
+            this.cli().printTemplate(this.getString());
 
             if (this.navigator) {
                 this.navigator.render(tableHeaders);

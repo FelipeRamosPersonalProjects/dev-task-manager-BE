@@ -20,10 +20,10 @@ async function UpdateView(params) {
 
     return new ViewCLI({
         name: 'crud/update',
-        Template: await new DashedHeaderLayout({
+        Template: new DashedHeaderLayout({
             headerText: 'Update - CRUD',
             headerDescription: 'Update your documents'
-        }).init(),
+        }),
         poolForm: {
             startQuestion: 'fetching-document',
             events: {

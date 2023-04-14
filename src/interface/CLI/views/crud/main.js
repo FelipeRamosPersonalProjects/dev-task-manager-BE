@@ -1,6 +1,5 @@
 const ViewCLI = require('../../ViewCLI');
 const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const MainMenuDescription = require('../../components/MainMenuDescription');
 const StringTemplateBuilder = require('../../../StringTemplateBuilder');
 
 async function CRUDView() {
@@ -8,12 +7,11 @@ async function CRUDView() {
         .text(`Create, Read, Update or Delete your document on database collections`)
     .end();
     
-    const Template = await new DashedHeaderLayout({
+    const Template = new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'DevDESK CLI - CRUD',
-        headerDescription,
-        Content: new MainMenuDescription()
-    }).init();
+        headerDescription
+    });
     
     const navigator = new ViewCLI.ViewNavigator({ options: [
         { title: 'Create', description: 'Create documents under a collection.', targetView: 'crud/create' },
