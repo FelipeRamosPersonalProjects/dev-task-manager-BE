@@ -12,7 +12,8 @@ class Project extends _Global {
         spaceDesk: [SpaceDesk.prototype],
     }){
         super({...setup, validationRules: 'projects'});
-        if (!setup.isComplete && !setup.isNew) return;
+        if (isObjectID(setup)) return;
+
         const Ticket = require('./Ticket');
         const Repo = require('./Repo');
         const SpaceDesk = require('./SpaceDesk');
@@ -26,11 +27,11 @@ class Project extends _Global {
             this.projectName = projectName;
             this.description = description;
             this.urls = urls;
-            this.tickets = Array.isArray(tickets) ? tickets.map(ticket => new Ticket(ticket)) : [];
-            this.tasks = Array.isArray(tasks) ? tasks.map(task => new Task(task)) : [];
-            this.repos = Array.isArray(repos) ? repos.map(repo => new Repo(repo)) : [];
-            this.spaceDesk = spaceDesk ? new SpaceDesk(spaceDesk) : {};
-            this.templates = new TemplateOptions({...templates, ...this.spaceDesk.templates});
+            this.tickets = !isObjectID(tickets) ? tickets.map(ticket => new Ticket(ticket)) : [];
+            this.tasks = !isObjectID(tasks) ? tasks.map(task => new Task(task)) : [];
+            this.repos = !isObjectID(repos) ? repos.map(repo => new Repo(repo)) : [];
+            this.spaceDesk = !isObjectID(spaceDesk) ? new SpaceDesk(spaceDesk) : {};
+            this.templates = !isObjectID(templates) ? new TemplateOptions({...templates, ...this.spaceDesk.templates}) : {};
             this.baseBranch = baseBranch;
 
             this.placeDefault();

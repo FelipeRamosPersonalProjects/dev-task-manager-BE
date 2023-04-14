@@ -120,7 +120,7 @@ async function onUpdate() {
                     toUpdate && promises.push(toUpdate);
                 });
             } else {
-                const currFieldSchema = schemaObj[key];
+                const currFieldSchema = schemaObj[key] || {};
                 const toUpdate = buildPromise.call(this,
                     value,
                     currFieldSchema,

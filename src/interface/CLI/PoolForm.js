@@ -66,7 +66,11 @@ class QuestionModel {
                 const answer = await this.prompt.question(this.text);
                 
                 this.answer = answer;
-                await this.events.triggerEvent('answer', this, answer);
+                const answerRes = await this.events.triggerEvent('answer', this, answer);
+                if (answerRes instanceof Error.Log) {
+                    answerRes.consolePrint();
+                    return answerRes
+                }
             }
 
             if (this.formCtrl) {
@@ -184,6 +188,7 @@ class EventsHandlers {
                     message: `The answer for this question is required!`
                 });
     
+                error.consolePrint();
                 return ev.trigger();
             }
     
