@@ -25,6 +25,14 @@ class RepoManager extends GitHubConnection {
         this.parent = () => parent;
     }
 
+    get repo() {
+        return this.parent();
+    }
+
+    get parentTask() {
+        return this.repo && this.repo.parentTask;
+    }
+
     getCurrentBranch() {
         try {
             const branch = this.prompt.cmd('git branch --show-current');
@@ -101,14 +109,21 @@ class RepoManager extends GitHubConnection {
             const branch = await this.isBranchExist(name);
             if (branch.isExist) {
                 const isExistError = new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
-                ToolsCLI.print(isExistError.message, 'INFO');
-                return isExistError;
+                toolsCLI.print(isExistError.message, 'INFO');
+
+                const task = await this.parentTask.increaseCurrentVersion();
+                if (task instanceof Error.Log) {
+                    throw task;
+                }
+
+                toolsCLI.print(`Branch name "${name}" already exists! Trying to create the "${task.taskBranch}".`, 'BRANCH-EXIST');
+                return await this.createBranch(task.taskBranch, baseName, options);
             }
 
             const currentBranch = this.getCurrentBranch();
             if (currentBranch !== baseName) {
                 const currentError = new Error.Log('services.GitHubAPI.RepoManager.base_branch_is_not_current');
-                ToolsCLI.print(currentError.message, 'WARN');
+                toolsCLI.print(currentError.message, 'WARN');
                 return currentError;
             }
 
@@ -353,7 +368,7 @@ class RepoManager extends GitHubConnection {
 
     async commit(title, description, params) {
         try {
-            let stringFilesList = new StringTemplateBuilder().text(description).newLine().newLine();
+            let stringFilesList = new StringTemplateBuilder().text(description ? description + '\n' : '');
 
             const fileChanges = await this.currentChanges();
             if (fileChanges instanceof Error.Log) {
@@ -361,7 +376,7 @@ class RepoManager extends GitHubConnection {
             }
 
             fileChanges.changes.map(item => {
-                stringFilesList = stringFilesList.text(`### ${item.filename}:`).newLine().newLine();
+                stringFilesList = stringFilesList.text(` -m "- ${item.filename} -> ${item.description || ''}"`);
             });
             stringFilesList = stringFilesList.end();
 
@@ -370,12 +385,17 @@ class RepoManager extends GitHubConnection {
                 throw added;
             }
 
-            const out = await this.prompt.exec(`git commit -m "${title}" -m "${stringFilesList}"${this.prompt.strigifyParams(params)}`);
+            const out = await this.prompt.exec(`git commit -m "${title}" ${stringFilesList}${this.prompt.strigifyParams(params)}`);
             if (out instanceof Error.Log) {
                 throw out;
             }
 
-            return out;
+            return {
+                title,
+                summaryDescription: description,
+                fileChanges: fileChanges.changes,
+                commitOutput: out.out
+            };
         } catch(err) {
             return new Error.Log(err).append('services.GitHubAPI.RepoManager.commiting');
         }
@@ -423,15 +443,15 @@ class RepoManager extends GitHubConnection {
                 throw PR;
             }
 
-            if (Array.isArray(data.assignedUsers)) {
+            // if (Array.isArray(data.assignedUsers)) {
                 const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                    assignees: ['FelipeRamos1202']
+                    assignees: [this.userName]
                 }, 'POST');
 
                 if (addAssignees instanceof Error.Log) {
                     throw addAssignees;
                 }
-            }
+            // }
             
             if (Array.isArray(data.labels)) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {

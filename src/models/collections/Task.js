@@ -29,7 +29,7 @@ class Task extends _Global {
         try {
             const {
                 source,
-                branchVersion,
+                currentVersion,
                 taskName,
                 taskID,
                 taskURL,
@@ -44,11 +44,12 @@ class Task extends _Global {
                 repo
             } = setup || {};
 
+            this.collectionName = 'tasks';
             this.source = source;
             this.taskName = taskName;
             this.taskID = taskID;
             this.taskURL = taskURL;
-            this.branchVersion = branchVersion;
+            this.currentVersion = currentVersion;
             this.description = description;
             this.dueDate = dueDate;
             this.assignedUser = !isObjectID(assignedUser) ? new User(assignedUser) : {};
@@ -83,7 +84,7 @@ class Task extends _Global {
     get taskBranch() {
         try {
             const prCount = this.pullRequests.length + 1;
-            const versionCount = ((prCount > this.branchVersion) || !this.branchVersion) ? prCount : this.branchVersion;
+            const versionCount = ((prCount > this.currentVersion) || !this.currentVersion) ? prCount : this.currentVersion;
 
             if (this.taskID) {
                 if (this.pullRequests.length || versionCount > 1) {
@@ -171,6 +172,28 @@ class Task extends _Global {
                 return err;
             }
 
+            throw new Error.Log(err);
+        }
+    }
+
+    async increaseCurrentVersion() {
+        try {
+            if (this.isComplete && !this.currentVersion) {
+                const created = await this.updateDB({collectionName: 'tasks', data: {currentVersion: this.pullRequests.length + 1}})
+                if (created instanceof Error.Log) {
+                    throw created;
+                }
+
+                return created;
+            }
+
+            const increased = await this.increateProp('currentVersion');
+            if (increased instanceof Error.Log) {
+                throw increased;
+            }
+
+            return increased;
+        } catch(err) {
             throw new Error.Log(err);
         }
     }
