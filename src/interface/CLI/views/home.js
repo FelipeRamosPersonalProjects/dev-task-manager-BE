@@ -1,7 +1,6 @@
 const ViewCLI = require('../ViewCLI');
-const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
-const StringTemplateBuilder = require('../../StringTemplateBuilder');
-const MainMenuDescription = require('../components/MainMenuDescription');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
+const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
 
 async function HomeView() {
     const headerDescription = new StringTemplateBuilder()
@@ -9,11 +8,10 @@ async function HomeView() {
         .newLine()
         .indent().text(`Pull Requests, Reviews, Testing Steps, etc.`)
     .end();
-    const templateInit = await new DashedHeaderLayout({
+    const templateInit = new DashedHeaderLayout({
         headerText: 'DevDESK CLI - Home',
-        headerDescription,
-        Content: new MainMenuDescription()
-    }, this).init();
+        headerDescription
+    }, this);
 
     return new ViewCLI({
         name: 'home',

@@ -177,7 +177,7 @@ class Repo extends _Global {
             if (project) {
                 const branchTemplate = project.getTemplate('branchName');
                 const template = await branchTemplate();
-                const branchName = await template.toMarkdown({taskBranch: task.taskBranch});
+                const branchName = template.toMarkdown({taskBranch: task.taskBranch});
                 const newBranch = await this.repoManager.createBranch(branchName, this.baseBranch, {bringChanges: true});
 
                 if (newBranch instanceof Error.Log) {
@@ -195,8 +195,8 @@ class Repo extends _Global {
         try {
             const isValidBranch = this.isCurrentBranchValid();
             const task = this.parentTask;
-            const titleTemplate = await this.getProjectTemplate('prTitle')();
-            const title = await titleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
+            const titleTemplate = this.getProjectTemplate('prTitle')();
+            const title = titleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
 
             if (isValidBranch) {
                 const commit = await this.repoManager.commit(title, '');
@@ -247,11 +247,11 @@ class Repo extends _Global {
                     labels: []
                 };
                 
-                const prTitleTemplate = await this.getProjectTemplate('prTitle')();
-                const description = await this.getProjectTemplate('prDescription')();
+                const prTitleTemplate = this.getProjectTemplate('prTitle')();
+                const description = this.getProjectTemplate('prDescription')();
 
-                objData.name = await prTitleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
-                objData.description = await description.renderToString(objData);
+                objData.name = prTitleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
+                objData.description = description.renderToString(objData);
 
                 return objData;
             }

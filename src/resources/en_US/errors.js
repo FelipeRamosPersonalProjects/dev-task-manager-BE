@@ -318,6 +318,16 @@ module.exports = {
             message: `Error caught on the database helper createCounter!`
         }},
 
+        increase_doc_prop: (collectionName, filter, value) => { return {
+            name: 'HELPERS-INCREASE-PROP',
+            message: `Error caught during the document property increase of:\nFilter: "${typeof filter === 'object' ? JSON.parse(filter, null, 2) : String(filter)}"\nCollection: "${collectionName}"\nValue: ${typeof value === 'object' ? JSON.parse(value, null, 2) : String(value)}\n\n`
+        }},
+
+        increase_doc_prop_collection_not_defined: (collectionName, filter, value) => { return {
+            name: 'HELPERS-INCREASE-PROP',
+            message: `Is required to declare the collectionName property of the class that is extending the _Global class of collections!`
+        }},
+
         increase_counter: (collectionName) => { return {
             name: 'HelpersIncreaseCounter',
             message: `Error caught during the counter increase of collection "${collectionName}"!`

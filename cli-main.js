@@ -1,3 +1,4 @@
+require('module-alias/register')
 // Declaring globals
 require('./src/global');
 // Initializing MongoDB

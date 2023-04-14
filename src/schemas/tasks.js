@@ -14,6 +14,10 @@ module.exports = new Schema({
             default: 'jira',
             enum: ['jira', 'github']
         },
+        currentVersion: {
+            type: Number,
+            default: 1
+        },
         taskName: {
             type: String,
             required: true
@@ -29,10 +33,6 @@ module.exports = new Schema({
             required: true,
             immutable: true,
             unique: true
-        },
-        branchVersion: {
-            type: Number,
-            default: 1
         },
         description: {
             type: String
