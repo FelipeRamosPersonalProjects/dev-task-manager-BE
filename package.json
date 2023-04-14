@@ -21,6 +21,22 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "module-alias": "^2.2.2",
     "nodemon": "^2.0.20"
+  },
+  "_moduleAliases": {
+    "@src": "src",
+    "@controllers": "src/controllers",
+    "@global": "src/global",
+    "@helpers": "src/helpers",
+    "@interface": "src/interface",
+    "@models": "src/models",
+    "@resources": "src/resources/en_US",
+    "@routes": "src/routes",
+    "@schemas": "src/schemas",
+    "@services": "src/services",
+    "@validation": "src/validation",
+    "@CLI": "src/interface/CLI",
+    "@templates": "src/resources/en_US/templates"
   }
 }
