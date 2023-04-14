@@ -4,7 +4,7 @@ const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
 async function PullRequestsView() {
     return new ViewCLI({
         name: 'prs_menu',
-        Template: await new DashedHeaderLayout({
+        Template: new DashedHeaderLayout({
             headerText: 'PULL REQUESTS',
             headerDescription: `Manage your pull requests.`
         }, this).init(),

@@ -2,6 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 class FileSystemService {
+    static readFileSync(path) {
+        return fs.readFileSync(path, { encoding: 'utf-8' });
+    }
+
     static async readFile(path) {
         return new Promise((resolve, reject) => {
             fs.readFile(path, (err, dataBuff) => {

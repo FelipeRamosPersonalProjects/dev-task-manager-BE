@@ -36,11 +36,11 @@ async function ReadView(params) {
 
     return new ViewCLI({
         name: 'crud/read',
-        Template: await new DashedHeaderLayout({
+        Template: new DashedHeaderLayout({
             componentName: 'CRUD view template',
             headerText: 'Read - CRUD',
             headerDescription: `Read you documents' collections.`
-        }).init(),
+        }),
         poolForm: {
             startQuestion: 'read-doc-form',
             events: {

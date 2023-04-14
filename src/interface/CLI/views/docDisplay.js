@@ -24,12 +24,12 @@ async function DocDisplay(params) {
     
         return new ViewCLI({
             name: 'docDisplay',
-            Template: await new DashedHeaderLayout({
+            Template: new DashedHeaderLayout({
                 componentName: 'Document View',
                 headerText: headerText || document.displayName,
                 headerDescription: headerDescription,
                 Content: new DisplayDocument({ document })
-            }).init(),
+            }),
             navigator: new ViewCLI.ViewNavigator({ options: [
                 {
                     title: 'Go back to home view',

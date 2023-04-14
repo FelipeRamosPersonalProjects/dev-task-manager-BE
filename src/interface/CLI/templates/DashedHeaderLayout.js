@@ -1,8 +1,9 @@
 const Component = require('../../Component');
+const DashedHeader = require('@CLI/components/DashedHeader');
 
 class DashedHeaderLayout extends Component {
     get SOURCE_PATH() {
-        return 'src/interface/CLI/templates/source/DashedHeaderLayout.template.txt';
+        return require.resolve('./source/DashedHeaderLayout.md')
     }
 
     constructor(settings = {
@@ -12,16 +13,18 @@ class DashedHeaderLayout extends Component {
         Content: [Component]
     }) {
         super(settings, {
-            headerText: { type: String, required: true },
-            Content: { type: [Object], required: true }
+            headerText: { type: String },
+            headerDescription: { type: String },
+            Content: { type: [Object] }
         });
 
         const {menu, headerText, headerDescription, Content} = settings || {};
 
-        this.Content = Content;
         this.menu = menu;
-        this.headerText = headerText;
-        this.headerDescription = headerDescription;
+        this.DashedHeader = new DashedHeader({headerText, headerDescription});
+        this.Content = Content;
+
+        this.init();
     }
 }
 

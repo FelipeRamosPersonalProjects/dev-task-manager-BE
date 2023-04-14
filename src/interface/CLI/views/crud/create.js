@@ -1,7 +1,6 @@
 const ViewCLI = require('../../ViewCLI');
-const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const MainMenuDescription = require('../../components/MainMenuDescription');
-const ToolsCLI = require('../../ToolsCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
+const ToolsCLI = require('@CLI/ToolsCLI');
 const schemas = require('../../../../schemas');
 const CRUD = require('../../../../services/database/crud');
 
@@ -13,12 +12,11 @@ const bodySchema = {
 async function CreateView(params) {
     const { defaultData } = params || {};
 
-    const Template = await new DashedHeaderLayout({
+    const Template = new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'Create - CRUD',
-        headerDescription: 'Create your documents under collections.',
-        Content: new MainMenuDescription()
-    }).init();
+        headerDescription: 'Create your documents under collections.'
+    });
 
     return new ViewCLI({
         name: 'crud/create',

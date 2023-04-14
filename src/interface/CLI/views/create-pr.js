@@ -4,10 +4,10 @@ const TaskDocument = require('../components/TaskDocument');
 const CRUD = require('../../../services/database/crud');
 
 async function CreatePRsView({ defaultData }) {
-    const Template = await new DashedHeaderLayout({
+    const Template = new DashedHeaderLayout({
         headerText: 'CREATE A NEW PR',
         headerDescription: `Create a new pull request.`
-    }, this).init();
+    }, this);
 
     function onAnswerDefault(ev, answer) {
         ev.setValue(ev.id, answer);
@@ -65,9 +65,9 @@ async function CreatePRsView({ defaultData }) {
                     events: {
                         onTrigger: async (ev) => {
                             const task = ev.getValue('task');
-                            const Component = await new TaskDocument().init();
+                            const Component = new TaskDocument(task);
                             
-                            await Component.printOnScreen(task);
+                            Component.printOnScreen();
                         },
                         onAnswer: async (ev, { boolAnswer }, answer) => {
                             try {
@@ -147,6 +147,8 @@ async function CreatePRsView({ defaultData }) {
                                     }
 
                                     return ev.setValue('isReadyToPR', isReadyToPR);
+                                } else {
+                                    return ev.trigger();
                                 }
                             }
                         }
