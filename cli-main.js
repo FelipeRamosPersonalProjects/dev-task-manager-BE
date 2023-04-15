@@ -1,10 +1,10 @@
-require('module-alias/register')
+require('module-alias/register');
 // Declaring globals
-require('./src/global');
+require('@global');
 // Initializing MongoDB
-require('./src/services/database/init').then(async (started) => {
+require('@services/database/init').then(async (started) => {
     try {
-        const CLI = require('./src/interface/CLI');
+        const CLI = require('@interface/CLI');
         await new CLI({
             startView: 'home'
         }).init();

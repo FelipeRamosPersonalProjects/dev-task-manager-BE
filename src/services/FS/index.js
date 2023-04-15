@@ -47,12 +47,16 @@ class FileSystemService {
                         fs.mkdirSync(newDestDir, { recursive: true });
                     }
 
-                    fs.copyFile(sourcePath, destPath, (err) => {
-                        if (err) throw reject(new Error.Log(err));
-        
-                        console.log(`${file} was copied to ${destPath}`);
+                    if (fs.existsSync(sourcePath)) {
+                        fs.copyFile(sourcePath, destPath, (err) => {
+                            if (err) throw reject(new Error.Log(err));
+            
+                            console.log(`${file} was copied to ${destPath}`);
+                            return resolve(file.filename);
+                        });
+                    } else {
                         return resolve(file.filename);
-                    });
+                    }
                 }));
             });
 
