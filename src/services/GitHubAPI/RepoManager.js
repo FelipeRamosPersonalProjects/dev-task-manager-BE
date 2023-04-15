@@ -111,11 +111,6 @@ class RepoManager extends GitHubConnection {
                 const isExistError = new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
                 toolsCLI.print(isExistError.message, 'INFO');
 
-                const task = await this.parentTask.increaseCurrentVersion();
-                if (task instanceof Error.Log) {
-                    throw task;
-                }
-
                 toolsCLI.print(`Branch name "${name}" already exists! Trying to create the "${task.taskBranch}".`, 'BRANCH-EXIST');
                 return await this.createBranch(task.taskBranch, baseName, options);
             }

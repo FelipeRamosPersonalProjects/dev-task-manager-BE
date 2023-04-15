@@ -82,6 +82,7 @@ class GlobalMap extends ValidateSchema {
 
     async updateDB({collectionName, data}) {
         const collection = collectionName || this.collectionName;
+
         try {
             if (!collection) throw new Error.Log('database.missing_params', 'collectionName', '_Global.updateDB');
 
@@ -90,13 +91,13 @@ class GlobalMap extends ValidateSchema {
                 throw new Error.Log(loaded);
             }
 
-            return loaded.initialize();
+            return loaded;
         } catch (err) {
             throw new Error.Log(err);
         }
     }
 
-    async increateProp(propKey, value) {
+    async increaseProp(propKey, value) {
         if (!propKey) throw new Error.Log()
         const increaseValue = {[propKey]: value || 1};
 

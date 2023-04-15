@@ -1,6 +1,7 @@
 const _Global = require('../maps/_Global');
 const RepoManager = require('../../services/GitHubAPI/RepoManager');
 const FS = require('../../services/FS');
+const config = require('@config');
 
 class Repo extends _Global {
     constructor(setup = {
@@ -95,7 +96,7 @@ class Repo extends _Global {
         const hour = date.getHours();
         const minute = date.getMinutes();
 
-        return `temp/${repo}/${ticket}/${branch}/${year}-${month}-${day}__${hour}_${minute}`;
+        return `temp/${config.mode === 'production' ? 'PROD' : 'DEV'}/${repo}/${ticket}/${branch}/${year}-${month}-${day}__${hour}_${minute}`;
     }
 
     isCurrentBranchValid() {
@@ -229,7 +230,7 @@ class Repo extends _Global {
             const ticket = task && task.ticket;
 
             if (task) {
-                const compared = await this.repoManager.compareBranches(this.baseBranch);
+                const compared = await this.repoManager.compareBranches(this.baseBranch, this.parentTask.taskBranch);
 
                 const objData = {
                     taskID: task.taskID,

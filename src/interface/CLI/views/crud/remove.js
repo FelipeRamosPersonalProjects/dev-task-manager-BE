@@ -26,7 +26,7 @@ async function RemoveView() {
                     id: 'delete-form',
                     next: 'confirmation',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        schema: bodySchema,
                         events: {
                             onEnd: async (ev) => {
                                 ev.view().setValue('deleteFilter', ev.formData);

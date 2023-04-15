@@ -1,21 +1,21 @@
-## 🔗 Links
-**Ticket:** ##{{ticketURL:string}}##
-**Jira Task:** ##{{taskURL:string}}##
+### :ticket: Links
+- Ticket: ##{{ticketURL:string}}##
+- Jira Task: ##{{taskURL:string}}##
 
-## 🔍  Bug or Enhancement Description
+### Bug or Enhancement Description
 ##{{summary:string}}##
 
-## 🎥  Demonstration
+### Changes
+##{{fileChanges:array:FileChange}}##
+
+### A picture is worth a thousand words
 {{ picture }}
 
-## 📂 Changes
-##{{fileChanges:array:FileChange}}##
- 
-## 📑  Metadata/Configurations
+### Metadata/Configurations Checklist
 - [ ] I have updated `imports/site_template_support` folder with the proper data and Code Review Assistant is not failing for metadata;
-- [x] Not required (No metadata);
+- [ ] Not required (No metadata);
 
-## ✔️ General Checklist
+### General Checklist
 - [x] My code passed the automation process (**gulp scss:lint** ran without errors on the files and lines I have modified);
 - [x] My PR has a proper title: **[TASK-ID] : [TICKET-ID] Ticket Title**
 - [x] I have performed a self-review of my own code;
@@ -27,3 +27,5 @@
 - [x] My code follows the guidelines of this project and Code Review Assistant is not failing (if CRA is enabled in the project);
 - [x] I have checked if the target branch is the correct one for this project
 
+### Confluence Pages
+Please mention below the page/s (Metadata, TSD, User Guide / Configuration Guide, etc…) that you updated / created for this ticket:

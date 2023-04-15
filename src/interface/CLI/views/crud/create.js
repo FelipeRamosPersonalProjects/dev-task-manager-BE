@@ -43,7 +43,7 @@ async function CreateView(params) {
                     id: 'build-params',
                     next: 'collecting-data',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        schema: bodySchema,
                         defaultData,
                         events: {
                             onStart: async (ev) => {
