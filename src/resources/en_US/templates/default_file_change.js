@@ -15,7 +15,7 @@ class DefaultFileChangeTemplate extends Component {
 
         this.SOURCE_PATH = require.resolve('./source/default_file_change.md');
         this.filename = filename;
-        this.description = description || ' ';
+        this.description = description || '\n';
         
         this.init();
     }

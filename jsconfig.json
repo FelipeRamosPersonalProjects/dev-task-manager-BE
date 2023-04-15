@@ -2,6 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "@config": ["./config.json"],
             "@src/*": ["./src/*"],
             "@controllers/*": ["./src/controllers/*"],
             "@global/*": ["./src/global/*"],

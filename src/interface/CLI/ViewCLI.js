@@ -1,10 +1,22 @@
-const StringTemplateBuilder = require('../StringTemplateBuilder');
 const ToolsCLI = require('./ToolsCLI');
 const ViewNavigator = require('./ViewNavigator');
 
+/**
+ * @class
+ */
 class ViewCLI extends ToolsCLI {
     static ViewNavigator = ViewNavigator;
 
+    /**
+     * Creates an instance of EventsHandlers.
+     * @constructor
+     * @param {Object} [setup] - The configuration for the instance.
+     * @param {string} [setup.name] - 
+     * @param {PoolForm} [setup.poolForm] - 
+     * @param {ViewNavigator} [setup.navigator] - 
+     * @param {Component} [setup.Template] - 
+     * @param {CLI} [cli] - 
+     */
     constructor(setup = {
         name: '',
         poolForm: PoolForm.prototype,
@@ -65,4 +77,7 @@ class ViewCLI extends ToolsCLI {
     }
 }
 
+/**
+ * @module ViewCLI
+ */
 module.exports = ViewCLI;

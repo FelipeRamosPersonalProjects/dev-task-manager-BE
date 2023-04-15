@@ -118,6 +118,7 @@ class Task extends _Global {
                     throw publish;
                 }
 
+                await savingPR.updateDB({data: { gitHubPR: publish }});
                 return publish;
             }
         } catch (err) {
@@ -179,7 +180,7 @@ class Task extends _Global {
     async increaseCurrentVersion() {
         try {
             if (this.isComplete && !this.currentVersion) {
-                const created = await this.updateDB({collectionName: 'tasks', data: {currentVersion: this.pullRequests.length + 1}})
+                const created = await this.updateDB({collectionName: 'tasks', data: { currentVersion: this.pullRequests.length + 1 }})
                 if (created instanceof Error.Log) {
                     throw created;
                 }
@@ -187,7 +188,7 @@ class Task extends _Global {
                 return created;
             }
 
-            const increased = await this.increateProp('currentVersion');
+            const increased = await this.increaseProp('currentVersion');
             if (increased instanceof Error.Log) {
                 throw increased;
             }

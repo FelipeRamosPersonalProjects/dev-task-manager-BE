@@ -43,7 +43,7 @@ async function UpdateView(params) {
                     id: 'fetching-document',
                     next: 'updating-data',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        schema: bodySchema,
                         defaultData,
                         events: {
                             onStart: async (ev) => {

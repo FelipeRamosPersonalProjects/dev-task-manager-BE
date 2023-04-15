@@ -10,7 +10,7 @@ class Prompt {
     }) {
         const {rootPath} = setup || {};
 
-        this.rootPath = rootPath;
+        this.rootPath = rootPath || __dirname;
     }
 
     cmd(command, options) {

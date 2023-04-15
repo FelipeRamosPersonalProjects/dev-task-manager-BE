@@ -1,6 +1,6 @@
 class FileChange {
     constructor (setup) {
-        const { additions, blob_url, changes, contents_url, deletions, filename, patch, raw_url, sha, status } = setup || {};
+        const { additions, blob_url, changes, contents_url, deletions, filename, patch, raw_url, sha, status, description } = setup || {};
 
         this.additions = additions;
         this.blob_url = blob_url;
@@ -12,6 +12,7 @@ class FileChange {
         this.raw_url = raw_url;
         this.sha = sha;
         this.status = status;
+        this.description = description;
     }
 }
 

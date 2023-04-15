@@ -30,6 +30,7 @@ class PullRequest extends _Global {
         const { owner, name, head, base, remoteID, summary, description, fileChanges, assignedUsers, reviewers, labels, bmConfigs, comments, ticket, task } = setup || {};
         
         try {
+            this.collectionName = 'pull_requests';
             this.owner = owner._bsontype !== 'ObjectID' ? new User(owner) : {};
             this.name = name;
             this.remoteID = remoteID;
@@ -70,6 +71,36 @@ class PullRequest extends _Global {
         return this.task && this.task.repo;
     }
 
+    get parentTicket() {
+        return this.task && this.task.ticket;
+    }
+
+    async updateDescription(dontSave) {
+        const descriptionTemplate = this.repo.getProjectTemplate('prDescription')();
+        const newDescription = descriptionTemplate.renderToString({
+            ticketURL: this.parentTicket.ticketURL,
+            taskURL: this.task.taskURL,
+            summary: this.summary,
+            fileChanges: this.fileChanges
+        });
+
+        if (!dontSave) {
+            const updatedDescription = await this.updateDB({ data: {
+                description: newDescription
+            }});
+    
+            if (updatedDescription instanceof Error.Log) {
+                updatedDescription.consolePrint();
+                throw updatedDescription;
+            }
+    
+            this.description = newDescription;
+            return this;
+        } else {
+            return newDescription;
+        }
+    }
+
     async publishPR() {
         try {
             const published = await this.repoManager.createPullRequest({
@@ -82,6 +113,7 @@ class PullRequest extends _Global {
                 labels: this.labels
             });
             
+            await this.task.increaseCurrentVersion();
             return published;
         } catch (err) {
             throw new Error.Log(err);

@@ -21,10 +21,11 @@ module.exports = {
         });
     },
 
-    default_pr_description: () => {
+    default_pr_description: (params) => {
         return new DefaultPRDescription({
             componentName: 'OSF pull request description',
-            description: 'The main template used by OSF for PR descriptions.'
+            description: 'The main template used by OSF for PR descriptions.',
+            ...params
         });
     }
 };
