@@ -361,26 +361,23 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async commit(title, description, params) {
+    async commit(title, summary, params) {
         try {
-            let stringFilesList = new StringTemplateBuilder().text(description ? description + '\n' : '');
-
-            const fileChanges = await this.currentChanges();
-            if (fileChanges instanceof Error.Log) {
-                throw fileChanges;
+            if (!params.fileChanges) {
+                const fileChanges = await this.currentChanges();
+                if (fileChanges instanceof Error.Log) {
+                    throw fileChanges;
+                }
             }
 
-            fileChanges.changes.map(item => {
-                stringFilesList = stringFilesList.text(` -m "- ${item.filename} -> ${item.description || ''}"`);
-            });
-            stringFilesList = stringFilesList.end();
-
+            const descriptionTemplate = this.repo.getProjectTemplate('commitDescription')();
+            const description = descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges});
             const added = await this.addChanges();
             if (added instanceof Error.Log) {
                 throw added;
             }
 
-            const out = await this.prompt.exec(`git commit -m "${title}" ${stringFilesList}${this.prompt.strigifyParams(params)}`);
+            const out = await this.prompt.exec(`git commit -m "${title}" ${description}`);
             if (out instanceof Error.Log) {
                 throw out;
             }
@@ -388,7 +385,7 @@ class RepoManager extends GitHubConnection {
             return {
                 title,
                 summaryDescription: description,
-                fileChanges: fileChanges.changes,
+                fileChanges: params.fileChanges,
                 commitOutput: out.out
             };
         } catch(err) {
