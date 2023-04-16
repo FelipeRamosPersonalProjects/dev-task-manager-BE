@@ -110,8 +110,6 @@ class PullRequest extends _Global {
             this.gitHubPR = published;
 
             const updatedGitRes = await this.updateDB({data: { gitHubPR: published }});
-            const updatedPR = updatedGitRes.initialize();
-            const diff = updatedPR.fileChanges[0].htmlGitHubDiffURL;
 
             if (updatedGitRes instanceof Error.Log) {
                 updatedGitRes.consolePrint();

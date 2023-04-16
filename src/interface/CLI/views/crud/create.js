@@ -47,8 +47,8 @@ async function CreateView(params) {
                         events: {
                             onEnd: async (ev) => {
                                 try {
-                                    ev.parentView.setValue('docFilter', ev.formData);
-                                    ev.parentView.goNext();
+                                    ev.parent.setValue('docFilter', ev.formData);
+                                    return await ev.parent.goNext();
                                 } catch (err) {
                                     throw new Error.Log(err);
                                 }
@@ -61,7 +61,7 @@ async function CreateView(params) {
                     formCtrl: {
                         events: {
                             onStart: async (ev) => {
-                                const filter = ev.parentView.getValue('docFilter');
+                                const filter = ev.parent.getValue('docFilter');
 
                                 if (filter) {
                                     const documentSchema = schemas[filter.collectionName];
@@ -70,6 +70,7 @@ async function CreateView(params) {
                             },
                             onEnd: async (ev) => {
                                 ev.view().setValue('newDoc', ev.formData);
+                                return await ev.parent.goNext();
                             }
                         }
                     }

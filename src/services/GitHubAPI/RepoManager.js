@@ -420,6 +420,10 @@ class RepoManager extends GitHubConnection {
             }
 
             const compared = await this.ajax(`/repos/${this.repoPath}/compare/${base}...${head}`);
+            if (compared instanceof Error.Log) {
+                throw compared;
+            }
+
             return new Compare(compared);
         } catch (err) {
             throw new Error.Log(err);
