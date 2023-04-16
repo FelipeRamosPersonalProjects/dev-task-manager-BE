@@ -192,7 +192,7 @@ class Repo extends _Global {
         }
     }
     
-    async commitChanges() {
+    async commitChanges(fileChanges, summary) {
         try {
             const isValidBranch = this.isCurrentBranchValid();
             const task = this.parentTask;
@@ -200,7 +200,7 @@ class Repo extends _Global {
             const title = titleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
 
             if (isValidBranch) {
-                const commit = await this.repoManager.commit(title, '');
+                const commit = await this.repoManager.commit(title, summary || task.description, {fileChanges});
                 if (commit instanceof Error.Log) {
                     throw commit;
                 }
