@@ -7,36 +7,39 @@ const FileChange = require('../../services/GitHubAPI/FileChange');
 const CRUD = require('../../services/database/crud');
 
 class PullRequest extends _Global {
-    constructor(setup = {
-        ..._Global.prototype,
-        owner: User.prototype,
-        name: '',
-        head: '',
-        base: '',
-        remoteID: '',
-        summary: '',
-        description: '',
-        fileChanges: [],
-        assignedUsers: [User.prototype],
-        reviewers: [User.prototype],
-        labels: [],
-        bmConfigs: [],
-        comments: [Comment.prototype],
-        ticket: Ticket.prototype,
-        task: Task.prototype
-    }){
+    constructor(setup){
         super({...setup, validationRules: 'pull_requests'});
         if (isObjectID(setup)) return;
-        const { owner, name, head, base, remoteID, summary, description, fileChanges, assignedUsers, reviewers, labels, bmConfigs, comments, ticket, task } = setup || {};
+
+        const {
+            owner,
+            name,
+            head,
+            base,
+            remoteID,
+            summary,
+            description,
+            fileChanges,
+            assignedUsers,
+            reviewers,
+            labels,
+            bmConfigs,
+            comments,
+            ticket,
+            task,
+            gitHubPR
+        } = new Object(setup || {});
         
         try {
+            this.collectionName = 'pull_requests';
+            this.gitHubPR = gitHubPR;
             this.owner = owner._bsontype !== 'ObjectID' ? new User(owner) : {};
             this.name = name;
             this.remoteID = remoteID;
             this.summary = summary;
             this.head = head;
             this.base = base;
-            this.fileChanges = !isObjectID(fileChanges) && fileChanges.map(change => new FileChange(change));
+            this.fileChanges = !isObjectID(fileChanges) && fileChanges.map(change => new FileChange(change, this));
             this.assignedUsers = !isObjectID(assignedUsers) && assignedUsers.map(user => new User(user));
             this.reviewers = !isObjectID(reviewers) && reviewers.map(user => new User(user));
             this.labels = labels;
@@ -70,6 +73,55 @@ class PullRequest extends _Global {
         return this.task && this.task.repo;
     }
 
+    get parentTicket() {
+        return this.task && this.task.ticket;
+    }
+
+    async updateDescription(dontSave) {
+        const descriptionTemplate = this.repo.getProjectTemplate('prDescription')();
+        const newDescription = descriptionTemplate.renderToString({
+            ticketURL: this.parentTicket.ticketURL,
+            taskURL: this.task.taskURL,
+            summary: this.summary,
+            fileChanges: this.fileChanges
+        });
+
+        if (!dontSave) {
+            const updatedDescription = await this.updateDB({ data: {
+                description: newDescription
+            }});
+    
+            if (updatedDescription instanceof Error.Log) {
+                updatedDescription.consolePrint();
+                throw updatedDescription;
+            }
+    
+            this.description = newDescription;
+            return this;
+        } else {
+            return newDescription;
+        }
+    }
+
+    async updateChangesInternal(published) {
+        try {
+            await this.task.increaseCurrentVersion();
+
+            this.gitHubPR = published;
+
+            const updatedGitRes = await this.updateDB({data: { gitHubPR: published }});
+
+            if (updatedGitRes instanceof Error.Log) {
+                updatedGitRes.consolePrint();
+                throw updatedGitRes;
+            }
+
+            return this;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     async publishPR() {
         try {
             const published = await this.repoManager.createPullRequest({
@@ -81,8 +133,18 @@ class PullRequest extends _Global {
                 base: this.base,
                 labels: this.labels
             });
-            
-            return published;
+            if (published instanceof Error.Log) {
+                published.consolePrint();
+                throw published;
+            }
+
+            const updatedPR = await this.updateChangesInternal(published);
+            if (updatedPR instanceof Error.Log) {
+                updatedPR.consolePrint();
+                throw updatedPR;
+            }
+
+            return updatedPR;
         } catch (err) {
             throw new Error.Log(err);
         }

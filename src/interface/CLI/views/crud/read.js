@@ -61,7 +61,7 @@ async function ReadView(params) {
                     id: 'read-doc-form',
                     formCtrl: {
                         defaultData,
-                        schema: { obj: bodySchema }
+                        schema: bodySchema
                     }
                 }
             ]

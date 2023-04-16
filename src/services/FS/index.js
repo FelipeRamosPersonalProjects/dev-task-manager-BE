@@ -2,6 +2,20 @@ const fs = require('fs');
 const path = require('path');
 
 class FileSystemService {
+    static readFileSync(path) {
+        return fs.readFileSync(path, { encoding: 'utf-8' });
+    }
+
+    static async readFile(path) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(path, (err, dataBuff) => {
+                if (err) throw reject(new Error.Log(err));
+                
+                return resolve(dataBuff);
+            });
+        });
+    }
+
     static async copyFiles(filesToCopy, sourceDir, destDir) {
         if (!Array.isArray(filesToCopy)) {
             throw new Error.Log({
@@ -33,12 +47,16 @@ class FileSystemService {
                         fs.mkdirSync(newDestDir, { recursive: true });
                     }
 
-                    fs.copyFile(sourcePath, destPath, (err) => {
-                        if (err) throw reject(new Error.Log(err));
-        
-                        console.log(`${file} was copied to ${destPath}`);
+                    if (fs.existsSync(sourcePath)) {
+                        fs.copyFile(sourcePath, destPath, (err) => {
+                            if (err) throw reject(new Error.Log(err));
+            
+                            console.log(`${file} was copied to ${destPath}`);
+                            return resolve(file.filename);
+                        });
+                    } else {
                         return resolve(file.filename);
-                    });
+                    }
                 }));
             });
 

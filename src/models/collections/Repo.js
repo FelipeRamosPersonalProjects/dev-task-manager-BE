@@ -1,7 +1,7 @@
 const _Global = require('../maps/_Global');
 const RepoManager = require('../../services/GitHubAPI/RepoManager');
 const FS = require('../../services/FS');
-const CRUD = require('../../services/database/crud');
+const config = require('@config');
 
 class Repo extends _Global {
     constructor(setup = {
@@ -89,15 +89,14 @@ class Repo extends _Global {
         const date = new Date();
         const repo = this.cod;
         const ticket = this.getTicketCod();
-        const task = this.getTaskCod();
         const branch = currentBranch;
         const year = date.getFullYear();
         const month = date.getMonth();
-        const day = date.getDay();
+        const day = date.getDate();
         const hour = date.getHours();
         const minute = date.getMinutes();
 
-        return `temp/${repo}/${ticket}/${branch}/${year}-${month}-${day}__${hour}_${minute}`;
+        return `temp/${config.mode === 'production' ? 'PROD' : 'DEV'}/${repo}/${ticket}/${branch}/${year}-${month}-${day}__${hour}_${minute}`;
     }
 
     isCurrentBranchValid() {
@@ -111,7 +110,8 @@ class Repo extends _Global {
                 (parent === 'develop'),
                 (parent === 'feature'),
                 (parent === 'release'),
-                (parent === 'bugfix')
+                (parent === 'bugfix'),
+                (parent === this.baseBranch)
             ].some(item => item);
     
             if (!isParentValid) {
@@ -122,7 +122,7 @@ class Repo extends _Global {
             }
     
             if (path.length > 1) {
-                const match = path.find(item => item === task.taskID);
+                const match = path.find(item => item.match(task.taskID));
     
                 if (match) {
                     return true;
@@ -178,7 +178,7 @@ class Repo extends _Global {
             if (project) {
                 const branchTemplate = project.getTemplate('branchName');
                 const template = await branchTemplate();
-                const branchName = template.toMarkdown({taskID: task.taskID})
+                const branchName = template.toMarkdown({taskBranch: task.taskBranch});
                 const newBranch = await this.repoManager.createBranch(branchName, this.baseBranch, {bringChanges: true});
 
                 if (newBranch instanceof Error.Log) {
@@ -192,15 +192,15 @@ class Repo extends _Global {
         }
     }
     
-    async commitChanges() {
+    async commitChanges(fileChanges, summary) {
         try {
             const isValidBranch = this.isCurrentBranchValid();
             const task = this.parentTask;
-            const titleTemplate = await this.getProjectTemplate('prTitle')();
-            const title = titleTemplate.toMarkdown({taskID: task.taskID, taskTitle: task.taskName});
+            const titleTemplate = this.getProjectTemplate('prTitle')();
+            const title = titleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
 
             if (isValidBranch) {
-                const commit = await this.repoManager.commit(title, task.ticket.description);
+                const commit = await this.repoManager.commit(title, summary || task.description, {fileChanges});
                 if (commit instanceof Error.Log) {
                     throw commit;
                 }
@@ -230,18 +230,14 @@ class Repo extends _Global {
             const ticket = task && task.ticket;
 
             if (task) {
-                const compared = await this.repoManager.compareBranches(this.baseBranch);
-                const prTitleTemplate = await this.getProjectTemplate('prTitle')();
-                const description = await this.getProjectTemplate('prDescription')();
+                const compared = await this.repoManager.compareBranches(this.baseBranch, this.parentTask.taskBranch);
 
-                const title = prTitleTemplate.toMarkdown({taskID: task.taskID, taskTitle: task.taskName});
                 const objData = {
                     taskID: task.taskID,
                     taskURL: task.taskURL,
                     ticketURL: ticket.ticketURL,
                     isNew: true,
                     assignedUsers: [user._id],
-                    name: title,
                     summary: task.description,
                     owner: user._id,
                     fileChanges: compared.files,
@@ -251,7 +247,12 @@ class Repo extends _Global {
                     head: this.parentTask.taskBranch,
                     labels: []
                 };
-                objData.description = description.toMarkdown(objData);
+                
+                const prTitleTemplate = this.getProjectTemplate('prTitle')();
+                const description = this.getProjectTemplate('prDescription')();
+
+                objData.name = prTitleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
+                objData.description = description.renderToString(objData);
 
                 return objData;
             }

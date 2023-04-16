@@ -25,6 +25,14 @@ class RepoManager extends GitHubConnection {
         this.parent = () => parent;
     }
 
+    get repo() {
+        return this.parent();
+    }
+
+    get parentTask() {
+        return this.repo && this.repo.parentTask;
+    }
+
     getCurrentBranch() {
         try {
             const branch = this.prompt.cmd('git branch --show-current');
@@ -99,14 +107,19 @@ class RepoManager extends GitHubConnection {
 
         try {
             const branch = await this.isBranchExist(name);
-            const currentBranch = this.getCurrentBranch();
+            if (branch.isExist) {
+                const isExistError = new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
+                toolsCLI.print(isExistError.message, 'INFO');
 
-            if (currentBranch !== baseName) {
-                return new Error.Log('services.GitHubAPI.RepoManager.base_branch_is_not_current');
+                toolsCLI.print(`Branch name "${name}" already exists! Trying to create the "${this.parentTask.nextBranchName}".`, 'BRANCH-EXIST');
+                return await this.createBranch(this.parentTask.nextBranchName, baseName, options);
             }
 
-            if (branch.isExist) {
-                return new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
+            const currentBranch = this.getCurrentBranch();
+            if (currentBranch !== baseName) {
+                const currentError = new Error.Log('services.GitHubAPI.RepoManager.base_branch_is_not_current');
+                toolsCLI.print(currentError.message, 'WARN');
+                return currentError;
             }
 
             const prompt = await this.prompt.exec(`git branch ${name} ${baseName}`);
@@ -333,7 +346,8 @@ class RepoManager extends GitHubConnection {
                         const url = match[1];
 
                         result.changes.push(new FileChange({
-                            filename: url
+                            filename: url,
+                            patch: item
                         }));
                     }
                 });
@@ -347,31 +361,33 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async commit(title, description, params) {
+    async commit(title, summary, params) {
         try {
-            let stringFilesList = new StringTemplateBuilder().text(description).newLine().newLine();
-
-            const fileChanges = await this.currentChanges();
-            if (fileChanges instanceof Error.Log) {
-                throw fileChanges;
+            if (!params.fileChanges) {
+                const fileChanges = await this.currentChanges();
+                if (fileChanges instanceof Error.Log) {
+                    throw fileChanges;
+                }
             }
 
-            fileChanges.changes.map(item => {
-                stringFilesList = stringFilesList.text(`### ${item.filename}:`).newLine().newLine();
-            });
-            stringFilesList = stringFilesList.end();
-
+            const descriptionTemplate = this.repo.getProjectTemplate('commitDescription')();
+            const description = descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges});
             const added = await this.addChanges();
             if (added instanceof Error.Log) {
                 throw added;
             }
 
-            const out = await this.prompt.exec(`git commit -m "${title}" -m "${stringFilesList}"${this.prompt.strigifyParams(params)}`);
+            const out = await this.prompt.exec(`git commit -m "${title}" ${description}`);
             if (out instanceof Error.Log) {
                 throw out;
             }
 
-            return out;
+            return {
+                title,
+                summaryDescription: description,
+                fileChanges: params.fileChanges,
+                commitOutput: out.out
+            };
         } catch(err) {
             return new Error.Log(err).append('services.GitHubAPI.RepoManager.commiting');
         }
@@ -391,8 +407,8 @@ class RepoManager extends GitHubConnection {
         try {
             if (!base) {
                 throw new Error.Log({
-                    name: 'dfsdf',
-                    message: 'gsfzfdbf'
+                    name: 'COMPARE-BRANCH',
+                    message: `Error caught when it's comparing the branches`
                 });
             }
 
@@ -401,6 +417,10 @@ class RepoManager extends GitHubConnection {
             }
 
             const compared = await this.ajax(`/repos/${this.repoPath}/compare/${base}...${head}`);
+            if (compared instanceof Error.Log) {
+                throw compared;
+            }
+
             return new Compare(compared);
         } catch (err) {
             throw new Error.Log(err);
@@ -419,28 +439,28 @@ class RepoManager extends GitHubConnection {
                 throw PR;
             }
 
-            if (Array.isArray(data.assignedUsers)) {
-                const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                    assignees: data.assignedUsers
-                }, 'POST');
+            const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
+                assignees: [this.userName]
+            }, 'POST');
 
-                if (addAssignees instanceof Error.Log) {
-                    throw addAssignees;
-                }
+            if (addAssignees instanceof Error.Log) {
+                throw addAssignees;
             }
-            
+
             if (Array.isArray(data.labels)) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
-                    labels: [
-                        'bug',
-                        'enhancement'
-                    ],
+                    labels: ['support'],
                 }, 'POST');
 
                 if (addLabels instanceof Error.Log) {
                     throw addLabels;
                 }
             }
+
+            // const filesChanges = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/files`);
+            // if (filesChanges instanceof Error.Log) {
+            //     throw filesChanges;
+            // }
 
             return PR;
         } catch (err) {

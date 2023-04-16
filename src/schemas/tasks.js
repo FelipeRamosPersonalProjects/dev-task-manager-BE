@@ -1,16 +1,22 @@
 const Schema = require('../models/SchemaDB');
 const queries = require('./queries');
+const events = require('./events');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'tasks',
     symbol: 'TSK',
     queries: queries.tasks,
+    events: events.tasks,
     schema: {
         source: {
             type: String,
             default: 'jira',
             enum: ['jira', 'github']
+        },
+        currentVersion: {
+            type: Number,
+            default: 1
         },
         taskName: {
             type: String,
@@ -18,14 +24,15 @@ module.exports = new Schema({
         },
         taskID: {
             type: String,
-            required: true
+            immutable: true,
+            unique: true
+            
         },
         taskURL: {
             type: String,
-            required: true
-        },
-        taskBranch: {
-            type: String
+            required: true,
+            immutable: true,
+            unique: true
         },
         description: {
             type: String

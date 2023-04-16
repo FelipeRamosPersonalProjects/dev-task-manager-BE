@@ -1,6 +1,5 @@
 const ViewCLI = require('../../ViewCLI');
 const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const MainMenuDescription = require('../../components/MainMenuDescription');
 const StringTemplateBuilder = require('../../../StringTemplateBuilder');
 
 async function CRUDView() {
@@ -11,8 +10,7 @@ async function CRUDView() {
     const Template = new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'DevDESK CLI - CRUD',
-        headerDescription,
-        Content: new MainMenuDescription()
+        headerDescription
     });
     
     const navigator = new ViewCLI.ViewNavigator({ options: [

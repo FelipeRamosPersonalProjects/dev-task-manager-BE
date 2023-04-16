@@ -14,7 +14,13 @@ async function DocDisplay(params) {
     }
 
     try {
-        const document = await CRUD.getDoc({ collectionName, filter }).defaultPopulate().initialize();
+        let document = await CRUD.getDoc({ collectionName, filter });
+
+        if (document.defaultPopulate) {
+            document = document.defaultPopulate().initialize();
+        } else {
+            document = document.initialize();
+        }
     
         return new ViewCLI({
             name: 'docDisplay',

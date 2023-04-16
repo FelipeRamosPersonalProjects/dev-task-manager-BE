@@ -1,7 +1,9 @@
 const ValidateSchema = require('../validation/validateSchema');
+const FS = require('../services/FS');
+const ToolsCLI = require('./CLI/ToolsCLI');
 
 const defaultRules = {
-    componentName: { type: String, default: (() => 'comp-' + Date.now())()},
+    componentName: { type: String, default: () => 'comp-' + Date.now()},
     description: { type: String },
     outputModel: { type: String, default: ''},
     types: { type: Object, default: {} }
@@ -16,6 +18,7 @@ class Component extends ValidateSchema {
     }, validationRules){
         super(typeof validationRules === 'string' ? validationRules : {...defaultRules, ...validationRules});
         const self = this;
+        this.tools = new ToolsCLI();
 
         try {
             const { componentName, description, outputModel, types } = setup || {};
@@ -25,10 +28,6 @@ class Component extends ValidateSchema {
             this.outputModel = outputModel;
             this.types = types;
 
-            if (this.validate({...this, ...setup})) {
-                throw new Error.Log(this.validationResult);
-            }
-
             this.placeDefault();
         } catch(err) {
             const error = new Error.Log(err).append('common.required_params', err.validationErrors, this.componentName);
@@ -36,6 +35,43 @@ class Component extends ValidateSchema {
             Object.keys(self).map(key => delete self[key]);
             Object.keys(error).map(key => self[key] = error[key]);
             throw error.stack;
+        }
+    }
+
+    get TEMPLATE_STRING() {
+        return FS.readFileSync(this.SOURCE_PATH);
+    }
+
+    init() {
+        try {
+            this.outputModel = this.loadSourceFile();
+            const keys = Object.keys(this.types);
+
+            for (let key of keys) {
+                const Type = this.types[key];
+                this.types[key] = Type;
+            }
+
+            return this;
+        } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    loadSourceFile(path) {
+        try {
+            if (!path && !this.SOURCE_PATH) {
+                return this.outputModel;
+            }
+
+            const loaded = this.TEMPLATE_STRING;
+            if (loaded instanceof Error.Log) {
+                throw loaded;
+            }
+
+            return loaded;
+        } catch(err) {
+            throw new Error.Log(err);
         }
     }
 
@@ -51,10 +87,10 @@ class Component extends ValidateSchema {
         const Child = this.types[childTypeName];
         let result = '';
 
-        if (Array.isArray(value)) {
-            value.map((item) => {
-                result += Child.toMarkdown(item);
-            });
+        if (Array.isArray(value) && Child) {
+            for (let item of value) {
+                result += new Child(item).renderToString();
+            }
         }
 
         return result;
@@ -86,38 +122,70 @@ class Component extends ValidateSchema {
         const regex = /##{{(.*?)}}##/g;
         const substrings = [];
         let result = this.outputModel;
+        
+        if (this.validate({...this, ...params})) {
+            throw new Error.Log(this.validationResult);
+        }
 
         let match;
         while (match = regex.exec(this.outputModel)) {
             substrings.push(match[1]);
         }
 
-        substrings.map(sub => {
+        for (let sub of substrings) {
             const [key, type, child] = sub.split(':');
+            const paramValue = params && params[key] || this[key];
             let value;
             let toReplaceString;
 
             if (type === 'string') {
-                value = this.string(params[key]);
+                value = this.string(paramValue);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (type === 'array') {
-                value = this.array(params[key], child);
+                value = this.array(paramValue, child);
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (type === 'date') {
-                value = this.date(params[key]);
+                value = this.date(paramValue);
+                toReplaceString = `##{{${sub}}}##`;
+            }
+
+            if (type === 'component') {
+                value = paramValue ? paramValue.renderToString(params) : ' ';
                 toReplaceString = `##{{${sub}}}##`;
             }
 
             if (value) {
                 result = result.replace(new RegExp(toReplaceString, 'g'), value);
             }
-        });
+        }
 
         return result;
+    }
+
+    renderToString(params) {
+        try {
+            const stringResult = this.toMarkdown(params);
+            if (stringResult instanceof Error.Log) {
+                throw stringResult;
+            }
+
+            return stringResult;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    printOnScreen(params) {
+        try {
+            const stringResult = this.renderToString(params);
+            this.tools.printTemplate(stringResult);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 }
 

@@ -1,7 +1,8 @@
-const { execSync, exec, spawn } = require('child_process');
+const { execSync, exec } = require('child_process');
 const readline = require('readline');
 const ToolsCLI = require('../../interface/CLI/ToolsCLI');
 const toolsCLI = new ToolsCLI();
+const config = require('../../../config.json');
 
 class Prompt {
     constructor(setup = {
@@ -9,7 +10,7 @@ class Prompt {
     }) {
         const {rootPath} = setup || {};
 
-        this.rootPath = rootPath;
+        this.rootPath = rootPath || __dirname;
     }
 
     cmd(command, options) {
@@ -66,8 +67,8 @@ class Prompt {
                     input: process.stdin,
                     output: process.stdout
                 });
-    
-                rl.question(questionText, (answer) => {
+
+                rl.question(`\n[QUESTION][${config.projectName.toUpperCase()}] -> ${questionText} `, (answer) => {
                     rl.close();
                     resolve(answer);
                 });

@@ -1,47 +1,30 @@
 const Component = require('../../Component');
-const StringTemplateBuilder = require('../../StringTemplateBuilder');
-const DashedHeader = require('../components/DashedHeader');
+const DashedHeader = require('@CLI/components/DashedHeader');
 
 class DashedHeaderLayout extends Component {
+    get SOURCE_PATH() {
+        return require.resolve('./source/DashedHeaderLayout.md')
+    }
+
     constructor(settings = {
         ...Component.prototype,
         headerText: '',
         headerDescription: '',
-        Content: [Component],
-        contentSettings: {}
+        Content: [Component]
     }) {
         super(settings, {
-            headerText: { type: String, required: true },
-            Content: { type: [Object], required: true }
+            headerText: { type: String },
+            headerDescription: { type: String },
+            Content: { type: [Object] }
         });
 
-        const {contentSettings, headerText, headerDescription, Content} = settings || {};
+        const {menu, headerText, headerDescription, Content} = settings || {};
 
-        this.contentSettings = contentSettings;
+        this.menu = menu;
+        this.DashedHeader = new DashedHeader({headerText, headerDescription});
         this.Content = Content;
-        this.headerText = headerText;
-        this.headerDescription = headerDescription;
-    }
 
-    getString() {
-        const header = new DashedHeader({
-            headerText: this.headerText,
-            headerDescription: this.headerDescription
-        }).getString();
-
-        return new StringTemplateBuilder()
-            .text(header)
-            .newLine()
-            .text(this.children(this.Content))
-            .newLine()
-            .text('------------------------------------------------------------------------------')
-            .text('------------------------------------------------------------------------------')
-        .end();
-    }
-
-    async render() {
-        console.log(this.getString());
-        return this;
+        this.init();
     }
 }
 

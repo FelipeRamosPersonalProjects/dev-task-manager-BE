@@ -27,14 +27,29 @@ class Task extends _Global {
         const Repo = require('./Repo');
 
         try {
-            const { source, taskBranch, taskName, taskID, taskURL, description, project, assignedUser, ticket, dueDate, sharedWith, pullRequests, comments, repo } = setup || {};
+            const {
+                source,
+                currentVersion,
+                taskName,
+                taskID,
+                taskURL,
+                description,
+                project,
+                assignedUser,
+                ticket,
+                dueDate,
+                sharedWith,
+                pullRequests,
+                comments,
+                repo
+            } = setup || {};
 
+            this.collectionName = 'tasks';
             this.source = source;
             this.taskName = taskName;
             this.taskID = taskID;
             this.taskURL = taskURL;
-            this.taskBranch = taskBranch;
-            this.displayName = taskName;
+            this.currentVersion = currentVersion;
             this.description = description;
             this.dueDate = dueDate;
             this.assignedUser = !isObjectID(assignedUser) ? new User(assignedUser) : {};
@@ -54,8 +69,50 @@ class Task extends _Global {
         }
     }
 
+    get displayName() {
+        return this.taskName;
+    }
+
     get repoManager() {
         return (typeof this.repo === 'object') && this.repo.repoManager;
+    }
+
+    get ticketID() {
+        return this.ticket && this.ticket.ticketID;
+    }
+
+    get taskBranch() {
+        return this.getTaskBranch();
+    }
+
+    get nextBranchVersion() {
+        const result = this.currentVersion + 1;
+        return !isNaN(result) && Number(result);
+    }
+
+    get nextBranchName() {
+        return this.getTaskBranch(this.nextBranchVersion);
+    }
+
+    getTaskBranch(version) {
+        try {
+            const prCount = this.pullRequests.length + 1;
+            let versionCount = ((prCount > this.currentVersion) || !this.currentVersion) ? prCount : this.currentVersion;
+
+            if (version) {
+                versionCount = version;
+            }
+
+            if (this.taskID) {
+                if (this.pullRequests.length || versionCount > 1) {
+                    return `feature/${this.taskID}-v${versionCount}`;
+                } else {
+                    return `feature/${this.taskID}`;
+                }
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     async createPR () {
@@ -78,6 +135,7 @@ class Task extends _Global {
                     throw publish;
                 }
 
+                await savingPR.updateDB({data: { gitHubPR: publish }});
                 return publish;
             }
         } catch (err) {
@@ -128,6 +186,32 @@ class Task extends _Global {
                 isReady: true
             }
         } catch (err) {
+            if (err.name === 'GitHubAPIRepoManagerBranchIsExist') {
+                return err;
+            }
+
+            throw new Error.Log(err);
+        }
+    }
+
+    async increaseCurrentVersion() {
+        try {
+            if (this.isComplete && !this.currentVersion) {
+                const created = await this.updateDB({collectionName: 'tasks', data: { currentVersion: this.pullRequests.length + 1 }})
+                if (created instanceof Error.Log) {
+                    throw created;
+                }
+
+                return created;
+            }
+
+            const increased = await this.increaseProp('currentVersion');
+            if (increased instanceof Error.Log) {
+                throw increased;
+            }
+
+            return increased;
+        } catch(err) {
             throw new Error.Log(err);
         }
     }
