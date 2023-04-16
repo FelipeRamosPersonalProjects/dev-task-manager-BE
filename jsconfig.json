@@ -3,6 +3,7 @@
         "baseUrl": ".",
         "paths": {
             "@config": ["./config.json"],
+            "@CRUD": ["./src/services/database/crud"],
             "@src/*": ["./src/*"],
             "@controllers/*": ["./src/controllers/*"],
             "@global/*": ["./src/global/*"],

@@ -68,7 +68,7 @@ class Prompt {
                     output: process.stdout
                 });
 
-                rl.question(`[${config.projectName}][Question] -> ${questionText} `, (answer) => {
+                rl.question(`\n[QUESTION][${config.projectName.toUpperCase()}] -> ${questionText} `, (answer) => {
                     rl.close();
                     resolve(answer);
                 });

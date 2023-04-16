@@ -285,7 +285,7 @@ async function CreatePRsView({ defaultData }) {
                     const published = ev.values.published || {};
 
                     print(
-                        `The pull request was created, and it's available at the link: ${published.html_url || '--Link not available--'}\n\n`,
+                        `The pull request was created, and it's available at the link: ${published.gitHubPR.html_url || '--Link not available--'}\n\n`,
                         'SUCCESS'
                     );
                     return published;

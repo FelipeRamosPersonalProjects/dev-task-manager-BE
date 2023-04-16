@@ -82,9 +82,26 @@ class Task extends _Global {
     }
 
     get taskBranch() {
+        return this.getTaskBranch();
+    }
+
+    get nextBranchVersion() {
+        const result = this.currentVersion + 1;
+        return !isNaN(result) && Number(result);
+    }
+
+    get nextBranchName() {
+        return this.getTaskBranch(this.nextBranchVersion);
+    }
+
+    getTaskBranch(version) {
         try {
             const prCount = this.pullRequests.length + 1;
-            const versionCount = ((prCount > this.currentVersion) || !this.currentVersion) ? prCount : this.currentVersion;
+            let versionCount = ((prCount > this.currentVersion) || !this.currentVersion) ? prCount : this.currentVersion;
+
+            if (version) {
+                versionCount = version;
+            }
 
             if (this.taskID) {
                 if (this.pullRequests.length || versionCount > 1) {
