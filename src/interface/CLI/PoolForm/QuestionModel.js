@@ -131,7 +131,7 @@ class QuestionModel {
             }
 
             if (this.next) {
-                return await this.goNext();
+                return await this.ctrlCLI.goNext();
             } else {
                 return await this.ctrlCLI.end();
             }

@@ -4,7 +4,6 @@ const ToolsCLI = require('@CLI/ToolsCLI');
 const schemas = require('../../../../schemas');
 const CRUD = require('../../../../services/database/crud');
 
-const tools = new ToolsCLI();
 const bodySchema = {
     collectionName: { type: String, required: true }
 };
@@ -46,12 +45,10 @@ async function CreateView(params) {
                         schema: bodySchema,
                         defaultData,
                         events: {
-                            onStart: async (ev) => {
-                                tools.print('Starting "build-params"...');
-                            },
                             onEnd: async (ev) => {
                                 try {
-                                    ev.view().setValue('docFilter', ev.formData);
+                                    ev.parentView.setValue('docFilter', ev.formData);
+                                    ev.parentView.goNext();
                                 } catch (err) {
                                     throw new Error.Log(err);
                                 }
@@ -64,11 +61,11 @@ async function CreateView(params) {
                     formCtrl: {
                         events: {
                             onStart: async (ev) => {
-                                const filter = ev.view().getValue('docFilter');
+                                const filter = ev.parentView.getValue('docFilter');
 
                                 if (filter) {
                                     const documentSchema = schemas[filter.collectionName];
-                                    documentSchema && ev.setForm(documentSchema.schema);
+                                    documentSchema && ev.setForm(documentSchema.schema.obj);
                                 }
                             },
                             onEnd: async (ev) => {

@@ -111,8 +111,8 @@ class RepoManager extends GitHubConnection {
                 const isExistError = new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
                 toolsCLI.print(isExistError.message, 'INFO');
 
-                toolsCLI.print(`Branch name "${name}" already exists! Trying to create the "${task.taskBranch}".`, 'BRANCH-EXIST');
-                return await this.createBranch(task.taskBranch, baseName, options);
+                toolsCLI.print(`Branch name "${name}" already exists! Trying to create the "${this.parentTask.nextBranchName}".`, 'BRANCH-EXIST');
+                return await this.createBranch(this.parentTask.nextBranchName, baseName, options);
             }
 
             const currentBranch = this.getCurrentBranch();
@@ -410,8 +410,8 @@ class RepoManager extends GitHubConnection {
         try {
             if (!base) {
                 throw new Error.Log({
-                    name: 'dfsdf',
-                    message: 'gsfzfdbf'
+                    name: 'COMPARE-BRANCH',
+                    message: `Error caught when it's comparing the branches`
                 });
             }
 
@@ -438,16 +438,14 @@ class RepoManager extends GitHubConnection {
                 throw PR;
             }
 
-            // if (Array.isArray(data.assignedUsers)) {
-                const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                    assignees: [this.userName]
-                }, 'POST');
+            const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
+                assignees: [this.userName]
+            }, 'POST');
 
-                if (addAssignees instanceof Error.Log) {
-                    throw addAssignees;
-                }
-            // }
-            
+            if (addAssignees instanceof Error.Log) {
+                throw addAssignees;
+            }
+
             if (Array.isArray(data.labels)) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
                     labels: ['support'],
@@ -457,6 +455,11 @@ class RepoManager extends GitHubConnection {
                     throw addLabels;
                 }
             }
+
+            // const filesChanges = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/files`);
+            // if (filesChanges instanceof Error.Log) {
+            //     throw filesChanges;
+            // }
 
             return PR;
         } catch (err) {
