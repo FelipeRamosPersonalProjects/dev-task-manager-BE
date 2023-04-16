@@ -59,7 +59,7 @@ class EventsHandlers {
             return await this[eventName](...args);
         }
 
-        return;
+        return
     }
 
     /**

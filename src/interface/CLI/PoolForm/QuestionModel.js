@@ -55,7 +55,7 @@ class QuestionModel {
      * The command-line interface control object.
      * @type {ViewCLI}
      */
-    get ctrlCLI() {
+    get parentPool() {
         return this.ctrl() || {};
     }
 
@@ -65,7 +65,7 @@ class QuestionModel {
      * @param {*} value - The value to set.
      */
     setValue(key, value) {
-        return this.ctrlCLI.setValue(key, value);
+        return this.parentPool.setValue(key, value);
     }
 
     /**
@@ -74,7 +74,7 @@ class QuestionModel {
      * @returns {*} The value of the key.
      */
     getValue(key) {
-        return this.ctrlCLI.getValue(key);
+        return this.parentPool.getValue(key);
     }
 
     /**
@@ -83,7 +83,7 @@ class QuestionModel {
      * @returns {QuestionModel} The question model object.
      */
     getQuestion(id) {
-        return this.ctrlCLI.getQuestion(id);
+        return this.parentPool.getQuestion(id);
     }
 
     /**
@@ -101,10 +101,17 @@ class QuestionModel {
      * @returns {*} The next question.
      */
     async goNext() {
-        const nextQ = this.ctrlCLI.getQuestion(this.next);
+        const nextQ = this.parentPool.getQuestion(this.next);
+        
+        if (nextQ) {
+            return await nextQ.trigger();
+        } else {
+            return await this.endParentPool();
+        }
+    }
 
-        await this.events.triggerEvent('next', nextQ);
-        await nextQ.trigger();
+    async endParentPool() {
+        return await this.parentPool.end();
     }
 
     /**
@@ -130,11 +137,7 @@ class QuestionModel {
                 return await this.formCtrl.startPool();
             }
 
-            if (this.next) {
-                return await this.ctrlCLI.goNext();
-            } else {
-                return await this.ctrlCLI.end();
-            }
+            return await this.goNext();
         } catch(err) {
             this.events.triggerEvent('error', this, err);
         }

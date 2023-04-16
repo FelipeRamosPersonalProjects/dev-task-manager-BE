@@ -36,7 +36,7 @@ class PoolForm extends FormCtrlCLI {
         this.view = () => view;
     }
 
-    get parentView() {
+    get parent() {
         return this.view && this.view() || {};
     }
 
@@ -79,7 +79,7 @@ class PoolForm extends FormCtrlCLI {
             for (let i = 0; i < this.formFields.length; i++) {
                 const currKey = this.formFields[i];
                 const fieldSchema = this.getFieldSchema(currKey);
-                const currentDoc = this.parentView.getValue && this.parentView.getValue('currentDoc');
+                const currentDoc = this.parent.getValue && this.parent.getValue('currentDoc');
                 let answer = '';
     
                 if (currentDoc) {

@@ -26,7 +26,7 @@ class FormCtrlCLI {
             this.setForm(schema);
         }
 
-        this.parent = () => parent;
+        this._parent = () => parent;
     }
 
     /**

@@ -203,7 +203,6 @@ async function CreatePRsView({ defaultData }) {
                                 const newPool = new PoolForm({
                                     events: {
                                         onEnd: async (ev) => {
-                                            
                                             return resolve(ev);
                                         }
                                     }
@@ -236,7 +235,7 @@ async function CreatePRsView({ defaultData }) {
                     id: 'publishPullRequest',
                     defaultData,
                     next: 'finishing-pr',
-                    text: `So if everithing is ok with the saved pull request, can we proceed and publish it (Y/N)?`,
+                    text: `So if everything is ok with the saved pull request, can we proceed and publish it (Y/N)?`,
                     events: {
                         onTrigger: async (ev, {print, printTemplate}) => {
                             const savedPR = ev.getValue('savedPR');
@@ -263,7 +262,8 @@ async function CreatePRsView({ defaultData }) {
                                     return ev.trigger();
                                 }
 
-                                return ev.setValue('published', published);
+                                ev.setValue('published', published);
+                                return ev.goNext();
                             } else {
                                 return ev.trigger();
                             }
@@ -275,7 +275,7 @@ async function CreatePRsView({ defaultData }) {
                     text: `Would you like to close dev-desk (Y/N)? `,
                     events: {
                         onAnswer: async (ev) => {
-                            return ev;
+                            return await ev.endParentPool();
                         }
                     }
                 }
