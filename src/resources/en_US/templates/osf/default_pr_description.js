@@ -36,8 +36,6 @@ class DefaultPRDescription extends Component {
         this.types = {
             FileChange
         };
-        
-        this.init();
     }
 }
 

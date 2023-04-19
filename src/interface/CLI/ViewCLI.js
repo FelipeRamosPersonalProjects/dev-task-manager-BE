@@ -64,12 +64,12 @@ class ViewCLI extends ToolsCLI {
         try {
             this.cli().printTemplate(this.getString());
 
-            if (this.navigator) {
-                this.navigator.render(tableHeaders);
-            }
-
             if (this.poolForm) {
                 this.poolForm.start();
+            }
+            
+            if (this.navigator) {
+                this.navigator.render(tableHeaders);
             }
         } catch(err) {
             throw new Error.Log(err);

@@ -1,6 +1,8 @@
 const ToolsCLI = require('./ToolsCLI');
 const NavigatorOption = require('./NavigatorOption');
-const StringTemplateBuilder = require('../StringTemplateBuilder')
+const ListTiles = require('@CLI/templates/ListTiles');
+const Prompt = require('@services/Prompt');
+const { QuestionModel } = require('./PoolForm');
 
 const navDefaultQuestions = {
     startQuestion: 'navigation',
@@ -21,20 +23,29 @@ class ViewNavigator extends ToolsCLI {
         type: '', // nav or doc-list
         options: [NavigatorOption.prototype],
         navSuccessCallback,
-        navErrorCallback
+        navErrorCallback,
+        question
     }, parentView) {
         super();
-        const {type, options, navSuccessCallback, navErrorCallback} = setup || {};
+        const {type, options, question, navSuccessCallback, navErrorCallback} = new Object(setup || {});
+        const self = this;
 
         this.type = type || 'nav';
         this.options = [];
+        this.question = question ? new QuestionModel(question) : {};
         this.navSuccessCallback = navSuccessCallback && navSuccessCallback.bind(this);
         this.navErrorCallback = navErrorCallback && navErrorCallback.bind(this);
-        this.parentView = parentView;
+
+        this.prompt = new Prompt();
+        this._parentView = () => parentView;
 
         if (Array.isArray(options)) {
-            this.options = options.map((opt) => new NavigatorOption(opt));
+            this.options = options.map((opt, index) => new NavigatorOption({...opt, index}, self));
         }
+    }
+
+    get parentView() {
+        return this._parentView();
     }
 
     async navTo(index, params) {
@@ -48,7 +59,8 @@ class ViewNavigator extends ToolsCLI {
             return await this.parentView.goToView(opt.targetView, {
                 ...opt.viewParams,
                 ...params,
-                defaultData: opt.defaultData
+                defaultData: opt.defaultData,
+                docData: opt.doc
             });
         }
     }
@@ -58,7 +70,7 @@ class ViewNavigator extends ToolsCLI {
     }
 
     addOption(data) {
-        const newOption = new NavigatorOption(data);
+        const newOption = new NavigatorOption(data, this);
 
         newOption.type = this.type;
         this.options.push(newOption);
@@ -69,40 +81,45 @@ class ViewNavigator extends ToolsCLI {
         const i = String(index);
 
         if (override) {
-            this.options[i] = new NavigatorOption(data);
+            this.options[i] = new NavigatorOption(data, this);
         } else {
             this.options[i] = {...this.options[i], ...data};
         }
     }
 
     render(params) {
-        let { headers, exclude } = params || {};
+        let { exclude } = params || {};
         let options = [];
 
         if (this.type === 'doc-list') {
-            this.options.map(opt => options.push(opt.doc));
+            this.options.map((opt) => options.push( opt.doc ));
         } else {
             options = this.options;
-            exclude = ['type', 'targetView'];
+            exclude = ['type', 'targetView', ...(exclude || [])];
         }
 
         try {
-            let template = new StringTemplateBuilder();
+            const template = new ListTiles({items: options});
+            const stringOutput = template.renderToString();
             
-            options.map((opt, i) => {
-                if (opt._schema) {
-                    let title = '';
+            this.printTemplate(stringOutput);
+            return stringOutput;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 
-                    if (Array.isArray(headers)) {
-                        title = headers.map(item => opt[item]).join(' | ');
-                    }
-                    template = template.indent().text(`${i}. ${title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
-                } else {
-                    template = template.indent().text(`${i}. ${opt.title}${opt.description ? (' - ' + opt.description) : ''}`).newLine();
-                }
-            });
+    async fire(params) {
+        try {
+            this.render(params);
+            const questionText = this.question && this.question.text || '';
 
-            console.log(template.end() || '--no-records--');
+            const fired = await this.prompt.question(questionText);
+            if (fired instanceof Error.Log) {
+                throw fired;
+            }
+
+            return await this.navTo(fired);
         } catch (err) {
             throw new Error.Log(err);
         }

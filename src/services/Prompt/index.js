@@ -5,10 +5,8 @@ const toolsCLI = new ToolsCLI();
 const config = require('../../../config.json');
 
 class Prompt {
-    constructor(setup = {
-        rootPath: ''
-    }) {
-        const {rootPath} = setup || {};
+    constructor(setup) {
+        const {rootPath} = new Object(setup || {});
 
         this.rootPath = rootPath || __dirname;
     }

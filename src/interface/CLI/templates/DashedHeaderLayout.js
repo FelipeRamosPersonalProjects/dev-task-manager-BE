@@ -23,8 +23,6 @@ class DashedHeaderLayout extends Component {
         this.menu = menu;
         this.DashedHeader = new DashedHeader({headerText, headerDescription});
         this.Content = Content;
-
-        this.init();
     }
 }
 
