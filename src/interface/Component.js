@@ -29,6 +29,20 @@ class Component extends ValidateSchema {
             this.types = types;
 
             this.placeDefault();
+
+            try {
+                this.outputModel = this.loadSourceFile();
+                const keys = Object.keys(this.types || {});
+    
+                for (let key of keys) {
+                    const Type = this.types[key];
+                    this.types[key] = Type;
+                }
+    
+                return this;
+            } catch(err) {
+                throw new Error.Log(err);
+            }
         } catch(err) {
             const error = new Error.Log(err).append('common.required_params', err.validationErrors, this.componentName);
 
@@ -40,22 +54,6 @@ class Component extends ValidateSchema {
 
     get TEMPLATE_STRING() {
         return FS.readFileSync(this.SOURCE_PATH);
-    }
-
-    init() {
-        try {
-            this.outputModel = this.loadSourceFile();
-            const keys = Object.keys(this.types);
-
-            for (let key of keys) {
-                const Type = this.types[key];
-                this.types[key] = Type;
-            }
-
-            return this;
-        } catch(err) {
-            throw new Error.Log(err);
-        }
     }
 
     loadSourceFile(path) {
@@ -123,9 +121,9 @@ class Component extends ValidateSchema {
         const substrings = [];
         let result = this.outputModel;
         
-        if (this.validate({...this, ...params})) {
-            throw new Error.Log(this.validationResult);
-        }
+        // if (this.validate({...this, ...params})) {
+        //     throw new Error.Log(this.validationResult);
+        // }
 
         let match;
         while (match = regex.exec(this.outputModel)) {

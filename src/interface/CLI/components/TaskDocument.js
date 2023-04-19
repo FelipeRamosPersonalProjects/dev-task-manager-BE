@@ -13,8 +13,6 @@ class TaskDocumentComponent extends Component {
         this.taskURL = taskURL;
         this.taskBranch = taskBranch;
         this.description = description;
-        
-        this.init();
     }
 }
 

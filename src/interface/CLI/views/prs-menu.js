@@ -7,7 +7,7 @@ async function PullRequestsView() {
         Template: new DashedHeaderLayout({
             headerText: 'PULL REQUESTS',
             headerDescription: `Manage your pull requests.`
-        }, this).init(),
+        }, this),
         navigator: { options: [
             {
                 title: 'Create new pull request   ',
