@@ -81,6 +81,10 @@ class Task extends _Global {
         return this.ticket && this.ticket.ticketID;
     }
 
+    get ticketURL() {
+        return this.ticket && this.ticket.ticketURL;
+    }
+
     get taskBranch() {
         return this.getTaskBranch();
     }

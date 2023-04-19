@@ -23,7 +23,7 @@ class Project extends _Global {
         try {
             const {projectName, description, tickets, repos, tasks, urls, spaceDesk, templates, baseBranch} = setup || {};
 
-            this.displayName = `[${this.cod}] ${projectName}`;
+            this.displayName = `${projectName}`;
             this.projectName = projectName;
             this.description = description;
             this.urls = urls;
