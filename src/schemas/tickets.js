@@ -2,11 +2,13 @@ const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 const { SLA } = require('./map');
 const events = require('./events');
+const queries = require('./queries');
 
 module.exports = new Schema({
     name: 'tickets',
     symbol: 'TICK',
     events: events.tickets,
+    queries: queries.tickets,
     schema: {
         source: {
             type: String,
