@@ -65,6 +65,10 @@ class PullRequest extends _Global {
         }
     }
 
+    get displayName() {
+        return `[${this.cod}] ${this.name}`;
+    }
+
     get repoManager() {
         return this.repo && this.repo.repoManager;
     }
@@ -74,7 +78,15 @@ class PullRequest extends _Global {
     }
 
     get parentTicket() {
-        return this.task && this.task.ticket;
+        return this.ticket;
+    }
+
+    get taskID() {
+        return this.task && this.task.taskID;
+    }
+
+    get ticketID() {
+        return this.parentTicket && this.parentTicket.ticketID;
     }
 
     async updateDescription(dontSave) {

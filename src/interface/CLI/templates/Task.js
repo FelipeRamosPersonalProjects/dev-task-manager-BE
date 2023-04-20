@@ -1,6 +1,6 @@
 const Component = require('@interface/Component');
 const DashedHeader = require('@CLI/components/DashedHeader');
-const DefaultTile = require('@CLI/templates/tiles/DefaultTile');
+const DefaultTile = require('@src/interface/CLI/templates/tiles/DefaultTile');
 
 class TaskTemplate extends Component {
     get SOURCE_PATH() {
