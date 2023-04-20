@@ -14,7 +14,7 @@ function getCollectionModel(collection) {
         if (isCollectionExist(collection)) {
             return mongoose.model(collection);
         } else {
-            throw new Error.Log(err).append('database.collection_dont_exist', collection);
+            throw new Error.Log('database.collection_dont_exist', collection);
         }
     } catch(err) {
         throw new Error.Log(err).append('helpers.get_collection_model', collection);

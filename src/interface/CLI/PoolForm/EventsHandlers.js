@@ -176,7 +176,6 @@ class EventsHandlers {
             }
     
             await this.triggerEvent('onAnswer', ev, this.tools, ev.answer);
-            return await ev.parentPool.goNext();
         } catch (err) {
             this.triggerEvent('error', this, err);
         }
@@ -209,8 +208,11 @@ class EventsHandlers {
      */
     async end (ev) {
         try {
+            if (ev.parentPool && ev.parentPool.goNext) {
+                return await ev.parentPool.goNext();
+            }
+
             await this.triggerEvent('onEnd', ev, this.tools);
-            return await ev.parentPool.goNext();
         } catch (err) {
             throw new Error.Log(err);
         }
