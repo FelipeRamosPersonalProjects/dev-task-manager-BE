@@ -120,12 +120,8 @@ class Component extends ValidateSchema {
         const regex = /##{{(.*?)}}##/g;
         const substrings = [];
         let result = this.outputModel;
-        
-        // if (this.validate({...this, ...params})) {
-        //     throw new Error.Log(this.validationResult);
-        // }
-
         let match;
+
         while (match = regex.exec(this.outputModel)) {
             substrings.push(match[1]);
         }

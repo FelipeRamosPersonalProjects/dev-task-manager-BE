@@ -2,7 +2,7 @@ const Component = require('@interface/Component');
 
 class DefaultTileTemplate extends Component {
     get SOURCE_PATH() {
-        return require.resolve('./source/DefaultTile.md')
+        return require.resolve('./source/DefaultTile.md');
     }
 
     constructor(setup) {

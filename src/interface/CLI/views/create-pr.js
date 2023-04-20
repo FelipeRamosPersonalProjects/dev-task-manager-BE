@@ -4,7 +4,7 @@ const TaskDocument = require('../components/TaskDocument');
 const CRUD = require('../../../services/database/crud');
 const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
 
-async function CreatePRsView({ defaultData }) {
+async function CreatePRsView({ task, defaultData }) {
     const Template = new DashedHeaderLayout({
         headerText: 'CREATE A NEW PR',
         headerDescription: `Create a new pull request.`
@@ -18,12 +18,11 @@ async function CreatePRsView({ defaultData }) {
         name: 'create_pr',
         Template,
         poolForm: {
-            startQuestion: 'taskId',
+            startQuestion: task ? 'autoConfirm' : 'taskId',
             questions: [
                 {
                     id: 'taskId',
                     next: 'autoConfirm',
-                    defaultData,
                     text: `Please, enter the task id that you want to create a PR (eg: TASK-4297): `,
                     events: {
                         onAnswer: async (ev, {print}, answer) => {
@@ -328,12 +327,17 @@ async function CreatePRsView({ defaultData }) {
                     text: `Would you like to close dev-desk (Y/N)? `,
                     events: {
                         onAnswer: async (ev) => {
-                            return await ev.endParentPool();
+                            return await ev.goNext();
                         }
                     }
                 }
             ],
             events: {
+                onStart: async (ev) => {
+                    if (task) {
+                        ev.setValue('task', task);
+                    }
+                },
                 onEnd: (ev, {print}) => {
                     const published = ev.values.published || {};
 
