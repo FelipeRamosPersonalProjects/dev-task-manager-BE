@@ -99,11 +99,15 @@ class ViewNavigator extends ToolsCLI {
         }
 
         try {
-            const template = new ListTiles({items: options});
-            const stringOutput = template.renderToString();
-            
-            this.printTemplate(stringOutput);
-            return stringOutput;
+            if (Array.isArray(options) && options.length) {
+                const template = new ListTiles({items: options});
+                const stringOutput = template.renderToString();
+                
+                this.printTemplate(stringOutput);
+                return stringOutput;
+            } else {
+                return '';
+            }
         } catch (err) {
             throw new Error.Log(err);
         }
