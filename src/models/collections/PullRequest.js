@@ -28,7 +28,7 @@ class PullRequest extends _Global {
             ticket,
             task,
             gitHubPR
-        } = new Object(setup || {});
+        } = setup || {};
         
         try {
             this.collectionName = 'pull_requests';
@@ -51,7 +51,7 @@ class PullRequest extends _Global {
             if (typeof description === 'string') {
                 this.description = description;
             } else {
-                this.description = description.toMarkdown({
+                this.description = description && description.toMarkdown({
                     ticketURL: ticket.ticketURL,
                     taskURL: task.taskURL,
                     summary: task.description,

@@ -1,3 +1,3 @@
-> 🗃️ **##{{filename:string}}##:**
+> 🗃️ **##{{filename:string}}##**
 > ##{{description:string}}##
  

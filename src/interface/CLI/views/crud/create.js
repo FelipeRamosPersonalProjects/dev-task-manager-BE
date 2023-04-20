@@ -1,6 +1,5 @@
 const ViewCLI = require('../../ViewCLI');
 const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
-const ToolsCLI = require('@CLI/ToolsCLI');
 const schemas = require('../../../../schemas');
 const CRUD = require('../../../../services/database/crud');
 

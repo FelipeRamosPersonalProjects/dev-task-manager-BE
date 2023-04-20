@@ -13,8 +13,6 @@ class DisplayDocument extends Component {
         this.document = document;
         this.excludeProps = Array.isArray(excludeProps) ? excludeProps : ['_schema', '_id', 'index', 'author', 'ModelDB'];
         this.outputModel = this.getString();
-        
-        this.init();
     }
 
     getString(obj, indentTimes = 0) {

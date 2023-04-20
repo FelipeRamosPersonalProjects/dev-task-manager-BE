@@ -42,8 +42,6 @@ class MyPrDescription extends Component {
         this.types = {
             FileChange
         };
-        
-        this.init();
     }
 }
 

@@ -1,20 +1,7 @@
 const _Global = require('../maps/_Global');
 
 class Ticket extends _Global {
-    constructor(setup = {
-        ...this,
-        ticketID: '',
-        ticketURL: '',
-        title: '',
-        description: '',
-        status: '',
-        project: Project.prototype,
-        sla: SLAModel.prototype,
-        tasks: [Task.prototype],
-        pullRequests: [PullRequest.prototype],
-        assignedUsers: [User.prototype],
-        comments: [Comment.prototype]
-    }){
+    constructor(setup){
         super({...setup, validationRules: 'tickets'});
         const Project = require('./Project');
         const Task = require('./Task');
@@ -23,8 +10,7 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        if (!setup.isComplete && !setup.isNew) return;
-        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = setup || {};
+        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup || {});
 
         try {
             this.ticketURL = ticketURL;
@@ -32,12 +18,12 @@ class Ticket extends _Global {
             this.title = title;
             this.description = description;
             this.status = status;
-            this.project = project && new Project(project);
-            this.sla = sla && new SLAModel(sla);
-            this.tasks = Array.isArray(tasks) && tasks.map(task => new Task(task));
-            this.pullRequests = Array.isArray(pullRequests) && pullRequests.map(pr => new PullRequest(pr));
-            this.assignedUsers = Array.isArray(assignedUsers) && assignedUsers.map(user => new User(user));
-            this.comments = Array.isArray(comments) && comments.map(comment => new Comment(comment));
+            this.project = !isObjectID(project) ? new Project(project) : {};
+            this.sla = !isObjectID(sla) ? new SLAModel(sla) : {};
+            this.tasks = !isObjectID(tasks) ? tasks.map(task => new Task(task)) : [];
+            this.pullRequests = !isObjectID(pullRequests) ? pullRequests.map(pr => new PullRequest(pr)) : [];
+            this.assignedUsers = !isObjectID(assignedUsers) ? assignedUsers.map(user => new User(user)) : [];
+            this.comments = !isObjectID(comments) ? comments.map(comment => new Comment(comment)) : [];
 
             this.placeDefault();
         } catch(err) {

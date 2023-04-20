@@ -1,6 +1,10 @@
 const Component = require('../../Component');
 
 class DashedHeader extends Component {
+    get SOURCE_PATH() {
+        return require.resolve('./source/DashedHeader.md');
+    }
+
     constructor(setup = {
         ...Component.prototype,
         headerText: '',
@@ -9,11 +13,8 @@ class DashedHeader extends Component {
         super(setup);
         const { headerText, headerDescription } = setup || {};
 
-        this.SOURCE_PATH = require.resolve('./source/DashedHeader.md');
         this.headerText = headerText;
         this.headerDescription = headerDescription;
-        
-        this.init();
     }
 }
 
