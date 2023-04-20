@@ -176,7 +176,6 @@ class EventsHandlers {
             }
     
             await this.triggerEvent('onAnswer', ev, this.tools, ev.answer);
-            // return await this.end(ev);
         } catch (err) {
             this.triggerEvent('error', this, err);
         }
