@@ -2,20 +2,12 @@ const _Global = require('../maps/_Global');
 const CRUD = require('../../services/database/crud');
 
 class Stash extends _Global {
-    constructor(setup = {
-        ...this,
-        stashIndex: String,
-        type: String,
-        name: String,
-        description: String,
-        task: Object,
-        repo: Object
-    }){
+    constructor(setup){
+        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'stashes'});
+
         const Task = require('./Task');
         const Repo = require('./Repo');
-
-        if (!setup.isComplete && !setup.isNew) return;
 
         try {
             const { stashIndex, type, name, description, branch, task, repo } = setup || {};

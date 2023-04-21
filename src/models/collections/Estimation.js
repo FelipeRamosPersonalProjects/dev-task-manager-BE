@@ -1,12 +1,10 @@
 const _Global = require('../maps/_Global');
 
 class Estimation extends _Global {
-    constructor(setup = {
-        ...Estimation.prototype,
-    }){
+    constructor(setup){
         try {
+            if (!setup || isObjectID(setup)) return;
             super({...setup, validationRules: 'estimations'});
-            if (!setup.isComplete && !setup.isNew) return;
             const {  } = setup || {};
 
             this.placeDefault();

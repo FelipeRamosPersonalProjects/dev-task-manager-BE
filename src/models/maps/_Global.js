@@ -16,10 +16,9 @@ class GlobalMap extends ValidateSchema {
     }, parent) {
         if (isObjectID(setup)) return;
         super(setup.validationRules || {});
-        const {isNew, _id, index, author, cod, createdAt, modifiedAt, collectionName} = setup || {};
+        const { _id, index, author, cod, createdAt, modifiedAt, collectionName} = setup || {};
 
         try {
-            this.isNew = isNew;
             this.collectionName = collectionName;
             this._id = _id && _id.toString();
             this.index = index;

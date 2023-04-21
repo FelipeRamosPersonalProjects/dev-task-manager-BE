@@ -4,16 +4,10 @@ const Repo = require('./Repo');
 const Project = require('./Project');
 
 class Organization extends _Global {
-    constructor(setup = {
-        ...Organization.prototype,
-        name: '',
-        owner: User.prototype,
-        repos: [Repo.prototype],
-        projects: [Project.prototype]
-    }){
+    constructor(setup){
         try {
+            if (!setup || isObjectID(setup)) return;
             super({...setup, validationRules: 'organizations'});
-            if (!setup.isComplete && !setup.isNew) return;
             const { name, owner, repos, projects } = setup || {};
 
             this.name = name;

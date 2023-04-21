@@ -1,14 +1,10 @@
 const _Global = require('../maps/_Global');
 
 class SpaceDesk extends _Global {
-    constructor(setup = {
-        ...SpaceDesk.prototype,
-        owner: User.prototype,
-        projects: [Project.prototype],
-        templates: Object
-    }){
+    constructor(setup){
+        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'space_desks'});
-        if (!setup.isComplete && !setup.isNew) return;
+
         const User = require('./User');
         const Project = require('./Project');
         const TemplateOptions = require('../maps/TemplatesOptions');
