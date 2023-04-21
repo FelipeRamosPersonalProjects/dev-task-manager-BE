@@ -4,19 +4,9 @@ const FS = require('../../services/FS');
 const config = require('@config');
 
 class Repo extends _Global {
-    constructor(setup = {
-        ...Repo.prototype,
-        nodeVersion: '',
-        baseBranch: '',
-        url: '',
-        localPath: '',
-        collaborators: [Object],
-        projects: [Object],
-        owner: Object,
-        repoManager: RepoManager.prototype
-    }, parentTask){
+    constructor(setup, parentTask){
+        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'repos'}, setup);
-        if (isObjectID(setup)) return;
 
         const User = require('./User');
         const Project = require('./Project');

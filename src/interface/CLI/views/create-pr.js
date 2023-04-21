@@ -6,7 +6,7 @@ const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
 
 async function CreatePRsView({ task, defaultData }) {
     const Template = new DashedHeaderLayout({
-        headerText: 'CREATE A NEW PR',
+        headerText: 'CREATE A NEW PULL REQUEST',
         headerDescription: `Create a new pull request.`
     }, this);
 
@@ -35,7 +35,7 @@ async function CreatePRsView({ task, defaultData }) {
                                     print(`The task "${answer}" provided, wasn't found! Please try again...`, 'TASK-NOT-FOUND');
                                     return ev.trigger();
                                 }
-                                
+
                                 const task = taskQuery.initialize();
                                 if (task instanceof Error.Log) {
                                     task.consolePrint();
@@ -66,24 +66,24 @@ async function CreatePRsView({ task, defaultData }) {
                         onTrigger: async (ev) => {
                             const task = ev.getValue('task');
                             const Component = new TaskDocument(task);
-                            
+
                             Component.printOnScreen();
                         },
                         onAnswer: async (ev, { boolAnswer }, answer) => {
                             try {
                                 onAnswerDefault(ev, answer);
                                 const task = ev.getValue('task');
-    
+
                                 if (boolAnswer(answer)) {
                                     const pullRequest = await task.createPR();
                                     if (pullRequest instanceof Error.Log) {
                                         pullRequest.consolePrint();
                                         return ev.trigger();
                                     }
-    
+
                                     return pullRequest;
                                 }
-    
+
                                 return;
                             } catch (err) {
                                 throw new Error.Log(err).append({

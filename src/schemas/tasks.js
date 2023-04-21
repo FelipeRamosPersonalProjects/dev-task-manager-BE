@@ -9,14 +9,40 @@ module.exports = new Schema({
     queries: queries.tasks,
     events: events.tasks,
     schema: {
+        taskType: {
+            type: String,
+            required: true,
+            default: 'master-task',
+            enum: ['master-task', 'sub-task']
+        },
+        isInternal: {
+            type: Boolean,
+            require: true,
+            default: false
+        },
         source: {
             type: String,
             default: 'jira',
             enum: ['jira', 'github']
         },
-        currentVersion: {
+        prStage: {
+            type: String,
+            required: true,
+            default: 'not-initialized',
+            enum: ['not-initialized', 'branch-created', 'commit-created', 'commit-pushed', 'pr-builded', 'pr-saved', 'pr-published']
+        },
+        isVersionedTask: {
+            type: Boolean,
+            required: true,
+            default: true
+        },
+        taskVersion: {
             type: Number,
             default: 1
+        },
+        isCurrentVersion: {
+            type: Boolean,
+            default: false
         },
         taskName: {
             type: String,
@@ -26,7 +52,6 @@ module.exports = new Schema({
             type: String,
             immutable: true,
             unique: true
-            
         },
         taskURL: {
             type: String,
@@ -36,6 +61,23 @@ module.exports = new Schema({
         },
         description: {
             type: String
+        },
+        parentTask: {
+            type: ObjectId,
+            ref: 'tasks',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'subTasks',
+                type: 'array-oid'
+            })
+        },
+        subTasks: {
+            type: [ObjectId],
+            ref: 'tasks',
+            default: [],
+            refConfig: new Schema.RefConfig({
+                relatedField: 'parentTask',
+                type: 'ObjectId'
+            })
         },
         project: {
             type: ObjectId,

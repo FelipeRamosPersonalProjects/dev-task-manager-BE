@@ -1,23 +1,9 @@
 const _Global = require('../maps/_Global');
 
 class Task extends _Global {
-    constructor(setup = {
-        ..._Global.prototype,
-        source,
-        taskName: '',
-        taskID: '',
-        description: '',
-        dueDate: '',
-        project: Object,
-        assignedUser: Object,
-        ticket: [Object],
-        sharedWith: Object,
-        pullRequests: [Object],
-        comments: [Object],
-        repo: Object
-    }, parentTicket){
+    constructor(setup, parentTicket){
+        if (!setup || isObjectID(setup) || !setup) return;
         super({...setup, validationRules: 'tasks'});
-        if (isObjectID(setup)) return;
 
         const Ticket = require('./Ticket');
         const User = require('./User');
@@ -28,12 +14,19 @@ class Task extends _Global {
 
         try {
             const {
+                taskType,
+                isInternal,
                 source,
-                currentVersion,
+                prStage,
+                isVersionedTask,
+                taskVersion,
+                isCurrentVersion,
                 taskName,
                 taskID,
                 taskURL,
                 description,
+                parentTask,
+                subTasks,
                 project,
                 assignedUser,
                 ticket,
@@ -42,16 +35,23 @@ class Task extends _Global {
                 pullRequests,
                 comments,
                 repo
-            } = setup || {};
+            } = new Object(setup || {});
 
             this.collectionName = 'tasks';
+            this.taskType = taskType;
+            this.isInternal = isInternal;
             this.source = source;
+            this.prStage = prStage;
+            this.isVersionedTask = isVersionedTask;
+            this.taskVersion = taskVersion;
+            this.isCurrentVersion = isCurrentVersion;
             this.taskName = taskName;
             this.taskID = taskID;
             this.taskURL = taskURL;
-            this.currentVersion = currentVersion;
             this.description = description;
             this.dueDate = dueDate;
+            this.parentTask = !isObjectID(parentTask) ? new Task(parentTask) : {};
+            this.subTasks = !isObjectID(subTasks) ? subTasks.map(sub => new Task(sub)) : [];
             this.assignedUser = !isObjectID(assignedUser) ? new User(assignedUser) : {};
             this.ticket = !isObjectID(ticket) ? new Ticket(ticket) : {};
             this.sharedWith = !isObjectID(sharedWith) ? new User(sharedWith) : {};
@@ -128,7 +128,7 @@ class Task extends _Global {
                 if (isReadyToPR instanceof Error.Log) {
                     throw isReadyToPR;
                 }
-                
+
                 const savingPR = await this.savePR();
                 if (savingPR instanceof Error.Log) {
                     throw savingPR;

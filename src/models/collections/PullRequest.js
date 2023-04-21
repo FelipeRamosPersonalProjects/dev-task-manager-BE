@@ -8,8 +8,8 @@ const CRUD = require('../../services/database/crud');
 
 class PullRequest extends _Global {
     constructor(setup){
+        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'pull_requests'});
-        if (isObjectID(setup)) return;
 
         const {
             owner,
