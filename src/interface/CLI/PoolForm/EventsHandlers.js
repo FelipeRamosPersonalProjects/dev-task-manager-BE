@@ -212,10 +212,6 @@ class EventsHandlers {
                 return await ev.parentPool.goNext();
             }
 
-            if (ev.parent && ev.parent.goNext) {
-                return await ev.parent.goNext();
-            }
-
             await this.triggerEvent('onEnd', ev, this.tools);
         } catch (err) {
             throw new Error.Log(err);

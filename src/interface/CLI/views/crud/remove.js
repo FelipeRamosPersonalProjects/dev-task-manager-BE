@@ -25,6 +25,7 @@ async function RemoveView() {
                         events: {
                             onEnd: async (ev) => {
                                 ev.view().setValue('deleteFilter', ev.formData);
+                                return await ev.parent.goNext();
                             }
                         }
                     }
