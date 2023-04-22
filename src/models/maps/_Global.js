@@ -92,6 +92,23 @@ class GlobalMap extends ValidateSchema {
         }
     }
 
+    async deleteDB(collectionName, filter) {
+        try {
+            const deleted = await CRUD.del({
+                collectionName: collectionName || this.collectionName,
+                filter: filter || this._id
+            });
+
+            if (deleted instanceof Error.Log) {
+                throw deleted;
+            }
+
+            return deleted;
+        } catch (err) { 
+            throw new Error.Log(err);
+        }
+    }
+
     async increaseProp(propKey, value) {
         if (!propKey) throw new Error.Log()
         const increaseAmount = value || 1;

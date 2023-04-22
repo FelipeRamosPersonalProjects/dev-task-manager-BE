@@ -181,7 +181,10 @@ class Task extends _Global {
 
     async dbInitDocPR() {
         try {
-            const isExistentPR = this.pullRequests.find(pr => pr.isCurrentVersion === true && pr.prStage !== 'published');
+            const isExistentPR = this.pullRequests.find(pr => [
+                (pr.isCurrentVersion === true),
+                ((pr.prStage !== 'published') && (pr.prStage !== 'aborted'))
+            ].every(item => item));
             const user = await this.getCurrentUser();
             
             if (isExistentPR) {
@@ -213,6 +216,8 @@ class Task extends _Global {
                 }
 
                 const initialized = await newDocPR.initialize().loadDB();
+
+                initialized.isNewPR = true;
                 this.pullRequests.push(initialized);
                 return initialized;
             }
