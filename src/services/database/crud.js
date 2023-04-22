@@ -111,7 +111,7 @@ async function del(setup) {
         const query = helpers.treatFilter(filter);
         let deleted;
 
-        switch(deleteType){
+        switch(deleteType || 'one'){
             case 'many': {
                 deleted = await Collection.deleteMany(query, options);
                 break;

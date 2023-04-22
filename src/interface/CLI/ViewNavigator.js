@@ -51,6 +51,10 @@ class ViewNavigator extends ToolsCLI {
     async navTo(index, params) {
         const opt = this.getOption(index);
 
+        if (!opt) {
+            this.print(`Navigation option for index "${index}" wasn't found!`, '[ERROR]');
+        }
+
         if (typeof opt.trigger === 'function') {
             return opt.trigger.call(opt, this);
         }
@@ -66,7 +70,7 @@ class ViewNavigator extends ToolsCLI {
     }
 
     getOption(index) {
-        return this.options[index];
+        return this.options.find(opt => opt.index === index);
     }
 
     addOption(data) {

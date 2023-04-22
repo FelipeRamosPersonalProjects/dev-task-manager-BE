@@ -9,23 +9,38 @@ async function ReadPRView({ viewParams, defaultData, dataDoc }) {
         poolForm: new PoolForm({
             questions: [{
                 id: 'searchPR',
-                text: `Search pull requrest by the PR number, PR name or task ID: `,
+                text: `Search your pull requests by:\n- PR remote ID\n- PR name\n- Task ID\n- Ticket ID\n- GitHub URL\n\nType you param to search: `,
                 events: {
                     onAnswer: async (ev, {print}, answer) => {
+                        answer = answer.trim();
+                        const searchParams = [
+                            { remoteID: answer },
+                            { name: answer },
+                            { cod: answer },
+                            { index: !isNaN(answer) && Number(answer) },
+                            { 'gitHubPR.html_url': answer }
+                        ];
+
+                        const task = await CRUD.getDoc({ collectionName: 'tasks', filter: { taskID: answer }});
+                        const ticket = await CRUD.getDoc({ collectionName: 'tickets', filter: { ticketID: answer }});
+
+                        if (task) {
+                            searchParams.push({ task: task._id });
+                        }
+
+                        if (ticket) {
+                            searchParams.push({ ticket: ticket._id });
+                        }
+
                         try {
                             const docQuery = await CRUD.query({ collectionName: 'pull_requests', filter: {
-                                $or: [
-                                    { number: answer },
-                                    { name: answer },
-                                    { cod: answer },
-                                    { index: Number(answer) }
-                                ]
+                                $or: searchParams
                             }}).defaultPopulate();
                             if (docQuery instanceof Error.Log) {
                                 throw docQuery;
                             }
 
-                            if (!docQuery) {
+                            if (!docQuery.length) {
                                 print(`The pull request for the filter ${answer} doesn't exist! Please try again.`);
                                 return ev.trigger();
                             }
@@ -43,17 +58,19 @@ async function ReadPRView({ viewParams, defaultData, dataDoc }) {
                 }
             }],
             events: {
-                onEnd: async (ev) => {
+                onEnd: async (ev, {print}) => {
                     try {
                         const pullRequest = ev.getValue('pullRequest');
 
-                        if (pullRequest && pullRequest.length) {
+                        if (pullRequest && pullRequest.length === 1) {
                             const template = new PullRequestTemplate(pullRequest[0]);
                             if (template instanceof Error.Log) {
                                 throw template;
                             }
 
                             template.printOnScreen();
+                        } else if (pullRequest) {
+                            print(`Your search resulted in more than 1 pull requests! For a while this feature can only get 1.`);
                         }
                     } catch (err) {
                         throw new Error.Log(err);

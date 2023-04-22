@@ -45,8 +45,8 @@ async function SearchView() {
                             }
                         }, ev.parent);
 
-                        search.map((doc, index) => {
-                            nav.addOption({index, type: 'doc-list', doc, targetView: 'docDisplay'});
+                        search.map((doc) => {
+                            nav.addOption({index: doc.index, type: 'doc-list', doc, targetView: 'docDisplay'});
                         });
 
                         const fired = await nav.fire();

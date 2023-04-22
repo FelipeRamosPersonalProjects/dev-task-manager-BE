@@ -84,7 +84,7 @@ class PullRequest extends _Global {
     }
 
     get parentTicket() {
-        return this.ticket;
+        return this.ticket || this.task.ticket;
     }
 
     get taskID() {
@@ -110,7 +110,8 @@ class PullRequest extends _Global {
 
         if (!dontSave) {
             const updatedDescription = await this.updateDB({ data: {
-                description: newDescription
+                description: newDescription,
+                fileChanges: this.fileChanges
             }});
     
             if (updatedDescription instanceof Error.Log) {
@@ -121,7 +122,7 @@ class PullRequest extends _Global {
             this.description = newDescription;
             return this;
         } else {
-            return newDescription;
+            return this;
         }
     }
 

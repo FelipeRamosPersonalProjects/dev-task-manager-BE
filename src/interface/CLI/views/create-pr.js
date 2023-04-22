@@ -205,7 +205,7 @@ async function CreatePRsView({ task, defaultData }) {
                                                 return resolve(ev);
                                             }
                                         }
-                                    }, event);
+                                    });
 
                                     if (currentChanges && Array.isArray(currentChanges.changes)) {
                                         const changes = currentChanges.changes;
