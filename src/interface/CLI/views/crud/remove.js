@@ -16,11 +16,6 @@ async function RemoveView() {
         }),
         poolForm: {
             startQuestion: 'delete-form',
-            events: {
-                onEnd: async (ev) => {
-                    console.log('>>>> Finished the pool!');
-                }
-            },
             questions: [
                 {
                     id: 'delete-form',
@@ -38,11 +33,11 @@ async function RemoveView() {
                     id: 'confirmation',
                     text: `Are you sure that you want to delete this document?\n>> (y) or (n): `,
                     events: {
-                        onAnswer: async (ev, _, answer) => {
-                            const deleteFilter = ev.ctrl().getValue('deleteFilter');
+                        onAnswer: async (ev, {boolAnswer}, answer) => {
+                            const deleteConfig = ev.parentPool.current.formCtrl.formData;
 
-                            if (answer === 'y') {
-                                const deleted = await CRUD.del(deleteFilter);
+                            if (boolAnswer(answer)) {
+                                const deleted = await CRUD.del(deleteConfig);
                                 
                                 if (!deleted.acknowledged) {
                                     this.triggerEvent('error', this);
