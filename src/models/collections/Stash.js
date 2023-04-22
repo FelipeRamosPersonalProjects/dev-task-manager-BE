@@ -2,20 +2,12 @@ const _Global = require('../maps/_Global');
 const CRUD = require('../../services/database/crud');
 
 class Stash extends _Global {
-    constructor(setup = {
-        ...this,
-        stashIndex: String,
-        type: String,
-        name: String,
-        description: String,
-        task: Object,
-        repo: Object
-    }){
+    constructor(setup){
         super({...setup, validationRules: 'stashes'});
+        if (!setup || isObjectID(setup)) return;
+
         const Task = require('./Task');
         const Repo = require('./Repo');
-
-        if (!setup.isComplete && !setup.isNew) return;
 
         try {
             const { stashIndex, type, name, description, branch, task, repo } = setup || {};
@@ -53,8 +45,7 @@ class Stash extends _Global {
 
     static async create(setup = Stash.prototype) {
         try {
-            const newStash = new Stash({...setup, isNew: true});
-            const created = await newStash.saveDB('stashes');
+            const created = await require('@CRUD').create('stashes', setup);
 
             if (created instanceof Error.Log) {
                 return created;

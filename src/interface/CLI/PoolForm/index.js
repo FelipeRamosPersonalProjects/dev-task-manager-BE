@@ -115,7 +115,7 @@ class PoolForm extends FormCtrlCLI {
                 }
             }
     
-            await this.events.triggerEvent('end', this);
+            await this.end(this);
             return this.formData;
         } catch(err) {
             throw new Error.Log(err);

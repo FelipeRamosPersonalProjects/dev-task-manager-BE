@@ -4,6 +4,7 @@
         "paths": {
             "@config": ["./config.json"],
             "@CRUD": ["./src/services/database/crud"],
+            "@STRING": ["./src/interface/StringTemplateBuilder"],
             "@src/*": ["./src/*"],
             "@controllers/*": ["./src/controllers/*"],
             "@global/*": ["./src/global/*"],

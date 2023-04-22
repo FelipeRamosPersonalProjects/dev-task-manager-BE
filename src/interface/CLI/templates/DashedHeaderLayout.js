@@ -6,19 +6,14 @@ class DashedHeaderLayout extends Component {
         return require.resolve('./source/DashedHeaderLayout.md')
     }
 
-    constructor(settings = {
-        ...Component.prototype,
-        headerText: '',
-        headerDescription: '',
-        Content: [Component]
-    }) {
+    constructor(settings) {
         super(settings, {
             headerText: { type: String },
             headerDescription: { type: String },
             Content: { type: [Object] }
         });
 
-        const {menu, headerText, headerDescription, Content} = settings || {};
+        const {menu, headerText, headerDescription, Content} = new Object(settings || {});
 
         this.menu = menu;
         this.DashedHeader = new DashedHeader({headerText, headerDescription});

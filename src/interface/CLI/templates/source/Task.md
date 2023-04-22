@@ -12,7 +12,7 @@
     Ticket URL:         ##{{ticketURL:string}}##
     ---------------------------------------------------------------------------------------
 
-    Current Version:    v##{{currentVersion:string}}##
+    Current Version:    v##{{taskVersion:string}}##
     ---------------------------------------------------------------------------------------
 
     Description:

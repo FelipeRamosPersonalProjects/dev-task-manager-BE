@@ -1,18 +1,9 @@
 const _Global = require('../maps/_Global');
 
 class Project extends _Global {
-    constructor(setup = {
-        ...this,
-        projectName: '',
-        description: '',
-        urls: [],
-        tickets: [Ticket.prototype],
-        tasks: [Task.prototype],
-        repos: [Repo.prototype],
-        spaceDesk: [SpaceDesk.prototype],
-    }){
+    constructor(setup){
         super({...setup, validationRules: 'projects'});
-        if (isObjectID(setup)) return;
+        if (!setup || isObjectID(setup)) return;
 
         const Ticket = require('./Ticket');
         const Repo = require('./Repo');
@@ -54,7 +45,7 @@ class Project extends _Global {
     getTemplate(name) {
         try {
             const template = this.templates[name];
-            return template;
+            return template && template();
         } catch (err) {
             throw new Error.Log({
                 name: '',

@@ -7,42 +7,27 @@ const PullRequest = require('./PullRequest');
 const Comment = require('./Comment');
 
 class User extends _Global {
-    constructor(setup = {
-        ..._Global.prototype,
-        firstName: '',
-        lastName: '',
-        fullName: '',
-        email: '',
-        phone: '',
-        repos: [Object],
-        spaceDesks: [Object],
-        tickets: [Object],
-        tasks: [Object],
-        myPullRequests: [Object],
-        myReviews: [Object],
-        pullRequestsAssigned: [Object],
-        comments: [Object]
-    }){
+    constructor(setup){
         super({...setup, validationRules: 'users'});
-        if (!setup.isComplete && !setup.isNew) return;
+        if (!setup || isObjectID(setup)) return;
+
+        const {
+            firstName,
+            lastName,
+            fullName,
+            email,
+            phone,
+            repos,
+            spaceDesks,
+            tickets,
+            tasks,
+            myPullRequests,
+            myReviews,
+            pullRequestsAssigned,
+            comments,
+        } = setup || {};
 
         try {
-            const {
-                firstName,
-                lastName,
-                fullName,
-                email,
-                phone,
-                repos,
-                spaceDesks,
-                tickets,
-                tasks,
-                myPullRequests,
-                myReviews,
-                pullRequestsAssigned,
-                comments,
-            } = setup || {};
-    
             // Database exported properties
             this.displayName = `${firstName} ${lastName} (${email})`;
             this.fullName = fullName;

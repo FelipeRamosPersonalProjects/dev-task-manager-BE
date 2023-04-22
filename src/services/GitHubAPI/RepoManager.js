@@ -108,11 +108,16 @@ class RepoManager extends GitHubConnection {
         try {
             const branch = await this.isBranchExist(name);
             if (branch.isExist) {
-                const isExistError = new Error.Log('services.GitHubAPI.RepoManager.branch_is_exist', name, branch);
-                toolsCLI.print(isExistError.message, 'INFO');
+                const increased = await this.parentTask.increaseVersion();
+                const higher = this.parentTask.newerVersion;
 
-                toolsCLI.print(`Branch name "${name}" already exists! Trying to create the "${this.parentTask.nextBranchName}".`, 'BRANCH-EXIST');
-                return await this.createBranch(this.parentTask.nextBranchName, baseName, options);
+                if (higher.version < increased.taskVersion) {
+                    await higher.updateDB({data: { version: increased.taskVersion, head: increased.taskBranch }});
+                }
+
+                toolsCLI.print(`Branch name "${name}" already exists!`, 'BRANCH-EXIST');
+                toolsCLI.print(`Trying to create the "${increased.taskBranch}"...`, 'BRANCH-EXIST');
+                return await this.createBranch(increased.taskBranch, baseName, options);
             }
 
             const currentBranch = this.getCurrentBranch();
@@ -370,7 +375,7 @@ class RepoManager extends GitHubConnection {
                 }
             }
 
-            const descriptionTemplate = this.repo.getProjectTemplate('commitDescription')();
+            const descriptionTemplate = this.repo.getProjectTemplate('commitDescription');
             const description = descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges});
             const added = await this.addChanges();
             if (added instanceof Error.Log) {
@@ -456,11 +461,6 @@ class RepoManager extends GitHubConnection {
                     throw addLabels;
                 }
             }
-
-            // const filesChanges = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/files`);
-            // if (filesChanges instanceof Error.Log) {
-            //     throw filesChanges;
-            // }
 
             return PR;
         } catch (err) {

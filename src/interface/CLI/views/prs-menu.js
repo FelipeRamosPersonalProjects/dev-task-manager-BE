@@ -12,6 +12,11 @@ async function PullRequestsView() {
             {
                 title: 'Create new pull request   ',
                 targetView: 'create_pr'
+            },
+            {
+                title: 'Load pull request',
+                description: `Load and read your pull requests.`,
+                targetView: 'pullRequests/readPR'
             }
         ]}
     }, this);

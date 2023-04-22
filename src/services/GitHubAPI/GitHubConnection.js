@@ -17,6 +17,10 @@ class GitHubConnection extends GitHubUser {
         this.repoHostURL = config.github.apiHostURL;
     }
 
+    get GITHUB_USER_TOKEN() {
+        return this.getGITHUB_USER_TOKEN();
+    }
+
     buildURL(path) {
         return this.repoHostURL + path;
     }

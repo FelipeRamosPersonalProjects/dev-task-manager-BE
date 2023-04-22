@@ -55,6 +55,7 @@ async function UpdateView(params) {
                                     
                                     ev.view().setValue('docFilter', ev.formData);
                                     ev.view().setValue('currentDoc', currentDoc.initialize());
+                                    return await ev.parent.goNext();
                                 } catch (err) {
                                     throw new Error.Log(err);
                                 }
@@ -72,6 +73,7 @@ async function UpdateView(params) {
                             },
                             onEnd: async (ev) => {
                                 ev.view().setValue('updates', ev.formData);
+                                return await ev.parent.goNext();
                             }
                         }
                     }
