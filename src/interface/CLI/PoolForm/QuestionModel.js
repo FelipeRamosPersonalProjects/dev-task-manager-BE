@@ -100,8 +100,8 @@ class QuestionModel {
      * Goes to the next question.
      * @returns {*} The next question.
      */
-    async goNext() {
-        const nextQ = this.parentPool.getQuestion(this.next);
+    async goNext(stepName) {
+        const nextQ = this.parentPool.getQuestion(stepName || this.next);
         
         if (nextQ) {
             return await nextQ.trigger();

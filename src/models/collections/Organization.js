@@ -6,8 +6,8 @@ const Project = require('./Project');
 class Organization extends _Global {
     constructor(setup){
         try {
-            if (!setup || isObjectID(setup)) return;
             super({...setup, validationRules: 'organizations'});
+            if (!setup || isObjectID(setup)) return;
             const { name, owner, repos, projects } = setup || {};
 
             this.name = name;

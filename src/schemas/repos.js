@@ -67,6 +67,14 @@ module.exports = new Schema({
                 relatedField: 'repo',
                 type: 'ObjectId'
             })
+        },
+        pullRequests: {
+            type: [ObjectId],
+            ref: 'pull_requests',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'repo',
+                type: 'ObjectId'
+            })
         }
     }
 });

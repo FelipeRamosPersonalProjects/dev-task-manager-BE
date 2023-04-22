@@ -25,24 +25,9 @@ module.exports = new Schema({
             default: 'jira',
             enum: ['jira', 'github']
         },
-        prStage: {
-            type: String,
-            required: true,
-            default: 'not-initialized',
-            enum: ['not-initialized', 'branch-created', 'commit-created', 'commit-pushed', 'pr-builded', 'pr-saved', 'pr-published']
-        },
-        isVersionedTask: {
-            type: Boolean,
-            required: true,
-            default: true
-        },
         taskVersion: {
             type: Number,
             default: 1
-        },
-        isCurrentVersion: {
-            type: Boolean,
-            default: false
         },
         taskName: {
             type: String,

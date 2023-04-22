@@ -6,8 +6,8 @@ const Task = require('./Task');
 
 class Comment extends _Global {
     constructor(setup){
-        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'comments'});
+        if (!setup || isObjectID(setup)) return;
 
         try {
             const { message, parent, user, pullRequest, ticket, task } = setup || {};

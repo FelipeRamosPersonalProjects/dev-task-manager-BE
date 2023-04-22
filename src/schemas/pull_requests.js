@@ -19,6 +19,21 @@ module.exports = new Schema({
         remoteID: {
             type: String
         },
+        prStage: {
+            type: String,
+            required: true,
+            default: 'initialized',
+            enum: ['initialized', 'branch-created', 'commit-created', 'compare-filled', 'changes-description-filled', 'published']
+        },
+        isCurrentVersion: {
+            type: Boolean,
+            default: true
+        },
+        version: {
+            type: Number,
+            required: true,
+            default: 1
+        },
         base: {
             type: String,
             required: true

@@ -1,9 +1,10 @@
 const _Global = require('../maps/_Global');
+const CRUD = require('@CRUD');
 
 class Task extends _Global {
     constructor(setup, parentTicket){
-        if (!setup || isObjectID(setup) || !setup) return;
         super({...setup, validationRules: 'tasks'});
+        if (!setup || isObjectID(setup) || !setup) return;
 
         const Ticket = require('./Ticket');
         const User = require('./User');
@@ -18,9 +19,7 @@ class Task extends _Global {
                 isInternal,
                 source,
                 prStage,
-                isVersionedTask,
                 taskVersion,
-                isCurrentVersion,
                 taskName,
                 taskID,
                 taskURL,
@@ -42,9 +41,7 @@ class Task extends _Global {
             this.isInternal = isInternal;
             this.source = source;
             this.prStage = prStage;
-            this.isVersionedTask = isVersionedTask;
             this.taskVersion = taskVersion;
-            this.isCurrentVersion = isCurrentVersion;
             this.taskName = taskName;
             this.taskID = taskID;
             this.taskURL = taskURL;
@@ -61,8 +58,6 @@ class Task extends _Global {
             this.repo = !isObjectID(repo) ? new Repo(repo, this) : {};
             
             this.placeDefault();
-
-            this.PullRequestModel = PullRequest;
             this.parentTicket = () => parentTicket
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Task');
@@ -81,6 +76,10 @@ class Task extends _Global {
         return this.ticket && this.ticket.ticketID;
     }
 
+    get ticketUID() {
+        return this.ticket && this.ticket._id;
+    }
+
     get ticketURL() {
         return this.ticket && this.ticket.ticketURL;
     }
@@ -90,7 +89,8 @@ class Task extends _Global {
     }
 
     get nextBranchVersion() {
-        const result = this.currentVersion + 1;
+        const newer = this.newerVersion;
+        const result = newer ? newer.version + 1 : 1;
         return !isNaN(result) && Number(result);
     }
 
@@ -98,21 +98,33 @@ class Task extends _Global {
         return this.getTaskBranch(this.nextBranchVersion);
     }
 
-    getTaskBranch(version) {
-        try {
-            const prCount = this.pullRequests.length + 1;
-            let versionCount = ((prCount > this.currentVersion) || !this.currentVersion) ? prCount : this.currentVersion;
+    get newerVersion() {
+        const sorted = this.prInProgress.sort((a, b) => b.version - a.version);
+        const higher = sorted.length ? sorted[0] : null;
 
-            if (version) {
-                versionCount = version;
+        return higher;
+    }
+
+    get prInProgress() {
+        const currentPR = this.pullRequests && this.pullRequests.filter(pull => {
+            return pull.isCurrentVersion && pull.prStage !== 'published';
+        });
+
+        return currentPR;
+    }
+
+    getTaskBranch(customVersion) {
+        try {
+            const version = customVersion || (this.taskVersion ? this.taskVersion : 1);
+
+            if (!this.taskID) {
+                throw new Error.Log('common.missing_params', 'Task.taskID', 'Task.taskBranch', 'Task.js');
             }
 
-            if (this.taskID) {
-                if (this.pullRequests.length || versionCount > 1) {
-                    return `feature/${this.taskID}-v${versionCount}`;
-                } else {
-                    return `feature/${this.taskID}`;
-                }
+            if (version > 1) {
+                return `feature/${this.taskID}-v${version}`;
+            } else {
+                return `feature/${this.taskID}`;
             }
         } catch (err) {
             throw new Error.Log(err);
@@ -147,20 +159,63 @@ class Task extends _Global {
         }
     }
 
-    async savePR() {
+    async savePR(pullRequest) {
         try {
-            const builded = await this.repo.buildPR();
-            if (builded instanceof Error.Log) {
-                throw builded;
+            const filled = await this.repo.fillPR();
+            if (filled instanceof Error.Log) {
+                throw filled;
             }
             
-            const saved = await this.PullRequestModel.save(builded);
-            if (saved instanceof Error.Log) {
-                throw saved;
+            const updated = await pullRequest.updateDB({ collectionName: 'pull_requests', data: filled });
+            if (updated instanceof Error.Log) {
+                throw updated;
             }
             
-            saved.task = this;
-            return saved;
+            updated.task = this;
+            updated.fileChanges = filled.fileChanges;
+            return updated;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async dbInitDocPR() {
+        try {
+            const isExistentPR = this.pullRequests.find(pr => pr.isCurrentVersion === true && pr.prStage !== 'published');
+            const user = await this.getCurrentUser();
+            
+            if (isExistentPR) {
+                const populatedLoad = await isExistentPR.loadDB();
+                return populatedLoad;
+            } else {
+                const prTitleTemplate = this.repo.getProjectTemplate('prTitle');
+                const prName = prTitleTemplate.renderToString({taskID: this.taskID, taskTitle: this.taskName});
+                
+                const currentUser = await this.getCurrentUser();
+                const newDocPR = await CRUD.create('pull_requests', {
+                    version: this.nextBranchVersion,
+                    name: prName,
+                    base: this.repo.baseBranch,
+                    head: this.taskBranch,
+                    owner: currentUser && currentUser._id,
+                    repo: this.repo._id,
+                    task: this._id,
+                    ticket: this.ticketUID,
+                    taskID: this.taskID,
+                    taskURL: this.taskURL,
+                    ticketURL: this.ticketURL,
+                    assignedUsers: user._id,
+                    summary: this.description
+                });
+
+                if (newDocPR instanceof Error.Log) {
+                    throw newDocPR;
+                }
+
+                const initialized = await newDocPR.initialize().loadDB();
+                this.pullRequests.push(initialized);
+                return initialized;
+            }
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -198,22 +253,14 @@ class Task extends _Global {
         }
     }
 
-    async increaseCurrentVersion() {
+    async increaseVersion() {
         try {
-            if (this.isComplete && !this.currentVersion) {
-                const created = await this.updateDB({collectionName: 'tasks', data: { currentVersion: this.pullRequests.length + 1 }})
-                if (created instanceof Error.Log) {
-                    throw created;
-                }
-
-                return created;
-            }
-
-            const increased = await this.increaseProp('currentVersion');
+            const increased = await this.increaseProp('taskVersion');
             if (increased instanceof Error.Log) {
                 throw increased;
             }
 
+            this.taskVersion = increased.taskVersion;
             return increased;
         } catch(err) {
             throw new Error.Log(err);
