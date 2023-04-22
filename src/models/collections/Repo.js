@@ -232,7 +232,7 @@ class Repo extends _Global {
             const prInProgress = task && task.prInProgress;
             const descrTemplate = this.getProjectTemplate('prDescription');
 
-            if (prInProgress) {
+            if (prInProgress.length) {
                 const compared = await this.repoManager.compareBranches(this.baseBranch, task.taskBranch);
                 if (compared instanceof Error.Log) {
                     toolsCLI.printError(compared);
@@ -240,7 +240,7 @@ class Repo extends _Global {
                 }
                 
                 const description = descrTemplate.renderToString({
-                    ...prInProgress,
+                    ...prInProgress[0],
                     fileChanges: compared.files
                 });
 

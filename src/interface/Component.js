@@ -75,7 +75,7 @@ class Component extends ValidateSchema {
 
     string(value = '') {
         if (typeof value === 'string' || typeof value === 'number') {
-            return String(value);
+            return String(value || '--empty--');
         } else {
             throw new Error.Log('common.bad_format_param', 'value', 'StringComponent', 'string', value, 'StringComponent.js');
         }
@@ -89,6 +89,8 @@ class Component extends ValidateSchema {
             for (let item of value) {
                 result += new Child(item).renderToString();
             }
+        } else {
+            result += '--empty--';
         }
 
         return result;
@@ -152,9 +154,7 @@ class Component extends ValidateSchema {
                 toReplaceString = `##{{${sub}}}##`;
             }
 
-            if (value) {
-                result = result.replace(new RegExp(toReplaceString, 'g'), value);
-            }
+            result = result.replace(new RegExp(toReplaceString, 'g'), value || '');
         }
 
         return result;

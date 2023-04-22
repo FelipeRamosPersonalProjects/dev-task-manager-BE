@@ -84,7 +84,7 @@ class PullRequest extends _Global {
     }
 
     get parentTicket() {
-        return this.ticket;
+        return this.ticket || this.task.ticket;
     }
 
     get taskID() {

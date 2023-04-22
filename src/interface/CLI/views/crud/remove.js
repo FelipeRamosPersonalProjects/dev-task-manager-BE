@@ -12,7 +12,7 @@ async function RemoveView() {
         name: 'crud/remove',
         Template: new DashedHeaderLayout({
             headerText: 'Delete - CRUD',
-            description: 'Delete your document under your collections.'
+            headerDescription: 'Delete your document under your collections.'
         }),
         poolForm: {
             startQuestion: 'delete-form',
