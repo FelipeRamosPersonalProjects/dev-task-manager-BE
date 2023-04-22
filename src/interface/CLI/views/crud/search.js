@@ -1,6 +1,6 @@
-const ViewCLI = require('../../ViewCLI');
-const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const CRUD = require('../../../../services/database/crud');
+const ViewCLI = require('@CLI/ViewCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
+const CRUD = require('@CRUD');
 
 const bodySchema = {
     collectionName: {
@@ -38,14 +38,23 @@ async function SearchView() {
                         const search = await CRUD.query(data).initialize();
                         const nav = new ViewCLI.ViewNavigator({
                             type: 'doc-list',
-                            parentView: ev.view()
+                            parentView: ev.parent,
+                            question: {
+                                id: 'navigation',
+                                text: `Enter the index related to your choosed option and hit enter to open: `
+                            }
+                        }, ev.parent);
+
+                        search.map((doc) => {
+                            nav.addOption({index: doc.index, type: 'doc-list', doc, targetView: 'docDisplay'});
                         });
 
-                        search.map(doc => {
-                            nav.addOption({type: 'doc-list', doc});
-                        });
+                        const fired = await nav.fire();
+                        if (fired instanceof Error.Log) {
+                            throw fired;
+                        }
 
-                        nav.render({headers: ['displayName']});
+                        return fired;
                     } catch (err) {
                         throw new Error.Log('database.querying_collection', data);
                     }
@@ -55,7 +64,12 @@ async function SearchView() {
                 {
                     id: 'search-document',
                     formCtrl: {
-                        schema: {obj: bodySchema}
+                        schema: bodySchema,
+                        events: {
+                            onEnd: async (ev) => {
+                                return await ev.parent.goNext();
+                            }
+                        }
                     }
                 }
             ]

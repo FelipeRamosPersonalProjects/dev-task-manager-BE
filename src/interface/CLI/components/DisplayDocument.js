@@ -11,37 +11,46 @@ class DisplayDocument extends Component {
         const { document, excludeProps } = setup || {};
 
         this.document = document;
-        this.excludeProps = Array.isArray(excludeProps) ? excludeProps : ['_schema', '_id', 'index', 'author'];
+        this.excludeProps = Array.isArray(excludeProps) ? excludeProps : ['_schema', '_id', 'index', 'author', 'ModelDB'];
+        this.outputModel = this.getString();
     }
 
-    getString() {
-        if (!this.document) return '';
-        let result = new StringTemplateBuilder().newLine().newLine();
+    getString(obj, indentTimes = 0) {
+        if (!obj && !this.document) return '';
+        let result = new StringTemplateBuilder();
+        const indentation = (indentTimes + 1) * result.indentation;
 
-        Object.entries(this.document).map(([key, value]) => {
+        Object.entries(obj || this.document).map(([key, value]) => {
             const isToExclude = this.excludeProps.find(item => item === key);
             let isNotAllowedType = false;
-
-            if (typeof value === 'object'){
-                value = JSON.stringify(value, null, 4);
-            }
 
             if (typeof value === 'function') {
                 isNotAllowedType = true;
             }
 
-            if (!isToExclude && !isNotAllowedType) {
+            if (!isToExclude && !isNotAllowedType) {               
                 if (key) {
-                    result = result.indent().text(`${key}: `).newLine();
+                    result = result.indent(indentation).text(`${key}: `).newLine();
                 }
 
-                if (value) {
-                    result = result.indent().text(`${value.replace(/\\n/g, '\n    ').replace(/\\/g, '')}`).newLine().newLine();
+                if (typeof value === 'object'){
+                    if (Array.isArray(value)) {
+                        const ind =  indentTimes + 1;
+                        value.map(val => {
+                            result = result.text(this.getString(val, ind));
+                        });
+                    } else {
+                        result = result = result.text(this.getString(value, indentTimes + 1));
+                    }
+                } else if (value && typeof value === 'string') {
+                    result = result.indent(indentation).text(`${value}`).newLine().newLine();
+                } else {
+                    result = result.indent(indentation).text('--empty--').newLine().newLine();
                 }
             }
         });
 
-        return result.newLine().end();
+       return result.end();
     }
 
     render() {

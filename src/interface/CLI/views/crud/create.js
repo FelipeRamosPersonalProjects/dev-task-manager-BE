@@ -1,11 +1,8 @@
 const ViewCLI = require('../../ViewCLI');
-const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const MainMenuDescription = require('../../components/MainMenuDescription');
-const ToolsCLI = require('../../ToolsCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
 const schemas = require('../../../../schemas');
 const CRUD = require('../../../../services/database/crud');
 
-const tools = new ToolsCLI();
 const bodySchema = {
     collectionName: { type: String, required: true }
 };
@@ -16,8 +13,7 @@ async function CreateView(params) {
     const Template = new DashedHeaderLayout({
         componentName: 'CRUD view template',
         headerText: 'Create - CRUD',
-        headerDescription: 'Create your documents under collections.',
-        Content: new MainMenuDescription()
+        headerDescription: 'Create your documents under collections.'
     });
 
     return new ViewCLI({
@@ -45,15 +41,13 @@ async function CreateView(params) {
                     id: 'build-params',
                     next: 'collecting-data',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        schema: bodySchema,
                         defaultData,
                         events: {
-                            onStart: async (ev) => {
-                                tools.print('Starting "build-params"...');
-                            },
                             onEnd: async (ev) => {
                                 try {
-                                    ev.view().setValue('docFilter', ev.formData);
+                                    ev.parent.setValue('docFilter', ev.formData);
+                                    return await ev.parent.goNext();
                                 } catch (err) {
                                     throw new Error.Log(err);
                                 }
@@ -66,15 +60,16 @@ async function CreateView(params) {
                     formCtrl: {
                         events: {
                             onStart: async (ev) => {
-                                const filter = ev.view().getValue('docFilter');
+                                const filter = ev.parent.getValue('docFilter');
 
                                 if (filter) {
                                     const documentSchema = schemas[filter.collectionName];
-                                    documentSchema && ev.setForm(documentSchema.schema);
+                                    documentSchema && ev.setForm(documentSchema.schema.obj);
                                 }
                             },
                             onEnd: async (ev) => {
                                 ev.view().setValue('newDoc', ev.formData);
+                                return await ev.parent.goNext();
                             }
                         }
                     }

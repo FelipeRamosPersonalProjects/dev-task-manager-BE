@@ -1,13 +1,17 @@
 const Prompt = require('../Prompt');
 const GitHubConnection = require('./GitHubConnection');
+const Stash = require('../../models/collections/Stash');
+const StringTemplateBuilder = require('../../interface/StringTemplateBuilder');
+const Compare = require('./Compare');
+const FileChange = require('./FileChange');
 
 class RepoManager extends GitHubConnection {
     constructor(setup = {
-        ...this,
+        ...GitHubConnection.prototype,
         repoName: '',
         repoPath: '',
         localPath: ''
-    }) {
+    }, parent) {
         super(setup);
         const { repoName, repoPath, localPath } = setup || {};
 
@@ -17,66 +21,318 @@ class RepoManager extends GitHubConnection {
         this.prompt = new Prompt({
             rootPath: this.localPath
         });
+
+        this.parent = () => parent;
+    }
+
+    get repo() {
+        return this.parent();
+    }
+
+    get parentTask() {
+        return this.repo && this.repo.parentTask;
+    }
+
+    getCurrentBranch() {
+        try {
+            const branch = this.prompt.cmd('git branch --show-current');
+            const regex = /[\n\t\r ]/g;
+
+            if (branch.error) {
+                throw new Error.Log(branch);
+            }
+
+            if (branch.out) {
+                branch.out = branch.out.replace(regex, '');
+            }
+
+            if (branch.success) {
+                return branch.out;
+            }
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.get_current_branch');
+        }
     }
 
     async isBranchExist(branchName) {
         try {
-            const out = this.prompt.cmd('git show-ref --verify --quiet refs/heads/' + branchName);
+            const isLocalExist = this.isLocalBranchExist(branchName);
+            const isRemoteExist = await this.isRemoteBranchExist(branchName);
 
-            if (out.error) {
+            return {
+                isExist: (isLocalExist || isRemoteExist.success),
+                isRemoteExist: isRemoteExist.success && isRemoteExist.isExist || false,
+                remoteData: !isRemoteExist.branchData.error && isRemoteExist.branchData,
+                isLocalExist
+            };
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.is_branch_exist');
+        }
+    }
+
+    isLocalBranchExist(branchName) {
+        try {
+            const isLocalExist = this.prompt.cmd('git show-ref --verify --quiet refs/heads/' + branchName);
+
+            if (isLocalExist.error) {
                 return false
             }
 
             return true;
         } catch (err) {
-            throw new Error.Log(err);
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.is_local_branch_exist');
+        }
+    }
+
+    async isRemoteBranchExist(branchName) {
+        try {
+            const response = await this.ajax(`/repos/${this.repoPath}/branches/${branchName}`);
+            
+            return {
+                success: (!response.error),
+                isExist: (!response.error && response.name === 'Not Found'),
+                branchData: !response.error && response,
+            }
+        } catch (err) {
+            if (err.status === 404 && err.name === 'Not Found') {
+                return false;
+            } else {
+                throw new Error.Log(err).append('services.GitHubAPI.RepoManager.is_remote_branch_exist');
+            }
+        }
+    }
+
+    async createBranch(name, baseName, options) {
+        const { bringChanges } = options || {};
+
+        try {
+            const branch = await this.isBranchExist(name);
+            if (branch.isExist) {
+                const increased = await this.parentTask.increaseVersion();
+                const higher = this.parentTask.newerVersion;
+
+                if (higher.version < increased.taskVersion) {
+                    await higher.updateDB({data: { version: increased.taskVersion, head: increased.taskBranch }});
+                }
+
+                toolsCLI.print(`Branch name "${name}" already exists!`, 'BRANCH-EXIST');
+                toolsCLI.print(`Trying to create the "${increased.taskBranch}"...`, 'BRANCH-EXIST');
+                return await this.createBranch(increased.taskBranch, baseName, options);
+            }
+
+            const currentBranch = this.getCurrentBranch();
+            if (currentBranch !== baseName) {
+                const currentError = new Error.Log('services.GitHubAPI.RepoManager.base_branch_is_not_current');
+                toolsCLI.print(currentError.message, 'WARN');
+                return currentError;
+            }
+
+            const prompt = await this.prompt.exec(`git branch ${name} ${baseName}`);
+
+            if (prompt instanceof Error.Log) {
+                throw prompt;
+            }
+
+            if (prompt.success) {
+                const checkout = await this.checkout(name, { bringChanges });
+                return checkout;
+            }
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.creating_branch');
+        }
+    }
+
+    buildStashName({_id, type}) {
+        return `[dev-desk]${_id}__${type}`;
+    }
+
+    async createStash(setup) {
+        const { type, name, description, taskUID, repoUID } = setup || {};
+
+        try {
+            const currentBranch = this.getCurrentBranch();
+            const parent = this.parent();
+            const repo = repoUID || parent && parent._id;
+
+            if (!repo) {
+                throw new Error.Log('services.GitHubAPI.RepoManager.repo_uid_required');
+            }
+
+            // Creating stash on database
+            const newStash = await Stash.create({ type, name, description, repo, branch: currentBranch, task: taskUID });
+            if (newStash instanceof Error.Log) {
+                throw newStash;
+            }
+
+            // Adding changes
+            const added = this.addChanges();
+            if (added instanceof Error.Log) {
+                throw added;
+            }
+
+            // Creating stash
+            const stashed = await this.stash(this.buildStashName(newStash));
+            if (stashed instanceof Error.Log) {
+                throw stashed;
+            }
+
+            return newStash;
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.creating_stash');
+        }
+    }
+
+    async getStash(filter) {
+        try {
+            const stashesList = this.prompt.cmd(`git stash list`);
+            const validFilter = stashesList.out.split('\n').filter(item => item);
+            const stashes = await Stash.load(filter);
+    
+            for (const stash of stashes) {
+                validFilter.map(item =>{
+                    const [prefix, _, name] = item.split(': ');
+                    const stashIndex = prefix.replace('stash@{', '').replace('}', '');
+                    const [_id] = name.split('__');
+    
+                    if (stash._id === _id) {
+                        return stash.setIndex(stashIndex);
+                    }
+                });
+            }
+    
+            if (typeof filter === 'string') {
+                const stash = stashes.find(item => item._id === filter);
+                return stash;
+            } else {
+                return stashes;
+            }
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.getting_stash');
+        }
+    }
+
+    async applyStash(filter) {
+        try {
+            const currentChanges = await this.currentChanges();
+
+            if (currentChanges instanceof Error.Log) {
+                return currentChanges;
+            }
+
+            if (currentChanges.changes.length) {
+                await this.createStash({
+                    type: 'backup',
+                    name: 'auto-backup-' + Date.now(),
+                    description: `Autostash done to avoid loose unstashed changes when it's applying another stash`,
+                    repoUID: this.parent()._id
+                });
+            }
+
+            const { stashIndex } = await this.getStash(filter) || {};
+            const applied = await this.prompt.exec(`git stash apply${stashIndex ? ` --index ${stashIndex}` : ''}`);
+
+            if (applied instanceof Error.Log) {
+                return applied;
+            }
+
+            if (applied.success) {
+                return applied;
+            }
+        } catch (err) {
+            return new Error.Log(err).append('services.GitHubAPI.RepoManager.apply_stash');
+        }
+    }
+
+    async stash(stashName) {
+        try {
+            const stashed = await this.prompt.exec(`git stash save "${stashName}"`);
+            
+            if (stashed instanceof Error.Log) {
+                throw stashed;
+            }
+
+            if (stashed.success) {
+                return stashed;
+            }
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.saving_stash');
         }
     }
 
     async checkout(branchName, options) {
+        const { bringChanges } = options || {};
+
         try {
-            const { leaveChanges } = options || {};
-            const isExist = await this.isBranchExist(branchName);
-            const params = !leaveChanges ? '-b ' : '';
+            const branch = await this.isBranchExist(branchName);
+            const currentBranch = this.getCurrentBranch();
 
-            if (!branchName) {
-                return new Error.Log({});
+            if (branchName === currentBranch) {
+                return new Error.Log('services.GitHubAPI.RepoManager.checkout_branch_is_current', branchName);
             }
 
-            if (isExist) {
-                branchName += '-v2';
+            if (!branch.isExist) {
+                return new Error.Log('services.GitHubAPI.RepoManager.checkout_branch_not_found', branchName);
             }
 
-            return new Promise((resolve, reject) => {
-                try {
-                    const out = this.prompt.cmd(`git checkout ${params}${branchName}`);
-                    return resolve(out);
-                } catch(err) {
-                    return reject(err);
+            if (!branch.isLocalExist) {
+                return new Error.Log('services.GitHubAPI.RepoManager.checkout_local_branch_not_found', branchName);
+            }
+
+            
+            const stashed = await this.createStash({ type: bringChanges && 'bring' });
+            if (stashed instanceof Error.Log) {
+                throw stashed.append('services.GitHubAPI.RepoManager.checkout_stashing_error');
+            }
+
+            const out = await this.prompt.exec(`git checkout ${branchName}`);
+            let message = out.out;
+            if (out instanceof Error.Log) {
+                return out.append('services.GitHubAPI.RepoManager.checkout_git_error');
+            }
+            
+            if (bringChanges && stashed.type === 'bring') {
+                const apply = await this.applyStash(stashed._id);
+                
+                if (apply instanceof Error.Log) {
+                    const isNoEntriesError = apply.message.indexOf('Command failed: git stash apply\nNo stash entries found.\n') > -1;
+
+                    if (!isNoEntriesError) {
+                        throw apply;
+                    }
+
+                    return apply;
                 }
-            });
-        } catch(err) {
-            throw new Error.Log({});
+
+                if (apply.success) {
+                    message += apply.out + '\n';
+                }
+            }
+
+            return {
+                success: true,
+                out: message
+            };
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.checkout');
         }
     }
 
-    async addChanges(params) {
+    addChanges() {
         try {
-            return new Promise((resolve, reject) => {
-                try {
-                    const out = this.prompt.cmd(`git add .${this.prompt.strigifyParams(params)}`);
-                    return resolve(out);
-                } catch(err) {
-                    return reject(err);
-                }
-            });
-        } catch(err) {
-            throw new Error.Log({});
+            const out = this.prompt.cmd(`git add .`);
+            return out;
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.add_changes');
         }
     }
 
     async currentChanges(params) {
         try {
+            const added = this.addChanges();
+            if (added instanceof Error.Log) {
+                return added;
+            }
+
             const consoleResult = await this.prompt.exec(`git --no-pager diff --staged${this.prompt.strigifyParams(params)}`);
             const regex = /diff --git a\/(.*?)\s/;
 
@@ -93,9 +349,11 @@ class RepoManager extends GitHubConnection {
                     
                     if (match && match[1]) {
                         const url = match[1];
-                        result.changes.push({
-                            filePath: url
-                        });
+
+                        result.changes.push(new FileChange({
+                            filename: url,
+                            patch: item
+                        }));
                     }
                 });
 
@@ -103,48 +361,111 @@ class RepoManager extends GitHubConnection {
             } else {
                 return new Error.Log(consoleResult);
             }
+        } catch (err) {
+            throw new Error.Log(err).append('services.GitHubAPI.RepoManager.current_changes');
+        }
+    }
+
+    async commit(title, summary, params) {
+        try {
+            if (!params.fileChanges) {
+                const fileChanges = await this.currentChanges();
+                if (fileChanges instanceof Error.Log) {
+                    throw fileChanges;
+                }
+            }
+
+            const descriptionTemplate = this.repo.getProjectTemplate('commitDescription');
+            const description = descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges});
+            const added = await this.addChanges();
+            if (added instanceof Error.Log) {
+                throw added;
+            }
+
+            const out = await this.prompt.exec(`git commit -m "${title}" ${description}`);
+            if (out instanceof Error.Log) {
+                throw out;
+            }
+
+            return {
+                title,
+                summaryDescription: description,
+                fileChanges: params.fileChanges,
+                commitOutput: out.out
+            };
         } catch(err) {
+            return new Error.Log(err).append('services.GitHubAPI.RepoManager.commiting');
+        }
+    }
+
+    async push(params) {
+        try {
+            const branchName = this.getCurrentBranch();
+            const out = await this.prompt.exec(`git push --set-upstream origin ${branchName}${this.prompt.strigifyParams(params)}`);
+            return out;
+        } catch (err) {
+            return new Error.Log(err).append('services.GitHubAPI.RepoManager.pushing');
+        }
+    }
+
+    async compareBranches(base, head) {
+        try {
+            if (!base) {
+                throw new Error.Log({
+                    name: 'COMPARE-BRANCH',
+                    message: `Error caught when it's comparing the branches`
+                });
+            }
+
+            if (!head) {
+                head = this.getCurrentBranch();
+            }
+
+            const compared = await this.ajax(`/repos/${this.repoPath}/compare/${base}...${head}`);
+            if (compared instanceof Error.Log) {
+                throw compared;
+            }
+
+            return new Compare(compared);
+        } catch (err) {
             throw new Error.Log(err);
         }
     }
 
-    async commit(description, params) {
+    async createPullRequest(data) {
         try {
-            const fileChanges = await this.currentChanges();
-            let stringFilesList = description || '';
-            
-            fileChanges.changes.map(item => {
-                stringFilesList += '- ' + item.filePath + '\n'
-            });
+            const PR = await this.ajax(
+                `/repos/${this.repoPath}/pulls`,
+                data,
+                'POST'
+            );
 
-            const added = await this.addChanges();
-            const out = await this.prompt.cmd(`git commit -m "${stringFilesList}"${this.prompt.strigifyParams(params)}`);
-
-            if ([
-                fileChanges.success,
-                added.success,
-                out.success,
-            ].every(item => item)){
-                return out;
-            } else {
-                return new Error.Log({});
+            if (PR instanceof Error.Log) {
+                throw PR;
             }
-        } catch(err) {
-            return new Error.Log(err);
-        }
-    }
 
-    async push(branchName, params) {
-        try {
-            const out = await this.prompt.exec(`git push origin ${branchName}${this.prompt.strigifyParams(params)}`);
-            return out;
-        } catch(err) {
-            return new Error.Log(err);
-        }
-    }
+            const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
+                assignees: [this.userName]
+            }, 'POST');
 
-    createPullRequest() {
-        return Object;
+            if (addAssignees instanceof Error.Log) {
+                throw addAssignees;
+            }
+
+            if (Array.isArray(data.labels)) {
+                const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
+                    labels: ['support'],
+                }, 'POST');
+
+                if (addLabels instanceof Error.Log) {
+                    throw addLabels;
+                }
+            }
+
+            return PR;
+        } catch (err) {
+            return new Error.Log(err).append('services.GitHubAPI.RepoManager.creating_pull_request');
+        }
     }
 }
 

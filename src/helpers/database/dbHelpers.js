@@ -14,7 +14,7 @@ function getCollectionModel(collection) {
         if (isCollectionExist(collection)) {
             return mongoose.model(collection);
         } else {
-            throw new Error.Log(err).append('database.collection_dont_exist', collection);
+            throw new Error.Log('database.collection_dont_exist', collection);
         }
     } catch(err) {
         throw new Error.Log(err).append('helpers.get_collection_model', collection);
@@ -59,6 +59,17 @@ async function increaseLog(logUID) {
         return logCounter.toObject();
     } catch(err) {
         throw new Error.Log(err).append('helpers.increase_log');
+    }
+}
+
+async function increaseDocProp(collectionName, filter, data) {   
+    try {
+        const DBModel = mongoose.model(collectionName);
+        const doc = await DBModel.findOneAndUpdate(filter, { $inc: data });
+
+        return doc.initialize();
+    } catch(err) {
+        throw new Error.Log(err).append('helpers.increase_doc_prop', collectionName, filter, data);
     }
 }
 
@@ -153,6 +164,7 @@ module.exports = {
     createCounter,
     increaseCounter,
     increaseLog,
+    increaseDocProp,
     isCollectionExist,
     getCollectionModel,
     pickQueryType,

@@ -12,24 +12,20 @@ async function RemoveView() {
         name: 'crud/remove',
         Template: new DashedHeaderLayout({
             headerText: 'Delete - CRUD',
-            description: 'Delete your document under your collections.'
+            headerDescription: 'Delete your document under your collections.'
         }),
         poolForm: {
             startQuestion: 'delete-form',
-            events: {
-                onEnd: async (ev) => {
-                    console.log('>>>> Finished the pool!');
-                }
-            },
             questions: [
                 {
                     id: 'delete-form',
                     next: 'confirmation',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        schema: bodySchema,
                         events: {
                             onEnd: async (ev) => {
                                 ev.view().setValue('deleteFilter', ev.formData);
+                                return await ev.parent.goNext();
                             }
                         }
                     }
@@ -38,11 +34,11 @@ async function RemoveView() {
                     id: 'confirmation',
                     text: `Are you sure that you want to delete this document?\n>> (y) or (n): `,
                     events: {
-                        onAnswer: async (ev, answer) => {
-                            const deleteFilter = ev.ctrl().getValue('deleteFilter');
+                        onAnswer: async (ev, {boolAnswer}, answer) => {
+                            const deleteConfig = ev.parentPool.current.formCtrl.formData;
 
-                            if (answer === 'y') {
-                                const deleted = await CRUD.del(deleteFilter);
+                            if (boolAnswer(answer)) {
+                                const deleted = await CRUD.del(deleteConfig);
                                 
                                 if (!deleted.acknowledged) {
                                     this.triggerEvent('error', this);

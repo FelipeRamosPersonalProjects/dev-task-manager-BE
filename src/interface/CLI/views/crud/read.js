@@ -61,7 +61,12 @@ async function ReadView(params) {
                     id: 'read-doc-form',
                     formCtrl: {
                         defaultData,
-                        schema: { obj: bodySchema }
+                        schema: bodySchema,
+                        events: {
+                            onEnd: async (ev) => {
+                                return await ev.parent.goNext();
+                            }
+                        }
                     }
                 }
             ]

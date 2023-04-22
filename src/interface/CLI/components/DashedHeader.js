@@ -1,9 +1,12 @@
 const Component = require('../../Component');
-const StringTemplateBuilder = require('../../StringTemplateBuilder');
 
 class DashedHeader extends Component {
+    get SOURCE_PATH() {
+        return require.resolve('./source/DashedHeader.md');
+    }
+
     constructor(setup = {
-        ...this,
+        ...Component.prototype,
         headerText: '',
         headerDescription: ''
     }) {
@@ -12,32 +15,6 @@ class DashedHeader extends Component {
 
         this.headerText = headerText;
         this.headerDescription = headerDescription;
-    }
-
-    getString(params) {
-        const {headerText, headerDescription} = params || {};
-
-        return new StringTemplateBuilder()
-            .text('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            .text('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            .newLine()
-            .text('------------------------------------------------------------------------------')
-            .text('------------------------------------------------------------------------------')
-            .newLine().newLine()
-            .indent().text(this.string(headerText || this.headerText).toLocaleUpperCase()).newLine()
-            .indent().text(this.string(headerDescription || this.headerDescription))
-            .newLine().newLine()
-            .text('------------------------------------------------------------------------------')
-            .text('------------------------------------------------------------------------------')
-            .newLine()
-            .text('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            .text('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            .newLine()
-        .end();
-    }
-
-    async render() {
-        console.log(this.getString());
     }
 }
 

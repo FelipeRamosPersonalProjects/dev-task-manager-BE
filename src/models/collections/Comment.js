@@ -5,18 +5,11 @@ const Ticket = require('./Ticket');
 const Task = require('./Task');
 
 class Comment extends _Global {
-    constructor(setup = {
-        ...Comment.prototype,
-        user: User.prototype,
-        parent: Comment.prototype,
-        message: '',
-        replies: [Comment.prototype],
-        pullRequest: PullRequest.prototype,
-        ticket: Ticket.prototype,
-        task: Task.prototype,
-    }){
+    constructor(setup){
+        super({...setup, validationRules: 'comments'});
+        if (!setup || isObjectID(setup)) return;
+
         try {
-            super({...setup, validationRules: 'comments'});
             const { message, parent, user, pullRequest, ticket, task } = setup || {};
 
             this.user = user && new User(user);

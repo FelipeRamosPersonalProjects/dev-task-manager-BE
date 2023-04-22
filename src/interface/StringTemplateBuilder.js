@@ -14,6 +14,13 @@ class StringTemplateBuilder {
         return this;
     }
 
+    separator() {
+        return this
+            .newLine()
+            .text('------------------------------------------------------------------------------------------------------------------------')
+            .newLine();
+    }
+
     textColumn(text, length) {
         if (!length) length = this.textColumnLength;
         let parsed = String(text).substring(0, length);
@@ -30,8 +37,8 @@ class StringTemplateBuilder {
         return this;
     }
 
-    newLine() {
-        this.result += '\n';
+    newLine(char) {
+        this.result += char || '\n';
         return this;
     }
 

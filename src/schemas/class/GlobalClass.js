@@ -12,6 +12,10 @@ class GlobalClass {
             throw new Error.Log(err).append('database.init_document', this.collection.collectionName, this.id);
         }
     }
+
+    get isComplete() {
+        return true;
+    }
 }
 
 module.exports = GlobalClass;

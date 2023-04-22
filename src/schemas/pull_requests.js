@@ -1,23 +1,56 @@
 const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
+const FileChange = require('./map/FileChange');
+const queries = require('@schemas/queries');
 
 module.exports = new Schema({
     name: 'pull_requests',
     symbol: 'PR',
+    queries: queries.pull_requests,
     schema: {
-        prName: {
+        gitHubPR: {
+            type: Object,
+            default: {}
+        },
+        name: {
             type: String,
             required: true
         },
-        prGitHubID: {
+        remoteID: {
+            type: String
+        },
+        prStage: {
+            type: String,
+            required: true,
+            default: 'initialized',
+            enum: ['initialized', 'branch-created', 'commit-created', 'compare-filled', 'changes-description-filled', 'published', 'aborted']
+        },
+        isCurrentVersion: {
+            type: Boolean,
+            default: true
+        },
+        version: {
+            type: Number,
+            required: true,
+            default: 1
+        },
+        base: {
+            type: String,
+            required: true
+        },
+        head: {
             type: String,
             required: true
         },
         description: {
             type: String
         },
+        summary: {
+            type: String
+        },
         fileChanges: {
-            type: [Object]
+            type: [FileChange],
+            default: []
         },
         owner: {
             type: ObjectId,
@@ -47,7 +80,8 @@ module.exports = new Schema({
             })
         },
         labels: {
-            type: [String]
+            type: [String],
+            default: []
         },
         bmConfigs: {
             type: [Object],

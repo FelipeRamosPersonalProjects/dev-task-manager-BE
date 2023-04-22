@@ -1,36 +1,56 @@
 const _Global = require('../maps/_Global');
-const Ticket = require('./Ticket');
-const Task = require('./Task');
-const Repo = require('./Repo');
-const SpaceDesk = require('./SpaceDesk');
 
 class Project extends _Global {
-    constructor(setup = {
-        ...this,
-        projectName: '',
-        description: '',
-        urls: [],
-        tickets: [Ticket.prototype],
-        tasks: [Task.prototype],
-        repos: [Repo.prototype],
-        spaceDesks: [SpaceDesk.prototype],
-    }){
-        try {
-            super({...setup, validationRules: 'projects'});
-            const {projectName, description, tickets, tasks, urls} = setup || {};
+    constructor(setup){
+        super({...setup, validationRules: 'projects'});
+        if (!setup || isObjectID(setup)) return;
 
-            this.displayName = `[${this.cod}] ${projectName}`;
+        const Ticket = require('./Ticket');
+        const Repo = require('./Repo');
+        const SpaceDesk = require('./SpaceDesk');
+        const TemplateOptions = require('../maps/TemplatesOptions');
+        const Task = require('./Task');
+
+        try {
+            const {projectName, description, tickets, repos, tasks, urls, spaceDesk, templates, baseBranch} = setup || {};
+
+            this.displayName = `${projectName}`;
             this.projectName = projectName;
             this.description = description;
             this.urls = urls;
-            this.tickets = Array.isArray(tickets) && tickets.map(ticket => new Ticket(ticket));
-            this.tasks = Array.isArray(tasks) && tasks.map(task => new Task(task));
-            this.repos = Array.isArray(repos) && repos.map(repo => new Repo(repo));
-            this.spaceDesks = Array.isArray(spaceDesks) && spaceDesks.map(spaceDesk => new SpaceDesk(spaceDesk));
+            this.tickets = !isObjectID(tickets) ? tickets.map(ticket => new Ticket(ticket)) : [];
+            this.tasks = !isObjectID(tasks) ? tasks.map(task => new Task(task)) : [];
+            this.repos = !isObjectID(repos) ? repos.map(repo => new Repo(repo)) : [];
+            this.spaceDesk = !isObjectID(spaceDesk) ? new SpaceDesk(spaceDesk) : {};
+            this.templates = !isObjectID(templates) && !isObjectID(spaceDesk) ? new TemplateOptions({...templates, ...spaceDesk.templates}) : {};
+            this.baseBranch = baseBranch;
 
             this.placeDefault();
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'Project');
+        }
+    }
+
+    getReviewers() {
+        try {
+            debugger;
+        } catch (err) {
+            throw new Error.Log({
+                name: '',
+                message: ''
+            });
+        }
+    }
+
+    getTemplate(name) {
+        try {
+            const template = this.templates[name];
+            return template && template();
+        } catch (err) {
+            throw new Error.Log({
+                name: '',
+                message: ''
+            });
         }
     }
 }
