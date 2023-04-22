@@ -107,7 +107,7 @@ class Task extends _Global {
 
     get prInProgress() {
         const currentPR = this.pullRequests && this.pullRequests.filter(pull => {
-            return pull.isCurrentVersion && pull.prStage !== 'published';
+            return pull.isCurrentVersion && pull.prStage !== 'published' && pull.prStage !== 'aborted';
         });
 
         return currentPR;
@@ -199,7 +199,7 @@ class Task extends _Global {
                     version: this.nextBranchVersion,
                     name: prName,
                     base: this.repo.baseBranch,
-                    head: this.taskBranch,
+                    head: this.nextBranchName,
                     owner: currentUser && currentUser._id,
                     repo: this.repo._id,
                     task: this._id,

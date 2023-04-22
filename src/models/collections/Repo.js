@@ -91,7 +91,7 @@ class Repo extends _Global {
 
     buildBranchBackupPath(currentBranch) {
         const date = new Date();
-        const repo = this.cod;
+        const repo = this.repoPath;
         const ticket = this.getTicketCod();
         const branch = currentBranch;
         const year = date.getFullYear();
