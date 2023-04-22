@@ -3,8 +3,8 @@ const CRUD = require('../../services/database/crud');
 
 class Stash extends _Global {
     constructor(setup){
-        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'stashes'});
+        if (!setup || isObjectID(setup)) return;
 
         const Task = require('./Task');
         const Repo = require('./Repo');
@@ -45,8 +45,7 @@ class Stash extends _Global {
 
     static async create(setup = Stash.prototype) {
         try {
-            const newStash = new Stash({...setup, isNew: true});
-            const created = await newStash.saveDB('stashes');
+            const created = await require('@CRUD').create('stashes', setup);
 
             if (created instanceof Error.Log) {
                 return created;

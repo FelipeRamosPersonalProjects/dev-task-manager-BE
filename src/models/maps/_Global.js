@@ -5,17 +5,9 @@ const { isObjectID } = require('../../helpers/database/relationalFields');
 const { increaseDocProp } = require('../../helpers/database/dbHelpers');
 
 class GlobalMap extends ValidateSchema {
-    constructor(setup = {
-        _id: String(),
-        index: Number(),
-        author: String(),
-        cod: String(),
-        createdAt: Date(),
-        modifiedAt: Date(),
-        collectionName: String()
-    }, parent) {
-        if (isObjectID(setup)) return;
+    constructor(setup, parent) {
         super(setup.validationRules || {});
+        if (isObjectID(setup)) return;
         const { _id, index, author, cod, createdAt, modifiedAt, collectionName} = setup || {};
 
         try {
@@ -66,8 +58,12 @@ class GlobalMap extends ValidateSchema {
     }
 
     async loadDB(collectionName) {
+        if (!collectionName) {
+            collectionName = this.collectionName;
+        }
+
         try {
-            const loaded = await CRUD.getDoc({collectionName, filter: this._id});
+            const loaded = await CRUD.getDoc({collectionName, filter: this._id}).defaultPopulate();
             
             if (loaded instanceof Error.Log) {
                 throw new Error.Log(loaded);
@@ -85,12 +81,12 @@ class GlobalMap extends ValidateSchema {
         try {
             if (!collection) throw new Error.Log('database.missing_params', 'collectionName', '_Global.updateDB');
 
-            const loaded = await CRUD.update({collectionName: collection, filter: this._id, data });
+            const loaded = await CRUD.update({collectionName: collection, filter: this._id, data, options: {returnDocs: true} });
             if (loaded instanceof Error.Log) {
                 throw new Error.Log(loaded);
             }
 
-            return loaded;
+            return loaded.initialize();
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -98,7 +94,8 @@ class GlobalMap extends ValidateSchema {
 
     async increaseProp(propKey, value) {
         if (!propKey) throw new Error.Log()
-        const increaseValue = {[propKey]: value || 1};
+        const increaseAmount = value || 1;
+        const increaseValue = {[propKey]: increaseAmount};
 
         try {
             if (!this.collectionName || !propKey) {
@@ -110,6 +107,7 @@ class GlobalMap extends ValidateSchema {
                 return increased;
             }
 
+            increased[propKey] = increased[propKey] + increaseAmount;
             return increased;
         } catch (err) {
             throw new Error.Log('helpers.increase_doc_prop', this.collectionName, this._id, increaseValue);

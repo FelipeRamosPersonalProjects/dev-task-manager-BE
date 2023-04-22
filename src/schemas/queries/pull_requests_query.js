@@ -2,11 +2,22 @@ function defaultPopulate() {
     const populateConfig = [
         {
             path: 'task',
-            ref: 'tasks'
+            model: 'tasks',
+            populate: [{
+                path: 'project',
+                model: 'projects',
+                populate: [{
+                    path: 'spaceDesk',
+                    model: 'space_desks'
+                }]
+            }, {
+                path: 'repo',
+                model: 'repos'
+            }]
         },
         {
             path: 'ticket',
-            ref: 'tickets'
+            model: 'tickets'
         }
     ];
 

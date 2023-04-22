@@ -2,8 +2,8 @@ const _Global = require('../maps/_Global');
 
 class Project extends _Global {
     constructor(setup){
-        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'projects'});
+        if (!setup || isObjectID(setup)) return;
 
         const Ticket = require('./Ticket');
         const Repo = require('./Repo');
@@ -45,7 +45,7 @@ class Project extends _Global {
     getTemplate(name) {
         try {
             const template = this.templates[name];
-            return template;
+            return template && template();
         } catch (err) {
             throw new Error.Log({
                 name: '',

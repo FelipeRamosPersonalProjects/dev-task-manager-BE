@@ -2,8 +2,8 @@ const _Global = require('../maps/_Global');
 
 class SpaceDesk extends _Global {
     constructor(setup){
-        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'space_desks'});
+        if (!setup || isObjectID(setup)) return;
 
         const User = require('./User');
         const Project = require('./Project');

@@ -1,7 +1,7 @@
-const ViewCLI = require('../ViewCLI');
+const ViewCLI = require('@CLI/ViewCLI');
 const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
 const TaskDocument = require('../components/TaskDocument');
-const CRUD = require('../../../services/database/crud');
+const CRUD = require('@CRUD');
 const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
 
 async function CreatePRsView({ task, defaultData }) {
@@ -43,8 +43,31 @@ async function CreatePRsView({ task, defaultData }) {
                                 }
 
                                 if (task) {
+                                    const initPR = await task.dbInitDocPR();
+                                    if (initPR instanceof Error.Log) {
+                                        throw initPR;
+                                    }
+
                                     ev.setValue('task', task, true);
-                                    return ev;
+                                    ev.setValue('prDOC', initPR, true);
+
+                                    switch (initPR.prStage) {
+                                        case 'initialized': {
+                                            return ev;
+                                        }
+                                        case 'branch-created': {
+                                            return await ev.goNext('commitDescription');
+                                        }
+                                        case 'commit-created': {
+                                            return await ev.goNext('savePullRequest');
+                                        }
+                                        case 'compare-filled': {
+                                            return await ev.goNext('addChangesDescription');
+                                        }
+                                        case 'changes-description-filled': {
+                                            return await ev.goNext('publishPullRequest');
+                                        }
+                                    }
                                 } else {
                                     throw new Error.Log({
                                         name: 'TASK-LOADING-ERROR',
@@ -103,11 +126,18 @@ async function CreatePRsView({ task, defaultData }) {
                         onAnswer: async (ev, { boolAnswer }, answer) => {
                             onAnswerDefault(ev, answer);
                             const task = ev.getValue('task');
+                            const prDOC = ev.getValue('prDOC');
 
                             if (boolAnswer(answer)) {
                                 const isReadyToCommit = await task.prepareBranchToPR();
                                 if (isReadyToCommit instanceof Error.Log) {
                                     isReadyToCommit.consolePrint();
+                                    return ev.trigger();
+                                }
+
+                                const updateStage = await prDOC.changeStage('branch-created');
+                                if (updateStage instanceof Error.Log) {
+                                    updateStage.consolePrint();
                                     return ev.trigger();
                                 }
 
@@ -184,17 +214,24 @@ async function CreatePRsView({ task, defaultData }) {
                         onAnswer: async (ev, { boolAnswer, print }, answer) => {
                             onAnswerDefault(ev, answer);
                             const task = ev.getValue('task');
+                            const prDOC = ev.getValue('prDOC');
                             const currentChanges = ev.getValue('commitFileChanges');
 
                             if (boolAnswer(answer)) {
                                 const isReadyToCommit = ev.getValue('isReadyToCommit');
 
-                                if (isReadyToCommit) {
+                                if (isReadyToCommit.isReady) {
                                     print('The branch is ready to commit!');
                                     const isReadyToPR = await task.repo.commitChanges(currentChanges);
 
                                     if (isReadyToPR instanceof Error.Log) {
                                         isReadyToPR.consolePrint();
+                                        return ev.trigger();
+                                    }
+
+                                    const updateStage = await prDOC.changeStage('commit-created');
+                                    if (updateStage instanceof Error.Log) {
+                                        updateStage.consolePrint();
                                         return ev.trigger();
                                     }
 
@@ -221,15 +258,21 @@ async function CreatePRsView({ task, defaultData }) {
                         onAnswer: async (ev, { boolAnswer }, answer) => {
                             onAnswerDefault(ev, answer);
                             const task = ev.getValue('task');
+                            const prDOC = ev.getValue('prDOC');
 
                             if (boolAnswer(answer)) {
-                                const savedPR = await task.savePR();
+                                const savedPR = await task.savePR(prDOC);
                                 if (savedPR instanceof Error.Log) {
                                     savedPR.consolePrint();
                                     return ev.trigger();
                                 }
 
-                                return ev.setValue('savedPR', savedPR);
+                                const updateStage = await savedPR.changeStage('compare-filled');
+                                if (updateStage instanceof Error.Log) {
+                                    updateStage.consolePrint();
+                                    return ev.trigger();
+                                }
+                                return ev.setValue('prDOC', savedPR);
                             }
                         }
                     }
@@ -240,46 +283,48 @@ async function CreatePRsView({ task, defaultData }) {
                     next: 'publishPullRequest',
                     events: {
                         onAnswer: async (ev, { boolAnswer, print }, answer) => {
-                            const savedPR = ev.getValue('savedPR');
-                            if (savedPR instanceof Error.Log) {
-                                throw savedPR;
-                            }
-
-                            if (!savedPR) {
-                                print(`The pull request don't exist on the internal database!`);
-                                return ev.trigger();
-                            }
-
-                            return new Promise(async (resolve, reject) => {
-                                const PoolForm = require('../PoolForm');
-                                const newPool = new PoolForm({
-                                    events: {
-                                        onEnd: async (ev) => {
-                                            return resolve(ev);
-                                        }
-                                    }
-                                }, ev);
-
-                                for (let index = 0; index < savedPR.fileChanges.length; index++) {
-                                    const change = savedPR.fileChanges[index];
-                                    const next = ((index + 1) < savedPR.fileChanges.length) ? String(index + 1) : '';
-                                    const id = String(index);
-    
-                                    newPool.setQuestion({
-                                        id,
-                                        next,
-                                        text: `\n${change.patch}\n\nFilepath: ${change.filename}\nFile blob: ${change.blob_url}\n\nDescription: `,
-                                        events: {
-                                            onAnswer: async (ev, {}, answer) => {
-                                                change.description = answer;
-                                                return ev;
-                                            }
-                                        }
-                                    });
+                            if (boolAnswer(answer)) {
+                                const savedPR = ev.getValue('prDOC');
+                                if (savedPR instanceof Error.Log) {
+                                    throw savedPR;
                                 }
 
-                                await newPool.start();
-                            });
+                                if (!savedPR) {
+                                    print(`The pull request don't exist on the internal database!`);
+                                    return ev.trigger();
+                                }
+
+                                return new Promise(async (resolve, reject) => {
+                                    const PoolForm = require('../PoolForm');
+                                    const newPool = new PoolForm({
+                                        events: {
+                                            onEnd: async (ev) => {
+                                                return resolve(ev);
+                                            }
+                                        }
+                                    }, ev);
+
+                                    for (let index = 0; index < savedPR.fileChanges.length; index++) {
+                                        const change = savedPR.fileChanges[index];
+                                        const next = ((index + 1) < savedPR.fileChanges.length) ? String(index + 1) : '';
+                                        const id = String(index);
+        
+                                        newPool.setQuestion({
+                                            id,
+                                            next,
+                                            text: `\n${change.patch}\n\nFilepath: ${change.filename}\nFile blob: ${change.blob_url}\n\nDescription: `,
+                                            events: {
+                                                onAnswer: async (ev, {}, answer) => {
+                                                    change.description = answer;
+                                                    return ev;
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    await newPool.start();
+                                });
+                            }
                         }
                     }
                 },
@@ -290,22 +335,30 @@ async function CreatePRsView({ task, defaultData }) {
                     text: `So if everything is ok with the saved pull request, can we proceed and publish it (Y/N)?`,
                     events: {
                         onTrigger: async (ev, {print, printTemplate}) => {
-                            const savedPR = ev.getValue('savedPR');
+                            const savedPR = ev.getValue('prDOC');
 
-                            const updated = await savedPR.updateDescription();
-                            if (updated instanceof Error.Log) {
-                                updated.consolePrint();
-                                return ev.trigger();
-                            }
+                            if (savedPR.prStage === 'compare-filled') {
+                                const updated = await savedPR.updateDescription();
+                                if (updated instanceof Error.Log) {
+                                    updated.consolePrint();
+                                    return ev.trigger();
+                                }
+    
+                                if (savedPR) {
+                                    const updateStage = await savedPR.changeStage('changes-description-filled');
+                                    if (updateStage instanceof Error.Log) {
+                                        updateStage.consolePrint();
+                                        return ev.trigger();
+                                    }
 
-                            if (savedPR) {
-                                print('The PR is ready to be published!');
-                                printTemplate(savedPR);
+                                    print('The PR is ready to be published!');
+                                    printTemplate(savedPR);
+                                }
                             }
                         },
                         onAnswer: async (ev, { boolAnswer }, answer) => {
                             onAnswerDefault(ev, answer);
-                            const savedPR = ev.getValue('savedPR');
+                            const savedPR = ev.getValue('prDOC');
 
                             if (boolAnswer(answer)) {
                                 const published = await savedPR.publishPR();
@@ -314,19 +367,19 @@ async function CreatePRsView({ task, defaultData }) {
                                     return ev.trigger();
                                 }
 
+                                const updateStage = await savedPR.changeStage('published');
+                                if (updateStage instanceof Error.Log) {
+                                    updateStage.consolePrint();
+                                    return ev.trigger();
+                                }
+
                                 ev.setValue('published', published);
                                 return ev.goNext();
                             } else {
                                 return ev.trigger();
                             }
-                        }
-                    }
-                },
-                {
-                    id: 'finishing-pr',
-                    text: `Would you like to close dev-desk (Y/N)? `,
-                    events: {
-                        onAnswer: async (ev) => {
+                        },
+                        onEnd: async (ev) => {
                             return await ev.goNext();
                         }
                     }
@@ -342,7 +395,7 @@ async function CreatePRsView({ task, defaultData }) {
                     const published = ev.values.published || {};
 
                     print(
-                        `The pull request was created, and it's available at the link: ${published.gitHubPR.html_url || '--Link not available--'}\n\n`,
+                        `The pull request was created, and it's available at the link: ${published.gitHubPR.html_url || '--Link not available--'}\n`,
                         'SUCCESS'
                     );
                     return published;

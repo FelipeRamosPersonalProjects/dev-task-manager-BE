@@ -8,8 +8,8 @@ const Comment = require('./Comment');
 
 class User extends _Global {
     constructor(setup){
-        if (!setup || isObjectID(setup)) return;
         super({...setup, validationRules: 'users'});
+        if (!setup || isObjectID(setup)) return;
 
         const {
             firstName,
