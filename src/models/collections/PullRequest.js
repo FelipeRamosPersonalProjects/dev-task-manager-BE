@@ -147,7 +147,7 @@ class PullRequest extends _Global {
         }
 
         try {
-            const updated = await this.updateDB({data: { prStage: newStage }});
+            const updated = await this.updateDB({data: { prStage: newStage, isCurrentVersion: !(newStage === 'aborted') }});
             if (updated instanceof Error.Log) {
                 return updated;
             }
@@ -183,6 +183,15 @@ class PullRequest extends _Global {
             }
 
             return updatedPR;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async deletePR() {
+        try {
+            const deleted = await this.deleteDB();
+            return deleted;
         } catch (err) {
             throw new Error.Log(err);
         }

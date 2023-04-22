@@ -29,7 +29,7 @@ class CLI extends ToolsCLI {
     }
 
     async loadView(viewPath, viewParams) {
-        this.print('Loading view "' + viewPath + '"...');
+        this.print('Loading view "' + viewPath + '"...', 'LOG');
         const parsedPath = viewPath.split('/');
         let View = views;
 

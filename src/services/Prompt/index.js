@@ -1,8 +1,9 @@
 const { execSync, exec } = require('child_process');
 const readline = require('readline');
-const ToolsCLI = require('../../interface/CLI/ToolsCLI');
+const ToolsCLI = require('@CLI/ToolsCLI');
+const StringTemplate = require('@interface/StringTemplateBuilder');
+const config = require('@config');
 const toolsCLI = new ToolsCLI();
-const config = require('../../../config.json');
 
 class Prompt {
     constructor(setup) {
@@ -65,9 +66,17 @@ class Prompt {
                     input: process.stdin,
                     output: process.stdout
                 });
+                const question = new StringTemplate()
+                    .separator()
+                    .newLine()
+                    .text(`[QUESTION][${config.projectName.toUpperCase()}] -> ${questionText} `)
+                .end();
 
-                rl.question(`\n[QUESTION][${config.projectName.toUpperCase()}] -> ${questionText} `, (answer) => {
+                rl.question(question, (answer) => {
                     rl.close();
+                    const separator = new StringTemplate();
+                    separator.separator();
+                    console.log(separator.end());
                     resolve(answer);
                 });
             } catch(err) {
