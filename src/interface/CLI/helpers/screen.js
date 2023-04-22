@@ -64,12 +64,10 @@ class ScreenHelperCLI {
 
         return this.pixelToChar(pixelsToConvert, charWidthInPixels);
     }
-}
-  
- 
+} 
+
 /**
  * The singleton instance of the screen helper CLI.
  * @type {ScreenHelperCLI}
  */
 module.exports = ScreenHelperCLI;
-  
