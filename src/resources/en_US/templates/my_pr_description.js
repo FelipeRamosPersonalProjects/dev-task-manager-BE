@@ -2,6 +2,10 @@ const Component = require('@interface/Component');
 const FileChange = require('./default_file_change');
 
 class MyPrDescription extends Component {
+    get SOURCE_PATH() {
+        return require.resolve('./source/my_pr_description.md');
+    }
+
     constructor(settings) {
         super(settings, {
             ticketURL: {
@@ -32,7 +36,6 @@ class MyPrDescription extends Component {
 
         const { ticketURL, taskURL, summary, fileChanges, images, videos } = Object(settings || {});
 
-        this.SOURCE_PATH = require.resolve('./source/my_pr_description.md');
         this.ticketURL = ticketURL;
         this.taskURL = taskURL;
         this.summary = summary;

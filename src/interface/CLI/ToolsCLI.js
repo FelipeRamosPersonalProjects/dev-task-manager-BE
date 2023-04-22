@@ -2,7 +2,7 @@ const config = require('../../../config.json');
 
 class ToolsCLI {
     print(txt, addHeader) {
-        console.log(`${addHeader ? `[${addHeader}]` : ''}[${config.projectName.toUpperCase()}] -> ${txt}`);
+        console.log(`${addHeader ? `[${addHeader}]` : '[LOG]'}[${config.projectName.toUpperCase()}] -> ${txt}`);
     }
 
     printError(err) {

@@ -3,13 +3,13 @@ const User = require('./User');
 const Comment = require('./Comment');
 const Ticket = require('./Ticket');
 const Task = require('./Task');
-const FileChange = require('../../services/GitHubAPI/FileChange');
-const CRUD = require('../../services/database/crud');
+const FileChange = require('@services/GitHubAPI/FileChange');
+const CRUD = require('@CRUD');
 
 class PullRequest extends _Global {
     constructor(setup){
         super({...setup, validationRules: 'pull_requests'});
-        if (isObjectID(setup)) return;
+        if (!setup || isObjectID(setup)) return;
 
         const {
             owner,
@@ -17,6 +17,9 @@ class PullRequest extends _Global {
             head,
             base,
             remoteID,
+            prStage,
+            isCurrentVersion,
+            version,
             summary,
             description,
             fileChanges,
@@ -36,6 +39,9 @@ class PullRequest extends _Global {
             this.owner = owner._bsontype !== 'ObjectID' ? new User(owner) : {};
             this.name = name;
             this.remoteID = remoteID;
+            this.prStage = prStage;
+            this.isCurrentVersion = isCurrentVersion;
+            this.version = version;
             this.summary = summary;
             this.head = head;
             this.base = base;
@@ -89,8 +95,12 @@ class PullRequest extends _Global {
         return this.parentTicket && this.parentTicket.ticketID;
     }
 
+    get project() {
+        return this.task && this.task.project && this.task.project;
+    }
+
     async updateDescription(dontSave) {
-        const descriptionTemplate = this.repo.getProjectTemplate('prDescription')();
+        const descriptionTemplate = this.project.getTemplate('prDescription');
         const newDescription = descriptionTemplate.renderToString({
             ticketURL: this.parentTicket.ticketURL,
             taskURL: this.task.taskURL,
@@ -115,21 +125,36 @@ class PullRequest extends _Global {
         }
     }
 
-    async updateChangesInternal(published) {
+    async saveRemoteData(published) {
+        this.gitHubPR = published;
+
         try {
-            await this.task.increaseCurrentVersion();
-
-            this.gitHubPR = published;
-
-            const updatedGitRes = await this.updateDB({data: { gitHubPR: published }});
-
-            if (updatedGitRes instanceof Error.Log) {
-                updatedGitRes.consolePrint();
-                throw updatedGitRes;
+            const updatedRemote = await this.updateDB({data: { gitHubPR: published }});
+            if (updatedRemote instanceof Error.Log) {
+                updatedRemote.consolePrint();
+                throw updatedRemote;
             }
 
             return this;
         } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async changeStage(newStage) {
+        if (!newStage) {
+            throw new Error.Log('common.missing_params', 'newStage', 'PullRequest.changeStage', 'PullRequest.js');
+        }
+
+        try {
+            const updated = await this.updateDB({data: { prStage: newStage, isCurrentVersion: !(newStage === 'aborted') }});
+            if (updated instanceof Error.Log) {
+                return updated;
+            }
+
+            this.prStage = newStage;
+            return this;
+        } catch(err) {
             throw new Error.Log(err);
         }
     }
@@ -145,18 +170,28 @@ class PullRequest extends _Global {
                 base: this.base,
                 labels: this.labels
             });
+
             if (published instanceof Error.Log) {
                 published.consolePrint();
                 throw published;
             }
 
-            const updatedPR = await this.updateChangesInternal(published);
+            const updatedPR = await this.saveRemoteData(published);
             if (updatedPR instanceof Error.Log) {
                 updatedPR.consolePrint();
                 throw updatedPR;
             }
 
             return updatedPR;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async deletePR() {
+        try {
+            const deleted = await this.deleteDB();
+            return deleted;
         } catch (err) {
             throw new Error.Log(err);
         }

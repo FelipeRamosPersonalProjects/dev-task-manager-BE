@@ -4,33 +4,37 @@ const FS = require('../../services/FS');
 const config = require('@config');
 
 class Repo extends _Global {
-    constructor(setup = {
-        ...Repo.prototype,
-        nodeVersion: '',
-        baseBranch: '',
-        url: '',
-        localPath: '',
-        collaborators: [Object],
-        projects: [Object],
-        owner: Object,
-        repoManager: RepoManager.prototype
-    }, parentTask){
+    constructor(setup, parentTask){
         super({...setup, validationRules: 'repos'}, setup);
-        if (isObjectID(setup)) return;
+        if (!setup || isObjectID(setup)) return;
 
         const User = require('./User');
         const Project = require('./Project');
+        const PullRequest = require('./PullRequest');
 
         try {
-            const { nodeVersion, baseBranch, url, repoName, repoPath, localPath, owner, collaborators, organization, projects } = setup || {};
+            const {
+                nodeVersion,
+                baseBranch,
+                url,
+                repoName,
+                repoPath,
+                localPath,
+                owner,
+                collaborators,
+                organization,
+                projects,
+                pullRequest
+            } = new Object(setup || {});
 
             this.nodeVersion = nodeVersion;
             this.baseBranch = baseBranch;
             this.url = url;
             this.localPath = localPath;
-            this.collaborators = Array.isArray(collaborators) ? collaborators.map(collab => new User(collab)) : [];
-            this.projects = Array.isArray(projects) ? projects.map(project => new Project(project)) : [];
-            this.owner = owner ? new User(owner) : {};
+            this.collaborators = !isObjectID(collaborators) && Array.isArray(collaborators) ? collaborators.map(collab => new User(collab)) : [];
+            this.projects = !isObjectID(projects) && Array.isArray(projects) ? projects.map(project => new Project(project)) : [];
+            this.owner = !isObjectID(owner) ? new User(owner) : {};
+            this.pullRequest = !isObjectID(pullRequest) ? new PullRequest(pullRequest) : {};
 
             if (url) {
                 const separateHost = url.split('https://github.com/');
@@ -176,8 +180,7 @@ class Repo extends _Global {
             const project = task && task.project;
             
             if (project) {
-                const branchTemplate = project.getTemplate('branchName');
-                const template = await branchTemplate();
+                const template = project.getTemplate('branchName');
                 const branchName = template.toMarkdown({taskBranch: task.taskBranch});
                 const newBranch = await this.repoManager.createBranch(branchName, this.baseBranch, {bringChanges: true});
 
@@ -196,7 +199,7 @@ class Repo extends _Global {
         try {
             const isValidBranch = this.isCurrentBranchValid();
             const task = this.parentTask;
-            const titleTemplate = this.getProjectTemplate('prTitle')();
+            const titleTemplate = this.getProjectTemplate('prTitle');
             const title = titleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
 
             if (isValidBranch) {
@@ -223,38 +226,28 @@ class Repo extends _Global {
         }
     }
 
-    async buildPR() {
+    async fillPR() {
         try {
-            const user = await this.getCurrentUser();
             const task = this.parentTask;
-            const ticket = task && task.ticket;
+            const prInProgress = task && task.prInProgress;
+            const descrTemplate = this.getProjectTemplate('prDescription');
 
-            if (task) {
-                const compared = await this.repoManager.compareBranches(this.baseBranch, this.parentTask.taskBranch);
-
-                const objData = {
-                    taskID: task.taskID,
-                    taskURL: task.taskURL,
-                    ticketURL: ticket.ticketURL,
-                    isNew: true,
-                    assignedUsers: [user._id],
-                    summary: task.description,
-                    owner: user._id,
-                    fileChanges: compared.files,
-                    task: task._id,
-                    ticket: ticket._id,
-                    base: this.parentTask.project.baseBranch || this.baseBranch,
-                    head: this.parentTask.taskBranch,
-                    labels: []
-                };
+            if (prInProgress) {
+                const compared = await this.repoManager.compareBranches(this.baseBranch, task.taskBranch);
+                if (compared instanceof Error.Log) {
+                    toolsCLI.printError(compared);
+                    return compared;
+                }
                 
-                const prTitleTemplate = this.getProjectTemplate('prTitle')();
-                const description = this.getProjectTemplate('prDescription')();
+                const description = descrTemplate.renderToString({
+                    ...prInProgress,
+                    fileChanges: compared.files
+                });
 
-                objData.name = prTitleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
-                objData.description = description.renderToString(objData);
-
-                return objData;
+                return {
+                    description,
+                    fileChanges: compared.files
+                };
             }
         } catch (err) {
             throw new Error.Log(err);

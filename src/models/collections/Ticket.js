@@ -3,6 +3,8 @@ const _Global = require('../maps/_Global');
 class Ticket extends _Global {
     constructor(setup){
         super({...setup, validationRules: 'tickets'});
+        if (!setup || isObjectID(setup)) return;
+
         const Project = require('./Project');
         const Task = require('./Task');
         const PullRequest = require('./PullRequest');
