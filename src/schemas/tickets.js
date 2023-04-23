@@ -95,6 +95,14 @@ module.exports = new Schema({
                 relatedField: 'ticket',
                 type: 'ObjectId'
             })
+        },
+        stashes: {
+            type: [ObjectId],
+            ref: 'stashes',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            })
         }
     }
 });

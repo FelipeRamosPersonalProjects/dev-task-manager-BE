@@ -279,7 +279,7 @@ class RepoManager extends GitHubConnection {
             }
 
             
-            const stashed = await this.createStash({ type: bringChanges && 'bring' });
+            const stashed = await this.createStash({ type: bringChanges && 'temp' });
             if (stashed instanceof Error.Log) {
                 throw stashed.append('services.GitHubAPI.RepoManager.checkout_stashing_error');
             }
@@ -290,7 +290,7 @@ class RepoManager extends GitHubConnection {
                 return out.append('services.GitHubAPI.RepoManager.checkout_git_error');
             }
             
-            if (bringChanges && stashed.type === 'bring') {
+            if (bringChanges && stashed.type === 'temp') {
                 const apply = await this.applyStash(stashed._id);
                 
                 if (apply instanceof Error.Log) {

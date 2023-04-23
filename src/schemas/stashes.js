@@ -13,13 +13,15 @@ module.exports = new Schema({
                 type: 'array-oid'
             })
         },
+        gitName: {
+            type: String
+        },
         type: {
             type: String,
             required: true,
-            default: 'draft',
-            enum: ['draft', 'bring', 'backup']
+            enum: ['draft', 'bring', 'temp', 'backup']
         },
-        name: {
+        title: {
             type: String
         },
         description: {
@@ -37,6 +39,14 @@ module.exports = new Schema({
                 type: 'array-oid'
             })
         },
+        ticket: {
+            type: ObjectId,
+            ref: 'tickets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'stashes',
+                type: 'array-oid'
+            })
+        },
         repo: {
             type: ObjectId,
             ref: 'repos',
@@ -45,6 +55,9 @@ module.exports = new Schema({
                 relatedField: 'stashes',
                 type: 'array-oid'
             })
+        },
+        backupFolder: {
+            type: String
         }
     }
 });
