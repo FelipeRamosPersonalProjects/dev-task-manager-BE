@@ -35,10 +35,7 @@ class Project extends _Global {
         try {
             debugger;
         } catch (err) {
-            throw new Error.Log({
-                name: '',
-                message: ''
-            });
+            throw new Error.Log(err);
         }
     }
 
@@ -47,10 +44,7 @@ class Project extends _Global {
             const template = this.templates[name];
             return template && template();
         } catch (err) {
-            throw new Error.Log({
-                name: '',
-                message: ''
-            });
+            throw new Error.Log(err);
         }
     }
 }
