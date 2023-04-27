@@ -16,3 +16,4 @@ global.Error.Log = ErrorLog;
 // Utils
 Boolean.isValid = validation.base.build;
 global.isObjectID = validation.base.ValidationBase.isObjectID;
+global.isCompleteDoc = validation.base.ValidationBase.isCompleteDoc;
