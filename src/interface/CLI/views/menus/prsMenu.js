@@ -1,9 +1,9 @@
-const ViewCLI = require('../ViewCLI');
-const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
+const ViewCLI = require('@CLI/ViewCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
 
 async function PullRequestsView() {
     return new ViewCLI({
-        name: 'prs_menu',
+        name: 'prsMenu',
         Template: new DashedHeaderLayout({
             headerText: 'PULL REQUESTS',
             headerDescription: `Manage your pull requests.`
@@ -11,7 +11,7 @@ async function PullRequestsView() {
         navigator: { options: [
             {
                 title: 'Create new pull request   ',
-                targetView: 'create_pr'
+                targetView: 'pullRequests/createPR'
             },
             {
                 title: 'Load pull request',

@@ -1,5 +1,5 @@
 const ViewCLI = require('@CLI/ViewCLI');
-const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
+const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
 const PullRequestTemplate = require('@CLI/templates/PullRequest');
 const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
 const FinalTempl = require('@CLI/components/LinksHeaderPR');
@@ -54,7 +54,7 @@ async function CreatePRsView({ task }) {
     }
 
     return new ViewCLI({
-        name: 'create_pr',
+        name: 'createPR',
         Template,
         poolForm: {
             startQuestion: task ? 'autoConfirm' : 'taskId',
@@ -190,7 +190,7 @@ async function CreatePRsView({ task }) {
                     events: {
                         onAnswer: async (event, {boolAnswer}, answer) => {
                             if (boolAnswer(answer)) {
-                                const PoolForm = require('../PoolForm');
+                                const PoolForm = require('../../PoolForm');
                                 const task = event.getValue('task');
 
                                 const currentChanges = await task.repoManager.currentChanges();
@@ -328,7 +328,7 @@ async function CreatePRsView({ task }) {
                                 }
 
                                 return new Promise(async (resolve, reject) => {
-                                    const PoolForm = require('../PoolForm');
+                                    const PoolForm = require('../../PoolForm');
                                     const newPool = new PoolForm({
                                         events: {
                                             onEnd: async (ev) => {
