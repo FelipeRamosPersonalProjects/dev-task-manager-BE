@@ -102,6 +102,13 @@ class ValidationBase {
     
         return false
     }
+
+    static isCompleteDoc(doc) {
+        return [
+            (!ValidationBase.isObjectID(doc)),
+            (typeof doc === 'object')
+        ].every(item => item);
+    }
 }
 
 function build(value) {

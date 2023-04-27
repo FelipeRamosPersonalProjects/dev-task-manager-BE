@@ -1,9 +1,11 @@
-const Schema = require('../models/SchemaDB');
+const Schema = require('@models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
+const queries = require('@schemas/queries/stashes_query');
 
 module.exports = new Schema({
     name: 'stashes',
     symbol: 'STSH',
+    queries,
     schema: {
         author: {
             type: ObjectId,
@@ -12,9 +14,6 @@ module.exports = new Schema({
                 relatedField: 'stashes',
                 type: 'array-oid'
             })
-        },
-        gitName: {
-            type: String
         },
         type: {
             type: String,

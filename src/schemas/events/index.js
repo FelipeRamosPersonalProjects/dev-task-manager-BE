@@ -3,5 +3,5 @@ const tasks = require('./tasks_events');
 
 module.exports = {
     tickets,
-    tasks
+    tasks,
 };

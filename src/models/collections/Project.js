@@ -27,7 +27,7 @@ class Project extends _Global {
 
             this.placeDefault();
         } catch(err) {
-            new Error.Log(err).append('common.model_construction', 'Project');
+            throw new Error.Log(err).append('common.model_construction', 'Project');
         }
     }
 

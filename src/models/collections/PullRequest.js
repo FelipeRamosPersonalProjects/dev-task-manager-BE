@@ -31,12 +31,11 @@ class PullRequest extends _Global {
             ticket,
             task,
             gitHubPR
-        } = setup || {};
+        } = Object(setup || {});
         
         try {
             this.collectionName = 'pull_requests';
             this.gitHubPR = gitHubPR;
-            this.owner = owner._bsontype !== 'ObjectID' ? new User(owner) : {};
             this.name = name;
             this.remoteID = remoteID;
             this.prStage = prStage;
@@ -45,11 +44,12 @@ class PullRequest extends _Global {
             this.summary = summary;
             this.head = head;
             this.base = base;
+            this.labels = labels;
+            this.bmConfigs = bmConfigs;
+            this.owner = !isObjectID(owner) ? new User(owner) : {};
             this.fileChanges = !isObjectID(fileChanges) && fileChanges.map(change => new FileChange(change, this));
             this.assignedUsers = !isObjectID(assignedUsers) && assignedUsers.map(user => new User(user));
             this.reviewers = !isObjectID(reviewers) && reviewers.map(user => new User(user));
-            this.labels = labels;
-            this.bmConfigs = bmConfigs;
             this.comments = !isObjectID(comments) && comments.map(comment => Comment(comment));
             this.ticket = !isObjectID(ticket) ? new Ticket(ticket) : {};
             this.task = !isObjectID(task) ? new Task(task) : {};
@@ -84,7 +84,13 @@ class PullRequest extends _Global {
     }
 
     get parentTicket() {
-        return this.ticket || this.task.ticket;
+        if (Object.keys(this.ticket || {}).length) {
+            return this.ticket;
+        }
+
+        if (Object.keys(this.task || {}).length) {
+            return this.task.ticket;
+        }
     }
 
     get taskID() {
@@ -148,7 +154,11 @@ class PullRequest extends _Global {
         }
 
         try {
-            const updated = await this.updateDB({data: { prStage: newStage, isCurrentVersion: !(newStage === 'aborted') }});
+            const updated = await this.updateDB({data: {
+                prStage: newStage,
+                isCurrentVersion: !(newStage === 'aborted')
+            }});
+
             if (updated instanceof Error.Log) {
                 return updated;
             }
