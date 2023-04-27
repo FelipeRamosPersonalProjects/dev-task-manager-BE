@@ -18,8 +18,9 @@ async function HomeView() {
         Template: templateInit,
         navigator: { options: [
             { title: 'CRUD                ', description: 'Database CRUD operations', targetView: 'crud/main' },
-            { title: 'Tickets and Tasks   ', description: 'Manage your tickets and tasks', targetView: 'ticketsAndTasks' },
-            { title: 'Pull Requests       ', description: 'Manage your pull requests', targetView: 'prs_menu' },
+            { title: 'Tickets and Tasks   ', description: 'Manage your tickets and tasks', targetView: 'menus/ticketsAndTasks' },
+            { title: 'Pull Requests       ', description: 'Manage your pull requests', targetView: 'menus/prsMenu' },
+            { title: 'Stashes and Backups ', description: 'Manage your stashes and backups', targetView: 'menus/stashesBackups' }
         ]}
     }, this);
 }

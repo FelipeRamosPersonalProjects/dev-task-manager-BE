@@ -1,5 +1,5 @@
-const ViewCLI = require('../ViewCLI');
-const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
+const ViewCLI = require('@CLI/ViewCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
 
 async function TicketsAndTasksView() {
     return new ViewCLI({
