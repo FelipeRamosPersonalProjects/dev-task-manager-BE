@@ -27,7 +27,7 @@ class StashManager {
         taskID = taskID || this.repo && this.repo.taskID;
         taskVersion = this.repo && this.repo.parentTask && this.repo.parentTask.taskVersion;
 
-        return `[${config.projectName}]${_id}__${type}__${ticketID}__${taskID}${taskVersion ? '-v'+taskVersion : ''}`;
+        return `[${config.projectName}]${_id}__${type}${ticketID ? `__${ticketID}` : ''}${taskID ? `__${taskID}` : ''}${taskVersion ? '-v'+taskVersion : ''}`;
     }
 
     async createStash(setup) {

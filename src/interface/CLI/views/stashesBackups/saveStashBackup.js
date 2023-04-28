@@ -5,8 +5,10 @@ const ListFileChangesTemplate = require('@CLI/components/ListFileChanges');
 const ListTileTemplate = require('@CLI/templates/ListTiles');
 const CRUD = require('@CRUD');
 
-async function SaveStashBackupView() {
-    const view = new ViewCLI({
+async function SaveStashBackupView({ viewParams }) {
+    const { isOnlyStash } = new Object(viewParams || {});
+
+    return new ViewCLI({
         name: 'saveStashBackup',
         Template: new DashedHeaderLayout({
             headerText: 'Save Stash and Backup',
@@ -134,23 +136,26 @@ async function SaveStashBackupView() {
                 },
                 {
                     id: 'confirmation',
-                    text: `Do you confirm to create the stash (Y/N)? `,
+                    text: `Do you confirm to create the stash${!isOnlyStash ? ' and the files backup' : ''} (Y/N)? `,
                     events: {
                         onAnswer:  async (ev, {boolAnswer}, answer) => {
                             try {
                                 const repo = ev.getValue('repo');
+                                let backup;
 
                                 if (boolAnswer(answer)) {
-                                    const backup = await repo.createBranchBackup({title: ev.getValue('stashTitle')});
-                                    if (backup instanceof Error.Log) {
-                                        throw backup;
+                                    if (!isOnlyStash) {
+                                        backup = await repo.createBranchBackup({title: ev.getValue('stashTitle')});
+                                        if (backup instanceof Error.Log) {
+                                            throw backup;
+                                        }
                                     }
 
                                     const stashed = await repo.repoManager.stashManager.createStash({
-                                        type: 'backup',
+                                        type: isOnlyStash && 'stash' || 'backup',
                                         title: ev.getValue('stashTitle'),
                                         description: ev.getValue('stashDescription'),
-                                        backupFolder: backup.backupFolder
+                                        backupFolder: backup && backup.backupFolder
                                     });
 
                                     if (stashed instanceof Error.Log) {
@@ -172,8 +177,6 @@ async function SaveStashBackupView() {
             ]
         }, this)
     }, this);
-
-    return view;
 }
 
 module.exports = SaveStashBackupView;
