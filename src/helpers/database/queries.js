@@ -58,8 +58,13 @@ function populateAll(options) {
     }
 }
 
-async function initialize(){
-    const docs = await this.exec();
+async function initialize(populate){
+    let query = this;
+    if (populate) {
+        query = this.defaultPopulate();
+    }
+
+    const docs = await query.exec();
     let result = [];
 
     try {

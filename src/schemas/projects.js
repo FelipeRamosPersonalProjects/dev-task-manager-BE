@@ -1,10 +1,12 @@
 const Schema = require('../models/SchemaDB');
 const { ObjectId } = Schema.mongoSchema.Types;
 const TemplateOptionsMap = require('./map/TemplatesOptions');
+const queries = require('@schemas/queries');
 
 module.exports = new Schema({
     name: 'projects',
     symbol: 'PRJ',
+    queries: queries.projects,
     schema: {
         projectName: {
             type: String,

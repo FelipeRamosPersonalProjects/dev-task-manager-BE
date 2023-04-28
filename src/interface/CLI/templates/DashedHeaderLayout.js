@@ -10,7 +10,7 @@ class DashedHeaderLayout extends Component {
         super(settings, {
             headerText: { type: String },
             headerDescription: { type: String },
-            Content: { type: [Object] }
+            Content: { type: Object }
         });
 
         const {menu, headerText, headerDescription, Content} = new Object(settings || {});
