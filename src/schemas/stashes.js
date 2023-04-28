@@ -18,7 +18,7 @@ module.exports = new Schema({
         type: {
             type: String,
             required: true,
-            enum: ['draft', 'bring', 'temp', 'backup']
+            enum: ['draft', 'bring', 'temp', 'backup', 'stash', 'stash-backup']
         },
         title: {
             type: String

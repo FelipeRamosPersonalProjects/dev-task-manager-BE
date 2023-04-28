@@ -40,7 +40,7 @@ class CLI extends ToolsCLI {
         });
 
         if (typeof View === 'function') {
-            const loadedView = await View.call(this, viewParams);
+            const loadedView = await View.call(this, {viewParams});
             
             this.setCurrentView(loadedView);
             await loadedView.render();
