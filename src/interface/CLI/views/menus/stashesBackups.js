@@ -18,7 +18,8 @@ async function StashesBackupsMenuView() {
             {
                 title: 'Save backup             ',
                 description: 'To only save a files backup',
-                targetView: 'stashesBackups/saveStashBackup'
+                targetView: 'stashesBackups/saveStashBackup',
+                viewParams: { isOnlyBackup: true }
             },
             {
                 title: 'Apply stash             ',
