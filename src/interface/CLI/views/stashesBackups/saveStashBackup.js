@@ -3,10 +3,11 @@ const PoolForm = require('@CLI/PoolForm');
 const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
 const ListFileChangesTemplate = require('@CLI/components/ListFileChanges');
 const ListTileTemplate = require('@CLI/templates/ListTiles');
+const Stash = require('@models/collections/Stash');
 const CRUD = require('@CRUD');
 
 async function SaveStashBackupView({ viewParams }) {
-    const { isOnlyStash } = new Object(viewParams || {});
+    const { isOnlyStash, isOnlyBackup } = new Object(viewParams || {});
 
     return new ViewCLI({
         name: 'saveStashBackup',
@@ -136,33 +137,60 @@ async function SaveStashBackupView({ viewParams }) {
                 },
                 {
                     id: 'confirmation',
-                    text: `Do you confirm to create the stash${!isOnlyStash ? ' and the files backup' : ''} (Y/N)? `,
+                    text: `Do you confirm to create${!isOnlyBackup ? 'the stash ' : ''}${!isOnlyStash ? ' and the files backup' : ''} (Y/N)? `,
                     events: {
-                        onAnswer:  async (ev, {boolAnswer}, answer) => {
+                        onAnswer:  async (ev, {boolAnswer, print}, answer) => {
                             try {
                                 const repo = ev.getValue('repo');
+                                const stashTitle = ev.getValue('stashTitle');
+                                const stashDescription = ev.getValue('stashDescription');
                                 let backup;
+                                let result;
 
                                 if (boolAnswer(answer)) {
                                     if (!isOnlyStash) {
-                                        backup = await repo.createBranchBackup({title: ev.getValue('stashTitle')});
+                                        backup = await repo.createBranchBackup({title: stashTitle});
                                         if (backup instanceof Error.Log) {
                                             throw backup;
                                         }
                                     }
 
-                                    const stashed = await repo.repoManager.stashManager.createStash({
-                                        type: isOnlyStash && 'stash' || 'backup',
-                                        title: ev.getValue('stashTitle'),
-                                        description: ev.getValue('stashDescription'),
-                                        backupFolder: backup && backup.backupFolder
-                                    });
+                                    if (!isOnlyBackup) {
+                                        result = await repo.repoManager.stashManager.createStash({
+                                            type: isOnlyStash && 'stash' || 'stash-backup',
+                                            title: stashTitle,
+                                            description: stashDescription,
+                                            backupFolder: backup && backup.backupFolder
+                                        });
+    
+                                        if (result instanceof Error.Log) {
+                                            throw result;
+                                        }
+                                    } else {
+                                        // TODO: This will be part of one of the changes that it's recommneded to do when it's implementing the Backup instance.
+                                        result = await Stash.create({
+                                            type: 'backup',
+                                            title: stashTitle,
+                                            description: stashDescription,
+                                            backupFolder: backup && backup.backupFolder,
+                                            branch: repo && repo.repoManager.getCurrentBranch(),
+                                            repo: repo && repo._id
+                                        });
 
-                                    if (stashed instanceof Error.Log) {
-                                        throw stashed;
+                                        if (result instanceof Error.Log) {
+                                            throw result;
+                                        }
                                     }
 
-                                    if (stashed.success) {
+                                    if (!result.errors) {
+                                        print(`Backup finished successfully!\n`);
+                                        print(`Type: ${result.type}`);
+                                        print(`Title: ${result.title}`);
+                                        print(`Description: ${result.description}`);
+                                        print(`Branch: ${result.branch}`);
+                                        print(`Repository: ${result.repo ? result.repo.repoName : '--empty--'}`);
+                                        print(`Backup file available at: ${result.backupFolder}`);
+                                        print(`Intarnal DB document: ${result._id}`);
                                         return ev.goNext();
                                     }
                                 } else {
