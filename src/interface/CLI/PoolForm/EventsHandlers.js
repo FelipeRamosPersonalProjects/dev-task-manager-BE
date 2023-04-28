@@ -174,6 +174,10 @@ class EventsHandlers {
                 error.consolePrint();
                 return ev.trigger();
             }
+
+            if (ev.parentPool && ev.parentPool.autoSaveAnswers) {
+                ev.setValue(ev.id, ev.answer);
+            }
     
             await this.triggerEvent('onAnswer', ev, this.tools, ev.answer);
         } catch (err) {

@@ -1,5 +1,5 @@
 const Component = require('@interface/Component');
-const DefaultTile = require('@src/interface/CLI/templates/tiles/DefaultTile');
+const DefaultTile = require('@CLI/components/tiles/DefaultTile');
 
 class ListTileTemplate extends Component {
     get SOURCE_PATH() {

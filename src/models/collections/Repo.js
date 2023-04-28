@@ -89,7 +89,8 @@ class Repo extends _Global {
         return template;
     }
 
-    buildBranchBackupPath(currentBranch) {
+    buildBranchBackupPath(currentBranch, title) {
+        const parsedTitle = title && title.replace(/ /g, '_');
         const date = new Date();
         const repo = this.repoPath;
         const ticket = this.ticketID;
@@ -102,7 +103,7 @@ class Repo extends _Global {
         const minute = date.getMinutes();
         const mode = config.mode === 'production' ? 'PROD' : 'DEV';
 
-        return `${config.backupFolder}/${mode}/${repo}/${ticket}/${branch}__${headBranch}/${year}-${month}-${day}__${hour}-${minute}`;
+        return `${config.backupFolder}/${mode}/${repo}/${ticket ? `${ticket}/` : 'STASH-BACKUP/'}${branch}__${headBranch ? headBranch : parsedTitle ? parsedTitle : ''}/${year}-${month}-${day}__${hour}-${minute}`;
     }
 
     isCurrentBranchValid() {
@@ -154,7 +155,9 @@ class Repo extends _Global {
         }
     }
 
-    async createBranchBackup() {
+    async createBranchBackup(setup) {
+        const { title } = setup || {};
+
         try {
             const currentBranch = this.repoManager.getCurrentBranch();
             const current = await this.repoManager.currentChanges();
@@ -167,7 +170,7 @@ class Repo extends _Global {
             }
 
             const filesToCopy = current.success && current.changes || [];
-            const destDir = this.buildBranchBackupPath(currentBranch);
+            const destDir = this.buildBranchBackupPath(currentBranch, title);
             const files = await FS.copyFiles(filesToCopy, this.localPath, destDir);
 
             return {

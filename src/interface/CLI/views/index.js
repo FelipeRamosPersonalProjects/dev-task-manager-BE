@@ -3,6 +3,7 @@ const tasks = require('./tasks');
 const tickets = require('./tickets');
 const pullRequests = require('./pullRequests');
 const menus = require('./menus');
+const stashesBackups = require('./stashesBackups');
 const home = require('./home');
 const docDisplay = require('./docDisplay');
 
@@ -12,6 +13,7 @@ module.exports = {
     tickets,
     pullRequests,
     menus,
+    stashesBackups,
     home,
     docDisplay
 };
