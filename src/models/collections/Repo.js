@@ -51,6 +51,7 @@ class Repo extends _Global {
                 this.repoPath = repoPath;
             }
 
+            this._parentTask = () => parentTask;
             this.displayName = this.repoPath;
             this.repoManager = new RepoManager({
                 localPath: this.localPath,
@@ -60,7 +61,6 @@ class Repo extends _Global {
             }, this);
 
             this.placeDefault();
-            this._parentTask = () => parentTask;
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'Repo');
         }
@@ -68,6 +68,17 @@ class Repo extends _Global {
 
     get parentTask() {
         return this._parentTask();
+    }
+
+    get taskID() {
+        const task = this.parentTask;
+        return task && task.taskID;
+    }
+
+    get ticketID() {
+        const task = this.parentTask;
+        const ticket = task && task.ticket;
+        return ticket && ticket.ticketID;
     }
 
     getProjectTemplate(templateName) {
@@ -78,29 +89,21 @@ class Repo extends _Global {
         return template;
     }
 
-    getTaskCod() {
-        const task = this.parentTask;
-        return task && task.taskID;
-    }
-
-    getTicketCod() {
-        const task = this.parentTask;
-        const ticket = task && task.ticket;
-        return ticket && ticket.ticketID;
-    }
-
-    buildBranchBackupPath(currentBranch) {
+    buildBranchBackupPath(currentBranch, title) {
+        const parsedTitle = title && title.replace(/ /g, '_');
         const date = new Date();
         const repo = this.repoPath;
-        const ticket = this.getTicketCod();
+        const ticket = this.ticketID;
         const branch = currentBranch;
+        const headBranch = this.parentTask && this.parentTask.taskBranch;
         const year = date.getFullYear();
         const month = date.getMonth();
         const day = date.getDate();
         const hour = date.getHours();
         const minute = date.getMinutes();
+        const mode = config.mode === 'production' ? 'PROD' : 'DEV';
 
-        return `temp/${config.mode === 'production' ? 'PROD' : 'DEV'}/${repo}/${ticket}/${branch}/${year}-${month}-${day}__${hour}_${minute}`;
+        return `${config.backupFolder}/${mode}/${repo}/${ticket ? `${ticket}/` : 'STASH-BACKUP/'}${branch}__${headBranch ? headBranch : parsedTitle ? parsedTitle : ''}/${year}-${month}-${day}__${hour}-${minute}`;
     }
 
     isCurrentBranchValid() {
@@ -152,7 +155,9 @@ class Repo extends _Global {
         }
     }
 
-    async createBranchBackup() {
+    async createBranchBackup(setup) {
+        const { title } = setup || {};
+
         try {
             const currentBranch = this.repoManager.getCurrentBranch();
             const current = await this.repoManager.currentChanges();
@@ -165,16 +170,21 @@ class Repo extends _Global {
             }
 
             const filesToCopy = current.success && current.changes || [];
-            const destDir = this.buildBranchBackupPath(currentBranch);
+            const destDir = this.buildBranchBackupPath(currentBranch, title);
+            const files = await FS.copyFiles(filesToCopy, this.localPath, destDir);
 
-            await FS.copyFiles(filesToCopy, this.localPath, destDir);
-            return current;
+            return {
+                success: true,
+                backupFolder: destDir,
+                currentChanges: current,
+                copiesResponse: files
+            };
         } catch (err) {
             throw new Error.Log(err);
         }
     }
 
-    async createFinalBranch() {
+    async createFinalBranch(backupFolder) {
         try {
             const task = this.parentTask;
             const project = task && task.project;
@@ -182,7 +192,7 @@ class Repo extends _Global {
             if (project) {
                 const template = project.getTemplate('branchName');
                 const branchName = template.toMarkdown({taskBranch: task.taskBranch});
-                const newBranch = await this.repoManager.createBranch(branchName, this.baseBranch, {bringChanges: true});
+                const newBranch = await this.repoManager.createBranch(branchName, this.baseBranch, {bringChanges: true, backupFolder});
 
                 if (newBranch instanceof Error.Log) {
                     throw newBranch;

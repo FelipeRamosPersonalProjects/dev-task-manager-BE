@@ -1,10 +1,11 @@
 const ViewCLI = require('@CLI/ViewCLI');
-const DashedHeaderLayout = require('../templates/DashedHeaderLayout');
+const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
 const PullRequestTemplate = require('@CLI/templates/PullRequest');
 const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
+const FinalTempl = require('@CLI/components/LinksHeaderPR');
 const CRUD = require('@CRUD');
 
-async function CreatePRsView({ task, defaultData }) {
+async function CreatePRsView({ task }) {
     const Template = new DashedHeaderLayout({
         headerText: 'CREATE A NEW PULL REQUEST',
         headerDescription: `Create a new pull request.`
@@ -53,7 +54,7 @@ async function CreatePRsView({ task, defaultData }) {
     }
 
     return new ViewCLI({
-        name: 'create_pr',
+        name: 'createPR',
         Template,
         poolForm: {
             startQuestion: task ? 'autoConfirm' : 'taskId',
@@ -189,7 +190,7 @@ async function CreatePRsView({ task, defaultData }) {
                     events: {
                         onAnswer: async (event, {boolAnswer}, answer) => {
                             if (boolAnswer(answer)) {
-                                const PoolForm = require('../PoolForm');
+                                const PoolForm = require('../../PoolForm');
                                 const task = event.getValue('task');
 
                                 const currentChanges = await task.repoManager.currentChanges();
@@ -327,7 +328,7 @@ async function CreatePRsView({ task, defaultData }) {
                                 }
 
                                 return new Promise(async (resolve, reject) => {
-                                    const PoolForm = require('../PoolForm');
+                                    const PoolForm = require('../../PoolForm');
                                     const newPool = new PoolForm({
                                         events: {
                                             onEnd: async (ev) => {
@@ -422,13 +423,16 @@ async function CreatePRsView({ task, defaultData }) {
                         ev.setValue('task', task);
                     }
                 },
-                onEnd: (ev, {print}) => {
+                onEnd: (ev) => {
                     const published = ev.values.published || {};
+                    const task = ev.getValue('task');
+                    const comp = new FinalTempl({
+                        ticketURL: task.ticketURL,
+                        taskURL: task.taskURL,
+                        prLink: published.gitHubPR.html_url
+                    });
 
-                    print(
-                        `The pull request was created, and it's available at the link: ${published.gitHubPR.html_url || '--Link not available--'}\n`,
-                        'SUCCESS'
-                    );
+                    comp.printOnScreen();
                     return published;
                 }
             }

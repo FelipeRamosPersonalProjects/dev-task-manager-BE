@@ -3,6 +3,7 @@
     "mode": "development",
     "defaultLanguage": "en_US",
     "testUser": "64312c951465bc5d22f26abe",
+    "backupFolder": "C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE/temp",
     "database": {
         "counterCollection": "counters",
         "logCollection": "logs",

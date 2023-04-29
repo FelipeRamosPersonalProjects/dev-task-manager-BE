@@ -1,5 +1,6 @@
-const _Global = require('../maps/_Global');
-const CRUD = require('../../services/database/crud');
+const _Global = require('@models/maps/_Global');
+const CRUD = require('@CRUD');
+const config = require('@config');
 
 class Stash extends _Global {
     constructor(setup){
@@ -8,29 +9,45 @@ class Stash extends _Global {
 
         const Task = require('./Task');
         const Repo = require('./Repo');
+        const Ticket = require('./Ticket');
 
         try {
-            const { stashIndex, type, name, description, branch, task, repo } = setup || {};
+            const { stashIndex, type, title, description, branch, task, ticket, repo, backupFolder } = setup || {};
             const isIndexNaN = isNaN(stashIndex);
 
+            this.collectionName = 'stashes';
             this.stashIndex = !isIndexNaN ? String(stashIndex) : '';
             this.type = type;
-            this.name = name;
+            this.title = title;
             this.description = description;
+            this.backupFolder = backupFolder || config.backupFolder;
             this.branch = branch;
-
-            if (!this.isNew) {
-                this.task = task && new Task(task);
-                this.repo = repo && new Repo(repo);
-            } else {
-                this.task = task;
-                this.repo = repo;
-            }
+            this.task = task && !isObjectID(task) && new Task(task);
+            this.ticket = ticket && !isObjectID(ticket) && new Ticket(ticket);
+            this.repo = repo && !isObjectID(repo) && new Repo(repo, this.task);
 
             this.placeDefault();
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Stash');
         }
+    }
+
+    get displayName() {
+        return this.title || this.gitName;
+    }
+
+    get stashManager() {
+        return this.repo && this.repo.repoManager && this.repo.repoManager.stashManager;
+    }
+
+    get gitName() {
+        return this.stashManager && this.stashManager.buildStashName({
+            _id: this._id,
+            type: this.type,
+            ticketID: this.ticket && this.ticket.ticketID,
+            taskID: this.task && this.task.taskID,
+            taskVersion: this.task && this.task.taskVersion
+        });
     }
 
     setIndex(index) {
@@ -43,15 +60,50 @@ class Stash extends _Global {
         this.stashIndex = !isIndexNaN ? String(index) : '';
     }
 
+    async apply() {
+        try {
+            const applied = await this.repo.repoManager.stashManager.applyStash(this);
+            if(applied instanceof Error.Log) {
+                throw applied;
+            }
+
+            return applied;
+        } catch (err) {
+            throw new Error.Log(err);
+        }    
+    }
+
+    async drop() {
+        try {
+            const deletedDB = await this.deleteDB();
+            if (deletedDB instanceof Error.Log) {
+                throw deletedDB;
+            }
+
+            const dropped = await this.repo.repoManager.stashManager.drop(this.stashIndex);
+            if(dropped instanceof Error.Log) {
+                throw dropped;
+            }
+
+            return dropped;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     static async create(setup = Stash.prototype) {
         try {
-            const created = await require('@CRUD').create('stashes', setup);
-
+            const created = await CRUD.create('stashes', setup);
             if (created instanceof Error.Log) {
                 return created;
             }
 
-            return created;
+            const createdPopulated = await created.defaultPopulate();
+            if (createdPopulated instanceof Error.Log) {
+                return createdPopulated;
+            }
+
+            return createdPopulated.initialize();
         } catch (err) {
             throw new Error.Log(err).append('stash.creating_loading');
         }
@@ -59,13 +111,13 @@ class Stash extends _Global {
 
     static async load(filter) {
         try {
-            const stash = await CRUD.query({ collectionName: 'stashes', filter }).initialize();
+            const stash = await CRUD.query({ collectionName: 'stashes', filter }).sort({createdAt: -1}).defaultPopulate();
 
             if (stash instanceof Error.Log) {
                 throw stash;
             }
 
-            return stash;
+            return stash.map(item => item.initialize());
         } catch (err) {
             throw new Error.Log(err).append('stash.creating_loading');
         }

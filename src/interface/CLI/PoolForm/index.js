@@ -13,6 +13,16 @@ const tools = new ToolsCLI();
 class PoolForm extends FormCtrlCLI {
     static EventsHandlers = EventsHandlers;
     static QuestionModel = QuestionModel;
+    static getQuestion = (questionID, options) => {
+        const poolQuestions = require('./poolQustions');
+        const { next } = new Object(options || {});
+        const question = poolQuestions[questionID];
+
+        if (question) {
+            question.next = next || question.next;
+            return question
+        }
+    }
 
     /**
      * @constructor
@@ -21,11 +31,12 @@ class PoolForm extends FormCtrlCLI {
      * @param {Array<QuestionModel>} [setup.questions=[]] - The list of questions to be used in the form.
      * @param {EventsHandlers} [setup.events={}] - The event handlers for the form.
      * @param {Object} [setup.values={}] - The default values for the form fields.
+     * @param {Boolean} [setup.autoSaveAnswers=false] - The default values for the form fields.
      * @param {Object} view - The view object for the form.
      */
     constructor(setup, view) {
         super(setup, view);
-        const { startQuestion, questions, events, values } = setup || {};
+        const { startQuestion, questions, events, values, autoSaveAnswers } = setup || {};
 
         this.current = null;
         this.prompt = new Prompt();
@@ -33,6 +44,7 @@ class PoolForm extends FormCtrlCLI {
         this.events = new EventsHandlers(events);
         this.questions = Array.isArray(questions) && !isObjectID(questions) ? questions.map(question => new QuestionModel(question, this)) : [];
         this.values = values || {};
+        this.autoSaveAnswers = autoSaveAnswers;
         this.view = () => view;
     }
 

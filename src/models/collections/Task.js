@@ -47,15 +47,15 @@ class Task extends _Global {
             this.taskURL = taskURL;
             this.description = description;
             this.dueDate = dueDate;
-            this.parentTask = !isObjectID(parentTask) ? new Task(parentTask) : {};
-            this.subTasks = !isObjectID(subTasks) ? subTasks.map(sub => new Task(sub)) : [];
-            this.assignedUser = !isObjectID(assignedUser) ? new User(assignedUser) : {};
-            this.ticket = !isObjectID(ticket) ? new Ticket(ticket) : {};
-            this.sharedWith = !isObjectID(sharedWith) ? new User(sharedWith) : {};
-            this.pullRequests = !isObjectID(pullRequests) ? pullRequests.map(pullRequest => new PullRequest(pullRequest)) : [];
-            this.comments = !isObjectID(comments) ? comments.map(comment => new Comment(comment)) : [];
-            this.project = !isObjectID(project) ? new Project(project) : {};
-            this.repo = !isObjectID(repo) ? new Repo(repo, this) : {};
+            this.parentTask = isCompleteDoc(parentTask) ? new Task(parentTask) : {};
+            this.subTasks = isCompleteDoc(subTasks) ? subTasks.map(sub => new Task(sub)) : [];
+            this.assignedUser = isCompleteDoc(assignedUser) ? new User(assignedUser) : {};
+            this.ticket = isCompleteDoc(ticket) ? new Ticket(ticket) : {};
+            this.sharedWith = isCompleteDoc(sharedWith) ? new User(sharedWith) : {};
+            this.pullRequests = isCompleteDoc(pullRequests) ? pullRequests.map(pullRequest => new PullRequest(pullRequest)) : [];
+            this.comments = isCompleteDoc(comments) ? comments.map(comment => new Comment(comment)) : [];
+            this.project = isCompleteDoc(project) ? new Project(project) : {};
+            this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
             
             this.placeDefault();
             this.parentTicket = () => parentTicket
@@ -186,14 +186,14 @@ class Task extends _Global {
                 ((pr.prStage !== 'published') && (pr.prStage !== 'aborted'))
             ].every(item => item));
             const user = await this.getCurrentUser();
-            
+
             if (isExistentPR) {
                 const populatedLoad = await isExistentPR.loadDB();
                 return populatedLoad;
             } else {
                 const prTitleTemplate = this.repo.getProjectTemplate('prTitle');
                 const prName = prTitleTemplate.renderToString({taskID: this.taskID, taskTitle: this.taskName});
-                
+
                 const currentUser = await this.getCurrentUser();
                 const newDocPR = await CRUD.create('pull_requests', {
                     version: this.nextBranchVersion,
@@ -237,7 +237,7 @@ class Task extends _Global {
 
             const isValidBranch = this.repo.isCurrentBranchValid();
             if (!isValidBranch) {
-                newBranch = await this.repo.createFinalBranch();
+                newBranch = await this.repo.createFinalBranch(backup.backupFolder);
 
                 if (newBranch instanceof Error.Log) {
                     throw newBranch;
