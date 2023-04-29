@@ -15,6 +15,7 @@ class Stash extends _Global {
             const { stashIndex, type, title, description, branch, task, ticket, repo, backupFolder } = setup || {};
             const isIndexNaN = isNaN(stashIndex);
 
+            this.collectionName = 'stashes';
             this.stashIndex = !isIndexNaN ? String(stashIndex) : '';
             this.type = type;
             this.title = title;
@@ -70,6 +71,24 @@ class Stash extends _Global {
         } catch (err) {
             throw new Error.Log(err);
         }    
+    }
+
+    async drop() {
+        try {
+            const deletedDB = await this.deleteDB();
+            if (deletedDB instanceof Error.Log) {
+                throw deletedDB;
+            }
+
+            const dropped = await this.repo.repoManager.stashManager.drop(this.stashIndex);
+            if(dropped instanceof Error.Log) {
+                throw dropped;
+            }
+
+            return dropped;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     static async create(setup = Stash.prototype) {
