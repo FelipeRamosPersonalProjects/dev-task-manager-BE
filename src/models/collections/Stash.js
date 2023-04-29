@@ -15,6 +15,7 @@ class Stash extends _Global {
             const { stashIndex, type, title, description, branch, task, ticket, repo, backupFolder } = setup || {};
             const isIndexNaN = isNaN(stashIndex);
 
+            this.collectionName = 'stashes';
             this.stashIndex = !isIndexNaN ? String(stashIndex) : '';
             this.type = type;
             this.title = title;
@@ -29,6 +30,10 @@ class Stash extends _Global {
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Stash');
         }
+    }
+
+    get displayName() {
+        return this.title || this.gitName;
     }
 
     get stashManager() {
@@ -55,6 +60,37 @@ class Stash extends _Global {
         this.stashIndex = !isIndexNaN ? String(index) : '';
     }
 
+    async apply() {
+        try {
+            const applied = await this.repo.repoManager.stashManager.applyStash(this);
+            if(applied instanceof Error.Log) {
+                throw applied;
+            }
+
+            return applied;
+        } catch (err) {
+            throw new Error.Log(err);
+        }    
+    }
+
+    async drop() {
+        try {
+            const deletedDB = await this.deleteDB();
+            if (deletedDB instanceof Error.Log) {
+                throw deletedDB;
+            }
+
+            const dropped = await this.repo.repoManager.stashManager.drop(this.stashIndex);
+            if(dropped instanceof Error.Log) {
+                throw dropped;
+            }
+
+            return dropped;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     static async create(setup = Stash.prototype) {
         try {
             const created = await CRUD.create('stashes', setup);
@@ -75,13 +111,13 @@ class Stash extends _Global {
 
     static async load(filter) {
         try {
-            const stash = await CRUD.query({ collectionName: 'stashes', filter }).initialize();
+            const stash = await CRUD.query({ collectionName: 'stashes', filter }).sort({createdAt: -1}).defaultPopulate();
 
             if (stash instanceof Error.Log) {
                 throw stash;
             }
 
-            return stash;
+            return stash.map(item => item.initialize());
         } catch (err) {
             throw new Error.Log(err).append('stash.creating_loading');
         }

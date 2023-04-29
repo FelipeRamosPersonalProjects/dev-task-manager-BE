@@ -1,7 +1,7 @@
 const Component = require('@interface/Component');
-const DefaultTile = require('@src/interface/CLI/templates/tiles/DefaultTile');
+const DefaultTile = require('@CLI/components/tiles/DefaultTile');
 
-class ListTileTemplate extends Component {
+class ListTilesTemplate extends Component {
     get SOURCE_PATH() {
         return require.resolve('./source/ListTiles.md');
     }
@@ -21,4 +21,4 @@ class ListTileTemplate extends Component {
     }
 }
 
-module.exports = ListTileTemplate;
+module.exports = ListTilesTemplate;
