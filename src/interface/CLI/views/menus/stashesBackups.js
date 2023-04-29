@@ -27,9 +27,9 @@ async function StashesBackupsMenuView() {
                 targetView: 'stashesBackups/applyStash'
             },
             {
-                title: 'Restore backup          ',
-                description: 'Restore a files backup',
-                targetView: 'home'
+                title: 'Delete Stash            ',
+                description: 'Delete permanently a stash from your computer',
+                targetView: 'stashesBackups/deleteStash'
             }
         ]}
     }, this);
