@@ -24,7 +24,7 @@ async function StashesBackupsMenuView() {
             {
                 title: 'Apply stash             ',
                 description: 'Apply some saved stash',
-                targetView: 'home'
+                targetView: 'stashesBackups/applyStash'
             },
             {
                 title: 'Restore backup          ',

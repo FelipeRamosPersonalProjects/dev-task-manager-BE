@@ -13,6 +13,16 @@ const tools = new ToolsCLI();
 class PoolForm extends FormCtrlCLI {
     static EventsHandlers = EventsHandlers;
     static QuestionModel = QuestionModel;
+    static getQuestion = (questionID, options) => {
+        const poolQuestions = require('./poolQustions');
+        const { next } = new Object(options || {});
+        const question = poolQuestions[questionID];
+
+        if (question) {
+            question.next = next || question.next;
+            return question
+        }
+    }
 
     /**
      * @constructor

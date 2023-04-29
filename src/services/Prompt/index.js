@@ -12,7 +12,7 @@ class Prompt {
         this.rootPath = rootPath || __dirname;
     }
 
-    cmd(command, options) {
+    cmd(command, options, dontPrint) {
         try {
             if (command) {
                 const cmd = execSync(command, {cwd: this.rootPath, ...options});
@@ -20,7 +20,7 @@ class Prompt {
                 if (cmd) {
                     const output = cmd.toString();
                     
-                    output && toolsCLI.print(output);
+                    output && !dontPrint && toolsCLI.print(output);
                     return {
                         success: true,
                         out: output

@@ -31,6 +31,10 @@ class Stash extends _Global {
         }
     }
 
+    get displayName() {
+        return this.title || this.gitName;
+    }
+
     get stashManager() {
         return this.repo && this.repo.repoManager && this.repo.repoManager.stashManager;
     }
@@ -55,6 +59,19 @@ class Stash extends _Global {
         this.stashIndex = !isIndexNaN ? String(index) : '';
     }
 
+    async apply() {
+        try {
+            const applied = await this.repo.repoManager.stashManager.applyStash(this);
+            if(applied instanceof Error.Log) {
+                throw applied;
+            }
+
+            return applied;
+        } catch (err) {
+            throw new Error.Log(err);
+        }    
+    }
+
     static async create(setup = Stash.prototype) {
         try {
             const created = await CRUD.create('stashes', setup);
@@ -75,13 +92,13 @@ class Stash extends _Global {
 
     static async load(filter) {
         try {
-            const stash = await CRUD.query({ collectionName: 'stashes', filter }).initialize();
+            const stash = await CRUD.query({ collectionName: 'stashes', filter }).sort({createdAt: -1}).defaultPopulate();
 
             if (stash instanceof Error.Log) {
                 throw stash;
             }
 
-            return stash;
+            return stash.map(item => item.initialize());
         } catch (err) {
             throw new Error.Log(err).append('stash.creating_loading');
         }
