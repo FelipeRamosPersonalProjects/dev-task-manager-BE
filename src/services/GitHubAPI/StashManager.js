@@ -76,7 +76,7 @@ class StashManager {
 
     async getStash(filter) {
         try {
-            const stashesList = this.prompt.cmd(`git stash list`);
+            const stashesList = this.prompt.cmd(`git stash list`, {}, true);
             const validFilter = stashesList.out.split('\n').filter(item => item);
             const stashes = await Stash.load(filter);
 
@@ -86,7 +86,7 @@ class StashManager {
                     const stashIndex = prefix.replace('stash@{', '').replace('}', '');
                     const [_id] = title.split('__');
     
-                    if (stash._id === _id) {
+                    if (`[${config.projectName}]${stash._id}` === _id) {
                         return stash.setIndex(stashIndex);
                     }
                 });
