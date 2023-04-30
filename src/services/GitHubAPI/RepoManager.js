@@ -3,6 +3,7 @@ const GitHubConnection = require('./GitHubConnection');
 const Compare = require('./Compare');
 const FileChange = require('./FileChange');
 const StashManager = require('./StashManager');
+const ToolsCLI = require('@CLI/ToolsCLI');
 
 class RepoManager extends GitHubConnection {
     constructor(setup, parent) {
@@ -12,6 +13,8 @@ class RepoManager extends GitHubConnection {
         this.repoName = repoName;
         this.repoPath = repoPath;
         this.localPath = localPath;
+
+        this.toolsCLI = new ToolsCLI();
         this.prompt = new Prompt({ rootPath: this.localPath });
         this.stashManager = new StashManager({ localPath }, this);
 
@@ -276,6 +279,23 @@ class RepoManager extends GitHubConnection {
             };
         } catch(err) {
             return new Error.Log(err).append('services.GitHubAPI.RepoManager.commiting');
+        }
+    }
+
+    async fetch() {
+        try {
+            const fetched = await this.prompt.exec('git fetch');
+            
+            if (fetched instanceof Error.Log) {
+                throw fetched;
+            }
+
+            if (fetched.success) {
+                this.toolsCLI.printTemplate(fetched.out);
+                return fetched;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
         }
     }
 
