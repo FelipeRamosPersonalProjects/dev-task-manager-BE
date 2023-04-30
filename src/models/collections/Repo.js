@@ -1,7 +1,6 @@
 const _Global = require('../maps/_Global');
-const RepoManager = require('../../services/GitHubAPI/RepoManager');
-const FS = require('../../services/FS');
-const config = require('@config');
+const RepoManager = require('@services/GitHubAPI/RepoManager');
+const BackupService = require('@services/Backup');
 
 class Repo extends _Global {
     constructor(setup, parentTask){
@@ -53,6 +52,7 @@ class Repo extends _Global {
 
             this._parentTask = () => parentTask;
             this.displayName = this.repoPath;
+            this.backup = new BackupService();
             this.repoManager = new RepoManager({
                 localPath: this.localPath,
                 repoName: this.repoName,
@@ -87,23 +87,6 @@ class Repo extends _Global {
         const template = project && project.getTemplate(templateName);
 
         return template;
-    }
-
-    buildBranchBackupPath(currentBranch, title) {
-        const parsedTitle = title && title.replace(/ /g, '_');
-        const date = new Date();
-        const repo = this.repoPath;
-        const ticket = this.ticketID;
-        const branch = currentBranch;
-        const headBranch = this.parentTask && this.parentTask.taskBranch;
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const day = date.getDate();
-        const hour = date.getHours();
-        const minute = date.getMinutes();
-        const mode = config.mode === 'production' ? 'PROD' : 'DEV';
-
-        return `${config.backupFolder}/${mode}/${repo}/${ticket ? `${ticket}/` : 'STASH-BACKUP/'}${branch}__${headBranch ? headBranch : parsedTitle ? parsedTitle : ''}/${year}-${month}-${day}__${hour}-${minute}`;
     }
 
     isCurrentBranchValid() {
@@ -155,33 +138,12 @@ class Repo extends _Global {
         }
     }
 
+    buildBranchBackupPath(currentBranch, title) {
+        return this.backup.buildBranchBackupPath(this, currentBranch, title);
+    }
+
     async createBranchBackup(setup) {
-        const { title } = setup || {};
-
-        try {
-            const currentBranch = this.repoManager.getCurrentBranch();
-            const current = await this.repoManager.currentChanges();
-
-            if (currentBranch instanceof Error.Log) {
-                throw currentBranch;
-            }
-            if (current instanceof Error.Log) {
-                throw current;
-            }
-
-            const filesToCopy = current.success && current.changes || [];
-            const destDir = this.buildBranchBackupPath(currentBranch, title);
-            const files = await FS.copyFiles(filesToCopy, this.localPath, destDir);
-
-            return {
-                success: true,
-                backupFolder: destDir,
-                currentChanges: current,
-                copiesResponse: files
-            };
-        } catch (err) {
-            throw new Error.Log(err);
-        }
+        return await this.backup.createBranchBackup(this, setup);
     }
 
     async createFinalBranch(backupFolder) {
