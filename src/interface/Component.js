@@ -86,7 +86,10 @@ class Component extends ValidateSchema {
         let result = '';
 
         if (Array.isArray(value) && Child) {
-            for (let item of value) {
+            for (let i = 0; i < value.length; i++) {
+                const item = value[i];
+
+                item.selfIndex = String(i);
                 result += new Child(item).renderToString();
             }
         } else {

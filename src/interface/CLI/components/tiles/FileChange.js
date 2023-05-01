@@ -10,8 +10,9 @@ class FileChangeComponent extends Component {
             filename: { type: String }
         });
 
-        const { filename } = new Object(settings || {});
+        const { selfIndex, filename } = Object(settings);
         
+        this.selfIndex = selfIndex;
         this.filename = filename;
     }
 }

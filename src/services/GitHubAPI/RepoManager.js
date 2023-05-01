@@ -31,7 +31,7 @@ class RepoManager extends GitHubConnection {
 
     getCurrentBranch() {
         try {
-            const branch = this.prompt.cmd('git branch --show-current');
+            const branch = this.prompt.cmd('git branch --show-current', {}, true);
             const regex = /[\n\t\r ]/g;
 
             if (branch.error) {
@@ -272,6 +272,7 @@ class RepoManager extends GitHubConnection {
             }
 
             return {
+                success: true,
                 title,
                 summaryDescription: description,
                 fileChanges: params.fileChanges,

@@ -139,11 +139,11 @@ class Repo extends _Global {
     }
 
     buildBranchBackupPath(currentBranch, title) {
-        return this.backup.buildBranchBackupPath(this, currentBranch, title);
+        return this.backup && this.backup.buildBranchBackupPath(this, currentBranch, title);
     }
 
     async createBranchBackup(setup) {
-        return await this.backup.createBranchBackup(this, setup);
+        return this.backup && await this.backup.createBranchBackup(this, setup);
     }
 
     async createFinalBranch(backupFolder) {

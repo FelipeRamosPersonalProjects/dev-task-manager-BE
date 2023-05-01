@@ -159,13 +159,15 @@ class PoolForm extends FormCtrlCLI {
      * @param {boolean} [override=false] - Whether to override the existing value(s) at the given key path with the new value.
      */
     setValue(keyPath, value, override) {
-        const currentValue = this.getValue(keyPath)
+        const currentValue = this.getValue(keyPath);
 
         if (typeof value === 'object' && !Array.isArray(value) ) {
             this.values[keyPath] = override ? {...currentValue, ...value} : value;
         } else {
             this.values[keyPath] = value;
         }
+
+        return this.values[keyPath];
     }
 
     /**
