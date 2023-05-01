@@ -302,10 +302,47 @@ class RepoManager extends GitHubConnection {
     async push(params) {
         try {
             const branchName = this.getCurrentBranch();
-            const out = await this.prompt.exec(`git push --set-upstream origin ${branchName}${this.prompt.strigifyParams(params)}`);
-            return out;
+            const pushed = await this.prompt.exec(`git push --set-upstream origin ${branchName}${this.prompt.strigifyParams(params)}`);
+
+            if (pushed instanceof Error.Log) {
+                this.toolsCLI.printError(pushed);
+                return pushed;
+            }
+
+            if (pushed.success) {
+                this.toolsCLI.printTemplate(pushed.out);
+                return pushed;
+            } else {
+                return this.toolsCLI.printError(new Error.Log(pushed).append({
+                    name: 'PUSHING-CHANGES',
+                    message: `Something went wrong with the changes push!`
+                }));
+            }
         } catch (err) {
             return new Error.Log(err).append('services.GitHubAPI.RepoManager.pushing');
+        }
+    }
+
+    async pull() {
+        try {
+            const pulled = await this.prompt.exec('git pull');
+
+            if (pulled instanceof Error.Log) {
+                this.toolsCLI.printError(pulled);
+                return pulled;
+            }
+
+            if (pulled.success) {
+                this.toolsCLI.printTemplate(pulled.out);
+                return pulled;
+            } else {
+                return this.toolsCLI.printError(new Error.Log(pulled).append({
+                    name: 'PULLING-BRANCH',
+                    message: `Something went wrong with the branch pull!`
+                }));
+            }
+        } catch (err) {
+            throw new Error.Log(err);
         }
     }
 
