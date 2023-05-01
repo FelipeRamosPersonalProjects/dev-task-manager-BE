@@ -3,7 +3,7 @@ const CRUD = require('@CRUD');
 const config = require('@config');
 
 module.exports = {
-    id: 'chooseRepo',
+    id: 'chooseRepoFromUser',
     next: 'confirmation',
     text: `Type one of the index above to choose a repository to manage: `,
     events: {

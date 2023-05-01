@@ -260,7 +260,7 @@ class RepoManager extends GitHubConnection {
             }
 
             const descriptionTemplate = this.repo.getProjectTemplate('commitDescription');
-            const description = descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges});
+            const description = descriptionTemplate ? descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges}) : `-m "${summary}"`;
             const added = await this.addChanges();
             if (added instanceof Error.Log) {
                 throw added;
