@@ -3,6 +3,14 @@ function defaultPopulate() {
         {
             path: 'projects',
             model: 'projects'
+        },
+        {
+            path: 'owner',
+            model: 'users'
+        },
+        {
+            path: 'collaborators',
+            model: 'users'
         }
     ];
 

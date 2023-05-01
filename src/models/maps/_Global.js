@@ -25,6 +25,10 @@ class GlobalMap extends ValidateSchema {
         }
     }
 
+    get stringIndex() {
+        return String(this.index);
+    }
+
     async getCurrentUser() {
         const UID = config.testUser;
         const user = await CRUD.getDoc({
