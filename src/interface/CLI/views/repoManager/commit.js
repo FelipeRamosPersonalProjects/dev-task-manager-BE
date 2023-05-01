@@ -19,7 +19,7 @@ async function CommitView() {
                         onAnswer: async (ev, {print, printError}, answer) => {
                             try {
                                 if (!answer) {
-                                    return await ev.goNext();
+                                    return await ev.goNext('chooseRepoFromUser');
                                 }
 
                                 const task = await CRUD.getDoc({
@@ -40,8 +40,7 @@ async function CommitView() {
                                     return await ev.trigger();
                                 }
 
-                                ev.setValue('task', task.initialize());
-                                return await ev.goNext('checkForChanges');
+                                return ev.setValue('task', task.initialize());
                             } catch (err) {
                                 throw new Error.Log(err);
                             }
@@ -151,7 +150,7 @@ async function CommitView() {
                 {
                     id: 'commitChanges',
                     text: `Do you confirm to commit the current changes (Y/N)?`,
-                    next: 'publishCommit',
+                    next: 'pushCommit',
                     events: {
                         onAnswer: async (ev, {print, printTemplate, boolAnswer}, answer) => {
                             if (!boolAnswer(answer)) {
@@ -184,46 +183,7 @@ async function CommitView() {
                         }
                     }
                 },
-                {
-                    id: 'publishCommit',
-                    text: `Would you like to publish the commit to remote (Y/N)? `,
-                    events: {
-                        onAnswer: async (ev, {print}) => {
-                            try {
-                                const repo = ev.getValue('selectedRepo');
-
-                                if (!repo) {
-                                    throw new Error.Log({
-                                        name: 'REPO-NOT-FOUND',
-                                        message: `The selected repository wan't found on the pool values!`
-                                    });
-                                }
-
-                                const pushed = await repo.repoManager.push();
-                                if (pushed instanceof Error.Log || !pushed.success) {
-                                    throw pushed;
-                                }
-
-                                print('Commit pushed with success to remote!', 'SUCCESS');
-                                return await new Promise((resolve, reject) => {
-                                    print('Redirecting to the home view...', 'REDIRECTING');
-
-                                    setTimeout(async () => {
-                                        try {
-                                            const redirect = await ev.parentPool.goToView('home');
-                                            resolve(redirect);
-                                        } catch (err) {
-                                            reject(err);
-                                        }
-                                    }, 2000);
-                                });
-                            } catch (err) {
-                                await ev.parentPool.end();
-                                throw new Error.Log(err);
-                            }
-                        }
-                    }
-                }
+                PoolForm.getQuestion('pushCommit')
             ]
         }, this)
     }, this);

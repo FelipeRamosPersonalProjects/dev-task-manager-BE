@@ -4,6 +4,7 @@ const chooseRepoFromUser = require('./chooseRepoFromUser');
 const getStash = require('./getStash');
 const commitDescription = require('./commitDescription');
 const commitChanges = require('./commitChanges');
+const pushCommit = require('./pushCommit');
 
 module.exports = {
     pickProject,
@@ -11,5 +12,6 @@ module.exports = {
     chooseRepoFromUser,
     getStash,
     commitDescription,
-    commitChanges
+    commitChanges,
+    pushCommit
 };
