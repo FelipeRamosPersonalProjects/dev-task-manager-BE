@@ -34,10 +34,7 @@ async function FetchView() {
                                 const repo = ev.getValue('selectedRepo');
 
                                 if (!repo) {
-                                    throw new Error.Log({
-                                        name: 'REPO-NOT-FOUND',
-                                        message: `The selected repository wan't found on the pool values!`
-                                    });
+                                    throw new Error.Log('cli.repos.repo_not_found');
                                 }
 
                                 if (boolAnswer(answer)) {

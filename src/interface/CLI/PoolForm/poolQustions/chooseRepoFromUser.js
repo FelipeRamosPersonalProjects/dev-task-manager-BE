@@ -1,6 +1,7 @@
 const ListTiles = require('@CLI/templates/ListTiles');
 const CRUD = require('@CRUD');
 const config = require('@config');
+const RepoTemplate = require('@CLI/templates/Repo');
 
 module.exports = {
     id: 'chooseRepoFromUser',
@@ -40,6 +41,8 @@ module.exports = {
                     return await ev.trigger();
                 }
 
+                const repoTemplate = new RepoTemplate(selectedRepo);
+                repoTemplate.printOnScreen();
                 ev.setValue('selectedRepo', selectedRepo);
             } catch (err) {
                 throw new Error.Log(err);

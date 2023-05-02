@@ -33,7 +33,7 @@ class ToolsCLI {
             message: `When the tool boolAnswer is configured to strict mode, it requires a strict answer, "y" or "n"! But received "${a}".`
         });
 
-        return;
+        return false;
     }
 }
 

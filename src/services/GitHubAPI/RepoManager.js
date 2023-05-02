@@ -86,7 +86,7 @@ class RepoManager extends GitHubConnection {
             
             return {
                 success: (!response.error),
-                isExist: (!response.error && response.name === 'Not Found'),
+                isExist: !(response.error && response.name === 'Not Found'),
                 branchData: !response.error && response,
             }
         } catch (err) {
@@ -158,9 +158,9 @@ class RepoManager extends GitHubConnection {
             }
 
             const stashed = await this.stashManager.createStash({
-                type: bringChanges && 'temp',
-                ticketUID: this.parentTask.ticket._id,
-                taskUID: this.parentTask._id,
+                type: bringChanges ? 'temp' : 'stash',
+                ticketUID:  this.parentTask && this.parentTask.ticket._id,
+                taskUID:  this.parentTask && this.parentTask._id,
                 backupFolder
             });
 

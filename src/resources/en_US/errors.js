@@ -29,6 +29,14 @@ module.exports = {
             }
         }
     },
+    cli: {
+        repos: {
+            repo_not_found: () => { return {
+                name: 'REPO-NOT-FOUND',
+                message: `The selected repository wan't found on the pool values!`
+            }}
+        }
+    },
     common: {
         required_params: (validationErrors, functionName) => {
             const validationMessages = validationErrors.map(item => '- ' + item.message).join('\n');
