@@ -23,17 +23,17 @@ class Repo extends _Global {
                 collaborators,
                 organization,
                 projects,
-                pullRequest
+                pullRequests
             } = new Object(setup || {});
 
             this.nodeVersion = nodeVersion;
             this.baseBranch = baseBranch;
             this.url = url;
             this.localPath = localPath;
-            this.collaborators = !isObjectID(collaborators) && Array.isArray(collaborators) ? collaborators.map(collab => new User(collab)) : [];
-            this.projects = !isObjectID(projects) && Array.isArray(projects) ? projects.map(project => new Project(project)) : [];
-            this.owner = !isObjectID(owner) ? new User(owner) : {};
-            this.pullRequest = !isObjectID(pullRequest) ? new PullRequest(pullRequest) : {};
+            this.collaborators = isCompleteDoc(collaborators) ? collaborators.map(collab => new User(collab)) : [];
+            this.projects = isCompleteDoc(projects) ? projects.map(project => new Project(project)) : [];
+            this.owner = isCompleteDoc(owner) ? new User(owner) : {};
+            this.pullRequests = isCompleteDoc(pullRequests) ? pullRequests.map(pr => new PullRequest(pr)) : [];
 
             if (url) {
                 const separateHost = url.split('https://github.com/');
@@ -139,11 +139,11 @@ class Repo extends _Global {
     }
 
     buildBranchBackupPath(currentBranch, title) {
-        return this.backup.buildBranchBackupPath(this, currentBranch, title);
+        return this.backup && this.backup.buildBranchBackupPath(this, currentBranch, title);
     }
 
     async createBranchBackup(setup) {
-        return await this.backup.createBranchBackup(this, setup);
+        return this.backup && await this.backup.createBranchBackup(this, setup);
     }
 
     async createFinalBranch(backupFolder) {

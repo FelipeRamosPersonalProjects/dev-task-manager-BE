@@ -59,6 +59,25 @@ class QuestionModel {
         return this.ctrl() || {};
     }
 
+    async redirectTo(path, timeout) {
+        try {
+            return await new Promise((resolve, reject) => {
+                print('Redirecting to the home view...', 'REDIRECTING');
+
+                setTimeout(async () => {
+                    try {
+                        const redirect = await this.parentPool.goToView(path || 'home');
+                        resolve(redirect);
+                    } catch (err) {
+                        reject(err);
+                    }
+                }, timeout || 2000);
+            });
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     /**
      * Sets the value of a key.
      * @param {string} key - The key to set the value for.

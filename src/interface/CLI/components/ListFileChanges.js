@@ -7,11 +7,8 @@ class ListFileChangesTemplate extends Component {
     }
 
     constructor(settings) {
-        super(settings, {
-            fileChanges: { type: [Object] }
-        });
-
-        const { fileChanges } = new Object(settings || {});
+        super(settings);
+        const { fileChanges } = Object(settings);
         
         this.fileChanges = fileChanges;
         this.types = {

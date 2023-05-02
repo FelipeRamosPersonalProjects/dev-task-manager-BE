@@ -3,6 +3,7 @@ const GitHubConnection = require('./GitHubConnection');
 const Compare = require('./Compare');
 const FileChange = require('./FileChange');
 const StashManager = require('./StashManager');
+const ToolsCLI = require('@CLI/ToolsCLI');
 
 class RepoManager extends GitHubConnection {
     constructor(setup, parent) {
@@ -12,6 +13,8 @@ class RepoManager extends GitHubConnection {
         this.repoName = repoName;
         this.repoPath = repoPath;
         this.localPath = localPath;
+
+        this.toolsCLI = new ToolsCLI();
         this.prompt = new Prompt({ rootPath: this.localPath });
         this.stashManager = new StashManager({ localPath }, this);
 
@@ -28,7 +31,7 @@ class RepoManager extends GitHubConnection {
 
     getCurrentBranch() {
         try {
-            const branch = this.prompt.cmd('git branch --show-current');
+            const branch = this.prompt.cmd('git branch --show-current', {}, true);
             const regex = /[\n\t\r ]/g;
 
             if (branch.error) {
@@ -257,7 +260,7 @@ class RepoManager extends GitHubConnection {
             }
 
             const descriptionTemplate = this.repo.getProjectTemplate('commitDescription');
-            const description = descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges});
+            const description = descriptionTemplate ? descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges}) : `-m "${summary}"`;
             const added = await this.addChanges();
             if (added instanceof Error.Log) {
                 throw added;
@@ -269,6 +272,7 @@ class RepoManager extends GitHubConnection {
             }
 
             return {
+                success: true,
                 title,
                 summaryDescription: description,
                 fileChanges: params.fileChanges,
@@ -279,13 +283,67 @@ class RepoManager extends GitHubConnection {
         }
     }
 
+    async fetch() {
+        try {
+            const fetched = await this.prompt.exec('git fetch');
+            
+            if (fetched instanceof Error.Log) {
+                throw fetched;
+            }
+
+            if (fetched.success) {
+                this.toolsCLI.printTemplate(fetched.out);
+                return fetched;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     async push(params) {
         try {
             const branchName = this.getCurrentBranch();
-            const out = await this.prompt.exec(`git push --set-upstream origin ${branchName}${this.prompt.strigifyParams(params)}`);
-            return out;
+            const pushed = await this.prompt.exec(`git push --set-upstream origin ${branchName}${this.prompt.strigifyParams(params)}`);
+
+            if (pushed instanceof Error.Log) {
+                this.toolsCLI.printError(pushed);
+                return pushed;
+            }
+
+            if (pushed.success) {
+                this.toolsCLI.printTemplate(pushed.out);
+                return pushed;
+            } else {
+                return this.toolsCLI.printError(new Error.Log(pushed).append({
+                    name: 'PUSHING-CHANGES',
+                    message: `Something went wrong with the changes push!`
+                }));
+            }
         } catch (err) {
             return new Error.Log(err).append('services.GitHubAPI.RepoManager.pushing');
+        }
+    }
+
+    async pull() {
+        try {
+            const pulled = await this.prompt.exec('git pull');
+
+            if (pulled instanceof Error.Log) {
+                this.toolsCLI.printError(pulled);
+                return pulled;
+            }
+
+            if (pulled.success) {
+                this.toolsCLI.printTemplate(pulled.out);
+                return pulled;
+            } else {
+                return this.toolsCLI.printError(new Error.Log(pulled).append({
+                    name: 'PULLING-BRANCH',
+                    message: `Something went wrong with the branch pull!`
+                }));
+            }
+        } catch (err) {
+            throw new Error.Log(err);
         }
     }
 

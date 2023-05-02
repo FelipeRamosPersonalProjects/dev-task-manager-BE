@@ -1,8 +1,8 @@
 const ViewCLI = require('@CLI/ViewCLI');
 const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
 const PullRequestTemplate = require('@CLI/templates/PullRequest');
-const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
 const FinalTempl = require('@CLI/components/LinksHeaderPR');
+const PoolForm = require('@CLI/PoolForm');
 const CRUD = require('@CRUD');
 
 async function CreatePRsView({ task }) {
@@ -183,100 +183,8 @@ async function CreatePRsView({ task }) {
                         }
                     }
                 },
-                {
-                    id: 'commitDescription',
-                    next: 'commitChanges',
-                    text: `Do you want to add description to the commit files (Y/N)?`,
-                    events: {
-                        onAnswer: async (event, {boolAnswer}, answer) => {
-                            if (boolAnswer(answer)) {
-                                const PoolForm = require('../../PoolForm');
-                                const task = event.getValue('task');
-
-                                const currentChanges = await task.repoManager.currentChanges();
-                                if (currentChanges instanceof Error.Log) {
-                                    throw currentChanges;
-                                }
-
-                                return new Promise(async (resolve, reject) => {
-                                    const poolForm = new PoolForm({
-                                        events: {
-                                            onEnd: async (ev) => {
-                                                event.setValue('commitFileChanges', currentChanges.changes);
-                                                return resolve(ev);
-                                            }
-                                        }
-                                    });
-
-                                    if (currentChanges && Array.isArray(currentChanges.changes)) {
-                                        const changes = currentChanges.changes;
-
-                                        for (let i = 0; i < changes.length; i++) {
-                                            const next = ((i + 1) < changes.length) ? String(i + 1) : '';
-                                            const id = String(i);
-                                            const change = changes[i];
-
-                                            poolForm.setQuestion({
-                                                id,
-                                                next,
-                                                text: new StringTemplateBuilder().newLine()
-                                                    .text(change.patch).newLine().newLine()
-                                                    .text(`Filepath: ${change.filename}`).newLine().newLine()
-                                                    .text('Description: ')
-                                                .end(),
-                                                events: {
-                                                    onAnswer: async (_, __, answer) => {
-                                                        change.description = answer;
-                                                        return _;
-                                                    }
-                                                }
-                                            });
-                                        };
-                                    }
-
-                                    await poolForm.start();
-                                });
-                            }
-                        }
-                    }
-                },
-                {
-                    id: 'commitChanges',
-                    text: `Do you like to commmit your current changes? (Y/N)?`,
-                    next: `savePullRequest`,
-                    events: {
-                        onAnswer: async (ev, { boolAnswer, print }, answer) => {
-                            onAnswerDefault(ev, answer);
-                            const task = ev.getValue('task');
-                            const prDOC = ev.getValue('prDOC');
-                            const currentChanges = ev.getValue('commitFileChanges');
-
-                            if (boolAnswer(answer)) {
-                                const isReadyToCommit = ev.getValue('isReadyToCommit');
-
-                                if (isReadyToCommit.isReady) {
-                                    print('The branch is ready to commit!');
-                                    const isReadyToPR = await task.repo.commitChanges(currentChanges);
-
-                                    if (isReadyToPR instanceof Error.Log) {
-                                        isReadyToPR.consolePrint();
-                                        return ev.trigger();
-                                    }
-
-                                    const updateStage = await prDOC.changeStage('commit-created');
-                                    if (updateStage instanceof Error.Log) {
-                                        updateStage.consolePrint();
-                                        return ev.trigger();
-                                    }
-
-                                    return ev.setValue('isReadyToPR', isReadyToPR);
-                                } else {
-                                    return ev.trigger();
-                                }
-                            }
-                        }
-                    }
-                },
+                PoolForm.getQuestion('commitDescription'),
+                PoolForm.getQuestion('commitChanges'),
                 {
                     id: 'savePullRequest',
                     text: `Alright, we are ready to start the PR. Let's build it (Y/N)?`,
