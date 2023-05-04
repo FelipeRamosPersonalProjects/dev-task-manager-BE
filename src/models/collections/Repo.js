@@ -24,7 +24,10 @@ class Repo extends _Global {
                 organization,
                 projects,
                 pullRequests
-            } = new Object(setup || {});
+            } = Object(setup);
+
+            this._parentTask = () => parentTask;
+            this.backup = new BackupService();
 
             this.nodeVersion = nodeVersion;
             this.baseBranch = baseBranch;
@@ -50,16 +53,7 @@ class Repo extends _Global {
                 this.repoPath = repoPath;
             }
 
-            this._parentTask = () => parentTask;
             this.displayName = this.repoPath;
-            this.backup = new BackupService();
-            this.repoManager = new RepoManager({
-                localPath: this.localPath,
-                repoName: this.repoName,
-                repoPath: this.repoPath,
-                organization: this.organization
-            }, this);
-
             this.placeDefault();
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'Repo');
@@ -79,6 +73,15 @@ class Repo extends _Global {
         const task = this.parentTask;
         const ticket = task && task.ticket;
         return ticket && ticket.ticketID;
+    }
+
+    get repoManager() {
+        return new RepoManager({
+            localPath: this.localPath,
+            repoName: this.repoName,
+            repoPath: this.repoPath,
+            organization: this.organization
+        }, this);
     }
 
     getProjectTemplate(templateName) {

@@ -1,6 +1,11 @@
+const StringTemplateBuilder = require('@STRING');
 const config = require('../../../config.json');
 
 class ToolsCLI {
+    constructor() {
+        this.StringBuilder = StringTemplateBuilder;
+    }
+
     print(txt, addHeader) {
         console.log(`${addHeader ? `[${addHeader}]` : '[LOG]'}[${config.projectName.toUpperCase()}] -> ${txt}`);
     }

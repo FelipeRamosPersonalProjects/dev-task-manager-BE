@@ -8,7 +8,7 @@ const ToolsCLI = require('@CLI/ToolsCLI');
 class RepoManager extends GitHubConnection {
     constructor(setup, parent) {
         super(setup);
-        const { repoName, repoPath, localPath } = new Object(setup || {});
+        const { repoName, repoPath, localPath } = Object(setup);
 
         this.repoName = repoName;
         this.repoPath = repoPath;
@@ -48,6 +48,37 @@ class RepoManager extends GitHubConnection {
         } catch (err) {
             throw new Error.Log(err).append('services.GitHubAPI.RepoManager.get_current_branch');
         }
+    }
+
+    getAllBranches() {
+        try {
+            const gitBranches = this.prompt.cmd('git --no-pager branch -a', {}, true);
+            if (gitBranches instanceof Error.Log) {
+                throw gitBranches;
+            }
+
+            if (gitBranches.success) {
+                const branches = this.parseBranchesList(gitBranches.out).filter(item => item.split('/')[0] !== 'remotes');
+                const renderList = new this.toolsCLI.StringBuilder();
+                
+                renderList.newLine();
+                branches.map((item, index) => renderList.text(index + '. ' + item).newLine());
+                renderList.end();
+
+                this.toolsCLI.printTemplate(renderList.result);
+
+                return branches;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    parseBranchesList(stringList) {
+        const noSpace = stringList.replace(new RegExp(/ /, 'g'), '');
+        const list = noSpace.split('\n');
+
+        return list;
     }
 
     async isBranchExist(branchName) {
