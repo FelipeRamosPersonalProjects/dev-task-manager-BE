@@ -1,3 +1,5 @@
+const createBranch = require('./createBranch');
+const checkoutBranch = require('./checkoutBranch');
 const fetch = require('./fetch');
 const commit = require('./commit');
 const push = require('./push');
@@ -7,5 +9,7 @@ module.exports = {
     fetch,
     commit,
     push,
-    pull
+    pull,
+    createBranch,
+    checkoutBranch,
 };

@@ -1,6 +1,11 @@
+const StringTemplateBuilder = require('@STRING');
 const config = require('../../../config.json');
 
 class ToolsCLI {
+    constructor() {
+        this.StringBuilder = StringTemplateBuilder;
+    }
+
     print(txt, addHeader) {
         console.log(`${addHeader ? `[${addHeader}]` : '[LOG]'}[${config.projectName.toUpperCase()}] -> ${txt}`);
     }
@@ -33,7 +38,7 @@ class ToolsCLI {
             message: `When the tool boolAnswer is configured to strict mode, it requires a strict answer, "y" or "n"! But received "${a}".`
         });
 
-        return;
+        return false;
     }
 }
 

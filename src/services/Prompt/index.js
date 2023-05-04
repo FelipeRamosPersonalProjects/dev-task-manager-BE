@@ -7,7 +7,7 @@ const toolsCLI = new ToolsCLI();
 
 class Prompt {
     constructor(setup) {
-        const {rootPath} = new Object(setup || {});
+        const {rootPath} = Object(setup);
 
         this.rootPath = rootPath || __dirname;
     }

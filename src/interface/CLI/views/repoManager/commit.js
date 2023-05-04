@@ -59,10 +59,7 @@ async function CommitView() {
                                 const repo = ev.getValue('selectedRepo') || ev.setValue('selectedRepo', task && task.repo);
 
                                 if (!repo) {
-                                    throw new Error.Log({
-                                        name: 'REPO-NOT-FOUND',
-                                        message: `The selected repository wan't found on the pool values!`
-                                    });
+                                    throw new Error.Log('cli.repos.repo_not_found');
                                 }
 
                                 const repoTemplate = new RepoTemplate(repo);
@@ -100,10 +97,7 @@ async function CommitView() {
                                 const repo = ev.getValue('selectedRepo');
 
                                 if (!repo) {
-                                    throw new Error.Log({
-                                        name: 'REPO-NOT-FOUND',
-                                        message: `The selected repository wan't found on the pool values!`
-                                    });
+                                    throw new Error.Log('cli.repos.repo_not_found');
                                 }
 
                                 if (boolAnswer(answer)) {
@@ -164,10 +158,7 @@ async function CommitView() {
                                 const fileChanges = ev.getValue('commitFileChanges');
 
                                 if (!repo) {
-                                    throw new Error.Log({
-                                        name: 'REPO-NOT-FOUND',
-                                        message: `The selected repository wan't found on the pool values!`
-                                    });
+                                    throw new Error.Log('cli.repos.repo_not_found');
                                 }
 
                                 const commited = await repo.repoManager.commit(commitTitle || '', commitSummary || '', { fileChanges });

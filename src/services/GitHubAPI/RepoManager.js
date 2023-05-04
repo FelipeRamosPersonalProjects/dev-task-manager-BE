@@ -8,7 +8,7 @@ const ToolsCLI = require('@CLI/ToolsCLI');
 class RepoManager extends GitHubConnection {
     constructor(setup, parent) {
         super(setup);
-        const { repoName, repoPath, localPath } = new Object(setup || {});
+        const { repoName, repoPath, localPath } = Object(setup);
 
         this.repoName = repoName;
         this.repoPath = repoPath;
@@ -50,6 +50,37 @@ class RepoManager extends GitHubConnection {
         }
     }
 
+    getAllBranches() {
+        try {
+            const gitBranches = this.prompt.cmd('git --no-pager branch -a', {}, true);
+            if (gitBranches instanceof Error.Log) {
+                throw gitBranches;
+            }
+
+            if (gitBranches.success) {
+                const branches = this.parseBranchesList(gitBranches.out).filter(item => item.split('/')[0] !== 'remotes');
+                const renderList = new this.toolsCLI.StringBuilder();
+                
+                renderList.newLine();
+                branches.map((item, index) => renderList.text(index + '. ' + item).newLine());
+                renderList.end();
+
+                this.toolsCLI.printTemplate(renderList.result);
+
+                return branches;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    parseBranchesList(stringList) {
+        const noSpace = stringList.replace(new RegExp(/ /, 'g'), '');
+        const list = noSpace.split('\n');
+
+        return list;
+    }
+
     async isBranchExist(branchName) {
         try {
             const isLocalExist = this.isLocalBranchExist(branchName);
@@ -86,7 +117,7 @@ class RepoManager extends GitHubConnection {
             
             return {
                 success: (!response.error),
-                isExist: (!response.error && response.name === 'Not Found'),
+                isExist: !(response.error && response.name === 'Not Found'),
                 branchData: !response.error && response,
             }
         } catch (err) {
@@ -158,9 +189,9 @@ class RepoManager extends GitHubConnection {
             }
 
             const stashed = await this.stashManager.createStash({
-                type: bringChanges && 'temp',
-                ticketUID: this.parentTask.ticket._id,
-                taskUID: this.parentTask._id,
+                type: bringChanges ? 'temp' : 'stash',
+                ticketUID:  this.parentTask && this.parentTask.ticket._id,
+                taskUID:  this.parentTask && this.parentTask._id,
                 backupFolder
             });
 
