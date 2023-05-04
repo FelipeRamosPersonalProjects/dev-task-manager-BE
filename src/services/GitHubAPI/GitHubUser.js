@@ -7,7 +7,7 @@ class GitHubUser {
     async getUser() {
         try {
             const response = await ajax(`${this.repoHostURL}/users/${config.github.testUser}`, {
-                headers: { Authorization: `Token ${this.getGITHUB_USER_TOKEN()}` }
+                headers: { Authorization: `Token ${this.GITHUB_USER_TOKEN}` }
             }).get();
 
             return response;

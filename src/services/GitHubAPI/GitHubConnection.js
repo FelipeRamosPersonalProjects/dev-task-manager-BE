@@ -44,7 +44,7 @@ class GitHubConnection extends GitHubUser {
         try {
             const response = await ajax(url, data)[method]({
                 headers: {
-                    'Authorization': `Token ${this.getGITHUB_USER_TOKEN()}`,
+                    'Authorization': `Token ${this.getGITHUB_USER_TOKEN}`,
                     "Content-Type": "application/json"
                 }
             });
