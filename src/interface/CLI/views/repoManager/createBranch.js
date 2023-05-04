@@ -19,6 +19,7 @@ async function CreateBranchView() {
                                 const repo = ev.getValue('selectedRepo');
                                 if (!repo) {
                                     printError(new Error.Log('cli.repos.repo_not_found'));
+                                    return await ev.goNext('chooseRepoFromUser');
                                 }
 
                                 const isBranchExist = await repo.repoManager.isBranchExist(answer);
