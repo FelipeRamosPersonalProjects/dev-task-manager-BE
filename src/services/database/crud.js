@@ -3,10 +3,16 @@ const helpersModule = require('../../helpers');
 const helpers = helpersModule.database.dbHelpers;
 
 async function create(collectionName, data, options) {
+    const { isDraft } = options || {};
     try {
         const Collection = helpers.getCollectionModel(collectionName);
         const newDoc = new Collection(data);
-          
+        
+        newDoc.raw = data;
+        if (isDraft) {
+            return newDoc;
+        }
+    
         const savedDoc = await newDoc.save(options);
         return savedDoc;
     } catch(err) {

@@ -1,4 +1,15 @@
 module.exports = {
+    auth: {
+        user_in_use: () => { return {
+            name: 'AUTH_USER_IN_USE',
+            message: `The username provided is already in use!`
+        }},
+
+        invalid_credentials: () => { return {
+            name: 'AUTH_INVALID_CREDENTIALS',
+            message: `The username or password provided is incorrect!`
+        }}
+    },
     apiResponse: {
         collection: {
             create: (collection) => { return {

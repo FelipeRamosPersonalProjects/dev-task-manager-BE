@@ -1,5 +1,6 @@
 const GlobalClass = require('./GlobalClass');
 const logs = require('./LogsClass');
+const auth_buckets = require('./AuthBucketsClass');
 const users = require('./UsersClass');
 const space_desks = require('./SpaceDesksClass');
 const organizations = require('./OrganizationsClass');
@@ -27,5 +28,6 @@ module.exports = {
     estimations,
     tasks,
     stashes,
+    auth_buckets,
     users
 };
