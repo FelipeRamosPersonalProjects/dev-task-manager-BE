@@ -8,6 +8,11 @@ module.exports = {
         invalid_credentials: () => { return {
             name: 'AUTH_INVALID_CREDENTIALS',
             message: `The username or password provided is incorrect!`
+        }},
+
+        password_not_match: () => { return {
+            name: 'AUTH_PASSWORD_NOT_MATCH',
+            message: `The password and the confirm password don't match! Try again...`
         }}
     },
     apiResponse: {

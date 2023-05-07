@@ -66,10 +66,6 @@ class User extends _Global {
         return this.auth && this.auth.service;
     }
 
-    async userSignIn() {
-        return this.authService && this.authService.signIn(this.userName, password);
-    }
-
     static async isExist(userName, returnUID) {
         try {
             const result = await dbHelpers.isDocExist('users', { userName });

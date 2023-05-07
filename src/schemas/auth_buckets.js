@@ -13,7 +13,7 @@ module.exports = new Schema({
             enum: ['incognito', 'client', 'admin', 'manager', 'master']
         },
         password: {
-            type: String
+            type: Buffer
         },
         gitHubToken: {
             type: Buffer
