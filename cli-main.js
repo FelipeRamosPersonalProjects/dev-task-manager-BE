@@ -6,7 +6,7 @@ require('@services/database/init').then(async (started) => {
     try {
         const CLI = require('@interface/CLI');
         await new CLI({
-            startView: 'home'
+            startView: 'user/signUp'
         }).init();
     } catch(err) {
         console.error(err.stack);

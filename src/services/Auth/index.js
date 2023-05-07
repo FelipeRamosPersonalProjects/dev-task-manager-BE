@@ -70,7 +70,7 @@ class AuthService {
 
     async validateCredentials(password) {
         try {
-            const isMatch = await bcrypt.compare(password, this.parentBucket.password);
+            const isMatch = await bcrypt.compare(password, this.parentBucket.password.toString());
             return isMatch;
         } catch (err) {
             throw new Error.Log(err);
