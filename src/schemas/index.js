@@ -1,4 +1,5 @@
 const counters = require('./counters');
+const auth_buckets = require('./auth_buckets');
 const users = require('./users');
 const space_desks = require('./space_desks');
 const organizations = require('./organizations');
@@ -15,6 +16,7 @@ const logs = require('./logs');
 
 module.exports = {
     counters,
+    auth_buckets,
     users,
     space_desks,
     organizations,

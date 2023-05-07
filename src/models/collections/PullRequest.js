@@ -7,8 +7,8 @@ const FileChange = require('@services/GitHubAPI/FileChange');
 const CRUD = require('@CRUD');
 
 class PullRequest extends _Global {
-    constructor(setup){
-        super({...setup, validationRules: 'pull_requests'});
+    constructor(setup, parent){
+        super({...setup, validationRules: 'pull_requests'}, parent);
         if (!setup || isObjectID(setup)) return;
 
         const {

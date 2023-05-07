@@ -4,7 +4,7 @@ const BackupService = require('@services/Backup');
 
 class Repo extends _Global {
     constructor(setup, parentTask){
-        super({...setup, validationRules: 'repos'}, setup);
+        super({...setup, validationRules: 'repos'}, parentTask);
         if (!setup || isObjectID(setup)) return;
 
         const User = require('./User');

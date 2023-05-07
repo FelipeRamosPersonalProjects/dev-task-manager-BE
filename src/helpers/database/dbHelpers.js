@@ -9,6 +9,19 @@ function isCollectionExist(collection) {
     }
 }
 
+function isDocExist(collectionName, filter) {
+    return new Promise((resolve, reject) => {
+        mongoose.model(collectionName).exists(filter, (err, res) => {
+            if (err) {
+                reject(new Error.Log(err));
+            }
+
+            resolve(res);
+        });
+    });
+
+}
+
 function getCollectionModel(collection) {
     try {
         if (isCollectionExist(collection)) {
@@ -166,6 +179,7 @@ module.exports = {
     increaseLog,
     increaseDocProp,
     isCollectionExist,
+    isDocExist,
     getCollectionModel,
     pickQueryType,
     treatFilter,
