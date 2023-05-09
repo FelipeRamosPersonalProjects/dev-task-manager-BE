@@ -62,7 +62,7 @@ class QuestionModel {
     async redirectTo(path, timeout) {
         try {
             return await new Promise((resolve, reject) => {
-                this.tools.print('Redirecting to the home view...', 'REDIRECTING');
+                this.tools.print(`Redirecting to the "${path}" view...`, 'REDIRECTING');
 
                 setTimeout(async () => {
                     try {

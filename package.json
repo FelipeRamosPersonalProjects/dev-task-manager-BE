@@ -33,6 +33,7 @@
     "@STRING": "src/interface/StringTemplateBuilder",
     "@SUCCESS": "src/models/Success",
     "@UTILS": "src/global/utils",
+    "@SESSION_CLI": "sessionCLI.json",
     "@src": "src",
     "@controllers": "src/controllers",
     "@global": "src/global",

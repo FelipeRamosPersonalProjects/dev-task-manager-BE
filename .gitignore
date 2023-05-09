@@ -108,3 +108,4 @@ dist
 .env
 temp
 draft.js
+sessionCLI.json
