@@ -30,9 +30,10 @@ class EventsHandlers {
         onAnswer: async () => {},
         onError: async () => {},
         onEnd: async () => {}
-    }) {
+    }, parent) {
         const {onStart, onTrigger, onNext, onBack, onChange, onRepeat, onAnswer, onError, onEnd} = setup || {};
 
+        // this._parent = () => parent;
         this.onStart = onStart;
         this.onTrigger = onTrigger;
         this.onNext = onNext;
@@ -44,6 +45,10 @@ class EventsHandlers {
         this.onEnd = onEnd;
         this.tools = new ToolsCLI();
     }
+
+    // get parent() {
+    //     return this._parent && this._parent()
+    // }
 
     /**
      * Triggers a specified event with optional parameters.

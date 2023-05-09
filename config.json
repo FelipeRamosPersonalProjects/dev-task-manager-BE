@@ -3,6 +3,8 @@
     "mode": "development",
     "defaultLanguage": "en_US",
     "testUser": "64312c951465bc5d22f26abe",
+    "projectLocalPath": "C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE",
+    "sessionPath": "C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE/sessionCLI.json",
     "backupFolder": "C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE/temp",
     "database": {
         "counterCollection": "counters",

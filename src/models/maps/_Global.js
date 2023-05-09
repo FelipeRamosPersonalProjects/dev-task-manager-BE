@@ -25,6 +25,10 @@ class GlobalMap extends ValidateSchema {
         }
     }
 
+    get parent() {
+        return this.getParent();
+    }
+
     get stringIndex() {
         return String(this.index);
     }
@@ -41,7 +45,7 @@ class GlobalMap extends ValidateSchema {
 
     async saveDB(collectionName) {
         try {
-            const created = await CRUD.create(collectionName, {...this});
+            const created = await CRUD.create(collectionName || this.collectionName, {...this});
 
             if (created instanceof Error.Log) {
                 return new Error.Log(created);

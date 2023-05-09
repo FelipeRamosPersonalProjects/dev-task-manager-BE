@@ -17,11 +17,36 @@ async function HomeView() {
         name: 'home',
         Template: templateInit,
         navigator: { options: [
-            { title: 'CRUD                ', description: 'Database CRUD operations', targetView: 'crud/main' },
-            { title: 'Tickets and Tasks   ', description: 'Manage your tickets and tasks', targetView: 'menus/ticketsAndTasks' },
-            { title: 'Pull Requests       ', description: 'Manage your pull requests', targetView: 'menus/prsMenu' },
-            { title: 'Stashes and Backups ', description: 'Manage your stashes and backups', targetView: 'menus/stashesBackups' },
-            { title: 'Repo Manager        ', description: 'Manage your repositories, perform actions like: commit, push, pull, checkout, etc.', targetView: 'menus/repoManager' }
+            {
+                title: 'CRUD                ',
+                description: 'Database CRUD operations',
+                targetView: 'crud/main'
+            },
+            {
+                title: 'Tickets and Tasks   ',
+                description: 'Manage your tickets and tasks',
+                targetView: 'menus/ticketsAndTasks'
+            },
+            {
+                title: 'Pull Requests       ',
+                description: 'Manage your pull requests',
+                targetView: 'menus/prsMenu'
+            },
+            {
+                title: 'Stashes and Backups ',
+                description: 'Manage your stashes and backups',
+                targetView: 'menus/stashesBackups'
+            },
+            {
+                title: 'Repo Manager        ',
+                description: 'Manage your repositories, perform actions like: commit, push, pull, checkout, etc.',
+                targetView: 'menus/repoManager'
+            },
+            {
+                title: 'My User             ',
+                description: 'Manage your user: edit, open or delete.',
+                targetView: 'menus/user'
+            }
         ]}
     }, this);
 }

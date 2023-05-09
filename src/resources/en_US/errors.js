@@ -1,4 +1,25 @@
 module.exports = {
+    auth: {
+        user_in_use: () => { return {
+            name: 'AUTH_USER_IN_USE',
+            message: `The username provided is already in use!`
+        }},
+
+        user_not_found: (userName) => { return {
+            name: 'AUTH_USERNAME_NOT_FOUND',
+            message: `The username provided "${userName}" wasn't found!`
+        }},
+
+        invalid_credentials: () => { return {
+            name: 'AUTH_INVALID_CREDENTIALS',
+            message: `The username or password provided is incorrect!`
+        }},
+
+        password_not_match: () => { return {
+            name: 'AUTH_PASSWORD_NOT_MATCH',
+            message: `The password and the confirm password don't match! Try again...`
+        }}
+    },
     apiResponse: {
         collection: {
             create: (collection) => { return {
@@ -509,6 +530,11 @@ module.exports = {
         get_open_trades: (userUID, userName) => { return {
             name: 'UserGetOpenTrades',
             message: `Error caught getting the user's open trades of [${userUID}] - ${userName}!`
+        }},
+
+        not_found: (filter) => { return {
+            name: 'USER-NOT-FOUND',
+            message: `The user for the filter "${JSON.stringify(filter)}" wasn't found!`
         }}
     }
 };

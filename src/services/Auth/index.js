@@ -1,0 +1,133 @@
+const Success = require('@SUCCESS');
+const bcrypt = require('bcrypt');
+const JWT = require('jsonwebtoken');
+const FS = require('@services/FS');
+const config = require('@config');
+const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
+
+class AuthService {
+    constructor(setup) {
+        const { parent } = Object(setup);
+
+        this._parentBucket = () => parent;
+    }
+
+    get parentBucket() {
+        return this._parentBucket && this._parentBucket();
+    }
+
+    get userUID() {
+        return this.getSafe('parentBucket.userUID');
+    }
+
+    get secretKey() {
+        return process.env.API_SECRET;
+    }
+
+    async signIn(password) {
+        try {
+            const isValid = await this.validateCredentials(password);
+            
+            if(!isValid) {
+                return new Error.Log('auth.invalid_credentials');
+            }
+
+            return isValid.toSuccess('User is valid!');
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async genSalt(length) {
+        try {
+            const salt = await bcrypt.genSalt(length || 8);
+            return salt;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async createHash(password, saltLength) {
+        try {
+            const salt = await this.genSalt(saltLength);
+            const hash = await bcrypt.hash(password, salt);
+            return hash;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    createToken() {
+        try {
+            const userName = this.getSafe('parentBucket.userName');
+            const userUID = this.getSafe('parentBucket.userUID');
+            const password = this.getSafe('parentBucket.password');
+            const authBucketUID = this.getSafe('parentBucket._id');
+            const token = JWT.sign({userName, password, userUID, authBucketUID}, this.secretKey, {expiresIn: Date.now() + 80000000});
+
+            return token;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async validateToken(token) {
+        try {
+            const isValid = JWT.verify(token, this.secretKey);
+            const userData = JWT.decode(token);
+
+            if (isValid) {
+                return userData;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async validateCredentials(password) {
+        try {
+            const isMatch = await bcrypt.compare(password, this.parentBucket.password.toString());
+            return isMatch;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async createSessionCLI(token) {
+        try {
+            const token = this.createToken();
+
+            debugger;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async dropSessionCLI(token) {
+        try {
+            const userData = await this.validateToken(token);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async signOut(token) {
+        try {
+            const userData = await this.validateToken(token);
+            
+            if (userData instanceof Error.Log) {
+                throw userData;
+            }
+
+            delete sessionCLI[userData.userUID];
+            sessionCLI.currentUser = '';
+
+            const sessionUpdated = await FS.writeFile(config.sessionPath, sessionCLI);
+            return sessionUpdated;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+}
+
+module.exports = AuthService;

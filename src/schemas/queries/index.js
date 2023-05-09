@@ -4,6 +4,7 @@ const repos = require('./repos_query');
 const pull_requests = require('./pull_requests_query');
 const stashes = require('./stashes_query');
 const projects = require('./projects_query');
+const users = require('./users_query');
 
 module.exports = {
     tasks,
@@ -11,5 +12,6 @@ module.exports = {
     repos,
     pull_requests,
     stashes,
-    projects
+    projects,
+    users
 };

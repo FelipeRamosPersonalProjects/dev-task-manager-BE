@@ -5,8 +5,8 @@ const Ticket = require('./Ticket');
 const Task = require('./Task');
 
 class Comment extends _Global {
-    constructor(setup){
-        super({...setup, validationRules: 'comments'});
+    constructor(setup, parent){
+        super({...setup, validationRules: 'comments'}, parent);
         if (!setup || isObjectID(setup)) return;
 
         try {

@@ -185,7 +185,7 @@ class PoolForm extends FormCtrlCLI {
         }
 
         try {
-            await this.events.triggerEvent('start', this); 
+            await this.events.triggerEvent('start', this);
             await this.goTo(this.startQuestion || firstQuestion.id);
 
             return this;

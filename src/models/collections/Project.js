@@ -2,7 +2,7 @@ const _Global = require('../maps/_Global');
 
 class Project extends _Global {
     constructor(setup){
-        super({...setup, validationRules: 'projects'});
+        super({...setup, validationRules: 'projects'}, () => this);
         if (!setup || isObjectID(setup)) return;
 
         const Ticket = require('./Ticket');

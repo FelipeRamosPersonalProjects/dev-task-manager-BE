@@ -1,10 +1,25 @@
 const Schema = require('../models/SchemaDB');
+const events = require('./events');
+const queries = require('./queries');
 const { ObjectId } = Schema.mongoSchema.Types;
 
 module.exports = new Schema({
     name: 'users',
     symbol: 'U',
+    events: events.users,
+    queries: queries.users,
     schema: {
+        auth: {
+            type: ObjectId,
+            ref: 'auth_buckets',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'user',
+                type: 'ObjectId'
+            })
+        },
+        userName: {
+            type: String
+        },
         firstName: {
             type: String,
             required: true

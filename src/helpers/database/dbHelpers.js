@@ -9,6 +9,19 @@ function isCollectionExist(collection) {
     }
 }
 
+function isDocExist(collectionName, filter) {
+    return new Promise((resolve, reject) => {
+        mongoose.model(collectionName).exists(filter, (err, res) => {
+            if (err) {
+                reject(new Error.Log(err));
+            }
+
+            resolve(res);
+        });
+    });
+
+}
+
 function getCollectionModel(collection) {
     try {
         if (isCollectionExist(collection)) {
@@ -37,10 +50,9 @@ async function createCounter(collection){
     } catch(err) {
         throw new Error.Log(err).append('helpers.create_counter', collection.name);
     }
-
 }
 
-async function increaseCounter(collection) {   
+async function increaseCounter(collection) {
     try {
         const Counters = mongoose.model(configs.database.counterCollection);
         const counter = await Counters.findByIdAndUpdate(collection, { $inc: { value: 1 }});
@@ -166,6 +178,7 @@ module.exports = {
     increaseLog,
     increaseDocProp,
     isCollectionExist,
+    isDocExist,
     getCollectionModel,
     pickQueryType,
     treatFilter,

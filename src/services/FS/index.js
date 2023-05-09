@@ -2,6 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 class FileSystemService {
+    static isExist(path) {
+        return fs.existsSync(path);
+    }
+
     static readFileSync(path) {
         return fs.readFileSync(path, { encoding: 'utf-8' });
     }
@@ -12,6 +16,16 @@ class FileSystemService {
                 if (err) throw reject(new Error.Log(err));
                 
                 return resolve(dataBuff);
+            });
+        });
+    }
+
+    static async writeFile(path, data) {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(path, JSON.stringify(data, null, 4), err => {
+                if (err) return reject(err);
+
+                return resolve(Object().toSuccess());
             });
         });
     }
