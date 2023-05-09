@@ -21,6 +21,10 @@ class AuthBucket extends _Global {
     get userName() {
         return this.parent.getSafe('userName');
     }
+    
+    get userUID() {
+        return this.user;
+    }
 
     static async draft(user) {
         try {

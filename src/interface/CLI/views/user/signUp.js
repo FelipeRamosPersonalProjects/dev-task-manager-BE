@@ -14,7 +14,7 @@ async function SignUpView() {
                     next: 'firstName',
                     text: `Enter your "e-mail", which will be your user name: `,
                     events: {
-                        onAnswer: async (ev, {}, answer) => {
+                        onAnswer: async (ev, {print}, answer) => {
                             try {
                                 const isExist = await User.isExist(answer);
                                 if (isExist instanceof Error.Log) {
@@ -22,6 +22,7 @@ async function SignUpView() {
                                 }
 
                                 if (isExist) {
+                                    print(`The user name "${answer}" is already in use by another user! Please, try again...`, 'USER-ALREADY-USED')
                                     return await ev.trigger();
                                 }
                             } catch (err) {
@@ -69,7 +70,7 @@ async function SignUpView() {
                                     throw newUser
                                 }
 
-                                return await ev.redirect('home');
+                                return await ev.redirectTo('home');
                             } catch (err) {
                                 throw new Error.Log(err);
                             }

@@ -3,7 +3,7 @@ const config = require('@config');
 
 async function isAuthenticated(token) {
     try {
-        const isSessionExist = FS.isExist(`${config.projectLocalPath}/${config.sessionPath}`);
+        const isSessionExist = FS.isExist(config.sessionPath);
         if (!isSessionExist) {
             return false;
         }

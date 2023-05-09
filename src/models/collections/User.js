@@ -9,6 +9,9 @@ const Comment = require('./Comment');
 const CRUD = require('@CRUD');
 const dbHelpers = require('@helpers/database/dbHelpers');
 const Success = require('@SUCCESS');
+const FS = require('@services/FS');
+const config = require('@config');
+const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
 
 class User extends _Global {
     constructor(setup){
@@ -68,6 +71,56 @@ class User extends _Global {
 
     get token() {
         return this.authService.createToken();
+    }
+
+    get userSession() {
+        return sessionCLI[this._id];
+    }
+
+    get currentUser() {
+        return sessionCLI.currentUser;
+    }
+
+    async signOut() {
+        try {
+            const signedOut = await this.authService.signOut(this.userSession.token);
+            return signedOut;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    static async getMyUser(filter) {
+        try {
+            const currentUser = filter || sessionCLI.currentUser || '';
+            const userDOC = await this.getUser(currentUser);
+
+            if (userDOC instanceof Error.Log) {
+                throw userDOC;
+            }
+
+            return userDOC;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    static async getUser(filter) {
+        try {
+            const userDOC = await CRUD.getDoc({collectionName: 'users', filter}).defaultPopulate();
+
+            if (!userDOC instanceof Error.Log) {
+                throw userDOC;
+            }
+
+            if (!userDOC) {
+                return new Error.Log('user.not_found', filter);
+            }
+
+            return userDOC.initialize();
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     static async isExist(userName, returnUID) {

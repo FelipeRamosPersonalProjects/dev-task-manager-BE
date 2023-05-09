@@ -18,6 +18,11 @@ async function UserView() {
                 title: 'Delete Profile                 ',
                 description: 'Delete your profile.',
                 targetView: 'user/deleteProfile'
+            },
+            {
+                title: 'SignOut                        ',
+                description: 'SignOut from your account!',
+                targetView: 'user/signOut'
             }
         ]}
     }, this);

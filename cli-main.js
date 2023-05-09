@@ -15,7 +15,7 @@ require('@services/database/init').then(async () => {
         const token = currentUser && session[currentUser] && session[currentUser].token;
 
         await new CLI({
-            startView: 'authView',
+            startView: 'user/authView',
             startViewParams: { token }
         }).init();
     } catch(err) {

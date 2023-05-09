@@ -50,10 +50,9 @@ async function createCounter(collection){
     } catch(err) {
         throw new Error.Log(err).append('helpers.create_counter', collection.name);
     }
-
 }
 
-async function increaseCounter(collection) {   
+async function increaseCounter(collection) {
     try {
         const Counters = mongoose.model(configs.database.counterCollection);
         const counter = await Counters.findByIdAndUpdate(collection, { $inc: { value: 1 }});

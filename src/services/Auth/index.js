@@ -1,5 +1,9 @@
+const Success = require('@SUCCESS');
 const bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
+const FS = require('@services/FS');
+const config = require('@config');
+const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
 
 class AuthService {
     constructor(setup) {
@@ -10,6 +14,10 @@ class AuthService {
 
     get parentBucket() {
         return this._parentBucket && this._parentBucket();
+    }
+
+    get userUID() {
+        return this.getSafe('parentBucket.userUID');
     }
 
     get secretKey() {
@@ -52,18 +60,25 @@ class AuthService {
     createToken() {
         try {
             const userName = this.getSafe('parentBucket.userName');
+            const userUID = this.getSafe('parentBucket.userUID');
             const password = this.getSafe('parentBucket.password');
-            const _id = this.getSafe('parentBucket._id');
-            const token = JWT.sign({userName, password, _id}, this.secretKey)
+            const authBucketUID = this.getSafe('parentBucket._id');
+            const token = JWT.sign({userName, password, userUID, authBucketUID}, this.secretKey, {expiresIn: Date.now() + 80000000});
+
             return token;
         } catch (err) {
             throw new Error.Log(err);
         }
     }
 
-    async validateToken() {
+    async validateToken(token) {
         try {
-            
+            const isValid = JWT.verify(token, this.secretKey);
+            const userData = JWT.decode(token);
+
+            if (isValid) {
+                return userData;
+            }
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -73,6 +88,42 @@ class AuthService {
         try {
             const isMatch = await bcrypt.compare(password, this.parentBucket.password.toString());
             return isMatch;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async createSessionCLI(token) {
+        try {
+            const token = this.createToken();
+
+            debugger;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async dropSessionCLI(token) {
+        try {
+            const userData = await this.validateToken(token);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async signOut(token) {
+        try {
+            const userData = await this.validateToken(token);
+            
+            if (userData instanceof Error.Log) {
+                throw userData;
+            }
+
+            delete sessionCLI[userData.userUID];
+            sessionCLI.currentUser = '';
+
+            const sessionUpdated = await FS.writeFile(config.sessionPath, sessionCLI);
+            return sessionUpdated;
         } catch (err) {
             throw new Error.Log(err);
         }
