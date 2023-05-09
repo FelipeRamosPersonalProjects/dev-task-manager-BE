@@ -530,6 +530,11 @@ module.exports = {
         get_open_trades: (userUID, userName) => { return {
             name: 'UserGetOpenTrades',
             message: `Error caught getting the user's open trades of [${userUID}] - ${userName}!`
+        }},
+
+        not_found: (filter) => { return {
+            name: 'USER-NOT-FOUND',
+            message: `The user for the filter "${JSON.stringify(filter)}" wasn't found!`
         }}
     }
 };
