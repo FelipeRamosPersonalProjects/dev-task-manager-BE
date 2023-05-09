@@ -5,6 +5,11 @@ module.exports = {
             message: `The username provided is already in use!`
         }},
 
+        user_not_found: (userName) => { return {
+            name: 'AUTH_USERNAME_NOT_FOUND',
+            message: `The username provided "${userName}" wasn't found!`
+        }},
+
         invalid_credentials: () => { return {
             name: 'AUTH_INVALID_CREDENTIALS',
             message: `The username or password provided is incorrect!`

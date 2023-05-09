@@ -66,6 +66,10 @@ class User extends _Global {
         return this.auth && this.auth.service;
     }
 
+    get token() {
+        return this.authService.createToken();
+    }
+
     static async isExist(userName, returnUID) {
         try {
             const result = await dbHelpers.isDocExist('users', { userName });
@@ -113,8 +117,12 @@ class User extends _Global {
     static async signIn(userName, password) {
         try {
             const userDOC = await CRUD.getDoc({ collectionName: 'users', filter: { userName }}).defaultPopulate();
-            const user = userDOC.initialize();
 
+            if (!userDOC) {
+                return new Error.Log('auth.user_not_found', userName);
+            }
+
+            const user = userDOC.initialize();
             const signedIn = await user.authService.signIn(password);
 
             if (signedIn.success) {

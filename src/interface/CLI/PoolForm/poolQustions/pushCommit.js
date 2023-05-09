@@ -22,18 +22,7 @@ module.exports = {
                     print('Commit pushed with success to remote!', 'SUCCESS');
                 }
 
-                return await new Promise((resolve, reject) => {
-                    print('Redirecting to the home view...', 'REDIRECTING');
-
-                    setTimeout(async () => {
-                        try {
-                            const redirect = await ev.parentPool.goToView('home');
-                            resolve(redirect);
-                        } catch (err) {
-                            reject(err);
-                        }
-                    }, 2000);
-                });
+                return await ev.redirectTo('home');
             } catch (err) {
                 await ev.parentPool.end();
                 throw new Error.Log(err);

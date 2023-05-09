@@ -53,7 +53,8 @@ class AuthService {
         try {
             const userName = this.getSafe('parentBucket.userName');
             const password = this.getSafe('parentBucket.password');
-            const token = JWT.sign({userName, password}, this.secretKey)
+            const _id = this.getSafe('parentBucket._id');
+            const token = JWT.sign({userName, password, _id}, this.secretKey)
             return token;
         } catch (err) {
             throw new Error.Log(err);

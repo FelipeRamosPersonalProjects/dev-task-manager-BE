@@ -45,7 +45,7 @@ class CLI extends ToolsCLI {
             this.setCurrentView(loadedView);
             await loadedView.render();
 
-            return this;
+            return loadedView;
         } else {
             this.printError(new Error.Log({
                 name: 'LoadingView',
