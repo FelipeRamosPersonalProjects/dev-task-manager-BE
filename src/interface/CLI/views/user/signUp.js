@@ -43,8 +43,13 @@ async function SignUpView() {
                 },
                 {
                     id: 'phone',
-                    next: 'password',
+                    next: 'gitHubToken',
                     text: `Enter your "phone number": `
+                },
+                {
+                    id: 'gitHubToken',
+                    next: 'password',
+                    text: `Provide your GitHub token: `
                 },
                 {
                     id: 'password',
