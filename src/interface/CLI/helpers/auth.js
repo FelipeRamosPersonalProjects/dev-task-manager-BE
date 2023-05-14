@@ -25,6 +25,39 @@ async function isAuthenticated(token) {
     }
 }
 
+async function createUserCLISession(user) {
+    try {
+        let session = {};
+        const sessionPath = config.sessionPath;
+
+        if (FS.isExist(sessionPath)) {
+            session = require('@SESSION_CLI');
+        }
+
+        const token = user.token;
+        session.currentUser = user._id;
+        session[user._id] = {
+            token,
+            gitHubToken: user.getSafe('auth._gitHubToken').toString(),
+            expiration: Date.now() + 86400000
+        }
+
+        const sessionCreated = await FS.writeFile(sessionPath, session);
+        if (sessionCreated instanceof Error.Log) {
+            throw sessionCreated;
+        }
+
+        if (sessionCreated.success) {
+            return sessionCreated;
+        } else {
+            throw sessionCreated;
+        }
+    } catch (err) {
+        throw new Error.Log(err);
+    }
+}
+
 module.exports = {
-    isAuthenticated 
+    isAuthenticated,
+    createUserCLISession
 };

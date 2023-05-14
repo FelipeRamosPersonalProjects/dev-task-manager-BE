@@ -27,7 +27,7 @@ class AuthService {
     async signIn(password) {
         try {
             const isValid = await this.validateCredentials(password);
-            
+
             if(!isValid) {
                 return new Error.Log('auth.invalid_credentials');
             }

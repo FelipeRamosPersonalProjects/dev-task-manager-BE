@@ -1,5 +1,5 @@
 const _Global = require('@models/maps/_Global');
-const AuthService = require('@src/services/Auth');
+const AuthService = require('@services/Auth');
 const CRUD = require('@CRUD');
 
 class AuthBucket extends _Global {
