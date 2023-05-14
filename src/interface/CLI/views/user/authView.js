@@ -64,25 +64,7 @@ async function AuthView({viewParams}) {
                                         }
                                     }
 
-                                    let session = {};
-                                    const sessionPath = config.sessionPath;
-
-                                    if (FS.isExist(sessionPath)) {
-                                        session = require('@SESSION_CLI');
-                                    }
-
-                                    const token = user.token;
-                                    session.currentUser = user._id;
-                                    session[user._id] = {
-                                        token,
-                                        expiration: Date.now() + 86400000
-                                    }
-
-                                    const sessionCreated = await FS.writeFile(sessionPath, session);
-                                    if (sessionCreated instanceof Error.Log) {
-                                        throw sessionCreated;
-                                    }
-
+                                    const sessionCreated = await authHelpers.createUserCLISession(user);
                                     if (sessionCreated.success) {
                                         return await ev.redirectTo('home');
                                     } else {

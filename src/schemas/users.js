@@ -35,6 +35,9 @@ module.exports = new Schema({
         phone: {
             type: String
         },
+        gitHub: {
+            type: Object
+        },
         repos: {
             type: [ObjectId],
             default: [],

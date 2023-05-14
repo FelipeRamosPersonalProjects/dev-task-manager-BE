@@ -57,7 +57,7 @@ class AuthService {
         }
     }
 
-    createToken() {
+    createUserToken() {
         try {
             const userName = this.getSafe('parentBucket.userName');
             const userUID = this.getSafe('parentBucket.userUID');
@@ -71,13 +71,22 @@ class AuthService {
         }
     }
 
-    async validateToken(token) {
+    genToken(data) {
+        try {
+            const token = JWT.sign(data, this.secretKey);
+            return token;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    validateToken(token) {
         try {
             const isValid = JWT.verify(token, this.secretKey);
-            const userData = JWT.decode(token);
+            const data = JWT.decode(token);
 
             if (isValid) {
-                return userData;
+                return data;
             }
         } catch (err) {
             throw new Error.Log(err);
@@ -93,9 +102,9 @@ class AuthService {
         }
     }
 
-    async createSessionCLI(token) {
+    async createSessionCLI() {
         try {
-            const token = this.createToken();
+            const token = this.createUserToken();
 
             debugger;
         } catch (err) {
@@ -105,7 +114,7 @@ class AuthService {
 
     async dropSessionCLI(token) {
         try {
-            const userData = await this.validateToken(token);
+            const userData = this.validateToken(token);
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -113,8 +122,8 @@ class AuthService {
 
     async signOut(token) {
         try {
-            const userData = await this.validateToken(token);
-
+            const userData = this.validateToken(token);
+            
             if (userData instanceof Error.Log) {
                 throw userData;
             }
