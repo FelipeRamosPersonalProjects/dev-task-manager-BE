@@ -70,7 +70,7 @@ class User extends _Global {
     }
 
     get token() {
-        return this.authService.createToken();
+        return this.authService.createUserToken();
     }
 
     get userSession() {
