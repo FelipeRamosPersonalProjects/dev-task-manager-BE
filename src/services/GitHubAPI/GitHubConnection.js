@@ -28,12 +28,12 @@ class GitHubConnection extends GitHubUser {
         return this.getGITHUB_USER_TOKEN();
     }
 
-    buildURL(path) {
-        return this.repoHostURL + path;
+    buildURL(path, raw) {
+        return !raw ? this.repoHostURL + path : path;
     }
 
-    async ajax(path, data, method) {
-        const url = this.buildURL(path);
+    async ajax(path, data, {method, rawURL}) {
+        const url = this.buildURL(path, rawURL);
 
         if (!method) {
             method = 'get';

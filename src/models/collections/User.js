@@ -57,7 +57,7 @@ class User extends _Global {
             this.comments = isCompleteDoc(comments) && comments.map(item => new Comment(item));
             this.gitHub = gitHub;
             
-            this.gitHubConnection = new GitHubConnection({ userName: this.gitHub.login });
+            this.gitHubConnection = new GitHubConnection({ userName: this.getSafe('gitHub.login') });
             this._auth = () => new AuthBucket(Object(auth), this);
             this.placeDefault();
         } catch(err) {
@@ -97,6 +97,26 @@ class User extends _Global {
         try {
             this.gitHub = await this.gitHubConnection.getUser();
             return this.gitHub;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async loadOpenedPRs() {
+        try {
+            const prs = await CRUD.query({collectionName: 'pull_requests', filter: {
+                assignedUsers: { $in: [this._id]},
+                $nor: [
+                    {prStage: 'aborted' },
+                    {prStage: 'merged' }
+                ]
+            }}).defaultPopulate();
+
+            if (prs instanceof Error.Log) {
+                throw prs;
+            }
+
+            return prs.map(item => item.initialize());
         } catch (err) {
             throw new Error.Log(err);
         }

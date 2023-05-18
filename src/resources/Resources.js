@@ -12,6 +12,10 @@ class Resources {
     }
 
     templates(path, ...params) {
+        if (!path) {
+            return () => '';
+        }
+
         const current = this.getPath('templates.' + path);
 
         if (Boolean.isValid(current).function().eval()) {
