@@ -1,5 +1,6 @@
 const FS = require('@services/FS');
 const config = require('@config');
+const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
 
 async function isAuthenticated(token) {
     try {
@@ -38,7 +39,7 @@ async function createUserCLISession(user) {
         session.currentUser = user._id;
         session[user._id] = {
             token,
-            gitHubToken: user.getSafe('auth._gitHubToken').toString(),
+            gitHubToken: user && user.getSafe('auth._gitHubToken').toString(),
             expiration: Date.now() + 86400000
         }
 
@@ -57,7 +58,16 @@ async function createUserCLISession(user) {
     }
 }
 
+function getSessionCurrentUser() {
+    try {
+        return sessionCLI && sessionCLI.currentUser;
+    } catch (err) {
+        throw new Error.Log(err);
+    }
+}
+
 module.exports = {
     isAuthenticated,
-    createUserCLISession
+    createUserCLISession,
+    getSessionCurrentUser
 };

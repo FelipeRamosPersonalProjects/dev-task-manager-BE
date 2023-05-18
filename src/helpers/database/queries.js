@@ -59,12 +59,14 @@ function populateAll(options) {
 }
 
 async function initialize(populate){
-    let query = this;
+    let docs;
+
     if (populate) {
-        query = this.defaultPopulate();
+        docs = await this.exec().defaultPopulate();
+    } else {
+        docs = await this.exec();
     }
 
-    const docs = await query.exec();
     let result = [];
 
     try {
@@ -73,7 +75,7 @@ async function initialize(populate){
                 const initialized = doc.initialize();
                 result.push(initialized);
             });
-        } else {
+        } else if (docs && docs.initialize) {
             result = docs.initialize();
         }
     } catch(err) {

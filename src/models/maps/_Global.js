@@ -1,6 +1,5 @@
 const ValidateSchema = require('../../validation/validateSchema');
 const CRUD = require('../../services/database/crud');
-const config = require('../../../config.json');
 const { isObjectID } = require('../../helpers/database/relationalFields');
 const { increaseDocProp } = require('../../helpers/database/dbHelpers');
 
@@ -8,13 +7,15 @@ class GlobalMap extends ValidateSchema {
     constructor(setup, parent) {
         super(setup.validationRules || {});
         if (isObjectID(setup)) return;
+
+        const User = require('@models/collections/User');
         const { _id, index, author, cod, createdAt, modifiedAt, collectionName} = setup || {};
 
         try {
             this.collectionName = collectionName;
             this._id = _id && _id.toString();
             this.index = index;
-            this.author = author || config.testUser;
+            this.author = author || User.currentUser();
             this.cod = cod;
             this.createdAt = createdAt && new Date(createdAt).toLocaleString();
             this.modifiedAt = modifiedAt && new Date(modifiedAt).toLocaleString();
@@ -34,7 +35,8 @@ class GlobalMap extends ValidateSchema {
     }
 
     async getCurrentUser() {
-        const UID = config.testUser;
+        const User = require('@models/collections/User');
+        const UID = User.currentUser();
         const user = await CRUD.getDoc({
             collectionName: 'users',
             filter: UID

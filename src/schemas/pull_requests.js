@@ -23,7 +23,7 @@ module.exports = new Schema({
             type: String,
             required: true,
             default: 'initialized',
-            enum: ['initialized', 'branch-created', 'commit-created', 'compare-filled', 'changes-description-filled', 'published', 'aborted']
+            enum: ['initialized', 'branch-created', 'commit-created', 'compare-filled', 'changes-description-filled', 'published', 'pendingChanges', 'aborted', 'merged']
         },
         isCurrentVersion: {
             type: Boolean,
