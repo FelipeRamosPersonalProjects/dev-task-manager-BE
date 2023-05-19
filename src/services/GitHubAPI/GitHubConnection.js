@@ -1,19 +1,26 @@
 const config = require('../../../config.json');
 const GitHubUser = require('./GitHubUser');
+const AuthService = require('@services/Auth');
 
 class GitHubConnection extends GitHubUser {
     constructor (setup = {
         userName: '',
-        GITHUB_USER_TOKEN: '',
         organization: ''
     }) {
         super(setup);
-        const { GITHUB_USER_TOKEN, userName, organization } = setup || {};
+        const User = require('@models/collections/User');
+        const { userName, organization } = Object(setup);
 
-        this.getGITHUB_USER_TOKEN = () => GITHUB_USER_TOKEN || process.env.GITHUB_USER_TOKEN;
-        this.userName = process.env.GITHUB_USER;
+        this.getGITHUB_USER_TOKEN = () => {
+            const authService = new AuthService();
+            const raw = User.userSession();
+            const parsed = authService.validateToken(raw.gitHubToken);
+
+            return parsed;
+        };
+
+        this.userName = userName;
         this.organization = organization || userName;
-
         this.repoHostURL = config.github.apiHostURL;
     }
 
@@ -21,19 +28,20 @@ class GitHubConnection extends GitHubUser {
         return this.getGITHUB_USER_TOKEN();
     }
 
-    buildURL(path) {
-        return this.repoHostURL + path;
+    buildURL(path, raw) {
+        return !raw ? this.repoHostURL + path : path;
     }
 
-    async ajax(path, data, method) {
-        const url = this.buildURL(path);
+    async ajax(path, data, options) {
+        let {method, rawURL} = Object(options);
+        const url = this.buildURL(path, rawURL);
 
         if (!method) {
             method = 'get';
         } else if (typeof method === 'string') {
             method = method.toLowerCase();
         }
-        
+
         if (!ajax()[method]) {
             throw new Error.Log({
                 name: 'GitHubConnectionAjaxBadMethod',
@@ -42,7 +50,7 @@ class GitHubConnection extends GitHubUser {
         }
 
         try {
-            const response = await ajax(url, data)[method]({
+            const response = await ajax(url, Object(data))[method]({
                 headers: {
                     'Authorization': `Token ${this.GITHUB_USER_TOKEN}`,
                     "Content-Type": "application/json"

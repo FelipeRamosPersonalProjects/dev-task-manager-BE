@@ -1,14 +1,23 @@
 const config = require('../../../config.json');
 
 class GitHubUser {
-    constructor (setup) {
+    constructor(setup) {
+        try {
+            const { userName } = Object(setup);
+
+            this.userName = userName;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     async getUser() {
         try {
-            const response = await ajax(`${this.repoHostURL}/users/${config.github.testUser}`, {
-                headers: { Authorization: `Token ${this.GITHUB_USER_TOKEN}` }
-            }).get();
+            const response = await this.ajax(`/user`);
+
+            if (response instanceof Error.Log) {
+                throw response;
+            }
 
             return response;
         } catch (err) {

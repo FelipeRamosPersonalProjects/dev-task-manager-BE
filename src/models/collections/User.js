@@ -12,6 +12,7 @@ const Success = require('@SUCCESS');
 const FS = require('@services/FS');
 const config = require('@config');
 const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
+const GitHubConnection = require('@services/GitHubAPI/GitHubConnection');
 
 class User extends _Global {
     constructor(setup){
@@ -33,7 +34,8 @@ class User extends _Global {
             myPullRequests,
             myReviews,
             pullRequestsAssigned,
-            comments
+            comments,
+            gitHub
         } = Object(setup);
 
         try {
@@ -53,7 +55,9 @@ class User extends _Global {
             this.myReviews = isCompleteDoc(myReviews) && myReviews.map(item => new User(item));
             this.pullRequestsAssigned = isCompleteDoc(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
             this.comments = isCompleteDoc(comments) && comments.map(item => new Comment(item));
-
+            this.gitHub = gitHub;
+            
+            this.gitHubConnection = new GitHubConnection({ userName: this.getSafe('gitHub.login') });
             this._auth = () => new AuthBucket(Object(auth), this);
             this.placeDefault();
         } catch(err) {
@@ -70,7 +74,7 @@ class User extends _Global {
     }
 
     get token() {
-        return this.authService.createToken();
+        return this.authService.createUserToken();
     }
 
     get userSession() {
@@ -79,6 +83,43 @@ class User extends _Global {
 
     get currentUser() {
         return sessionCLI.currentUser;
+    }
+
+    static userSession() {
+        return sessionCLI[this.currentUser()];
+    }
+
+    static currentUser() {
+        return sessionCLI.currentUser;
+    }
+
+    async loadGitHubData() {
+        try {
+            this.gitHub = await this.gitHubConnection.getUser();
+            return this.gitHub;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async loadOpenedPRs() {
+        try {
+            const prs = await CRUD.query({collectionName: 'pull_requests', filter: {
+                assignedUsers: { $in: [this._id]},
+                $nor: [
+                    {prStage: 'aborted' },
+                    {prStage: 'merged' }
+                ]
+            }}).defaultPopulate();
+
+            if (prs instanceof Error.Log) {
+                throw prs;
+            }
+
+            return prs.map(item => item.initialize());
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     async signOut() {
@@ -117,7 +158,14 @@ class User extends _Global {
                 return new Error.Log('user.not_found', filter);
             }
 
-            return userDOC.initialize();
+            const initialized = userDOC.initialize();
+            if (!initialized.gitHub && initialized.auth.gitHubToken) {
+                await initialized.updateDB({data: {
+                    gitHub: await initialized.loadGitHubData()
+                }});
+            } 
+
+            return initialized;
         } catch (err) {
             throw new Error.Log(err);
         }

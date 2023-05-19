@@ -1,7 +1,7 @@
 const ListTiles = require('@CLI/templates/ListTiles');
 const CRUD = require('@CRUD');
-const config = require('@config');
 const RepoTemplate = require('@CLI/templates/Repo');
+const User = require('@models/collections/User');
 
 module.exports = {
     id: 'chooseRepoFromUser',
@@ -13,8 +13,8 @@ module.exports = {
                 let repos = await CRUD.query({
                     collectionName: 'repos',
                     filter: { $or: [
-                        { owner: config.testUser },
-                        { collaborators: { $in: [config.testUser] } }
+                        { owner: User.currentUser() },
+                        { collaborators: { $in: [User.currentUser()] } }
                     ]}
                 }).defaultPopulate();
 

@@ -407,7 +407,7 @@ class RepoManager extends GitHubConnection {
             const PR = await this.ajax(
                 `/repos/${this.repoPath}/pulls`,
                 data,
-                'POST'
+                {method: 'POST'}
             );
 
             if (PR instanceof Error.Log) {
@@ -416,7 +416,7 @@ class RepoManager extends GitHubConnection {
 
             const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
                 assignees: [this.userName]
-            }, 'POST');
+            }, {method: 'POST'});
 
             if (addAssignees instanceof Error.Log) {
                 throw addAssignees;
@@ -425,7 +425,7 @@ class RepoManager extends GitHubConnection {
             if (Array.isArray(data.labels)) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
                     labels: ['support'],
-                }, 'POST');
+                }, {method: 'POST'});
 
                 if (addLabels instanceof Error.Log) {
                     throw addLabels;

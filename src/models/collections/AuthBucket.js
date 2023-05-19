@@ -1,5 +1,5 @@
 const _Global = require('@models/maps/_Global');
-const AuthService = require('@src/services/Auth');
+const AuthService = require('@services/Auth');
 const CRUD = require('@CRUD');
 
 class AuthBucket extends _Global {
@@ -12,10 +12,14 @@ class AuthBucket extends _Global {
 
         this.rule = rule;
         this.password = password;
-        this.gitHubToken = gitHubToken;
+        this._gitHubToken = gitHubToken;
         this.jiraToken = jiraToken;
         this.openAIToken = openAIToken;
         this.user = user ? user.oid(true) : {};
+    }
+
+    get gitHubToken() {
+        return this.service.validateToken(this._gitHubToken.toString());
     }
 
     get userName() {
@@ -29,8 +33,9 @@ class AuthBucket extends _Global {
     static async draft(user) {
         try {
             const auth = await CRUD.create('auth_buckets', {
+                user: user.id,
                 password: user.raw.password,
-                user: user.id
+                gitHubToken: user.raw.gitHubToken
             });
 
             if (auth instanceof Error.Log || !auth) {
