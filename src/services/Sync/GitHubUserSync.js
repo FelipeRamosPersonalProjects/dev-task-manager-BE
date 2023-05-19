@@ -26,9 +26,8 @@ class GitHubUserSync extends GitHubConnection {
         }
     }
 
-    async isUpToDate() {
+    isUpToDate() {
         try {
-            await this.init();
             const internal = JSON.stringify(this.internal.gitHub);
             const remote = JSON.stringify(this.remote);
 

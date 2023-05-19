@@ -74,7 +74,7 @@ class GitHubPRSync extends GitHubConnection {
 
             for (let item of this.opened) {
                 if (item.gitHubPR.number) {
-                    const remote = await this.ajax(item.gitHubPR.url, {}, {rawURL: true});
+                    const remote = await this.ajax(item.gitHubPR.url, null, {rawURL: true});
                     if (remote instanceof Error.Log) {
                         throw remote;
                     }

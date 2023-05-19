@@ -32,7 +32,8 @@ class GitHubConnection extends GitHubUser {
         return !raw ? this.repoHostURL + path : path;
     }
 
-    async ajax(path, data, {method, rawURL}) {
+    async ajax(path, data, options) {
+        let {method, rawURL} = Object(options);
         const url = this.buildURL(path, rawURL);
 
         if (!method) {
@@ -40,7 +41,7 @@ class GitHubConnection extends GitHubUser {
         } else if (typeof method === 'string') {
             method = method.toLowerCase();
         }
-        
+
         if (!ajax()[method]) {
             throw new Error.Log({
                 name: 'GitHubConnectionAjaxBadMethod',
@@ -49,7 +50,7 @@ class GitHubConnection extends GitHubUser {
         }
 
         try {
-            const response = await ajax(url, data)[method]({
+            const response = await ajax(url, Object(data))[method]({
                 headers: {
                     'Authorization': `Token ${this.GITHUB_USER_TOKEN}`,
                     "Content-Type": "application/json"
