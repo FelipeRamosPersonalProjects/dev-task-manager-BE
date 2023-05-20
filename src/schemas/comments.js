@@ -82,14 +82,6 @@ module.exports = new Schema({
                 relatedField: 'comments',
                 type: 'array-oid'
             })
-        },
-        parentThread: {
-            type: ObjectId,
-            ref: 'threads',
-            refConfig: Schema.RefConfig({
-                relatedField: 'children',
-                type: 'array-oid'
-            })
         }
     }
 });
