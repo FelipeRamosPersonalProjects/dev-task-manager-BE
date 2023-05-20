@@ -34,7 +34,7 @@ class User extends _Global {
             myPullRequests,
             myReviews,
             pullRequestsAssigned,
-            comments,
+            myComments,
             gitHub
         } = Object(setup);
 
@@ -54,7 +54,7 @@ class User extends _Global {
             this.myPullRequests = isCompleteDoc(myPullRequests) && myPullRequests.map(item => new PullRequest(item));
             this.myReviews = isCompleteDoc(myReviews) && myReviews.map(item => new User(item));
             this.pullRequestsAssigned = isCompleteDoc(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
-            this.comments = isCompleteDoc(comments) && comments.map(item => new Comment(item));
+            this.myComments = isCompleteDoc(myComments) && myComments.map(item => new Comment(item));
             this.gitHub = gitHub;
             
             this.gitHubConnection = new GitHubConnection({ userName: this.getSafe('gitHub.login') });
