@@ -10,11 +10,36 @@ class Comment extends _Global {
         if (!setup || isObjectID(setup)) return;
 
         try {
-            const { message, parent, user, pullRequest, ticket, task } = setup || {};
+            const {
+                body,
+                parent,
+                user,
+                pullRequest,
+                ticket,
+                task,
+                source,
+                commentType,
+                sourceID,
+                nodeID,
+                diffHunk,
+                filePath,
+                sourceCreatedAt,
+                sourceUpdatedAt,
+                author
+            } = Object(setup);
 
+            this.source = source;
+            this.commentType = commentType;
+            this.sourceID = sourceID;
+            this.nodeID = nodeID;
+            this.diffHunk = diffHunk;
+            this.filePath = filePath;
+            this.sourceCreatedAt = sourceCreatedAt;
+            this.sourceUpdatedAt = sourceUpdatedAt;
+            this.author = author;
             this.user = user && new User(user);
             this.parent = parent && new Comment(parent);
-            this.message = message;
+            this.body = body;
             this.replies = Array.isArray(replies) && replies.map(reply => new Comment(reply));
             this.pullRequest = pullRequest && new PullRequest(pullRequest);
             this.ticket = ticket && new Ticket(ticket);
