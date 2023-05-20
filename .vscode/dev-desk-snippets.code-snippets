@@ -6,13 +6,11 @@
 			"",
 			"class ${1:TemplateName} extends Component {",
 			"\tget SOURCE_PATH() {",
-			"\t\treturn require.resolve('./source/${2:mdfilename}.md');",
+			"\t\treturn require.resolve('./source/${1:mdfilename}.md');",
 			"\t}",
 			"",
 			"\tconstructor(settings) {",
-			"\t\tsuper(settings, {",
-			"\t\t\t${3:firstField}: { type: ${4:firstFieldType} }",
-			"\t\t});",
+			"\t\tsuper(settings);",
 			"",
 			"\t\tconst { ${3:firstField} } = Object(settings);",
 			"\t\t",
@@ -120,5 +118,20 @@
 			"}"
 		],
 		"description": "Create a new class instance with my usual pattern."
+	},
+	"Get a template resource": {
+		"prefix": "GetTemplate",
+		"body": [
+			"const ${1:templateName}Template = Resource.templates('${2:resournce.path}', {${3:params}});",
+			"const ${1:templateName}String = ${1:templateName}Template.renderToString();"
+		],
+		"description": "Declare a call to a resource template."
+	},
+	"Import CRUD": {
+		"prefix": "CRUD",
+		"body": [
+			"const CRUD = require('@CRUD');"
+		],
+		"description": "Import database CRUD."
 	}
 }

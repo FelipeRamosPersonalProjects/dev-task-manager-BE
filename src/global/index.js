@@ -48,5 +48,9 @@ Object.prototype.getSafe = function(path, obj) {
     return utils.getObjectPath(obj || this, path);
 }
 
+String.prototype.toCamelCase = function() {
+    return this.valueOf().replace(/[-_ ](.)/g, (_, char) => char.toUpperCase()).replace(/^(.)/, (_, char) => char.toUpperCase());
+}
+
 global.isObjectID = validation.base.ValidationBase.isObjectID;
 global.isCompleteDoc = validation.base.ValidationBase.isCompleteDoc;
