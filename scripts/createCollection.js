@@ -41,7 +41,7 @@ require('@services/database/init').then(async () => {
         try {
             const FS = require('@services/FS');
             const [schemaName, symbol] = process.argv.slice(2);
-            
+
             if (!schemaName || !symbol) {
                 throw new Error.Log('common.missing_params', ['schemaName', 'symbol']);
             }
@@ -95,7 +95,6 @@ require('@services/database/init').then(async () => {
                 throw schemaClass;
             }
 
-            
             schemaClass.modelName = modelName;
             schemaClass.className = className;
 
@@ -114,7 +113,6 @@ require('@services/database/init').then(async () => {
             const schemas = require(`@schemas/${schemaName}`);
             const camelName = schemaName.toCamelCase();
             let modelName = camelName || '';
-            let currentSchema;
 
             if (!schemas) {
                 throw Error.Log({

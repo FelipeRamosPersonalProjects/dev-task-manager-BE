@@ -1,4 +1,6 @@
 const Component = require('@interface/Component');
+const ObjectPropNoValue = require('./ObjectPropNoValue');
+const ThisDeclaration = require('./ThisDeclaration');
 
 class CollectionModel extends Component {
     get SOURCE_PATH() {
@@ -12,7 +14,16 @@ class CollectionModel extends Component {
         
         this.modelName = modelName;
         this.collectionName = collectionName;
-        this.schemaObj = schemaObj;
+        this.schemaObj = [];
+
+        Object.entries(schemaObj).map(([key, value]) => {
+            this.schemaObj.push({ propName: key, ...value});
+        });
+
+        this.types = {
+            ObjectPropNoValue,
+            ThisDeclaration
+        }
     }
 }
 

@@ -21,9 +21,11 @@ class SchemaDB {
         try {
             this.name = setup.name;
             this.symbol = setup.symbol;
+            
 
             if (Array.isArray(setup.fields)) {
                 if (!setup.schema) setup.schema = {};
+                this.fields = setup.fields;
 
                 setup.fields.map(item => {
                     setup.schema[item.fieldName] = item;

@@ -11,7 +11,7 @@ class ObjectString extends Component {
         const { objectProps } = Object(settings);
         
         this.objectProps = [];
-        this.Types = {
+        this.types = {
             ObjectProp
         }
 

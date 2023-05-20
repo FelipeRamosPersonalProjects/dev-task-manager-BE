@@ -4,7 +4,7 @@ const Schema = require('@models/SchemaDB');
 /**
  * Represents a collection on the database.
  */
-class Collection extends Schema {
+class Collection {
     static Types = Schema.mongoSchema.Types;
     
     /**
@@ -18,7 +18,6 @@ class Collection extends Schema {
      * @param {CollectionField[]} setup.fields - The fields of the collection.
      */
     constructor(setup) {
-        super(Object(setup));
         try {
             const { name, key, displayName, pluralLabel, singularLabel, fields, lastSync } = Object(setup);
 

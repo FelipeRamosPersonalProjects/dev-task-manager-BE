@@ -5,10 +5,11 @@ class ##{{modelName:string}}## extends _Global {
         super({...setup, validationRules: '##{{collectionName:string}}##'}, parent);
         if (!setup || isObjectID(setup)) return;
 
-        const ##{{objectProps:array:ObjectPropNoValue}}## = Object(setup);
+        const {
+##{{schemaObj:array:ObjectPropNoValue}}##        } = Object(setup);
         
         try {
-            ##{{objectProps:array:ThisDeclaration}}##
+##{{schemaObj:array:ThisDeclaration}}##
             this.placeDefault();
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', '##{{modelName:string}}##');
