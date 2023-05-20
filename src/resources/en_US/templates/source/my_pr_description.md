@@ -1,8 +1,8 @@
-## 🔗 Links
+## 🎟️ Links
 **Ticket:** ##{{ticketURL:string}}##
 **Jira Task:** ##{{taskURL:string}}##
  
-## 🔍 Summary and Index
+## 🔍 Brief description
 ##{{summary:string}}##
  
 ## 📂 Changes
