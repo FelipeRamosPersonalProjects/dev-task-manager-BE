@@ -5,7 +5,7 @@ require('@global');
 let collectionName;
 
 // Initializing MongoDB
-require('@services/database/init').then(async () => {        
+require('@services/database/init').then(async () => {
     async function createCollection() {
         toolsCLI.print(`Starting to create a new collection...`, 'WORKING');
 
@@ -52,7 +52,10 @@ require('@services/database/init').then(async () => {
             }
 
             const symbolParsed = symbol && symbol.toUpperCase();
-            const fileCodeTemplate = Resource.templates('code.schema_file', {collectionName, symbol: symbolParsed});
+            const fileCodeTemplate = Resource.templates('code.schema_file', {
+                name: collectionName,
+                key: symbolParsed,
+            });
             const fileCodeString = fileCodeTemplate.renderToString();
             const schema = await FS.writeFile(`src/schemas/${collectionName}.js`, fileCodeString);
             if (schema instanceof Error.Log) {
@@ -108,8 +111,17 @@ require('@services/database/init').then(async () => {
 
         try {
             const FS = require('@services/FS');
+            const schemas = require(`@schemas/${schemaName}`);
             const camelName = schemaName.toCamelCase();
             let modelName = camelName || '';
+            let currentSchema;
+
+            if (!schemas) {
+                throw Error.Log({
+                    name: 'NEW-SCHEMA-NOT-SET',
+                    message: `Your're trying to create a new schema, but it wasn't configured properly! Check the schema object declaration...`
+                });
+            }
 
             if (!modelName) {
                 throw new Error.Log('common.missing_params', ['modelName']);
@@ -119,7 +131,11 @@ require('@services/database/init').then(async () => {
                 modelName = modelName.slice(0, modelName.length-1);
             }
 
-            const fileCodeTemplate = Resource.templates('code.collection_model_file', {modelName, collectionName: schemaName});
+            const fileCodeTemplate = Resource.templates('code.collection_model_file', {
+                modelName,
+                collectionName: schemaName,
+                schemaObj: schemas.getSafe('schema.obj')
+            });
             const fileCodeString = fileCodeTemplate.renderToString();
 
             const collectionModel = await FS.writeFile(`src/models/collections/${modelName}.js`, fileCodeString);
@@ -170,6 +186,7 @@ require('@services/database/init').then(async () => {
 
     try {
         const created = await createCollection();
+        schemas = require(`@schemas/${collectionName}`);
 
         toolsCLI.print(`Collection "${collectionName}" created!`, 'SUCCESS');
         return created;

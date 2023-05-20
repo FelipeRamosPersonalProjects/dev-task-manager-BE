@@ -1,6 +1,6 @@
 const Schema = require('../models/SchemaDB');
 const SchemaTypes = Schema.mongoSchema.Types;
-const config = require('../../config.json');
+const config = require('@config');
 const collectionName = config.database.counterCollection;
 
 module.exports = new Schema({

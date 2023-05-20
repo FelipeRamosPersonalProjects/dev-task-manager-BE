@@ -1,5 +1,5 @@
 const StringTemplateBuilder = require('@STRING');
-const config = require('../../../config.json');
+const config = require('@config');
 
 class ToolsCLI {
     constructor() {

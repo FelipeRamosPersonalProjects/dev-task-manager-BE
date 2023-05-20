@@ -1,13 +1,11 @@
-const Schema = require('@models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
-const queries = require('@schemas/queries');
-const events = require('@schemas/events');
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
-    name: '##{{collectionName:string}}##',
-    symbol: '##{{symbol:string}}##',
-    queries: queries.##{{collectionName:string}}##,
-    events: events.##{{collectionName:string}}##,
-    schema: {}
-});
-
+module.exports = new Collection({
+    name: '##{{name:string}}##',
+    key: '##{{key:string}}##',
+    displayName: '##{{displayName:string}}##',
+    pluralLabel: '##{{pluralLabel:string}}##',
+    singularLabel: '##{{singularLabel:string}}##',
+    fields: []
+}).initSchema();
