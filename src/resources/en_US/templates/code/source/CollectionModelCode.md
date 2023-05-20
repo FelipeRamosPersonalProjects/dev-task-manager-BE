@@ -11,7 +11,7 @@ class ##{{modelName:string}}## extends _Global {
             
             this.placeDefault();
         } catch(err) {
-            throw new Error.Log(err).append('common.model_construction', '##{{modelName:string}}##s');
+            throw new Error.Log(err).append('common.model_construction', '##{{modelName:string}}##');
         }
     }
 }
