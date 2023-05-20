@@ -16,7 +16,7 @@ class ToolsCLI {
 
     printTemplate(stringContent) {
         if (typeof stringContent === 'string') {
-            console.log(`\n${stringContent || ''}`);
+            console.log(`${stringContent || ''}`);
         }
     }
 

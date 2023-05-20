@@ -19,7 +19,7 @@ class Resources {
         const current = this.getPath('templates.' + path);
 
         if (Boolean.isValid(current).function().eval()) {
-            return () => current(...params);
+            return current(...params);
         }
     }
 

@@ -131,7 +131,7 @@ class AuthService {
             delete sessionCLI[userData.userUID];
             sessionCLI.currentUser = '';
 
-            const sessionUpdated = await FS.writeFile(config.sessionPath, sessionCLI);
+            const sessionUpdated = await FS.writeJSON(config.sessionPath, sessionCLI);
             return sessionUpdated;
         } catch (err) {
             throw new Error.Log(err);

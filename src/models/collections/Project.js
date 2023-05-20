@@ -42,7 +42,7 @@ class Project extends _Global {
     getTemplate(name) {
         try {
             const template = this.templates[name];
-            return template && template();
+            return template;
         } catch (err) {
             throw new Error.Log(err);
         }

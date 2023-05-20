@@ -1,10 +1,12 @@
 const osf = require('./osf');
+const code = require('./code');
 const MyPrDescription = require('./my_pr_description');
 const DefaultCommitDescriptionTemplate = require('./default_commit_description');
 const DefaultFileChangeTemplate = require('./default_file_change');
 
 module.exports = {
     osf,
+    code,
     
     default_commit_description: () => {
         return new DefaultCommitDescriptionTemplate({

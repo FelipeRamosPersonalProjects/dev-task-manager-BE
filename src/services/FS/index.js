@@ -22,12 +22,20 @@ class FileSystemService {
 
     static async writeFile(path, data) {
         return new Promise((resolve, reject) => {
-            fs.writeFile(path, JSON.stringify(data, null, 4), err => {
+            fs.writeFile(path, data, err => {
                 if (err) return reject(err);
 
                 return resolve(Object().toSuccess());
             });
         });
+    }
+
+    static async writeJSON(path, jsObject) {
+        try {
+            return await this.writeFile(path, JSON.stringify(jsObject, null, 4));
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     static async copyFiles(filesToCopy, sourceDir, destDir) {

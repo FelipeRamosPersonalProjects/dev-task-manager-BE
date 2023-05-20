@@ -1,0 +1,19 @@
+const _Global = require('../maps/_Global');
+
+class ##{{modelName:string}}## extends _Global {
+    constructor(setup, parent){
+        super({...setup, validationRules: '##{{collectionName:string}}##'}, parent);
+        if (!setup || isObjectID(setup)) return;
+
+        const {  } = Object(setup || {});
+        
+        try {
+            
+            this.placeDefault();
+        } catch(err) {
+            throw new Error.Log(err).append('common.model_construction', '##{{modelName:string}}##s');
+        }
+    }
+}
+
+module.exports = ##{{modelName:string}}##;
