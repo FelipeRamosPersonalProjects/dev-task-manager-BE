@@ -15,7 +15,7 @@ require('@services/database/init').then(async () => {
             const collectionModel = await createCollectionModel(schema.name);
             const schemaAppended = await appendToSchemaIndex(schema.name);
             const classAppended = await appendToClassIndex({
-                newSchema: schema.name,
+                newSchema: collectionName || '',
                 newSchemaClassName: schemaClass.modelName
             });
 
@@ -41,28 +41,26 @@ require('@services/database/init').then(async () => {
         try {
             const FS = require('@services/FS');
             const [schemaName, symbol] = process.argv.slice(2);
-            let schemaNameParsed = schemaName && schemaName.toLowerCase();
-            const symbolParsed = symbol && symbol.toUpperCase();
-            const fileCodeTemplate = Resource.templates('code.schema_file', {collectionName: schemaNameParsed, symbol: symbolParsed});
-            const fileCodeString = fileCodeTemplate.renderToString();
-
+            
             if (!schemaName || !symbol) {
                 throw new Error.Log('common.missing_params', ['schemaName', 'symbol']);
             }
 
-            collectionName = schemaNameParsed;
-            if (!schemaNameParsed.endsWith('s')) {
-                schemaNameParsed += 's';
+            collectionName = schemaName && schemaName.toLowerCase();
+            if (!collectionName.endsWith('s')) {
+                collectionName += 's';
             }
 
-            const schema = await FS.writeFile(`src/schemas/${schemaNameParsed}.js`, fileCodeString);
+            const symbolParsed = symbol && symbol.toUpperCase();
+            const fileCodeTemplate = Resource.templates('code.schema_file', {collectionName, symbol: symbolParsed});
+            const fileCodeString = fileCodeTemplate.renderToString();
+            const schema = await FS.writeFile(`src/schemas/${collectionName}.js`, fileCodeString);
             if (schema instanceof Error.Log) {
                 throw schema;
             }
 
-            schema.name = schemaNameParsed;
-            
-            toolsCLI.print(`File "src/schemas/${schemaNameParsed}.js" created successfully...`, 'SUCCESS');
+            schema.name = collectionName;
+            toolsCLI.print(`File "src/schemas/${collectionName}.js" created successfully...`, 'SUCCESS');
             return schema;
         } catch (err) {
             throw new Error.Log(err);
@@ -74,11 +72,15 @@ require('@services/database/init').then(async () => {
 
         try {
             const camelName = schemaName.toCamelCase();
-            const modelName = camelName || '';
+            let modelName = camelName || '';
             const className = modelName + 'Class';
 
             if (!className || !modelName) {
                 throw new Error.Log('common.missing_params', ['className', 'modelName']);
+            }
+
+            if (modelName.endsWith('s')) {
+                modelName = modelName.slice(0, modelName.length-1);
             }
 
             const FS = require('@services/FS');
