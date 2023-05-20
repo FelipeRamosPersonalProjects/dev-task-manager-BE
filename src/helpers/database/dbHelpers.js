@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const configs = require('../../../config.json');
+const configs = require('@config');
 
 function isCollectionExist(collection) {
     try {

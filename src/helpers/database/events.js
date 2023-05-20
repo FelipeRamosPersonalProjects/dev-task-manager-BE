@@ -1,6 +1,6 @@
 const dbHelpers = require('./dbHelpers');
 const relationalHelper = require('./relationalFields');
-const config = require('../../../config.json');
+const config = require('@config');
 
 async function preSave(next) {
     try {

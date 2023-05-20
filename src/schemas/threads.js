@@ -12,7 +12,7 @@ module.exports = new Schema({
         parentComment: {
             type: ObjectId,
             ref: 'comment',
-            refConfig: Schema.RefConfig({
+            refConfig: new Schema.RefConfig({
                 relatedField: 'thread',
                 type: 'ObjectId'
             })
@@ -20,7 +20,7 @@ module.exports = new Schema({
         children: {
             type: [ObjectId],
             ref: 'comment',
-            refConfig: Schema.RefConfig({
+            refConfig: new Schema.RefConfig({
                 relatedField: 'parentThread',
                 type: 'ObjectId'
             })

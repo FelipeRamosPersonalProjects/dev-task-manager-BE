@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const {getGlobalSchema} = require('../schemas/_globals');
 const schemasClass = require('../schemas/class');
-const RefConfig = require('./SchemaRefConfig');
+const RefConfig = require('./settings/SchemaRefConfig');
 const {database: {dbHelpers, queries, events}} = require('../helpers');
-const configs = require('../../config.json');
+const configs = require('@config');
 const GlobalClass = schemasClass.GlobalClass;
 
 class SchemaDB {
@@ -21,6 +21,17 @@ class SchemaDB {
         try {
             this.name = setup.name;
             this.symbol = setup.symbol;
+            
+
+            if (Array.isArray(setup.fields)) {
+                if (!setup.schema) setup.schema = {};
+                this.fields = setup.fields;
+
+                setup.fields.map(item => {
+                    setup.schema[item.fieldName] = item;
+                });
+            }
+
             this.schema = new mongoose.Schema({...getGlobalSchema(setup.excludeGlobals), ...setup.schema});
             this.links = setup.links || {};
             this.queries = setup.queries || {};
@@ -56,10 +67,10 @@ class SchemaDB {
                 initializedCollections.push(this.symbol);
                 this.DB = mongoose.model(this.name, this.schema);
             } else {
-                const error = new Error.Log('database.duplicated_schema', this.name, this.symbol);
-                if (isDup) error.append('database.duplicated_schema_name', this.name);
-                if (isDupSymbol) error.append('database.duplicated_schema_symbol', this.symbol);
-                throw error;
+                // const error = new Error.Log('database.duplicated_schema', this.name, this.symbol);
+                // if (isDup) error.append('database.duplicated_schema_name', this.name);
+                // if (isDupSymbol) error.append('database.duplicated_schema_symbol', this.symbol);
+                // throw error;
             }
         } catch(err) {
             throw new Error.Log(err).append('database.schema_init');

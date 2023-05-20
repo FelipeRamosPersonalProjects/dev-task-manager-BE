@@ -1,4 +1,4 @@
-const config = require('../../../config.json');
+const config = require('@config');
 const GitHubUser = require('./GitHubUser');
 const AuthService = require('@services/Auth');
 
