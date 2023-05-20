@@ -101,12 +101,12 @@ module.exports = new Schema({
                 type: 'array-oid'
             })
         },
-        comments: {
+        myComments: {
             type: [ObjectId],
             default: [],
             ref: 'comments',
             refConfig: new Schema.RefConfig({
-                relatedField: 'user',
+                relatedField: 'author',
                 type: 'ObjectId'
             })
         },
