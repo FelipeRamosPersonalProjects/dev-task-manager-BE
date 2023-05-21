@@ -1,6 +1,7 @@
 const _Global = require('../maps/_Global');
 const DiscoveryModel = require('@models/tasks/Discovery');
 const DevelopmentModel = require('@models/tasks/Development');
+const ValidationModel = require('@models/tasks/Validation');
 const CRUD = require('@CRUD');
 
 class Task extends _Global {
@@ -67,6 +68,10 @@ class Task extends _Global {
             
             else if (this.taskType === 'development') {
                 this.development = development && new DevelopmentModel(development);
+            }
+            
+            else if (this.taskType === 'validation') {
+                this.validation = validation && new ValidationModel(validation);
             }
             
             this.placeDefault();
