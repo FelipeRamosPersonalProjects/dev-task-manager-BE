@@ -2,9 +2,10 @@ const Schema = require('../models/SchemaDB');
 const queries = require('./queries');
 const events = require('./events');
 const { ObjectId } = Schema.mongoSchema.Types;
-const DiscoveryTask = require('@schemas/map/Discovery.map');
-const DevelopmentTask = require('@schemas/map/Development.map');
-const ValidationTask = require('@schemas/map/Validation.map');
+const DiscoveryTask = require('@src/schemas/map/Discovery.task');
+const DevelopmentTask = require('@src/schemas/map/Development.task');
+const ValidationTask = require('@src/schemas/map/Validation.task');
+const TODOReminderTask = require('@src/schemas/map/TODOReminder.task');
 
 module.exports = new Schema({
     name: 'tasks',
@@ -146,8 +147,9 @@ module.exports = new Schema({
             })
         },
         
-        discovery: DiscoveryTask.toObject(),
-        development: DevelopmentTask.toObject(),
-        validation: ValidationTask.toObject(),
+        discoveries: DiscoveryTask.toObject(),
+        developments: DevelopmentTask.toObject(),
+        validations: ValidationTask.toObject(),
+        todoReminders: TODOReminderTask.toObject()
     }
 });
