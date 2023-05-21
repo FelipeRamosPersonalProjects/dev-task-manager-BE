@@ -4,6 +4,7 @@ const events = require('./events');
 const { ObjectId } = Schema.mongoSchema.Types;
 const DiscoveryTask = require('@schemas/map/Discovery.map');
 const DevelopmentTask = require('@schemas/map/Development.map');
+const ValidationTask = require('@schemas/map/Validation.map');
 
 module.exports = new Schema({
     name: 'tasks',
@@ -146,6 +147,7 @@ module.exports = new Schema({
         },
         
         discovery: DiscoveryTask.toObject(),
-        development: DevelopmentTask.toObject()
+        development: DevelopmentTask.toObject(),
+        validation: ValidationTask.toObject(),
     }
 });

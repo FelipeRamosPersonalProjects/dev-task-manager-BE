@@ -4,6 +4,7 @@ const TemplatesOptions = require('./TemplatesOptions');
 const FileChange = require('./FileChange');
 const DiscoveryTask = require('./Discovery.map');
 const DevelopmentTask = require('./Development.map');
+const ValidationTask = require('./Validation.map');
 
 module.exports = {
     TemplatesOptions,
@@ -11,5 +12,6 @@ module.exports = {
     SLA,
     FileChange,
     DiscoveryTask,
-    DevelopmentTask
+    DevelopmentTask,
+    ValidationTask
 };
