@@ -1,5 +1,7 @@
 /**
  * Represents the reference configuration for a schema field.
+ * 
+ * @module SchemaRefConfig
  */
 class SchemaRefConfig {
     /**
@@ -9,11 +11,7 @@ class SchemaRefConfig {
      * @param {string} [setup.relatedField] - The related field of the reference.
      * @param {boolean} [setup.toDelete=false] - Indicates if the reference should be deleted.
      */
-    constructor(setup = {
-        type,
-        relatedField: '',
-        toDelete: false
-    }) {
+    constructor(setup) {
         const { relatedField, type, toDelete } = Object(setup);
 
         /**

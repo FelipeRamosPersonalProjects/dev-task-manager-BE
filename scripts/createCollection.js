@@ -2,10 +2,10 @@ require('module-alias/register');
 // Declaring globals
 require('@global');
 
-let collectionName;
-
 // Initializing MongoDB
 require('@services/database/init').then(async () => {
+    let collectionName;
+
     async function createCollection() {
         toolsCLI.print(`Starting to create a new collection...`, 'WORKING');
 
@@ -20,11 +20,11 @@ require('@services/database/init').then(async () => {
             });
 
             const success = [
-                schema.success,
-                schemaClass.success,
-                collectionModel.success,
-                schemaAppended.success,
-                classAppended.success,
+                schema && schema.success,
+                schemaClass && schemaClass.success,
+                collectionModel && collectionModel.success,
+                schemaAppended && schemaAppended.success,
+                classAppended && classAppended.success,
             ].every(item => item);
 
             if (success) {
@@ -54,7 +54,7 @@ require('@services/database/init').then(async () => {
             const symbolParsed = symbol && symbol.toUpperCase();
             const fileCodeTemplate = Resource.templates('code.schema_file', {
                 name: collectionName,
-                key: symbolParsed,
+                symbol: symbolParsed,
             });
             const fileCodeString = fileCodeTemplate.renderToString();
             const schema = await FS.writeFile(`src/schemas/${collectionName}.js`, fileCodeString);

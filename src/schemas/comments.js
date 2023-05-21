@@ -3,7 +3,7 @@ const { ObjectId } = Collection.Types;
 
 module.exports = new Collection({
     name: 'comments',
-    key: 'COMM',
+    symbol: 'COMM',
     displayName: 'Comments',
     pluralLabel: 'comments',
     singularLabel: 'comment',

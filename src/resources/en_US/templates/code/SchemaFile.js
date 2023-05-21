@@ -8,10 +8,10 @@ class SchemaFile extends Component {
     constructor(settings) {
         super(settings);
 
-        const { name, key, displayName, pluralLabel, singularLabel } = Object(settings);
+        const { name, symbol, displayName, pluralLabel, singularLabel } = Object(settings);
         
         this.name = name;
-        this.key = key;
+        this.symbol = symbol;
         this.displayName = displayName;
         this.pluralLabel = pluralLabel;
         this.singularLabel = singularLabel;

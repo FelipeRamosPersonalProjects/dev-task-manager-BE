@@ -2,6 +2,8 @@ const SchemaRefConfig = require('./SchemaRefConfig');
 
 /**
  * Represents a field in a collection.
+ * 
+ * @module CollectionField
  */
 class CollectionField {
     /**
@@ -75,7 +77,7 @@ class CollectionField {
              * The configuration for related fields with other collections.
              * @type {SchemaRefConfig}
              */
-            if (refConfig) this.refConfig = refConfig;
+            if (refConfig) this.refConfig = new SchemaRefConfig(Object(refConfig));
 
             /**
              * If a function was provided, it will axecute the function runtime, and the default will be the result of the function.

@@ -3,6 +3,7 @@ const Schema = require('@models/SchemaDB');
 
 /**
  * Represents a collection on the database.
+ * @module Collection
  */
 class Collection {
     static Types = Schema.mongoSchema.Types;
@@ -11,7 +12,7 @@ class Collection {
      * Creates a new instance of the Collection class.
      * @param {Object} setup - The setup object.
      * @param {string} setup.name - The name of the collection.
-     * @param {string} setup.key - The key of the collection.
+     * @param {string} setup.symbol - The symbol of the collection.
      * @param {string} setup.displayName - The display name of the collection.
      * @param {string} setup.pluralLabel - The plural label of the collection.
      * @param {string} setup.singularLabel - The singular label of the collection.
@@ -19,13 +20,13 @@ class Collection {
      */
     constructor(setup) {
         try {
-            const { name, key, displayName, pluralLabel, singularLabel, fields, lastSync } = Object(setup);
+            const { name, symbol, displayName, pluralLabel, singularLabel, fields, lastSync } = Object(setup);
 
             /**
-             * The key of the collection.
+             * The symbol of the collection.
              * @type {string}
              */
-            this.key = key;
+            this.symbol = symbol;
 
             /**
              * The name of the collection.
@@ -61,16 +62,18 @@ class Collection {
              * The fields of the collection.
              * @type {CollectionField[]}
              */
-            this.fields = Array.isArray(fields) && fields.map(field => new CollectionField(field));
+            this.fields = fields.map(field => new CollectionField(field));
         } catch (err) {
             throw new Error.Log(err);
         }
     }
-    
+
+    static Types = Schema.mongoSchema.Types;
+
     initSchema() {
         const result = {
             name: this.name,
-            symbol: this.key,
+            symbol: this.symbol,
             schema: {}
         };
 
