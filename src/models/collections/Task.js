@@ -2,6 +2,7 @@ const _Global = require('../maps/_Global');
 const DiscoveryModel = require('@models/tasks/Discovery');
 const DevelopmentModel = require('@models/tasks/Development');
 const ValidationModel = require('@models/tasks/Validation');
+const TODOReminder = require('@models/tasks/TODOReminder');
 const CRUD = require('@CRUD');
 
 class Task extends _Global {
@@ -37,8 +38,10 @@ class Task extends _Global {
                 pullRequests,
                 comments,
                 repo,
-                discovery,
-                development
+                discoveries,
+                developments,
+                validations,
+                todoReminders
             } = new Object(setup);
 
             this.collectionName = 'tasks';
@@ -63,15 +66,19 @@ class Task extends _Global {
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
 
             if (this.taskType === 'discovery') {
-                this.discovery = discovery && new DiscoveryModel(discovery);
+                this.discoveries = discoveries && new DiscoveriesModel(discoveries);
             }
             
             else if (this.taskType === 'development') {
-                this.development = development && new DevelopmentModel(development);
+                this.developments = developments && new DevelopmentModel(developments);
             }
             
             else if (this.taskType === 'validation') {
-                this.validation = validation && new ValidationModel(validation);
+                this.validations = validations && new ValidationModel(validations);
+            }
+            
+            else if (this.taskType === 'todo-reminder') {
+                this.todoReminders = todoReminders && new TODOReminder(todoReminders);
             }
             
             this.placeDefault();
