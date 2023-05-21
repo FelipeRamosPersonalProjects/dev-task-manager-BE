@@ -14,6 +14,7 @@ const space_desks = require('./SpaceDesksClass');
 const organizations = require('./OrganizationsClass');
 const logs = require('./LogsClass');
 const threads = require('./ThreadsClass');
+const worklogs = require('./WorklogsClass');
 
 module.exports = {
     GlobalClass,
@@ -31,5 +32,6 @@ module.exports = {
     space_desks,
     organizations,
     logs,
-    threads
+    threads,
+    worklogs
 };

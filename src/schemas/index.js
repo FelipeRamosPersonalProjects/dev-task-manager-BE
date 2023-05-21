@@ -14,6 +14,7 @@ const space_desks = require('./space_desks');
 const organizations = require('./organizations');
 const logs = require('./logs');
 const threads = require('./threads');
+const worklogs = require('./worklogs');
 
 module.exports = {
     counters,
@@ -31,5 +32,6 @@ module.exports = {
     space_desks,
     organizations,
     logs,
-    threads
+    threads,
+    worklogs
 };

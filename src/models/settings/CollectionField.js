@@ -88,6 +88,10 @@ class CollectionField {
             throw new Error.Log(err);
         }
     }
+    
+    toObject() {
+        return {...this};
+    }
 }
 
 module.exports = CollectionField;

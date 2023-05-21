@@ -62,7 +62,7 @@ class Collection {
              * The fields of the collection.
              * @type {CollectionField[]}
              */
-            this.fields = fields.map(field => new CollectionField(field));
+            this.fields = fields.map(field => new CollectionField(field).toObject());
         } catch (err) {
             throw new Error.Log(err);
         }
