@@ -1,5 +1,6 @@
 const _Global = require('../maps/_Global');
 const DiscoveryModel = require('@models/tasks/Discovery');
+const DevelopmentModel = require('@models/tasks/Development');
 const CRUD = require('@CRUD');
 
 class Task extends _Global {
@@ -35,7 +36,8 @@ class Task extends _Global {
                 pullRequests,
                 comments,
                 repo,
-                discovery
+                discovery,
+                development
             } = new Object(setup);
 
             this.collectionName = 'tasks';
@@ -59,7 +61,13 @@ class Task extends _Global {
             this.project = isCompleteDoc(project) ? new Project(project) : {};
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
 
-            this.discovery = discovery && new DiscoveryModel(discovery);
+            if (this.taskType === 'discovery') {
+                this.discovery = discovery && new DiscoveryModel(discovery);
+            }
+            
+            else if (this.taskType === 'development') {
+                this.development = development && new DevelopmentModel(development);
+            }
             
             this.placeDefault();
             this.parentTicket = () => parentTicket;
