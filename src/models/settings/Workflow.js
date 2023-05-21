@@ -1,4 +1,4 @@
-const statusConfigs = require('./configs');
+const statusConfigs = require('@CONFIGS/workflows');
 
 class Workflow {
     constructor(setup) {
