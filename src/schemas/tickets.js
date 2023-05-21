@@ -53,8 +53,21 @@ module.exports = new Schema({
         },
         status: {
             type: String,
-            default: 'progress',
-            enum: ['progress', 'development', 'testing', 'pending-client', 'resolved', 'closed']
+            default: 'TO-START',
+            enum: [
+                'TO-START',
+                'INVESTIGATING',
+                'ESTIMATION',
+                'TO-DEVELOP',
+                'IN-DEVELOPMENT',
+                'DEVELOPMENT-DONE',
+                'CODE-REVIEW',
+                'VALIDATION',
+                'COMPLETED',
+                'ABORTED',
+                'SHARED',
+                'ON-HOLD'
+            ]
         },
         sla: {
             type: SLA,

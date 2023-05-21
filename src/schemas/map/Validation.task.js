@@ -1,6 +1,18 @@
 class ValidationTask {
+    static status = {
+        type: String,
+        default: 'TO-ADD-TESTING-STEPS',
+        enum: [
+            'TO-ADD-TESTING-STEPS',
+            'DEV',
+            'STG',
+            'PROD',
+            'VALIDATED'
+        ]
+    }
+
     static testingSteps = {
-        type: []
+        type: [Object]
     };
     
     static toObject() {
