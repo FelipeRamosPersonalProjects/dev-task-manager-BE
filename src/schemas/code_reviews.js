@@ -12,7 +12,12 @@ module.exports = new Collection({
             fieldName: 'status',
             type: String,
             default: 'to-create-pr',
-            enum: ['to-create-pr', 'waiting-approval', 'changes-requested', 'approved']
+            enum: [
+                'TO-CREATE-PR',
+                'WAITING-APPROVAL',
+                'CHANGES-REQUESTED',
+                'APPROVED',
+            ]
         },
         {
             fieldName: 'pullRequest',
