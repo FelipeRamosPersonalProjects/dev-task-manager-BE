@@ -2,7 +2,8 @@ const Schema = require('../models/SchemaDB');
 const queries = require('./queries');
 const events = require('./events');
 const { ObjectId } = Schema.mongoSchema.Types;
-const DiscoveryMap = require('@schemas/map/Discovery.map');
+const DiscoveryTask = require('@schemas/map/Discovery.map');
+const DevelopmentTask = require('@schemas/map/Development.map');
 
 module.exports = new Schema({
     name: 'tasks',
@@ -144,6 +145,7 @@ module.exports = new Schema({
             })
         },
         
-        discovery: DiscoveryMap.toObject()
+        discovery: DiscoveryTask.toObject(),
+        development: DevelopmentTask.toObject()
     }
 });

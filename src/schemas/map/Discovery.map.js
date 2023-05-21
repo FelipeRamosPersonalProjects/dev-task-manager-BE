@@ -1,4 +1,4 @@
-module.exports = class DiscoveryMap {
+class DiscoveryTask {
     static findings = {
         type: String
     };
@@ -15,3 +15,5 @@ module.exports = class DiscoveryMap {
         return {...this};
     }
 }
+
+module.exports = DiscoveryTask;
