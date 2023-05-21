@@ -15,7 +15,8 @@ class SchemaRefConfig {
         const { relatedField, type, toDelete } = Object(setup);
 
         /**
-         * The type of the reference.
+         * The value type of the reference.
+         * Allowed: "array-oid" or "ObjectId"
          * @type {string}
          */
         this.type = type;

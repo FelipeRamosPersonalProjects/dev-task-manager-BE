@@ -146,6 +146,15 @@ module.exports = new Schema({
                 type: 'array-oid'
             })
         },
+        codeReviews: {
+            type: [ObjectId],
+            default: [],
+            ref: 'code_reviews',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'devTask',
+                type: 'ObjectId'
+            })
+        },
         
         discoveries: DiscoveryTask.toObject(),
         developments: DevelopmentTask.toObject(),
