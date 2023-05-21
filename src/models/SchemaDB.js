@@ -5,6 +5,8 @@ const RefConfig = require('./settings/SchemaRefConfig');
 const {database: {dbHelpers, queries, events}} = require('../helpers');
 const configs = require('@config');
 const GlobalClass = schemasClass.GlobalClass;
+const customQueries = require('@schemas/queries');
+const customEvents = require('@schemas/events');
 
 class SchemaDB {
     static RefConfig = RefConfig;
@@ -34,8 +36,8 @@ class SchemaDB {
 
             this.schema = new mongoose.Schema({...getGlobalSchema(setup.excludeGlobals), ...setup.schema});
             this.links = setup.links || {};
-            this.queries = setup.queries || {};
-            this.events = setup.events || {};
+            this.queries = setup.queries || Object(customQueries[this.name]);
+            this.events = setup.events || Object(customEvents[this.name]);
             this.DB = null;
 
             // Initializing queries, events and classes

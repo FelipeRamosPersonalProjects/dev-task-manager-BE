@@ -101,6 +101,15 @@ module.exports = new Collection({
             }
         },
         {
+            fieldName: 'codeReview',
+            type: ObjectId,
+            ref: 'code_reviews',
+            refConfig: {
+                relatedField: 'comments',
+                type: 'array-oid'
+            }
+        },
+        {
             fieldName: 'thread',
             type: ObjectId,
             ref: 'threads',

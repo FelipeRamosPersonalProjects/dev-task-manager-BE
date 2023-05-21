@@ -103,6 +103,14 @@ module.exports = new Schema({
                 relatedField: 'ticket',
                 type: 'ObjectId'
             })
+        },
+        codeReviews: {
+            type: [ObjectId],
+            ref: 'code_reviews',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            })
         }
     }
 });

@@ -1,15 +1,15 @@
 const _Global = require('../maps/_Global');
-const User = require('./User');
-const Comment = require('./Comment');
-const Ticket = require('./Ticket');
-const Task = require('./Task');
-const FileChange = require('@services/GitHubAPI/FileChange');
 const CRUD = require('@CRUD');
 
 class PullRequest extends _Global {
     constructor(setup, parent){
         super({...setup, validationRules: 'pull_requests'}, parent);
         if (!setup || isObjectID(setup)) return;
+        const User = require('./User');
+        const Comment = require('./Comment');
+        const Ticket = require('./Ticket');
+        const Task = require('./Task');
+        const FileChange = require('@services/GitHubAPI/FileChange');
 
         const {
             owner,
@@ -46,13 +46,13 @@ class PullRequest extends _Global {
             this.base = base;
             this.labels = labels;
             this.bmConfigs = bmConfigs;
-            this.owner = !isObjectID(owner) ? new User(owner) : {};
-            this.fileChanges = !isObjectID(fileChanges) && fileChanges.map(change => new FileChange(change, this));
-            this.assignedUsers = !isObjectID(assignedUsers) && assignedUsers.map(user => new User(user));
-            this.reviewers = !isObjectID(reviewers) && reviewers.map(user => new User(user));
-            this.comments = !isObjectID(comments) && comments.map(comment => Comment(comment));
-            this.ticket = !isObjectID(ticket) ? new Ticket(ticket) : {};
-            this.task = !isObjectID(task) ? new Task(task) : {};
+            this.owner = owner && new User(owner.oid(true));
+            this.fileChanges = Array.isArray(fileChanges) && !fileChanges.oid() && fileChanges.map(change => new FileChange(change, this));
+            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user));
+            this.reviewers = Array.isArray(reviewers) && !reviewers.oid() && reviewers.map(user => new User(user));
+            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => Comment(comment));
+            this.ticket = ticket && new Ticket(ticket.oid(true));
+            this.task = task && new Task(task.oid(true));
             
             if (typeof description === 'string') {
                 this.description = description;
