@@ -10,6 +10,7 @@ const bodySchema = {
     data: { type: Object, required: true },
     options: { type: Object, default: {} } // Mongoose .save(options)
 };
+const schemas = require('@schemas');
 
 module.exports = async function (req, res) {
     try {
