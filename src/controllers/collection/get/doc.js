@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const models = require('../../../models');
+const models = require('@models');
 const GetDoc = models.routes.collection.GetDoc;
-const Request = require('../../../models/RequestAPI');
+const Request = require('@models/RequestAPI');
 const Response = GetDoc.response;
-const CRUD = require('../../../services/database/crud');
+const CRUD = require('@services/database/crud');
 
 const bodySchema = {
     collectionName: {

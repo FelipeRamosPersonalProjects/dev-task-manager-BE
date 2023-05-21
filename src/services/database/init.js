@@ -3,7 +3,7 @@ const configs = require('@config');
 let dbName = 'dev-desk';
 
 // Initializing collections
-const schemas = require('@schemas');
+require('@schemas');
 
 if (configs.mode === 'development') {
     dbName = 'dev-desk-development';
@@ -16,9 +16,6 @@ module.exports = new Promise((resolve, reject) => {
 
         // Globals
         global.initializedCollections = [];
-
-        
-
         resolve(connectedDB);
     }).catch(err=>{
         console.error('Ocorreu um erro ao conectar no banco de dados: ', JSON.stringify(err, null, 3));

@@ -2,6 +2,7 @@ const Schema = require('../models/SchemaDB');
 const queries = require('./queries');
 const events = require('./events');
 const { ObjectId } = Schema.mongoSchema.Types;
+const DiscoveryMap = require('@schemas/map/Discovery.map');
 
 module.exports = new Schema({
     name: 'tasks',
@@ -13,7 +14,7 @@ module.exports = new Schema({
             type: String,
             required: true,
             default: 'master-task',
-            enum: ['master-task', 'sub-task']
+            enum: ['master-task', 'sub-task', 'bug', 'discovery', 'code-review', 'development', 'validation']
         },
         isInternal: {
             type: Boolean,
@@ -141,6 +142,8 @@ module.exports = new Schema({
                 relatedField: 'tasks',
                 type: 'array-oid'
             })
-        }
+        },
+        
+        discovery: DiscoveryMap.toObject()
     }
 });
