@@ -7,7 +7,7 @@ module.exports = new Collection({
     displayName: 'Code Reviews',
     pluralLabel: 'Code Reviews',
     singularLabel: 'Code Review',
-    fields: [
+    fieldsSet: [
         {
             fieldName: 'status',
             type: String,
