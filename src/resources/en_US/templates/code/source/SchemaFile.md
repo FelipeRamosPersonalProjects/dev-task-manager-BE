@@ -7,5 +7,5 @@ module.exports = new Collection({
     displayName: '##{{displayName:string}}##',
     pluralLabel: '##{{pluralLabel:string}}##',
     singularLabel: '##{{singularLabel:string}}##',
-    fields: []
+    fieldsSet: []
 }).initSchema();

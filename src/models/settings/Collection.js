@@ -1,5 +1,6 @@
 const CollectionField = require('./CollectionField');
 const Schema = require('@models/SchemaDB');
+const Workflow = require('@models/settings/Workflow');
 
 /**
  * Represents a collection on the database.
@@ -16,11 +17,11 @@ class Collection {
      * @param {string} setup.displayName - The display name of the collection.
      * @param {string} setup.pluralLabel - The plural label of the collection.
      * @param {string} setup.singularLabel - The singular label of the collection.
-     * @param {CollectionField[]} setup.fields - The fields of the collection.
+     * @param {CollectionField[]} setup.fieldsSet - The fields of the collection.
      */
     constructor(setup) {
         try {
-            const { name, symbol, displayName, pluralLabel, singularLabel, fields, lastSync } = Object(setup);
+            const { name, symbol, displayName, pluralLabel, singularLabel, fieldsSet } = Object(setup);
 
             /**
              * The symbol of the collection.
@@ -53,16 +54,16 @@ class Collection {
             this.singularLabel = singularLabel;
 
             /**
-             * Last collection's config files sychronization.
-             * @type {Date|null} - Timestamp of last sync, or null, if is a new collection.
-             */
-            this.lastSync = lastSync;
-
-            /**
              * The fields of the collection.
              * @type {CollectionField[]}
              */
-            this.fields = fields.map(field => new CollectionField(field).toObject());
+            this.fieldsSet = fieldsSet.map(field => new CollectionField(field).toObject());
+
+            /**
+             * The collection's workflow to be used.
+             * @type {Workflow}
+             */
+            this.workflow = Workflow.loadWorkflow(this.name);
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -77,7 +78,7 @@ class Collection {
             schema: {}
         };
 
-        this.fields.map(field => {
+        this.fieldsSet.map(field => {
             result.schema[field.fieldName] = field;
         });
 

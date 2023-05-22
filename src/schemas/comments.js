@@ -7,7 +7,7 @@ module.exports = new Collection({
     displayName: 'Comments',
     pluralLabel: 'comments',
     singularLabel: 'comment',
-    fields: [
+    fieldsSet: [
         {
             fieldName: 'source',
             type: String,
