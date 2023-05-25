@@ -1,5 +1,5 @@
-const ticket = require('./ticket.workflow');
+const tickets = require('./tickets.workflow');
 
 module.exports = {
-    ticket
+    tickets
 };

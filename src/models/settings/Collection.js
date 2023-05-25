@@ -1,6 +1,5 @@
 const CollectionField = require('./CollectionField');
 const Schema = require('@models/SchemaDB');
-const Workflow = require('@models/settings/Workflow');
 
 /**
  * Represents a collection on the database.
@@ -25,45 +24,45 @@ class Collection {
 
             /**
              * The symbol of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.symbol = symbol;
 
             /**
              * The name of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.name = name;
 
             /**
              * The display name of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.displayName = displayName;
 
             /**
              * The plural label of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.pluralLabel = pluralLabel;
 
             /**
              * The singular label of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.singularLabel = singularLabel;
 
             /**
              * The fields of the collection.
-             * @type {CollectionField[]}
+             * @property {CollectionField[]}
              */
             this.fieldsSet = fieldsSet.map(field => new CollectionField(field).toObject());
 
             /**
              * The collection's workflow to be used.
-             * @type {Workflow}
+             * @property {Workflow}
              */
-            this.workflow = Workflow.loadWorkflow(this.name);
+            this.workflow = workflows[this.name];
         } catch (err) {
             throw new Error.Log(err);
         }

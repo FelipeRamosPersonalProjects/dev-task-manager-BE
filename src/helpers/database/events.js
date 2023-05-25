@@ -44,12 +44,23 @@ async function preUpdateOne(next) {
     }
 }
 
+async function postUpdateOne() {
+    try {
+        // const collection = this.collection.collectionName;
+        
+        debugger;
+    } catch (err) {
+        throw new Error.Log(err);
+    }
+}
+
 async function postSave() {
     try {
         const collection = this.collection.collectionName;
 
         if (collection !== config.database.counterCollection) {
             await relationalHelper.onCreate.call(this);
+            process.emit(`create:${collection}`, this);
         }
 
         return;
@@ -83,6 +94,7 @@ async function postDelete() {
 module.exports = {
     preSave,
     preUpdateOne,
+    postUpdateOne,
     postSave,
     preDelete,
     postDelete
