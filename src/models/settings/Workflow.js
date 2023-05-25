@@ -1,5 +1,5 @@
 const Status = require('@models/settings/Status');
-const workflows = require('@CONFIGS/workflows');
+const EventStd = require('@models/EventStd');
 
 /**
  * It's a setting model to configurate the collection's workflows.
@@ -11,24 +11,40 @@ class Workflow {
      * @param {Object} setup - The setup object.
      * @param {string} setup.workflowID - String with a identification for the workflow.
      * @param {string} setup.displayName - A name for the workflow to be displayed to the user.
+     * @param {EventStd[]} setup.workflowEvents - Array with the general workflow events.
      * @param {Status[]} setup.statuses - Array with the configurated Status class for the workflow.
      */
     constructor(setup) {
         try {
-            const { workflowID, displayName, statuses } = Object(setup);
-            
+            const { workflowID, displayName, workflowEvents, statuses } = Object(setup);
 
             /**
              * Identification for the workflow.
-             * @type {string}
+             * @property {string}
              */
             this.workflowID = workflowID;
 
             /**
              * A name for the workflow to be displayed to the user.
-             * @type {string}
+             * @property {string}
              */
             this.displayName = displayName;
+
+            /**
+             * Array with the configurated Status classes for the workflow.
+             * @property {Status[]}
+             */
+            this.statuses = [];
+
+            /**
+             * Array with the general workflow events.
+             * @property {EventStd[]}
+             */
+            this.workflowEvents = Array.isArray(workflowEvents) ? workflowEvents.map(event => new EventStd({
+                ...event,
+                name: `${event.name}:${this.workflowID}`,
+                target: this
+            })) : [];
 
             if (Array.isArray(statuses)) {
                 const currStatus = {};
@@ -40,28 +56,21 @@ class Workflow {
                             message: `The status "${item.statusID}" on the workflow "${this.workflowID}" is duplicated, the statuses ID should be unique.`
                         });
                     } else {
-                        currStatus[item.statusID] = item;
+                        currStatus[item.statusID] = true;
                     }
                 });
 
-                /**
-                 * Array with the configurated Status classes for the workflow.
-                 * @type {Status[]}
-                 */
-                this.statuses = Array.isArray(statuses) ? statuses.map(status => new Status(status)) : [];
+                this.statuses = statuses.map(status => new Status(status));
             }
-            // Adds the event listeners when it’s constructed
         } catch (err) {
             throw new Error.Log(err);
         }
     }
-
-    static loadWorkflow(workflowName) {
+    
+    addListeners() {
         try {
-            const workflow = workflows[workflowName];
-
-            if (!workflow) return null;
-            // Finish logic here
+            this.workflowEvents.map(event => event.add());
+            this.statuses.map(status => status.addListeners());
         } catch (err) {
             throw new Error.Log(err);
         }

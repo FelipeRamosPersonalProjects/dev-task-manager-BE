@@ -15,9 +15,9 @@ class XMLManager {
     async getParsedXML(path) {
         try {
             const stringFile = await this.getFile(path || this.fullPath);
-            const parsedXMl = await this.parseFile(stringFile);
+            const parsedXML = await this.parseFile(stringFile);
 
-            return parsedXMl;
+            return parsedXML;
         } catch(err) {
             return new Error.Log(err).append('services.XMLManager.loading_file').append('services.XMLManager.parsing_xml');
         }
@@ -68,7 +68,7 @@ class XMLManager {
                     return resolve(error);
                 }
               
-                console.log('Arquivo gravado com sucesso.');
+                console.log('File created with success!');
                 return resolve(xml);
             });
         })

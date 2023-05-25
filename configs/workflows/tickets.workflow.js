@@ -1,8 +1,20 @@
 const Workflow = require('@models/settings/Workflow');
 
 module.exports = new Workflow({
-    workflowID: 'comments',
-    displayName: 'Comments Workflow',
+    workflowID: 'tickets',
+    displayName: 'Tickets - Workflow',
+    workflowEvents: [
+        {
+            name: 'create',
+            handler: async function (docObj) {
+                try {
+                    debugger;
+                } catch (err) {
+                    throw new Error.Log(err);
+                }
+            }
+        }
+    ],
     statuses: [
         {
             statusID: 'TO-START',
