@@ -1,5 +1,5 @@
 const ajax = require('./ajax');
-const ResourceCenter = require('../resources/Resources');
+const Resource = require('../resources/Resources');
 const validation = require('../validation');
 const ErrorLog = require('../models/logs/ErrorLog');
 const configs = require('@config');
@@ -10,8 +10,11 @@ const utils = require('@UTILS');
 
 global.ajax = ajax;
 // Resources
-global.Resource = new ResourceCenter(configs.defaultLanguage);
+global.Resource = new Resource(configs.defaultLanguage);
 global.toolsCLI = toolsCLI;
+
+// Starting workflows
+global.workflows = require('@CONFIGS/workflows');
 
 // Declarations
 global.Error.Log = ErrorLog;

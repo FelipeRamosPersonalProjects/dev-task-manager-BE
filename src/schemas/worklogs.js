@@ -7,7 +7,7 @@ module.exports = new Collection({
     displayName: 'Worklogs',
     pluralLabel: 'worklogs',
     singularLabel: 'worklog',
-    fields: [
+    fieldsSet: [
         {
             type: String,
             fieldName: 'status',

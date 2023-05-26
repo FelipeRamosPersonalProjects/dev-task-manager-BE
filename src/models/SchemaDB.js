@@ -25,11 +25,11 @@ class SchemaDB {
             this.symbol = setup.symbol;
             
 
-            if (Array.isArray(setup.fields)) {
+            if (Array.isArray(setup.fieldsSet)) {
                 if (!setup.schema) setup.schema = {};
-                this.fields = setup.fields;
+                this.fieldsSet = setup.fieldsSet;
 
-                setup.fields.map(item => {
+                setup.fieldsSet.map(item => {
                     setup.schema[item.fieldName] = item;
                 });
             }
@@ -94,6 +94,7 @@ class SchemaDB {
             this.schema.pre('save', events.preSave);
             this.schema.post('save', events.postSave);
             this.schema.pre(['updateOne', 'findOneAndUpdate'], events.preUpdateOne);
+            this.schema.post(['updateOne', 'findOneAndUpdate'], events.postUpdateOne);
             this.schema.pre(['deleteOne', 'deleteMany'], events.preDelete);
             this.schema.post(['deleteOne', 'deleteMany'], events.postDelete);
 

@@ -16,53 +16,53 @@ class Collection {
      * @param {string} setup.displayName - The display name of the collection.
      * @param {string} setup.pluralLabel - The plural label of the collection.
      * @param {string} setup.singularLabel - The singular label of the collection.
-     * @param {CollectionField[]} setup.fields - The fields of the collection.
+     * @param {CollectionField[]} setup.fieldsSet - The fields of the collection.
      */
     constructor(setup) {
         try {
-            const { name, symbol, displayName, pluralLabel, singularLabel, fields, lastSync } = Object(setup);
+            const { name, symbol, displayName, pluralLabel, singularLabel, fieldsSet } = Object(setup);
 
             /**
              * The symbol of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.symbol = symbol;
 
             /**
              * The name of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.name = name;
 
             /**
              * The display name of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.displayName = displayName;
 
             /**
              * The plural label of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.pluralLabel = pluralLabel;
 
             /**
              * The singular label of the collection.
-             * @type {string}
+             * @property {string}
              */
             this.singularLabel = singularLabel;
 
             /**
-             * Last collection's config files sychronization.
-             * @type {Date|null} - Timestamp of last sync, or null, if is a new collection.
+             * The fields of the collection.
+             * @property {CollectionField[]}
              */
-            this.lastSync = lastSync;
+            this.fieldsSet = fieldsSet.map(field => new CollectionField(field).toObject());
 
             /**
-             * The fields of the collection.
-             * @type {CollectionField[]}
+             * The collection's workflow to be used.
+             * @property {Workflow}
              */
-            this.fields = fields.map(field => new CollectionField(field).toObject());
+            this.workflow = workflows[this.name];
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -77,7 +77,7 @@ class Collection {
             schema: {}
         };
 
-        this.fields.map(field => {
+        this.fieldsSet.map(field => {
             result.schema[field.fieldName] = field;
         });
 
