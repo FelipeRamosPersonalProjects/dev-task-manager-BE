@@ -10,7 +10,7 @@ class Sync {
         }
     }
 
-    async async() {
+    async fullSync() {
         try {
             return await this.gitHub.syncAll();
         } catch (err) {

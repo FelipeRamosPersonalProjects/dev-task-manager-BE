@@ -9,6 +9,7 @@
     "draft": "nodemon -r dotenv/config ./draft.js",
     "cli": "node -r dotenv/config ./cli-main.js",
     "cli-dev": "nodemon -r dotenv/config ./cli-main.js",
+    "sync": "node -r dotenv/config ./scripts/sync.js",
     "create-collection": "node -r dotenv/config ./scripts/createCollection"
   },
   "author": "Felipe Ramos",
