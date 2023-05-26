@@ -103,7 +103,7 @@ class SchemaDB {
             if (this.events.postSave) this.schema.post('save', this.events.postSave);
             if (this.events.preFindOne) this.schema.pre('findOne', this.events.preFindOne);
             if (this.events.postFindOne) this.schema.post('findOne', this.events.postFindOne);
-            if (this.events.preUpdateOne) this.schema.pre(['updateOne', 'findOneAndUpdate'], this.events.preUpdate);
+            if (this.events.preUpdate) this.schema.pre(['updateOne', 'findOneAndUpdate'], this.events.preUpdate);
             if (this.events.postUpdate) this.schema.post(['updateOne', 'findOneAndUpdate'], this.events.postUpdate);
         } catch(err) {
             throw new Error.Log(err).append('database.init_events');
