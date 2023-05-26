@@ -2,9 +2,7 @@ const ViewCLI = require('@CLI/ViewCLI');
 const HomeViewCLI = require('@CLI/views/home');
 const PoolForm = require('@CLI/PoolForm');
 const User = require('@models/collections/User');
-const FS = require('@services/FS');
 const authHelpers = require('@CLI/helpers/auth');
-const config = require('@config');
 
 async function AuthView({viewParams}) {
     const { token } = Object(viewParams);
