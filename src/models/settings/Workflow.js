@@ -1,5 +1,6 @@
 const Status = require('@models/settings/Status');
 const EventStd = require('@models/EventStd');
+const Collection = require('@Collection');
 
 /**
  * It's a setting model to configurate the collection's workflows.
@@ -13,16 +14,23 @@ class Workflow {
      * @param {string} setup.displayName - A name for the workflow to be displayed to the user.
      * @param {EventStd[]} setup.workflowEvents - Array with the general workflow events.
      * @param {Status[]} setup.statuses - Array with the configurated Status class for the workflow.
+     * @param {Collection} collection - The parent Collection of wrokflow.
      */
     constructor(setup) {
         try {
-            const { workflowID, displayName, workflowEvents, statuses } = Object(setup);
+            const { collection, workflowID, displayName, workflowEvents, statuses } = Object(setup);
+
+            /**
+             * The parent Collection of wrokflow.
+             * @property {Collection}
+             */
+            this.collection = collection;
 
             /**
              * Identification for the workflow.
              * @property {string}
              */
-            this.workflowID = workflowID;
+            this.workflowID = workflowID || collection;
 
             /**
              * A name for the workflow to be displayed to the user.
@@ -60,7 +68,7 @@ class Workflow {
                     }
                 });
 
-                this.statuses = statuses.map(status => new Status(status));
+                this.statuses = statuses.map(status => new Status(status, this));
             }
         } catch (err) {
             throw new Error.Log(err);

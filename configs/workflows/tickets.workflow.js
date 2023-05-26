@@ -1,12 +1,12 @@
 const Workflow = require('@models/settings/Workflow');
 
 module.exports = new Workflow({
-    workflowID: 'tickets',
+    collection: 'tickets',
     displayName: 'Tickets - Workflow',
     workflowEvents: [
         {
             name: 'create',
-            handler: async function (docObj) {
+            handler: async function (target) {
                 try {
                     debugger;
                 } catch (err) {
@@ -24,7 +24,17 @@ module.exports = new Workflow({
         {
             statusID: 'INVESTIGATING',
             displayName: 'Investigating',
-            next: 'ESTIMATION'
+            next: 'ESTIMATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        debugger;
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ESTIMATION',

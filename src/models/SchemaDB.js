@@ -94,6 +94,7 @@ class SchemaDB {
             this.schema.pre('save', events.preSave);
             this.schema.post('save', events.postSave);
             this.schema.pre(['updateOne', 'findOneAndUpdate'], events.preUpdateOne);
+            this.schema.post(['updateOne', 'findOneAndUpdate'], events.postUpdateOne);
             this.schema.pre(['deleteOne', 'deleteMany'], events.preDelete);
             this.schema.post(['deleteOne', 'deleteMany'], events.postDelete);
 
