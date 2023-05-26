@@ -1,4 +1,5 @@
 const EventStd = require('@models/EventStd');
+const Workflow = require('@models/settings/Workflow');
 
 /**
  * Model to set the a status configuration.
@@ -12,10 +13,17 @@ class Status {
      * @param {string} setup.displayName - A name for the workflow to be displayed to the user.
      * @param {string} setup.next - The next status ID on the flow.
      * @param {EventStd[]} setup.events - Array with the EventStd configured.
+     * @param {Workflow} workflow - The parent Workflow wrapping the Status.
      */
-    constructor(setup) {
+    constructor(setup, workflow) {
         try {
             const { statusID, displayName, next, events } = Object(setup);
+
+            /**
+             * The parent Workflow wrapping the Status.
+             * @property {Workflow}
+             */
+            this.workflow = workflow;
 
             /**
              * String with a identification for the Status.
@@ -39,7 +47,7 @@ class Status {
              * Array with the EventStd configured.
              * @property {EventStd[]}
              */
-            this.events = Array.isArray(events) ? events.map(ev => new EventStd(ev)) : [];
+            this.events = Array.isArray(events) ? events.map(ev => new EventStd({...ev, name: `status:${ev.name}:${this.workflow.collection}`})) : [];
         } catch (err) {
             throw new Error.Log(err);
         }
