@@ -13,6 +13,7 @@ class PullRequest extends _Global {
         const FileChange = require('@services/GitHubAPI/FileChange');
 
         const {
+            status,
             owner,
             name,
             head,
@@ -39,6 +40,7 @@ class PullRequest extends _Global {
             this.gitHubPR = gitHubPR;
             this.name = name;
             this.remoteID = remoteID;
+            this.status = status;
             this.prStage = prStage;
             this.isCurrentVersion = isCurrentVersion;
             this.version = version;
