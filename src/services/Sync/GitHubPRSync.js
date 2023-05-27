@@ -41,24 +41,40 @@ class GitHubPRSync extends GitHubConnection {
             
             for (let item of this.opened) {
                 const currentRemote = this.remote.find(remote => item.gitHubPR.number === remote.number);
+                let prHasChanges = false;
 
-                if (currentRemote && JSON.stringify(currentRemote) !== JSON.stringify(item.gitHubPR)) {
-                    item.gitHubPR = currentRemote;
-
-                    const updateQuery = item.updateDB({
-                        collectionName: 'pull_requests',
-                        data: { gitHubPR: currentRemote }
-                    });
-
-                    calls.push(updateQuery);
-                }
-                
                 const saved = await item.updateReviewComments();
                 if (saved instanceof Error.Log) {
                     throw new Error(saved);
                 }
 
-                
+                if (currentRemote && JSON.stringify(currentRemote) !== JSON.stringify(item.gitHubPR)) {
+                    item.gitHubPR = currentRemote;
+                    prHasChanges = true;
+                }
+
+                if (currentRemote.merged) {
+                    item.prStage = 'merged';
+                    prHasChanges = true;
+                }
+
+                if (item.status !== currentRemote.state.toUpperCase()){
+                    item.status = currentRemote.state.toUpperCase();
+                    prHasChanges = true;
+                }
+
+                if (prHasChanges) {
+                    const updateQuery = item.updateDB({
+                        collectionName: 'pull_requests',
+                        data: {
+                            status: item.status,
+                            prStage: item.prStage,
+                            gitHubPR: item.gitHubPR
+                        }
+                    });
+    
+                    calls.push(updateQuery);
+                }
             }
 
             return Promise.all(calls);
