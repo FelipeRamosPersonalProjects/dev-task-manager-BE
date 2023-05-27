@@ -21,7 +21,7 @@ module.exports = new Schema({
         },
         status: {
             type: String,
-            default: 'OPENED',
+            default: 'OPEN',
             enum: ['OPEN', 'CLOSED']
         },
         prStage: {
