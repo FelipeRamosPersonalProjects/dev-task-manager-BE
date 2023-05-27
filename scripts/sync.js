@@ -17,7 +17,12 @@ require('@services/database/init').then(async (response) => {
     if (await auth.isAuthenticated(token)) {
         const sync = new Sync();
         const synced = await sync.fullSync();
-        debugger;
+
+        synced.data.pullRequestSync.map(pr => {
+            toolsCLI.print(pr.displayName, 'SYNC');
+        });
+        
+        return synced;
     } else {
         await new CLI({
             startView: 'user/authView',

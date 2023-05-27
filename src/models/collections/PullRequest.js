@@ -149,7 +149,7 @@ class PullRequest extends _Global {
         }
     }
 
-    async updateReviewComments(internalComment) {
+    async updateReviewComments(internalPR) {
         try {
             const remoteComments = await this.repoManager.ajax(this.gitHubPR.review_comments_url, null, {rawURL: true});
             const toSave = [];
@@ -166,7 +166,11 @@ class PullRequest extends _Global {
                         pullRequest: this._id
                     }));
                 } else {
-                    toSave.push(Comment.updateFromGitHubPR({ 'gitHub.id': comment.id }, comment));
+                    const internalComment = internalPR.comments.find(item => item.gitHubID === comment.id);
+
+                    if (JSON.stringify(internalComment.gitHub) !== JSON.stringify(comment)) {
+                        toSave.push(Comment.updateFromGitHubPR({ 'gitHub.id': comment.id }, comment));
+                    }
                 }
             }
 

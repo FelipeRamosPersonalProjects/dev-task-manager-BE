@@ -55,6 +55,10 @@ class Comment extends _Global {
         }
     }
 
+    get gitHubID() {
+        return this.gitHub.id;
+    }
+
     static async updateFromGitHubPR(filter, gitHubData) {
         const { body } = Object(gitHubData);
 
