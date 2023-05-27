@@ -109,9 +109,9 @@ class User extends _Global {
         try {
             const prs = await CRUD.query({collectionName: 'pull_requests', filter: {
                 assignedUsers: { $in: [this._id]},
-                $nor: [
-                    {prStage: 'aborted' },
-                    {prStage: 'merged' }
+                $or: [
+                    { status: 'OPEN' },
+                    { status: undefined }
                 ]
             }}).defaultPopulate();
 

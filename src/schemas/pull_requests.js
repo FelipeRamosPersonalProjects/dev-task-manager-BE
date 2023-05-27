@@ -19,6 +19,11 @@ module.exports = new Schema({
         remoteID: {
             type: String
         },
+        status: {
+            type: String,
+            default: 'OPENED',
+            enum: ['OPEN', 'CLOSED']
+        },
         prStage: {
             type: String,
             required: true,
