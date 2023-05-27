@@ -1,21 +1,22 @@
 const mongoose = require('mongoose');
-const configs = require('../../../config.json');
-let dbName = 'dev-desk';
+const Configs = require('@config');
+let dbName = 'dev-desk-development';
 
 // Initializing collections
-require('../../schemas');
+const schemas = require('@schemas');
 
-if (configs.mode === 'development') {
-    dbName = 'dev-desk-development';
+if (Configs.mode === 'production') {
+    dbName = 'dev-desk';
 }
 
 module.exports = new Promise((resolve, reject) => {
     mongoose.set('strictQuery', false);
     mongoose.connect('mongodb://localhost:27017/', {useNewUrlParser: true, useUnifiedTopology: true, dbName }).then(connectedDB=>{
         console.log('>> Banco de dados conectado em: mongodb://localhost:27017/\n');
+
         // Globals
         global.initializedCollections = [];
-        resolve(connectedDB)
+        resolve(connectedDB);
     }).catch(err=>{
         console.error('Ocorreu um erro ao conectar no banco de dados: ', JSON.stringify(err, null, 3));
         reject(err);

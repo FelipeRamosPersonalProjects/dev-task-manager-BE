@@ -2,15 +2,21 @@ const ViewCLI = require('@CLI/ViewCLI');
 const HomeViewCLI = require('@CLI/views/home');
 const PoolForm = require('@CLI/PoolForm');
 const User = require('@models/collections/User');
-const FS = require('@services/FS');
 const authHelpers = require('@CLI/helpers/auth');
-const config = require('@config');
+const Sync = require('@services/Sync');
 
 async function AuthView({viewParams}) {
-    const { token } = Object(viewParams);
+    const { token, redirectTo } = Object(viewParams);
     const isAuthenticated = await authHelpers.isAuthenticated(token);
 
     if (isAuthenticated) {
+        const sync = new Sync();
+        const syncComplete = await sync.fullSync({ skipAuth: true });
+    
+        if (syncComplete instanceof Error.Log) {
+            throw syncComplete;
+        }
+
         return HomeViewCLI.call(this);
     } else {
         return new ViewCLI({
@@ -66,7 +72,11 @@ async function AuthView({viewParams}) {
 
                                     const sessionCreated = await authHelpers.createUserCLISession(user);
                                     if (sessionCreated.success) {
-                                        return await ev.redirectTo('home');
+                                        if (!redirectTo) {
+                                            return process.kill(process.pid);
+                                        }
+
+                                        return await ev.redirectTo(redirectTo);
                                     } else {
                                         printError(sessionCreated);
                                         return await ev.goNext('userName');

@@ -86,7 +86,7 @@ module.exports = new Schema({
         myReviews: {
             type: [ObjectId],
             default: [],
-            ref: 'pull_requests',
+            ref: 'code_reviews',
             refConfig: new Schema.RefConfig({
                 relatedField: 'reviewers',
                 type: 'array-oid'
@@ -101,12 +101,12 @@ module.exports = new Schema({
                 type: 'array-oid'
             })
         },
-        comments: {
+        myComments: {
             type: [ObjectId],
             default: [],
             ref: 'comments',
             refConfig: new Schema.RefConfig({
-                relatedField: 'user',
+                relatedField: 'author',
                 type: 'ObjectId'
             })
         },

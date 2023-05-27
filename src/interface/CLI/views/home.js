@@ -1,16 +1,20 @@
 const ViewCLI = require('../ViewCLI');
 const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
 const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
+const HomeContent = require('@CLI/templates/content/Home');
+const User = require('@models/collections/User');
 
 async function HomeView() {
-    const headerDescription = new StringTemplateBuilder()
-        .text(`It's an application to automate and help the developer in organization and procedures such as:`)
-        .newLine()
-        .indent().text(`Pull Requests, Reviews, Testing Steps, etc.`)
-    .end();
+    const user = await User.getMyUser();
+    const openedPRs = await user.loadOpenedPRs();
     const templateInit = new DashedHeaderLayout({
         headerText: 'DevDESK CLI - Home',
-        headerDescription
+        headerDescription: new StringTemplateBuilder()
+            .text(`It's an application to automate and help the developer in organization and procedures such as:`)
+            .newLine()
+            .indent().text(`Pull Requests, Reviews, Testing Steps, etc.`)
+        .end(),
+        Content: new HomeContent({ openedPRs })
     }, this);
 
     return new ViewCLI({

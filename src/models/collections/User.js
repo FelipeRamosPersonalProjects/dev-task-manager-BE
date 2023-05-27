@@ -34,7 +34,7 @@ class User extends _Global {
             myPullRequests,
             myReviews,
             pullRequestsAssigned,
-            comments,
+            myComments,
             gitHub
         } = Object(setup);
 
@@ -42,7 +42,6 @@ class User extends _Global {
             this.collectionName = 'users';
             this.userName = userName;
             this.displayName = `${firstName} ${lastName} (${email})`;
-            this.fullName = fullName;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
@@ -54,7 +53,7 @@ class User extends _Global {
             this.myPullRequests = isCompleteDoc(myPullRequests) && myPullRequests.map(item => new PullRequest(item));
             this.myReviews = isCompleteDoc(myReviews) && myReviews.map(item => new User(item));
             this.pullRequestsAssigned = isCompleteDoc(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
-            this.comments = isCompleteDoc(comments) && comments.map(item => new Comment(item));
+            this.myComments = isCompleteDoc(myComments) && myComments.map(item => new Comment(item));
             this.gitHub = gitHub;
             
             this.gitHubConnection = new GitHubConnection({ userName: this.getSafe('gitHub.login') });
@@ -63,6 +62,10 @@ class User extends _Global {
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'User');
         }
+    }
+
+    get fullName() {
+        return (this.firstName || '') + (this.lastName ? ' ' : '') + (this.lastName || '');
     }
 
     get auth() {
@@ -107,8 +110,7 @@ class User extends _Global {
             const prs = await CRUD.query({collectionName: 'pull_requests', filter: {
                 assignedUsers: { $in: [this._id]},
                 $nor: [
-                    {prStage: 'aborted' },
-                    {prStage: 'merged' }
+                    { status: 'CLOSED' }
                 ]
             }}).defaultPopulate();
 

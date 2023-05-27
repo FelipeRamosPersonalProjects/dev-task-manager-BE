@@ -1,8 +1,8 @@
-const models = require('../../models');
-const services = require('../../services');
+const models = require('@models');
+const services = require('@services');
 const CRUD = services.database.crud;
 const routeModels = models.routes.collection.Create;
-const Request = require('../../models/RequestAPI');
+const Request = require('@models/RequestAPI');
 const Response = routeModels.response;
 
 const bodySchema = {
@@ -10,6 +10,7 @@ const bodySchema = {
     data: { type: Object, required: true },
     options: { type: Object, default: {} } // Mongoose .save(options)
 };
+const schemas = require('@schemas');
 
 module.exports = async function (req, res) {
     try {

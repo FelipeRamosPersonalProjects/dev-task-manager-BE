@@ -43,7 +43,7 @@ async function createUserCLISession(user) {
             expiration: Date.now() + 86400000
         }
 
-        const sessionCreated = await FS.writeFile(sessionPath, session);
+        const sessionCreated = await FS.writeJSON(sessionPath, session);
         if (sessionCreated instanceof Error.Log) {
             throw sessionCreated;
         }

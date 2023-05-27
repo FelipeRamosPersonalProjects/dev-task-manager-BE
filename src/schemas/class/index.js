@@ -1,33 +1,39 @@
 const GlobalClass = require('./GlobalClass');
-const logs = require('./LogsClass');
 const auth_buckets = require('./AuthBucketsClass');
 const users = require('./UsersClass');
-const space_desks = require('./SpaceDesksClass');
-const organizations = require('./OrganizationsClass');
-const tickets = require('./TicketsClass');
-const comments = require('./CommentsClass');
-const projects = require('./ProjectsClass');
-const pull_requests = require('./PullRequestsClass');
 const repos = require('./ReposClass');
+const projects = require('./ProjectsClass');
+const tickets = require('./TicketsClass');
+const tasks = require('./TasksClass');
+const pull_requests = require('./PullRequestsClass');
+const comments = require('./CommentsClass');
 const components = require('./ComponentsClass');
 const estimations = require('./EstimationsClass');
-const tasks = require('./TasksClass');
 const stashes = require('./StashesClass');
+const space_desks = require('./SpaceDesksClass');
+const organizations = require('./OrganizationsClass');
+const logs = require('./LogsClass');
+const threads = require('./ThreadsClass');
+const worklogs = require('./WorklogsClass');
+const code_reviews = require('./CodeReviewsClass');
 
 module.exports = {
     GlobalClass,
-    logs,
-    space_desks,
-    organizations,
-    tickets,
-    comments,
-    projects,
-    pull_requests,
+    auth_buckets,
+    users,
     repos,
+    projects,
+    tickets,
+    tasks,
+    pull_requests,
+    comments,
     components,
     estimations,
-    tasks,
     stashes,
-    auth_buckets,
-    users
+    space_desks,
+    organizations,
+    logs,
+    threads,
+    worklogs,
+    code_reviews
 };

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const models = require('../../../models');
-const CRUD = require('../../../services/database/crud');
+const models = require('@models');
+const CRUD = require('@services/database/crud');
 const GetQueryCollection = models.routes.collection.GetQueryCollection;
-const Request = require('../../../models/RequestAPI');
+const Request = require('@models/RequestAPI');
 const Response = GetQueryCollection.response;
 
 const bodySchema = {
@@ -14,7 +14,6 @@ const bodySchema = {
         type: mongoose.SchemaTypes.Mixed
     },
     options: {
-        default: {},
         type: {
             paginate: { type: Object, default: {} },
             populate: { type: Boolean, default: {} },
@@ -28,7 +27,7 @@ module.exports = async function (req, res) {
     try {
         const request = new Request(req, bodySchema);
         const body = request.getBody();
-        const {paginate, populate, readable, select} = body.options || {};
+        const {paginate, populate, readable, select} = Object(body.options);
         const query = CRUD.query(body);
         let result;
 

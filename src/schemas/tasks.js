@@ -2,6 +2,10 @@ const Schema = require('../models/SchemaDB');
 const queries = require('./queries');
 const events = require('./events');
 const { ObjectId } = Schema.mongoSchema.Types;
+const DiscoveryTask = require('@src/schemas/map/Discovery.task');
+const DevelopmentTask = require('@src/schemas/map/Development.task');
+const ValidationTask = require('@src/schemas/map/Validation.task');
+const TODOReminderTask = require('@src/schemas/map/TODOReminder.task');
 
 module.exports = new Schema({
     name: 'tasks',
@@ -13,7 +17,7 @@ module.exports = new Schema({
             type: String,
             required: true,
             default: 'master-task',
-            enum: ['master-task', 'sub-task']
+            enum: ['master-task', 'sub-task', 'bug', 'discovery', 'code-review', 'development', 'validation']
         },
         isInternal: {
             type: Boolean,
@@ -141,6 +145,20 @@ module.exports = new Schema({
                 relatedField: 'tasks',
                 type: 'array-oid'
             })
-        }
+        },
+        codeReviews: {
+            type: [ObjectId],
+            default: [],
+            ref: 'code_reviews',
+            refConfig: new Schema.RefConfig({
+                relatedField: 'devTask',
+                type: 'ObjectId'
+            })
+        },
+        
+        discoveries: DiscoveryTask.toObject(),
+        developments: DevelopmentTask.toObject(),
+        validations: ValidationTask.toObject(),
+        todoReminders: TODOReminderTask.toObject()
     }
 });

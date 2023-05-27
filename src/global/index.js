@@ -1,8 +1,8 @@
 const ajax = require('./ajax');
-const ResourceCenter = require('../resources/Resources');
+const Resource = require('../resources/Resources');
 const validation = require('../validation');
 const ErrorLog = require('../models/logs/ErrorLog');
-const configs = require('../../config.json');
+const configs = require('@config');
 const ToolsCLI = require('../interface/CLI/ToolsCLI');
 const toolsCLI = new ToolsCLI();
 const Success = require('@SUCCESS');
@@ -10,8 +10,11 @@ const utils = require('@UTILS');
 
 global.ajax = ajax;
 // Resources
-global.Resource = new ResourceCenter(configs.defaultLanguage);
+global.Resource = new Resource(configs.defaultLanguage);
 global.toolsCLI = toolsCLI;
+
+// Starting workflows
+global.workflows = require('@CONFIGS/workflows');
 
 // Declarations
 global.Error.Log = ErrorLog;
@@ -46,6 +49,10 @@ Object.prototype.toSuccess = function(message) {
  */
 Object.prototype.getSafe = function(path, obj) {
     return utils.getObjectPath(obj || this, path);
+}
+
+String.prototype.toCamelCase = function() {
+    return this.valueOf().replace(/[-_ ](.)/g, (_, char) => char.toUpperCase()).replace(/^(.)/, (_, char) => char.toUpperCase());
 }
 
 global.isObjectID = validation.base.ValidationBase.isObjectID;

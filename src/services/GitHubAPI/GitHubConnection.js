@@ -1,31 +1,28 @@
-const config = require('../../../config.json');
+const Config = require('@config');
 const GitHubUser = require('./GitHubUser');
 const AuthService = require('@services/Auth');
 
 class GitHubConnection extends GitHubUser {
-    constructor (setup = {
-        userName: '',
-        organization: ''
-    }) {
+    constructor (setup) {
         super(setup);
-        const User = require('@models/collections/User');
         const { userName, organization } = Object(setup);
-
-        this.getGITHUB_USER_TOKEN = () => {
-            const authService = new AuthService();
-            const raw = User.userSession();
-            const parsed = authService.validateToken(raw.gitHubToken);
-
-            return parsed;
-        };
 
         this.userName = userName;
         this.organization = organization || userName;
-        this.repoHostURL = config.github.apiHostURL;
+        this.repoHostURL = Config.github.apiHostURL;
     }
 
     get GITHUB_USER_TOKEN() {
-        return this.getGITHUB_USER_TOKEN();
+        return this.getGitHubToken();
+    }
+
+    getGitHubToken() {
+        const User = require('@models/collections/User');
+        const authService = new AuthService();
+        const raw = User.userSession();
+        const parsed = authService.validateToken(raw.gitHubToken);
+
+        return parsed;
     }
 
     buildURL(path, raw) {

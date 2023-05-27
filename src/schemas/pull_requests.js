@@ -19,6 +19,11 @@ module.exports = new Schema({
         remoteID: {
             type: String
         },
+        status: {
+            type: String,
+            default: 'OPEN',
+            enum: ['OPEN', 'CLOSED', 'CHANGES-REQUESTED']
+        },
         prStage: {
             type: String,
             required: true,
@@ -70,13 +75,13 @@ module.exports = new Schema({
                 type: 'array-oid'
             })
         },
-        reviewers: {
+        codeReviews: {
             type: [ObjectId],
             default: [],
-            ref: 'users',
+            ref: 'code_reviews',
             refConfig: new Schema.RefConfig({
-                relatedField: 'myReviews',
-                type: 'array-oid'
+                relatedField: 'pull_request',
+                type: 'ObjectId'
             })
         },
         labels: {

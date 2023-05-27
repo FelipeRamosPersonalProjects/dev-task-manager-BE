@@ -1,5 +1,5 @@
 const StringTemplateBuilder = require('@STRING');
-const config = require('../../../config.json');
+const config = require('@config');
 
 class ToolsCLI {
     constructor() {
@@ -16,7 +16,7 @@ class ToolsCLI {
 
     printTemplate(stringContent) {
         if (typeof stringContent === 'string') {
-            console.log(`\n${stringContent || ''}`);
+            console.log(`${stringContent || ''}`);
         }
     }
 
