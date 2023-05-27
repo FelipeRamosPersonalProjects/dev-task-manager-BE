@@ -109,9 +109,8 @@ class User extends _Global {
         try {
             const prs = await CRUD.query({collectionName: 'pull_requests', filter: {
                 assignedUsers: { $in: [this._id]},
-                $or: [
-                    { status: 'OPEN' },
-                    { status: undefined }
+                $nor: [
+                    { status: 'CLOSED' }
                 ]
             }}).defaultPopulate();
 

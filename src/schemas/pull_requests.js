@@ -22,7 +22,7 @@ module.exports = new Schema({
         status: {
             type: String,
             default: 'OPEN',
-            enum: ['OPEN', 'CLOSED']
+            enum: ['OPEN', 'CLOSED', 'CHANGES-REQUESTED']
         },
         prStage: {
             type: String,

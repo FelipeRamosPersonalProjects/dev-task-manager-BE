@@ -43,9 +43,20 @@ class GitHubPRSync extends GitHubConnection {
                 const currentRemote = this.remote.find(remote => item.gitHubPR.number === remote.number);
                 let prHasChanges = false;
 
-                const saved = await item.updateReviewComments();
+                if (item.status !== currentRemote.state.toUpperCase()){
+                    item.status = currentRemote.state.toUpperCase();
+                    prHasChanges = true;
+                }
+
+                const saved = await item.updateReviewComments(item);
                 if (saved instanceof Error.Log) {
                     throw new Error(saved);
+                }
+
+                if (saved.length) {
+                    item.status = 'CHANGES-REQUESTED';
+                    item.prStage = 'pendingChanges';
+                    prHasChanges = true;
                 }
 
                 if (currentRemote && JSON.stringify(currentRemote) !== JSON.stringify(item.gitHubPR)) {
@@ -53,13 +64,13 @@ class GitHubPRSync extends GitHubConnection {
                     prHasChanges = true;
                 }
 
-                if (currentRemote.merged) {
+                if (currentRemote.merged && currentRemote.state === 'closed') {
                     item.prStage = 'merged';
                     prHasChanges = true;
                 }
 
-                if (item.status !== currentRemote.state.toUpperCase()){
-                    item.status = currentRemote.state.toUpperCase();
+                if (!currentRemote.merged && currentRemote.state === 'closed') {
+                    item.prStage = 'aborted';
                     prHasChanges = true;
                 }
 
