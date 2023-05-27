@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const configs = require('@config');
-let dbName = 'dev-desk';
+const Configs = require('@config');
+let dbName = 'dev-desk-development';
 
 // Initializing collections
-require('@schemas');
+const schemas = require('@schemas');
 
-if (configs.mode === 'development') {
-    dbName = 'dev-desk-development';
+if (Configs.mode === 'production') {
+    dbName = 'dev-desk';
 }
 
 module.exports = new Promise((resolve, reject) => {

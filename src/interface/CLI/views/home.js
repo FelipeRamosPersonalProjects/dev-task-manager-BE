@@ -1,6 +1,7 @@
 const ViewCLI = require('../ViewCLI');
 const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
 const StringTemplateBuilder = require('@interface/StringTemplateBuilder');
+const Sync = require('@services/Sync');
 
 async function HomeView() {
     const headerDescription = new StringTemplateBuilder()
@@ -12,6 +13,13 @@ async function HomeView() {
         headerText: 'DevDESK CLI - Home',
         headerDescription
     }, this);
+
+    const sync = new Sync();
+    const syncComplete = await sync.fullSync();
+
+    if (syncComplete instanceof Error.Log) {
+        throw syncComplete;
+    }
 
     return new ViewCLI({
         name: 'home',
