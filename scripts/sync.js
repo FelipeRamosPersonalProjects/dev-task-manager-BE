@@ -21,7 +21,7 @@ require('@services/database/init').then(async (response) => {
     } else {
         await new CLI({
             startView: 'user/authView',
-            startViewParams: { token, redirectTo: '' }
+            startViewParams: { token }
         }).init();
     }
 });

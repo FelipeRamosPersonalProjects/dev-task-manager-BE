@@ -22,32 +22,8 @@ module.exports = new Collection({
             enum: ['STANDARD', 'PR', 'REPLY', 'NOTE']
         },
         {
-            fieldName: 'sourceID',
-            type: Number
-        },
-        {
-            fieldName: 'nodeID',
-            type: String
-        },
-        {
-            fieldName: 'diffHunk',
-            type: String
-        },
-        {
-            fieldName: 'filePath',
-            type: String
-        },
-        {
             fieldName: 'body',
             type: String
-        },
-        {
-            fieldName: 'sourceCreatedAt',
-            type: Date
-        },
-        {
-            fieldName: 'sourceUpdatedAt',
-            type: Date
         },
         {
             fieldName: 'author',
@@ -126,6 +102,10 @@ module.exports = new Collection({
                 relatedField: 'children',
                 type: 'array-oid'
             }
+        },
+        {
+            fieldName: 'gitHub',
+            type: Object
         }
     ]
 }).initSchema();
