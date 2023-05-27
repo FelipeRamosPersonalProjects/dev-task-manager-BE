@@ -42,7 +42,6 @@ class User extends _Global {
             this.collectionName = 'users';
             this.userName = userName;
             this.displayName = `${firstName} ${lastName} (${email})`;
-            this.fullName = fullName;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
@@ -63,6 +62,10 @@ class User extends _Global {
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'User');
         }
+    }
+
+    get fullName() {
+        return (this.firstName || '') + (this.lastName ? ' ' : '') + (this.lastName || '');
     }
 
     get auth() {

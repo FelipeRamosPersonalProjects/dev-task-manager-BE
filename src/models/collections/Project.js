@@ -22,7 +22,7 @@ class Project extends _Global {
             this.tasks = !isObjectID(tasks) ? tasks.map(task => new Task(task)) : [];
             this.repos = !isObjectID(repos) ? repos.map(repo => new Repo(repo)) : [];
             this.spaceDesk = !isObjectID(spaceDesk) ? new SpaceDesk(spaceDesk) : {};
-            this.templates = !isObjectID(templates) && !isObjectID(spaceDesk) ? new TemplateOptions({...templates, ...spaceDesk.templates}) : {};
+            this.templates = !isObjectID(templates) && !isObjectID(spaceDesk) ? new TemplateOptions({...templates, ...(Object(spaceDesk).templates)}) : {};
             this.baseBranch = baseBranch;
 
             this.placeDefault();

@@ -1,12 +1,13 @@
 const _Global = require('../maps/_Global');
+const Comment = require('./Comment');
 const CRUD = require('@CRUD');
+const dbHelpers = require('@helpers/database/dbHelpers');
 
 class PullRequest extends _Global {
     constructor(setup, parent){
         super({...setup, validationRules: 'pull_requests'}, parent);
         if (!setup || isObjectID(setup)) return;
         const User = require('./User');
-        const Comment = require('./Comment');
         const Ticket = require('./Ticket');
         const Task = require('./Task');
         const FileChange = require('@services/GitHubAPI/FileChange');
@@ -50,9 +51,9 @@ class PullRequest extends _Global {
             this.fileChanges = Array.isArray(fileChanges) && !fileChanges.oid() && fileChanges.map(change => new FileChange(change, this));
             this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user));
             this.reviewers = Array.isArray(reviewers) && !reviewers.oid() && reviewers.map(user => new User(user));
-            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => Comment(comment));
-            this.ticket = ticket && new Ticket(ticket.oid(true));
-            this.task = task && new Task(task.oid(true));
+            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment));
+            this.ticket = !Object(ticket).oid() && new Ticket(ticket);
+            this.task = !Object(task).oid() && new Task(task);
             
             if (typeof description === 'string') {
                 this.description = description;
@@ -76,7 +77,7 @@ class PullRequest extends _Global {
     }
 
     get repoManager() {
-        return this.repo && this.repo.repoManager;
+        return this.task && this.task.repo.repoManager;
     }
 
     get repo() {
@@ -143,6 +144,33 @@ class PullRequest extends _Global {
             }
 
             return this;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async updateReviewComments(internalComment) {
+        try {
+            const remoteComments = await this.repoManager.ajax(this.gitHubPR.review_comments_url, null, {rawURL: true});
+            const toSave = [];
+
+            
+            for (let comment of remoteComments) {
+                const isExist = await dbHelpers.isDocExist('comments', { 'gitHub.id': comment.id });
+
+                if (!isExist) {
+                    toSave.push(Comment.createFromGitHubPR({
+                        data: comment,
+                        ticket: this.ticket._id,
+                        task: this.task._id,
+                        pullRequest: this._id
+                    }));
+                } else {
+                    toSave.push(Comment.updateFromGitHubPR({ 'gitHub.id': comment.id }, comment));
+                }
+            }
+
+            return Promise.all(toSave);
         } catch (err) {
             throw new Error.Log(err);
         }

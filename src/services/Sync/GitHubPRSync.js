@@ -37,19 +37,31 @@ class GitHubPRSync extends GitHubConnection {
     async sync() {
         try {
             await this.init();
-            const success = [];
+            const calls = [];
             
             for (let item of this.opened) {
-                const currentRemote = this.remote.find(remo => item.gitHubPR.number === remo.number);
+                const currentRemote = this.remote.find(remote => item.gitHubPR.number === remote.number);
 
                 if (currentRemote && JSON.stringify(currentRemote) !== JSON.stringify(item.gitHubPR)) {
-                    success.push(item.updateDB({collectionName: 'pull_requests', data: {
-                        gitHubPR: currentRemote
-                    }}));
+                    item.gitHubPR = currentRemote;
+
+                    const updateQuery = item.updateDB({
+                        collectionName: 'pull_requests',
+                        data: { gitHubPR: currentRemote }
+                    });
+
+                    calls.push(updateQuery);
                 }
+                
+                const saved = await item.updateReviewComments();
+                if (saved instanceof Error.Log) {
+                    throw new Error(saved);
+                }
+
+                
             }
 
-            return Promise.all(success);
+            return Promise.all(calls);
         } catch (err) {
             throw new Error.Log(err);
         }

@@ -13,6 +13,14 @@ class GitHubUserSync extends GitHubConnection {
         }
     }
 
+    get internalUser() {
+        return this.internal && this.internal.userName;
+    }
+
+    get remoteUser() {
+        return this.remote && this.remote.login;
+    }
+
     async init() {
         try {
             if (!this.internal || !this.remote) {

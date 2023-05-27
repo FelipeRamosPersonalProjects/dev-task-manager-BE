@@ -5,7 +5,7 @@ const User = require('@models/collections/User');
 const authHelpers = require('@CLI/helpers/auth');
 
 async function AuthView({viewParams}) {
-    const { token } = Object(viewParams);
+    const { token, redirectTo } = Object(viewParams);
     const isAuthenticated = await authHelpers.isAuthenticated(token);
 
     if (isAuthenticated) {
@@ -64,7 +64,11 @@ async function AuthView({viewParams}) {
 
                                     const sessionCreated = await authHelpers.createUserCLISession(user);
                                     if (sessionCreated.success) {
-                                        return await ev.redirectTo('home');
+                                        if (!redirectTo) {
+                                            return process.kill(process.pid);
+                                        }
+
+                                        return await ev.redirectTo(redirectTo);
                                     } else {
                                         printError(sessionCreated);
                                         return await ev.goNext('userName');
