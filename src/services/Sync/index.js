@@ -14,14 +14,16 @@ class Sync {
         }
     }
 
-    async fullSync() {
+    async fullSync(params) {
+        const { skipAuth } = Object(params);
+
         try {
             const isSessionExist = FS.isExist(Config.sessionPath);
             const session = Object(isSessionExist && require('@SESSION_CLI'));
             const currentUser = session.currentUser;
             const token = currentUser && session[currentUser] && session[currentUser].token;
         
-            if (await auth.isAuthenticated(token)) {
+            if (skipAuth || await auth.isAuthenticated(token)) {
                 return await this.gitHub.syncAll();
             } else {
                 return await new CLI({
