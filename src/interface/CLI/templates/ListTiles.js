@@ -7,9 +7,7 @@ class ListTilesTemplate extends Component {
     }
 
     constructor(settings) {
-        super(settings, {
-            items: { type: [Object], default: [] }
-        });
+        super(settings);
 
         const { items, types } = new Object(settings || {});
 

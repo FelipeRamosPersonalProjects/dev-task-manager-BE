@@ -3,12 +3,20 @@ const HomeViewCLI = require('@CLI/views/home');
 const PoolForm = require('@CLI/PoolForm');
 const User = require('@models/collections/User');
 const authHelpers = require('@CLI/helpers/auth');
+const Sync = require('@services/Sync');
 
 async function AuthView({viewParams}) {
     const { token, redirectTo } = Object(viewParams);
     const isAuthenticated = await authHelpers.isAuthenticated(token);
 
     if (isAuthenticated) {
+        const sync = new Sync();
+        const syncComplete = await sync.fullSync({ skipAuth: true });
+    
+        if (syncComplete instanceof Error.Log) {
+            throw syncComplete;
+        }
+
         return HomeViewCLI.call(this);
     } else {
         return new ViewCLI({
