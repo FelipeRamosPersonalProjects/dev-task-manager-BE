@@ -1,32 +1,30 @@
 require('module-alias/register');
 require('@global');
 
-const auth = require('@CLI/helpers/auth');
-const Sync = require('@services/Sync');
-const FS = require('@services/FS');
-const Config = require('@config');
-const CLI = require('@interface/CLI');
-
 // Initializing MongoDB
-require('@services/database/init').then(async (response) => {
-    const isSessionExist = FS.isExist(Config.sessionPath);
-    const session = Object(isSessionExist && require('@SESSION_CLI'));
-    const currentUser = session.currentUser;
-    const token = currentUser && session[currentUser] && session[currentUser].token;
+require('@services/database/init').then(async () => {
+    const Sync = require('@services/Sync');
 
-    if (await auth.isAuthenticated(token)) {
+    try {
         const sync = new Sync();
         const synced = await sync.fullSync();
+
+        if (synced instanceof Error.Log) {
+            throw synced;
+        }
 
         synced.data.pullRequestSync.map(pr => {
             toolsCLI.print(pr.displayName, 'SYNC');
         });
-        
-        return synced;
-    } else {
-        await new CLI({
-            startView: 'user/authView',
-            startViewParams: { token }
-        }).init();
+
+        if (!synced.data.pullRequestSync.length) {
+            toolsCLI.print('\nYour opened pull requests are up to date!\n\n', 'SYNC');
+        }
+
+        process.exit();
+    } catch (err) {
+        throw new Error.Log(err);
     }
+}).catch(err => {
+    throw new Error.Log(err);
 });

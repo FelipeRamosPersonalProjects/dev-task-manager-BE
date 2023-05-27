@@ -131,7 +131,7 @@ class Task extends _Global {
 
     get prInProgress() {
         const currentPR = this.pullRequests && this.pullRequests.filter(pull => {
-            return pull.isCurrentVersion && pull.prStage !== 'published' && pull.prStage !== 'aborted';
+            return pull.isCurrentVersion && pull.status !== 'CLOSED';
         });
 
         return currentPR;
@@ -207,7 +207,7 @@ class Task extends _Global {
         try {
             const isExistentPR = this.pullRequests.find(pr => [
                 (pr.isCurrentVersion === true),
-                ((pr.prStage !== 'published') && (pr.prStage !== 'aborted'))
+                (pr.status !== 'CLOSED')
             ].every(item => item));
             const user = await this.getCurrentUser();
 
