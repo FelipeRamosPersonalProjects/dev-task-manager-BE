@@ -37,7 +37,7 @@ module.exports = new Collection({
             required: true
         },
         {
-            fieldName: 'fsdfdsgsfd',
+            fieldName: 'phone',
             type: String
         },
         {

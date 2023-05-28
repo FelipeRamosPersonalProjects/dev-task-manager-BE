@@ -77,7 +77,7 @@ class CollectionField {
              * The configuration for related fields with other collections.
              * @type {SchemaRefConfig}
              */
-            if (refConfig) this.refConfig = new SchemaRefConfig(Object(refConfig));
+            if (refConfig) this.refConfig = new SchemaRefConfig(refConfig);
 
             /**
              * If a function was provided, it will axecute the function runtime, and the default will be the result of the function.
