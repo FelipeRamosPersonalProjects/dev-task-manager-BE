@@ -1,12 +1,13 @@
 const CollectionField = require('./CollectionField');
-const Schema = require('@models/SchemaDB');
+const SchemaDB = require('@models/SchemaDB');
 
 /**
  * Represents a collection on the database.
- * @module Collection
+ * @class Collection
+ * @extends SchemaDB
  */
-class Collection extends Schema {
-    static Types = Schema.mongoSchema.Types;
+class Collection extends SchemaDB {
+    static Types = SchemaDB.mongoSchema.Types;
     
     /**
      * Creates a new instance of the Collection class.
@@ -64,7 +65,7 @@ class Collection extends Schema {
              * The fields of the collection.
              * @property {CollectionField[]}
              */
-            this.fieldsSet = fieldsSet.map(field => new CollectionField(field).toObject());
+            this.fieldsSet = Array.isArray(fieldsSet) && fieldsSet.map(field => new CollectionField(field).toObject()) || [];
 
             /**
              * The collection's workflow to be used.
