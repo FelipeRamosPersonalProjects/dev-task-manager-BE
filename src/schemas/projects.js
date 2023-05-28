@@ -1,70 +1,80 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 const TemplateOptionsMap = require('./map/TemplatesOptions');
-const queries = require('@schemas/queries');
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'projects',
     symbol: 'PRJ',
-    queries: queries.projects,
-    schema: {
-        projectName: {
+    displayName: 'Projects',
+    pluralLabel: 'Projects',
+    singularLabel: 'Project',
+    fieldsSet: [
+        {
+            fieldName: 'projectName',
             type: String,
             required: true
         },
-        description: {
+        {
+            fieldName: 'description',
             type: String
         },
-        urls: {
+        {
+            fieldName: 'urls',
             type: Array,
             default: []
         },
-        tickets: {
+        {
+            fieldName: 'tickets',
             type: [ObjectId],
             default: [],
             ref: 'tickets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'project',
                 type: 'ObjectId'
-            })
+            }
         },
-        tasks: {
+        {
+            fieldName: 'tasks',
             type: [ObjectId],
             default: [],
             ref: 'tasks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'project',
                 type: 'ObjectId'
-            })
+            }
         },
-        repos: {
+        {
+            fieldName: 'repos',
             type: [ObjectId],
             default: [],
             ref: 'repos',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'projects',
                 type: 'array-oid'
-            })
+            }
         },
-        spaceDesk: {
+        {
+            fieldName: 'spaceDesk',
             type: ObjectId,
             ref: 'space_desks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'projects',
                 type: 'array-oid'
-            })
+            }
         },
-        organization: {
+        {
+            fieldName: 'organization',
             type: ObjectId,
             ref: 'organizations',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'projects',
                 type: 'array-oid'
-            })
+            }
         },
-        templates: {
+        {
+            fieldName: 'templates',
             type: TemplateOptionsMap,
             default: {}
         }
-    }
+    ]
 });

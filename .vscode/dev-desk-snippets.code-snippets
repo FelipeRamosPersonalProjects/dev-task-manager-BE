@@ -43,31 +43,6 @@
 		],
 		"description": "This is a snippet to create Views to CLI."
 	},
-	"Create new function for BotStore": {
-		"prefix": "BotStoreFunction",
-		"body": [
-			"async function ${1:nameOfTheFunctionFunction}() {",
-			"    try {",
-			"        ",
-			"    } catch (err) {",
-			"        throw new Error.Log(err);",
-			"    }",
-			"}",
-			"",
-			"${1:nameOfTheFunctionFunction}.configs = {",
-			"    title: '${2:Name of the indicator}',",
-			"    categories: [${6:'category1', 'category2'}],",
-			"    options: {",
-			"        ${3:param1}: { type: ${4:Type}, default: ${5:'defaultValue'} }",
-			"    },",
-			"    returns: ['${7:boolean}']",
-			"};",
-			"",
-			"module.exports = ${1:nameOfThefunctionFunction};",
-			""
-		],
-		"description": "Create a new function function for the BotStore project."
-	},
 	"Create new question for PoolForm": {
 		"prefix": "CreateQuestionPoolForm",
 		"body": [
@@ -133,5 +108,22 @@
 			"const CRUD = require('@CRUD');"
 		],
 		"description": "Import database CRUD."
+	},
+	"Create Collection": {
+		"prefix": "CreateCollection",
+		"body": [
+			"const Collection = require('@Collection');",
+			"const { ObjectId } = Collection.Types;",
+			"",
+			"module.exports = new Collection({",
+				"\tname: '${1:schema_name}',",
+				"\tsymbol: '${2:SYMBOL}',",
+				"\tdisplayName: '${3:Display Name}s',",
+				"\tpluralLabel: '${3:Plural Name}s',",
+				"\tsingularLabel: '${3:Singular Name}',",
+				"\tfieldsSet: [${4:}]",
+			"});"
+		],
+		"description": "To create a collection model schema."
 	}
 }

@@ -1,37 +1,44 @@
-const Schema = require('@models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
-const events = require('./events/auth_buckets_events');
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'auth_buckets',
     symbol: 'AUTH',
-    events,
-    schema: {
-        rule: {
+    displayName: 'Auth Butckets',
+    pluralLabel: 'Auth Butckets',
+    singularLabel: 'Auth Butcket',
+    fieldsSet: [
+        {
+            fieldName: 'rule',
             type: String,
             default: 'incognito',
             enum: ['incognito', 'client', 'admin', 'manager', 'master']
         },
-        password: {
+        {
+            fieldName: 'password',
             type: Buffer
         },
-        gitHubToken: {
+        {
+            fieldName: 'gitHubToken',
             type: Buffer
         },
-        jiraToken: {
+        {
+            fieldName: 'jiraToken',
             type: Buffer
         },
-        openAIToken: {
+        {
+            fieldName: 'openAIToken',
             type: Buffer
         },
-        user: {
+        {
+            fieldName: 'user',
             type: ObjectId,
             required: true,
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'auth',
                 type: 'ObjectId'
-            })
+            }
         }
-    }
+    ]
 });

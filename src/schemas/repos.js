@@ -1,80 +1,93 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
-const queries = require('./queries');
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'repos',
     symbol: 'REPO',
-    queries: queries.repos,
-    schema: {
-        nodeVersion: {
+    displayName: 'Repositiries',
+    pluralLabel: 'Repositiries',
+    singularLabel: 'Repositiry',
+    fieldsSet: [
+        {
+            fieldName: 'nodeVersion',
             type: String
         },
-        baseBranch: {
+        {
+            fieldName: 'baseBranch',
             type: String
         },
-        repoName: {
+        {
+            fieldName: 'repoName',
             type: String
         },
-        repoPath: {
+        {
+            fieldName: 'repoPath',
             type: String
         },
-        localPath: {
+        {
+            fieldName: 'localPath',
             type: String
         },
-        url: {
+        {
+            fieldName: 'url',
             type: String,
             required: true
         },
-        owner: {
+        {
+            fieldName: 'owner',
             type: ObjectId,
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'repos',
                 type: 'array-oid'
-            })
+            }
         },
-        collaborators: {
+        {
+            fieldName: 'collaborators',
             type: [ObjectId],
             default: [],
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'repos',
                 type: 'array-oid'
-            })
+            }
         },
-        organization: {
+        {
+            fieldName: 'organization',
             type: ObjectId,
             ref: 'organizations',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'repos',
                 type: 'array-oid'
-            })
+            }
         },
-        projects: {
+        {
+            fieldName: 'projects',
             type: [ObjectId],
             default: [],
             ref: 'projects',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'repos',
                 type: 'array-oid'
-            })
+            }
         },
-        stashes: {
+        {
+            fieldName: 'stashes',
             type: [ObjectId],
             ref: 'stashes',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'repo',
                 type: 'ObjectId'
-            })
+            }
         },
-        pullRequests: {
+        {
+            fieldName: 'pullRequests',
             type: [ObjectId],
             ref: 'pull_requests',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'repo',
                 type: 'ObjectId'
-            })
+            }
         }
-    }
+    ]
 });

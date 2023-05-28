@@ -1,40 +1,47 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'organizations',
     symbol: 'ORG',
-    schema: {
-        name: {
+    displayName: 'Organizations',
+    pluralLabel: 'Organizations',
+    singularLabel: 'Organization',
+    fieldsSet: [
+        {
+            fieldName: 'name',
             type: String,
             required: true
         },
-        owner: {
+        {
+            fieldName: 'owner',
             type: ObjectId,
             required: true,
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'myOrganizations',
                 type: 'array-oid'
-            })
+            }
         },
-        repos: {
+        {
+            fieldName: 'repos',
             type: [ObjectId],
             default: [],
             ref: 'repos',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'organization',
                 type: 'ObjectId'
-            })
+            }
         },
-        projects: {
+        {
+            fieldName: 'projects',
             type: [ObjectId],
             default: [],
             ref: 'projects',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'organization',
                 type: 'ObjectId'
-            })
+            }
         }
-    }
+    ]
 });

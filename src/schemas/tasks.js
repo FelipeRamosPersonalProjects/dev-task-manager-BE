@@ -1,164 +1,193 @@
-const Schema = require('../models/SchemaDB');
-const queries = require('./queries');
-const events = require('./events');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
 const DiscoveryTask = require('@src/schemas/map/Discovery.task');
 const DevelopmentTask = require('@src/schemas/map/Development.task');
 const ValidationTask = require('@src/schemas/map/Validation.task');
 const TODOReminderTask = require('@src/schemas/map/TODOReminder.task');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'tasks',
     symbol: 'TSK',
-    queries: queries.tasks,
-    events: events.tasks,
-    schema: {
-        taskType: {
+    displayName: 'Tasks',
+    pluralLabel: 'Tasks',
+    singularLabel: 'Task',
+    fieldsSet: [
+        {
+            fieldName: 'taskType',
             type: String,
             required: true,
             default: 'master-task',
-            enum: ['master-task', 'sub-task', 'bug', 'discovery', 'code-review', 'development', 'validation']
+            enum: [
+                'master-task',
+                'sub-task',
+                'bug',
+                'discovery',
+                'code-review',
+                'development',
+                'validation'
+            ]
         },
-        isInternal: {
+        {
+            fieldName: 'isInternal',
             type: Boolean,
             require: true,
             default: false
         },
-        source: {
+        {
+            fieldName: 'source',
             type: String,
             default: 'jira',
             enum: ['jira', 'github']
         },
-        taskVersion: {
+        {
+            fieldName: 'taskVersion',
             type: Number,
             default: 1
         },
-        taskName: {
+        {
+            fieldName: 'taskName',
             type: String,
             required: true
         },
-        taskID: {
+        {
+            fieldName: 'taskID',
             type: String,
             immutable: true,
             unique: true
         },
-        taskURL: {
+        {
+            fieldName: 'taskURL',
             type: String,
             required: true,
             immutable: true,
             unique: true
         },
-        description: {
+        {
+            fieldName: 'description',
             type: String
         },
-        parentTask: {
+        {
+            fieldName: 'parentTask',
             type: ObjectId,
             ref: 'tasks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'subTasks',
                 type: 'array-oid'
-            })
+            }
         },
-        subTasks: {
+        {
+            fieldName: 'subTasks',
             type: [ObjectId],
             ref: 'tasks',
             default: [],
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'parentTask',
                 type: 'ObjectId'
-            })
+            }
         },
-        project: {
+        {
+            fieldName: 'project',
             type: ObjectId,
             ref: 'projects',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'tasks',
                 type: 'array-oid'
-            })
+            }
         },
-        assignedUsers: {
+        {
+            fieldName: 'assignedUsers',
             type: [ObjectId],
             default: [],
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'tasks',
                 type: 'array-oid'
-            })
+            }
         },
-        ticket: {
+        {
+            fieldName: 'ticket',
             type: ObjectId,
             ref: 'tickets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'tasks',
                 type: 'array-oid'
-            })
+            }
         },
-        dueDate: {
+        {
+            fieldName: 'dueDate',
             type: Date
         },
-        estimations: {
+        {
+            fieldName: 'estimations',
             type: [ObjectId],
             default: [],
             ref: 'estimations',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 type: 'ObjectId',
                 relatedField: 'task'
-            })
+            }
         },
-        sharedWith: {
+        {
+            fieldName: 'sharedWith',
             type: String
         },
-        pullRequests: {
+        {
+            fieldName: 'pullRequests',
             type: [ObjectId],
             default: [],
             ref: 'pull_requests',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'task',
                 type: 'ObjectId'
-            })
+            }
         },
-        comments: {
+        {
+            fieldName: 'comments',
             type: [ObjectId],
             default: [],
             ref: 'comments',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'task',
                 type: 'ObjectId'
-            })
+            }
         },
-        configs: {
+        {
+            fieldName: 'configs',
             type: [Object],
             default: []
         },
-        stashes: {
+        {
+            fieldName: 'stashes',
             type: [ObjectId],
             ref: 'stashes',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'task',
                 type: 'ObjectId'
-            })
+            }
         },
-        repo: {
+        {
+            fieldName: 'repo',
             type: ObjectId,
             ref: 'repos',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'tasks',
                 type: 'array-oid'
-            })
+            }
         },
-        codeReviews: {
+        {
+            fieldName: 'codeReviews',
             type: [ObjectId],
             default: [],
             ref: 'code_reviews',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'devTask',
                 type: 'ObjectId'
-            })
+            }
         },
         
-        discoveries: DiscoveryTask.toObject(),
-        developments: DevelopmentTask.toObject(),
-        validations: ValidationTask.toObject(),
-        todoReminders: TODOReminderTask.toObject()
-    }
+        DiscoveryTask.toObject(),
+        DevelopmentTask.toObject(),
+        ValidationTask.toObject(),
+        TODOReminderTask.toObject()
+    ]
 });

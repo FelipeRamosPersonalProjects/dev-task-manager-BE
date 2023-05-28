@@ -1,30 +1,30 @@
-const Schema = require('@models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
-const queries = require('@schemas/queries');
-const events = require('@schemas/events');
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'threads',
     symbol: 'THRD',
-    queries: queries.threads,
-    events: events.threads,
-    schema: {
-        parentComment: {
+    displayName: 'Threads',
+    pluralLabel: 'Threads',
+    singularLabel: 'Thread',
+    fieldsSet: [
+        {
+            fieldName: 'parentComment',
             type: ObjectId,
             ref: 'comment',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'thread',
                 type: 'ObjectId'
-            })
+            }
         },
-        children: {
+        {
+            fieldName: 'children',
             type: [ObjectId],
             ref: 'comment',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'parentThread',
                 type: 'ObjectId'
-            })
+            }
         }
-    }
+    ]
 });
-

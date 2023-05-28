@@ -7,7 +7,6 @@ const tickets = require('./tickets');
 const tasks = require('./tasks');
 const pull_requests = require('./pull_requests');
 const comments = require('./comments');
-const components = require('./components');
 const estimations = require('./estimations');
 const stashes = require('./stashes');
 const space_desks = require('./space_desks');
@@ -27,7 +26,6 @@ module.exports = {
     tasks,
     pull_requests,
     comments,
-    components,
     estimations,
     stashes,
     space_desks,

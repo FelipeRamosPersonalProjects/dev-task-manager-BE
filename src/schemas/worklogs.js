@@ -37,4 +37,4 @@ module.exports = new Collection({
             type: [Logstamp.toObject()]
         }
     ]
-}).initSchema();
+});

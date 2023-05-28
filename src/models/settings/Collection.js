@@ -5,7 +5,7 @@ const Schema = require('@models/SchemaDB');
  * Represents a collection on the database.
  * @module Collection
  */
-class Collection {
+class Collection extends Schema {
     static Types = Schema.mongoSchema.Types;
     
     /**
@@ -19,8 +19,10 @@ class Collection {
      * @param {CollectionField[]} setup.fieldsSet - The fields of the collection.
      */
     constructor(setup) {
+        super(setup);
+
         try {
-            const { name, symbol, displayName, pluralLabel, singularLabel, fieldsSet } = Object(setup);
+            const { name, symbol, displayName, pluralLabel, singularLabel, excludeGlobals, fieldsSet } = Object(setup);
 
             /**
              * The symbol of the collection.
@@ -53,6 +55,12 @@ class Collection {
             this.singularLabel = singularLabel;
 
             /**
+             * Globals to be excluded from the collection
+             * @property {string[]}
+             */
+            this.excludeGlobals = excludeGlobals;
+
+            /**
              * The fields of the collection.
              * @property {CollectionField[]}
              */
@@ -69,32 +77,6 @@ class Collection {
     }
 
     static Types = Schema.mongoSchema.Types;
-
-    initSchema() {
-        const result = {
-            name: this.name,
-            symbol: this.symbol,
-            schema: {}
-        };
-
-        this.fieldsSet.map(field => {
-            result.schema[field.fieldName] = field;
-        });
-
-        try {
-            return new Schema(result);
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-    
-    async syncCollection() {
-        try {
-            
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
 }
 
 module.exports = Collection;
