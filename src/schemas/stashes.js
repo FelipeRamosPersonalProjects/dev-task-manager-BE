@@ -1,62 +1,72 @@
-const Schema = require('@models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
-const queries = require('@schemas/queries/stashes_query');
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'stashes',
     symbol: 'STSH',
-    queries,
-    schema: {
-        author: {
+    displayName: 'Stashs',
+    pluralLabel: 'Stashs',
+    singularLabel: 'Stash',
+    fieldsSet: [
+        {
+            fieldName: 'author',
             type: ObjectId,
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'stashes',
                 type: 'array-oid'
-            })
+            }
         },
-        type: {
+        {
+            fieldName: 'type',
             type: String,
             required: true,
             enum: ['draft', 'bring', 'temp', 'backup', 'stash', 'stash-backup']
         },
-        title: {
+        {
+            fieldName: 'title',
             type: String
         },
-        description: {
+        {
+            fieldName: 'description',
             type: String
         },
-        branch: {
+        {
+            fieldName: 'branch',
             type: String,
             required: true
         },
-        task: {
+        {
+            fieldName: 'task',
             type: ObjectId,
             ref: 'tasks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'stashes',
                 type: 'array-oid'
-            })
+            }
         },
-        ticket: {
+        {
+            fieldName: 'ticket',
             type: ObjectId,
             ref: 'tickets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'stashes',
                 type: 'array-oid'
-            })
+            }
         },
-        repo: {
+        {
+            fieldName: 'repo',
             type: ObjectId,
             ref: 'repos',
             required: true,
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'stashes',
                 type: 'array-oid'
-            })
+            }
         },
-        backupFolder: {
+        {
+            fieldName: 'backupFolder',
             type: String
         }
-    }
+    ]
 });

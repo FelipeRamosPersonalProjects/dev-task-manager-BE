@@ -35,7 +35,6 @@ class SchemaDB {
             }
 
             this.schema = new mongoose.Schema({...getGlobalSchema(setup.excludeGlobals), ...setup.schema});
-            this.links = setup.links || {};
             this.queries = setup.queries || Object(customQueries[this.name]);
             this.events = setup.events || Object(customEvents[this.name]);
             this.DB = null;

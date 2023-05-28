@@ -1,51 +1,64 @@
-const Schema = require('../models/SchemaDB');
-const SchemaTypes = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'logs',
     symbol: 'LG',
-    schema: {
-        type: {
-            type: SchemaTypes.String,
+    displayName: 'Logs',
+    pluralLabel: 'Logs',
+    singularLabel: 'Log',
+    fieldsSet: [
+        {
+            fieldName: 'type',
+            type: String,
             required: true,
             default: 'log',
             enum: ['log', 'warn', 'error']
         },
-        read: {
-            type: SchemaTypes.Boolean,
+        {
+            fieldName: 'read',
+            type: Boolean,
             default: false
         },
-        name: {
-            type: SchemaTypes.String,
+        {
+            fieldName: 'name',
+            type: String,
             default: 'UnkownError'
         },
-        code: {
-            type: SchemaTypes.String
+        {
+            fieldName: 'code',
+            type: String
         },
-        groupedLogs: {
-            type: SchemaTypes.Number,
+        {
+            fieldName: 'groupedLogs',
+            type: Number,
             default: 0
         },
-        resource: {
-            type: SchemaTypes.String
+        {
+            fieldName: 'resource',
+            type: String
         },
-        message: {
-            type: SchemaTypes.String, 
+        {
+            fieldName: 'message',
+            type: String, 
             default: ''
         },
-        stack: {
-            type: SchemaTypes.String,
+        {
+            fieldName: 'stack',
+            type: String,
             default: ''
         },
-        errorList: {
-            type: SchemaTypes.String
+        {
+            fieldName: 'errorList',
+            type: String
         },
-        validationErrors: {
-            type: SchemaTypes.String
+        {
+            fieldName: 'validationErrors',
+            type: String
         },
-        additionalData: {
-            type: SchemaTypes.String,
+        {
+            fieldName: 'additionalData',
+            type: String,
             default: '{}'
         }
-    }
+    ]
 });

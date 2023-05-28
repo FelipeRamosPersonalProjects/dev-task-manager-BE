@@ -1,131 +1,147 @@
-const Schema = require('../models/SchemaDB');
-const events = require('./events');
-const queries = require('./queries');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'users',
     symbol: 'U',
-    events: events.users,
-    queries: queries.users,
-    schema: {
-        auth: {
+    displayName: 'Users',
+    pluralLabel: 'Users',
+    singularLabel: 'User',
+    fieldsSet: [
+        {
+            fieldName: 'auth',
             type: ObjectId,
             ref: 'auth_buckets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'user',
                 type: 'ObjectId'
-            })
+            }
         },
-        userName: {
+        {
+            fieldName: 'userName',
             type: String
         },
-        firstName: {
+        {
+            fieldName: 'firstName',
             type: String,
             required: true
         },
-        lastName: {
+        {
+            fieldName: 'lastName',
             type: String,
             required: true
         },
-        email: {
+        {
+            fieldName: 'email',
             type: String,
             required: true
         },
-        phone: {
+        {
+            fieldName: 'fsdfdsgsfd',
             type: String
         },
-        gitHub: {
+        {
+            fieldName: 'gitHub',
             type: Object
         },
-        repos: {
+        {
+            fieldName: 'repos',
             type: [ObjectId],
             default: [],
             ref: 'repos',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'owner',
                 type: 'ObjectId'
-            })
+            }
         },
-        spaceDesks: {
+        {
+            fieldName: 'spaceDesks',
             type: [ObjectId],
             default: [],
             ref: 'space_desks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'owner',
                 type: 'ObjectId'
-            })
+            }
         },
-        tickets: {
+        {
+            fieldName: 'tickets',
             type: [ObjectId],
             default: [],
             ref: 'tickets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'assignedUsers',
                 type: 'array-oid'
-            })
+            }
         },
-        tasks: {
+        {
+            fieldName: 'tasks',
             type: [ObjectId],
             default: [],
             ref: 'tasks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'assignedUsers',
                 type: 'array-oid'
-            })
+            }
         },
-        myPullRequests: {
+        {
+            fieldName: 'myPullRequests',
             type: [ObjectId],
             default: [],
             ref: 'pull_requests',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'owner',
                 type: 'ObjectId'
-            })
+            }
         },
-        myReviews: {
+        {
+            fieldName: 'myReviews',
             type: [ObjectId],
             default: [],
             ref: 'code_reviews',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'reviewers',
                 type: 'array-oid'
-            })
+            }
         },
-        pullRequestsAssigned: {
+        {
+            fieldName: 'pullRequestsAssigned',
             type: [ObjectId],
             default: [],
             ref: 'pull_requests',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'assignedUsers',
                 type: 'array-oid'
-            })
+            }
         },
-        myComments: {
+        {
+            fieldName: 'myComments',
             type: [ObjectId],
             default: [],
             ref: 'comments',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'author',
                 type: 'ObjectId'
-            })
+            }
         },
-        myOrganizations: {
+        {
+            fieldName: 'myOrganizations',
             type: [ObjectId],
             default: [],
             ref: 'organizations',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'owner',
                 type: 'ObjectId'
-            })
+            }
         },
-        stashes: {
+        {
+            fieldName: 'stashes',
             type: [ObjectId],
             ref: 'stashes',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'author',
                 type: 'ObjectId'
-            })
+            }
         }
-    }
+    ]
 });

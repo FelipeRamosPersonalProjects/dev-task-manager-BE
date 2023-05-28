@@ -108,4 +108,4 @@ module.exports = new Collection({
             type: Object
         }
     ]
-}).initSchema();
+});

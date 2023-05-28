@@ -1,37 +1,44 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'estimations',
     symbol: 'ESTM',
-    schema: {
-        type: {
+    displayName: 'Estimations',
+    pluralLabel: 'Estimations',
+    singularLabel: 'Estimation',
+    fieldsSet: [
+        {
+            fieldName: 'type',
             type: String,
             required: true,
             enum: ['FE', 'BE', 'QA']
         },
-        timeAmount: {
+        {
+            fieldName: 'timeAmount',
             type: Number,
             required: true,
             min: 0
         },
-        ticket: {
+        {
+            fieldName: 'ticket',
             type: ObjectId,
             required: true,
             ref: 'tickets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 type: 'array-oid',
                 relatedField: 'estimations'
-            })
+            }
         },
-        task: {
+        {
+            fieldName: 'task',
             type: ObjectId,
             required: true,
             ref: 'task',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 type: 'array-oid',
                 relatedField: 'estimations'
-            })
+            }
         }
-    }
+    ]
 });

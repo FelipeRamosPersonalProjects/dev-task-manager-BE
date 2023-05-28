@@ -26,7 +26,7 @@ class DiscoveryTask {
     };
 
     static toObject() {
-        return {...this};
+        return Object.keys(this).map(item => ({...this[item], fieldName: item}));
     }
 }
 

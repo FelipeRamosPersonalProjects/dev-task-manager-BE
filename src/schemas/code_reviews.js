@@ -67,4 +67,4 @@ module.exports = new Collection({
             }
         }
     ]
-}).initSchema();
+});
