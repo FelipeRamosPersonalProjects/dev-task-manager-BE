@@ -13,6 +13,7 @@ const FS = require('@services/FS');
 const config = require('@config');
 const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
 const GitHubConnection = require('@services/GitHubAPI/GitHubConnection');
+const crypto = require('crypto');
 
 class User extends _Global {
     constructor(setup){
@@ -109,9 +110,7 @@ class User extends _Global {
         try {
             const prs = await CRUD.query({collectionName: 'pull_requests', filter: {
                 assignedUsers: { $in: [this._id]},
-                $nor: [
-                    { status: 'CLOSED' }
-                ]
+                $nor: [{ status: 'CLOSED' }]
             }}).defaultPopulate();
 
             if (prs instanceof Error.Log) {
@@ -128,6 +127,24 @@ class User extends _Global {
         try {
             const signedOut = await this.authService.signOut(this.userSession.token);
             return signedOut;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    static async addPreUser(data) {
+        const { firstName, lastName, email, phone, gitHubUser, slackName } = Object(data);
+
+        try {
+            const toSave = {
+                firstName,
+                lastName,
+                email,
+                phone,
+                slackName,
+                password: crypto.randomBytes(4)
+            };
+            debugger;
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -194,9 +211,10 @@ class User extends _Global {
         }
     }
 
-    static async create(setup) {
+    static async create(setup, options) {
         try {
-            const { userName, email, password } = Object(setup);
+            const { userName, email, password, gitHubUser } = Object(setup);
+            const { preventSignIn } = Object(options);
 
             // Check if the userName or email (that can be an userName) is already in use
             const isExist = await this.isExist(userName || email);
@@ -210,8 +228,12 @@ class User extends _Global {
                 throw newUser;
             }
 
-            const signedIn = await this.signIn(newUser.userName, password);
-            return new Success(signedIn);
+            if (!preventSignIn) {
+                const signedIn = await this.signIn(newUser.userName, password);
+                return Object(signedIn).toSuccess();
+            }
+
+            return Object().toSuccess();
         } catch (err) {
             throw new Error.Log(err);
         }

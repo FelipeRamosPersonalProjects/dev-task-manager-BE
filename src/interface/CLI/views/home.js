@@ -47,8 +47,8 @@ async function HomeView() {
                 targetView: 'menus/repoManager'
             },
             {
-                title: 'My User             ',
-                description: 'Manage your user: edit, open or delete.',
+                title: 'Users               ',
+                description: 'Manage your user: edit, open or delete. Manage other users.',
                 targetView: 'menus/user'
             }
         ]}

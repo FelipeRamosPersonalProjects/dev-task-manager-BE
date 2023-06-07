@@ -59,6 +59,10 @@ class QuestionModel {
         return this.ctrl() || {};
     }
 
+    get poolData() {
+        return this.getSafe('parentPool.values');
+    }
+
     async redirectTo(path, timeout) {
         try {
             return await new Promise((resolve, reject) => {

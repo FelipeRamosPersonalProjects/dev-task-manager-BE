@@ -31,9 +31,12 @@ class AuthBucket extends _Global {
     }
 
     static async draft(user) {
+        let gitHubUserData;
+
         try {
             const auth = await CRUD.create('auth_buckets', {
                 user: user.id,
+                rule: user.raw.rule,
                 password: user.raw.password,
                 gitHubToken: user.raw.gitHubToken
             });

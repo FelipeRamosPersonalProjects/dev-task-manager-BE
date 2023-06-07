@@ -18,6 +18,10 @@ module.exports = new Collection({
             }
         },
         {
+            fieldName: 'slackName',
+            type: String
+        },
+        {
             fieldName: 'userName',
             type: String
         },

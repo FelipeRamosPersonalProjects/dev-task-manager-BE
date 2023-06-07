@@ -77,7 +77,7 @@ class Collection extends SchemaDB {
         }
     }
 
-    static Types = Schema.mongoSchema.Types;
+    static Types = SchemaDB.mongoSchema.Types;
 }
 
 module.exports = Collection;
