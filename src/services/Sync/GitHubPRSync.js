@@ -43,7 +43,7 @@ class GitHubPRSync extends GitHubConnection {
                 const currentRemote = this.remote.find(remote => item.gitHubPR.number === remote.number);
                 let prHasChanges = false;
 
-                if (item.status !== currentRemote.state.toUpperCase()){
+                if (currentRemote && item.status !== currentRemote.state.toUpperCase()){
                     item.status = currentRemote.state.toUpperCase();
                     prHasChanges = true;
                 }

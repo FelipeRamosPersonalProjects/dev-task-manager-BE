@@ -30,7 +30,7 @@ class GitHubConnection extends GitHubUser {
     }
 
     async ajax(path, data, options) {
-        let {method, rawURL} = Object(options);
+        let {method, rawURL, noToken} = Object(options);
         const url = this.buildURL(path, rawURL);
 
         if (!method) {
@@ -49,8 +49,8 @@ class GitHubConnection extends GitHubUser {
         try {
             const response = await ajax(url, Object(data))[method]({
                 headers: {
-                    'Authorization': `Token ${this.GITHUB_USER_TOKEN}`,
-                    "Content-Type": "application/json"
+                    'Authorization': noToken ? undefined :`Token ${this.GITHUB_USER_TOKEN}`,
+                    'Content-Type': 'application/json'
                 }
             });
             
