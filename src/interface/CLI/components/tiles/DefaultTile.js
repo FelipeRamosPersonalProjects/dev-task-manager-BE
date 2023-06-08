@@ -11,9 +11,9 @@ class DefaultTileTemplate extends Component {
             displayName: { type: String }
         });
 
-        const { index, displayName } = new Object(setup || {});
+        const { index, displayName } = Object(setup);
 
-        this.index = index;
+        this.index = String(index);
         this.displayName = displayName;
     }
 }
