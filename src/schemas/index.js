@@ -15,6 +15,7 @@ const logs = require('./logs');
 const threads = require('./threads');
 const worklogs = require('./worklogs');
 const code_reviews = require('./code_reviews');
+const labels = require('./labels');
 
 module.exports = {
     counters,
@@ -33,5 +34,6 @@ module.exports = {
     logs,
     threads,
     worklogs,
-    code_reviews
+    code_reviews,
+    labels
 };
