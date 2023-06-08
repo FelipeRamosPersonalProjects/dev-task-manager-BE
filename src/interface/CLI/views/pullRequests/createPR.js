@@ -318,9 +318,6 @@ async function CreatePRsView({ task }) {
                             } else {
                                 return ev.trigger();
                             }
-                        },
-                        onEnd: async (ev) => {
-                            return await ev.goNext();
                         }
                     }
                 }
@@ -334,10 +331,12 @@ async function CreatePRsView({ task }) {
                 onEnd: (ev) => {
                     const published = ev.values.published || {};
                     const task = ev.getValue('task');
+                    const reviewers = Object(task).getSafe('project.reviewers') || [];
                     const comp = new FinalTempl({
                         ticketURL: task.ticketURL,
                         taskURL: task.taskURL,
-                        prLink: published.gitHubPR.html_url
+                        prLink: published.gitHubPR.html_url,
+                        reviewers: reviewers.map(item => item.slackName).join(' ')
                     });
 
                     comp.printOnScreen();

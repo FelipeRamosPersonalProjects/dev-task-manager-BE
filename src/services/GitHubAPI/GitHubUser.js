@@ -1,5 +1,3 @@
-const config = require('@config');
-
 class GitHubUser {
     constructor(setup) {
         try {
@@ -12,8 +10,14 @@ class GitHubUser {
     }
 
     async getUser() {
+        let response;
+
         try {
-            const response = await this.ajax(`/user`);
+            if (typeof this.userName === 'string') {
+                response = await this.ajax(`/users/${this.userName}`, null, {noToken: true})
+            } else {
+                response = await this.ajax(`/user`);
+            }
 
             if (response instanceof Error.Log) {
                 throw response;

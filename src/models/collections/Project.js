@@ -10,9 +10,11 @@ class Project extends _Global {
         const SpaceDesk = require('./SpaceDesk');
         const TemplateOptions = require('../maps/TemplatesOptions');
         const Task = require('./Task');
+        const Label = require('./Label');
+        const User = require('./User');
 
         try {
-            const {projectName, description, tickets, repos, tasks, urls, spaceDesk, templates, baseBranch} = setup || {};
+            const {projectName, description, tickets, repos, tasks, urls, spaceDesk, templates, baseBranch, reviewers, prLabels} = Object(setup);
 
             this.displayName = `${projectName}`;
             this.projectName = projectName;
@@ -23,7 +25,9 @@ class Project extends _Global {
             this.repos = !isObjectID(repos) ? repos.map(repo => new Repo(repo)) : [];
             this.spaceDesk = !isObjectID(spaceDesk) ? new SpaceDesk(spaceDesk) : {};
             this.templates = !isObjectID(templates) && !isObjectID(spaceDesk) ? new TemplateOptions({...templates, ...(Object(spaceDesk).templates)}) : {};
+            this.reviewers = Array.isArray(reviewers) && !reviewers.oid() ? reviewers.map(item => new User(item)) : [];
             this.baseBranch = baseBranch;
+            this.prLabels = Array.isArray(prLabels) && !prLabels.oid() ? prLabels.map(item => new Label(item)) : [];
 
             this.placeDefault();
         } catch(err) {

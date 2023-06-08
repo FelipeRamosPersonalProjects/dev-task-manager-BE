@@ -6,17 +6,14 @@ class LinksHeaderPR extends Component {
     }
 
     constructor(settings) {
-        super(settings, {
-            ticketURL: { type: String },
-            taskURL: { type: String },
-            prLink: { type: String },
-        });
+        super(settings);
 
-        const { ticketURL, taskURL, prLink } = Object(settings || {});
+        const { ticketURL, taskURL, prLink, reviewers } = Object(settings);
         
         this.ticketURL = ticketURL;
         this.taskURL = taskURL;
         this.prLink = prLink;
+        this.reviewers = reviewers;
     }
 }
 

@@ -18,6 +18,10 @@ module.exports = new Collection({
             }
         },
         {
+            fieldName: 'slackName',
+            type: String
+        },
+        {
             fieldName: 'userName',
             type: String
         },
@@ -37,7 +41,7 @@ module.exports = new Collection({
             required: true
         },
         {
-            fieldName: 'fsdfdsgsfd',
+            fieldName: 'phone',
             type: String
         },
         {

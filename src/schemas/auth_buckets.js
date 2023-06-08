@@ -11,8 +11,8 @@ module.exports = new Collection({
         {
             fieldName: 'rule',
             type: String,
-            default: 'incognito',
-            enum: ['incognito', 'client', 'admin', 'manager', 'master']
+            default: 'ANONYMOUS',
+            enum: ['ANONYMOUS', 'DEVELOPER', 'PROJECT-MANAGER', 'TECH-LEAD', 'MENTOR', 'ADMIN', 'MASTER']
         },
         {
             fieldName: 'password',

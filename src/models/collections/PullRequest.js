@@ -153,6 +153,10 @@ class PullRequest extends _Global {
 
     async updateReviewComments(internalPR) {
         try {
+            if (!this.gitHubPR || !this.gitHubPR.review_comments_url) {
+                return [];
+            }
+
             const remoteComments = await this.repoManager.ajax(this.gitHubPR.review_comments_url, null, {rawURL: true});
             const toSave = [];
 
@@ -213,7 +217,8 @@ class PullRequest extends _Global {
                 body: this.description,
                 head: this.head,
                 base: this.base,
-                labels: this.labels
+                labels: this.getSafe('project.prLabels'),
+                reviewers: this.getSafe('project.reviewers')
             });
 
             if (published instanceof Error.Log) {

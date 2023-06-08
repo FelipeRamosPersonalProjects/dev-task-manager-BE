@@ -75,6 +75,22 @@ module.exports = new Collection({
             fieldName: 'templates',
             type: TemplateOptionsMap,
             default: {}
+        },
+        {
+            fieldName: 'reviewers',
+            type: [ObjectId],
+            ref: 'users',
+            default: []
+        },
+        {
+            fieldName: 'prLabels',
+            type: [ObjectId],
+            default: [],
+            ref: 'labels',
+            refConfig: {
+                relatedField: 'projects',
+                type: 'array-oid'
+            }
         }
     ]
 });

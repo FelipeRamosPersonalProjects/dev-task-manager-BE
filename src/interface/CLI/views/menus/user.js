@@ -5,6 +5,11 @@ async function UserView() {
         name: 'user',
         navigator: { options: [
             {
+                title: 'Add User                       ',
+                description: 'Add a new user to use on collection relations',
+                targetView: 'user/addNew'
+            },
+            {
                 title: 'My Profile                     ',
                 description: 'Open your profile.',
                 targetView: 'user/profile'
