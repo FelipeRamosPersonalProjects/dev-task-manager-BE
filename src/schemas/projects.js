@@ -81,6 +81,16 @@ module.exports = new Collection({
             type: [ObjectId],
             ref: 'users',
             default: []
+        },
+        {
+            fieldName: 'prLabels',
+            type: [ObjectId],
+            default: [],
+            ref: 'labels',
+            refConfig: {
+                relatedField: 'projects',
+                type: 'array-oid'
+            }
         }
     ]
 });

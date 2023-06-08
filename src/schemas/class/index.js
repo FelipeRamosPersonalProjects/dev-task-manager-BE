@@ -16,6 +16,7 @@ const logs = require('./LogsClass');
 const threads = require('./ThreadsClass');
 const worklogs = require('./WorklogsClass');
 const code_reviews = require('./CodeReviewsClass');
+const labels = require('./LabelsClass');
 
 module.exports = {
     GlobalClass,
@@ -35,5 +36,6 @@ module.exports = {
     logs,
     threads,
     worklogs,
-    code_reviews
+    code_reviews,
+    labels
 };
