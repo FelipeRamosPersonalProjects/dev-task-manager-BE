@@ -12,7 +12,7 @@ class ProjectConfig {
      * The mode of the project (e.g., development, production).
      * @type {string}
      */
-    static mode = 'development';
+    static mode = 'STG';
 
     /**
      * The default language of the project.

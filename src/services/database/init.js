@@ -9,6 +9,10 @@ if (Configs.mode === 'production') {
     dbName = 'dev-desk';
 }
 
+if (Configs.mode === 'STG') {
+    dbName = 'dev-desk-STG';
+}
+
 module.exports = new Promise((resolve, reject) => {
     mongoose.set('strictQuery', false);
     mongoose.connect('mongodb://localhost:27017/', {useNewUrlParser: true, useUnifiedTopology: true, dbName }).then(connectedDB=>{
