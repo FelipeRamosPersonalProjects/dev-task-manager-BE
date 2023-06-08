@@ -7,7 +7,7 @@ const tools = new ToolsCLI();
 
 async function DocDisplay(params) {
     tools.print(`Loading view's resources from database...`);
-    const { collectionName, filter, headerText, headerDescription, docData } = params || {};
+    const { viewParams: { collectionName, filter, headerText, headerDescription, docData }} = Object(params);
 
     if (!docData && !collectionName && !filter) {
         throw new Error.Log('common.missing_params', ['collectionName', 'filter'], 'DocDisplay', 'docDisplay.js');
@@ -17,13 +17,8 @@ async function DocDisplay(params) {
         let document;
         
         if (!docData) {
-            document = await CRUD.getDoc({ collectionName, filter: filter || {} });
-
-            if (document.defaultPopulate) {
-                document = document.defaultPopulate().initialize();
-            } else {
-                document = document.initialize();
-            }
+            document = await CRUD.getDoc({ collectionName, filter: filter || {} }).defaultPopulate();
+            document = document.initialize();
         } else {
             document = docData;
         }
