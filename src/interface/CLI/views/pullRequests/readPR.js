@@ -62,15 +62,33 @@ async function ReadPRView({ viewParams, defaultData, dataDoc }) {
                     try {
                         const pullRequest = ev.getValue('pullRequest');
 
-                        if (pullRequest && pullRequest.length === 1) {
+                        if (Array.isArray(pullRequest) && pullRequest.length === 1) {
                             const template = new PullRequestTemplate(pullRequest[0]);
                             if (template instanceof Error.Log) {
                                 throw template;
                             }
 
                             template.printOnScreen();
-                        } else if (pullRequest) {
-                            print(`Your search resulted in more than 1 pull requests! For a while this feature can only get 1.`);
+                        } else if (Array.isArray(pullRequest) && pullRequest.length > 1) {
+                            const nav = new ViewCLI.ViewNavigator({
+                                type: 'doc-list',
+                                parentView: ev.parent,
+                                question: {
+                                    id: 'navigation',
+                                    text: `Enter the index related to your choosed option and hit enter to open: `
+                                }
+                            }, ev.parent);
+    
+                            pullRequest.map((doc) => {
+                                nav.addOption({index: doc.stringIndex, type: 'doc-list', doc, targetView: 'docDisplay'});
+                            });
+    
+                            const fired = await nav.fire();
+                            if (fired instanceof Error.Log) {
+                                throw fired;
+                            }
+
+                            return fired;
                         }
                     } catch (err) {
                         throw new Error.Log(err);

@@ -290,6 +290,17 @@ class RepoManager extends GitHubConnection {
                 }
             }
 
+            if (typeof summary === 'string') {
+                summary = summary.replace(/"/g, '**');
+            }
+
+            if (Array.isArray(params.fileChanges)) {
+                params.fileChanges = params.fileChanges.map(file => {
+                    file.description = file.description.replace(/"/g, '**')
+                    return file;
+                });
+            }
+
             const descriptionTemplate = this.repo.getProjectTemplate('commitDescription');
             const description = descriptionTemplate ? descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges}) : `-m "${summary}"`;
             const added = await this.addChanges();
