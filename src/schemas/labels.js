@@ -9,7 +9,7 @@ module.exports = new Collection({
     singularLabel: 'Label',
     fieldsSet: [
         {
-            fieldName: 'displayName',
+            fieldName: 'name',
             type: String,
             required: true
         },

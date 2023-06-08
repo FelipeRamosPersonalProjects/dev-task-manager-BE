@@ -19,6 +19,10 @@ async function preSave(next) {
             this.userName = this.email;
         }
 
+        if (this.slackName) {
+            this.slackName = '@' + this.slackName;
+        }
+
         this.auth = signedUp._id;
         next();
     } catch (err) {

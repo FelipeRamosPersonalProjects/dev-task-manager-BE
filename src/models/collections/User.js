@@ -23,9 +23,9 @@ class User extends _Global {
         const {
             auth,
             userName,
+            slackName,
             firstName,
             lastName,
-            fullName,
             email,
             phone,
             repos,
@@ -42,6 +42,7 @@ class User extends _Global {
         try {
             this.collectionName = 'users';
             this.userName = userName;
+            this.slackName = slackName;
             this.displayName = `${firstName} ${lastName} (${email})`;
             this.firstName = firstName;
             this.lastName = lastName;
@@ -87,6 +88,10 @@ class User extends _Global {
 
     get currentUser() {
         return sessionCLI.currentUser;
+    }
+
+    get gitHubUser() {
+        return Object(this.gitHub).getSafe('login');
     }
 
     static userSession() {

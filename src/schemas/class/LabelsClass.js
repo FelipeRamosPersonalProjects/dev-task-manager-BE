@@ -4,7 +4,7 @@ class LabelsClass {
     static Model = Label;
 
     get slug() {
-        return typeof this.displayName === 'string' ? this.displayName.toLowerCase().replace(/ /g, '-') : '';
+        return typeof this.name === 'string' ? this.name.toLowerCase().replace(/ /g, '-') : '';
     }
 }
 
