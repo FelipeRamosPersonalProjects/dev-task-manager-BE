@@ -1,4 +1,25 @@
 module.exports = {
+    auth: {
+        user_in_use: () => { return {
+            name: 'AUTH_USER_IN_USE',
+            message: `The username provided is already in use!`
+        }},
+
+        user_not_found: (userName) => { return {
+            name: 'AUTH_USERNAME_NOT_FOUND',
+            message: `The username provided "${userName}" wasn't found!`
+        }},
+
+        invalid_credentials: () => { return {
+            name: 'AUTH_INVALID_CREDENTIALS',
+            message: `The username or password provided is incorrect!`
+        }},
+
+        password_not_match: () => { return {
+            name: 'AUTH_PASSWORD_NOT_MATCH',
+            message: `The password and the confirm password don't match! Try again...`
+        }}
+    },
     apiResponse: {
         collection: {
             create: (collection) => { return {
@@ -27,6 +48,14 @@ module.exports = {
                     message: `Error caught getting a query collection at endpoint "collection/get/queryCollection"!`
                 }}
             }
+        }
+    },
+    cli: {
+        repos: {
+            repo_not_found: () => { return {
+                name: 'REPO-NOT-FOUND',
+                message: `The selected repository wan't found on the pool values!`
+            }}
         }
     },
     common: {
@@ -67,6 +96,11 @@ module.exports = {
         model_construction: (modelName) => { return {
             name: 'CommonModelSchemaValidation',
             message: `Error caught at the construction of "${modelName || 'Unknown Model'}" model!`
+        }},
+
+        number_expected: (received) => { return {
+            name: 'CommonNumberExpected',
+            message: `The index provided is not a number. Please provide a valid index number! But received "${received}".`
         }}
     },
     database: {
@@ -313,6 +347,16 @@ module.exports = {
             message: `Error caught on the database helper createCounter!`
         }},
 
+        increase_doc_prop: (collectionName, filter, value) => { return {
+            name: 'HELPERS-INCREASE-PROP',
+            message: `Error caught during the document property increase of:\nFilter: "${typeof filter === 'object' ? JSON.parse(filter, null, 2) : String(filter)}"\nCollection: "${collectionName}"\nValue: ${typeof value === 'object' ? JSON.parse(value, null, 2) : String(value)}\n\n`
+        }},
+
+        increase_doc_prop_collection_not_defined: (collectionName, filter, value) => { return {
+            name: 'HELPERS-INCREASE-PROP',
+            message: `Is required to declare the collectionName property of the class that is extending the _Global class of collections!`
+        }},
+
         increase_counter: (collectionName) => { return {
             name: 'HelpersIncreaseCounter',
             message: `Error caught during the counter increase of collection "${collectionName}"!`
@@ -345,7 +389,137 @@ module.exports = {
                 name: 'ServicesXMLManagerSavingFile',
                 message: `Error caught during xml file was being parsed!\Path: ${filePath}\nFile:${fileName}.`
             }}
+        },
+        GitHubAPI: {
+            RepoManager: {
+                get_current_branch: () => { return {
+                    name: 'GitHubAPIRepoManagerGetCurrentBranch',
+                    message: `Error caught getting the current local branch!`
+                }},
+                
+                is_branch_exist: () => { return {
+                    name: 'GitHubAPIRepoManagerIsBranchExist',
+                    message: `Error caught checking if the branch exist!`
+                }},
+
+                is_local_branch_exist: () => { return {
+                    name: 'GitHubAPIRepoManagerIsLocalBranchExist',
+                    message: `Error caught checking if the local branch exist!`
+                }},
+
+                is_remote_branch_exist: () => { return {
+                    name: 'GitHubAPIRepoManagerIsRemoteBranchExist',
+                    message: `Error caught checking if the remote branch exist!`
+                }},
+
+                base_branch_is_not_current: () => { return {
+                    name: 'GitHubAPIRepoManagerBaseBranchIsNotCurrent',
+                    message: `The current branch is not the base branch provided to create the new branch!`
+                }},
+
+                branch_is_exist: (name, branch) => { return {
+                    name: 'GitHubAPIRepoManagerBranchIsExist',
+                    message: `The branch "${name}" is already exist on ${branch.isLocalExist ? 'local' : ''}${branch.isLocalExist && branch.isRemoteExist ? ' and ' : ''}${branch.isRemoteExist ? 'remote' : ''}\n`
+                }},
+
+                creating_branch: () => { return {
+                    name: 'GitHubAPIRepoManagerCreatingBranch',
+                    message: `Error caught while is creating a branch!`
+                }},
+
+                creating_stash: () => { return {
+                    name: 'GitHubAPIRepoManagerCreatingStash',
+                    message: `Error caught while is creating a stash!`
+                }},
+
+                repo_uid_required: () => { return {
+                    name: 'GitHubAPIRepoManagerRepoUIDRequired',
+                    message: `If the RepoManager doesn't have a repo parent it's required to provide the "repoUID" param!`
+                }},
+
+                getting_stash: () => { return {
+                    name: 'GitHubAPIRepoManagerGettingStash',
+                    message: `Error caught when getting a stash(es) at RepoManager.getStash()!`
+                }},
+
+                apply_stash: () => { return {
+                    name: 'GitHubAPIRepoManagerApplyStash',
+                    message: `Error caught when applying a stash at RepoManager.applyStash()!`
+                }},
+
+                saving_stash: () => { return {
+                    name: 'GitHubAPIRepoManagerSavingStash',
+                    message: `Error caught when saving a stash at RepoManager.applyStash()!`
+                }},
+
+                checkout_branch_is_current: (branchName) => { return {
+                    name: 'GitHubAPIRepoManagerCheckoutBranchIsCurrent',
+                    message: `You already is using the "${branchName}" branch!`
+                }},
+
+                checkout_branch_not_found: (branchName) => { return {
+                    name: 'GitHubAPIRepoManagerCheckoutBranchNotFound',
+                    message: `The branch "${branchName}" wasn't found!`
+                }},
+
+                checkout_local_branch_not_found: (branchName) => { return {
+                    name: 'GitHubAPIRepoManagerCheckoutLocalBranchNotFound',
+                    message: `The branch "${branchName}" wasn't found at local repository!`
+                }},
+
+                checkout_stashing_error: () => { return {
+                    name: 'GitHubAPIRepoManagerCheckoutStashingError',
+                    message: `An error was caught during the stash creation!`
+                }},
+
+                checkout_git_error: () => { return {
+                    name: 'RepoManagerCheckoutGitError',
+                    message: `Error caught on checkout method of RepoManager!`
+                }},
+
+                checkout: () => { return {
+                    name: 'GitHubAPIRepoManagerCheckout',
+                    message: `Error caught at RepoManager.checkout()!`
+                }},
+
+                add_changes: () => { return {
+                    name: 'GitHubAPIRepoManagerAddChanges',
+                    message: `Error adding changes to head of git repository!`
+                }},
+
+                current_changes: () => { return {
+                    name: 'GitHubAPIRepoManagerCurrentChanges',
+                    message: `Something went wrong getting the current changes!`
+                }},
+
+                commiting: () => { return {
+                    name: 'GitHubAPIRepoManagerCommiting',
+                    message: `Something went wrong commiting the current changes!`
+                }},
+
+                pushing: () => { return {
+                    name: 'GitHubAPIRepoManagerPushing',
+                    message: `Something went wrong pushing the current commits!`
+                }},
+
+                creating_pull_request: () => { return {
+                    name: 'GitHubAPIRepoManagerCreatingPullRequest',
+                    message: `Something went wrong creating the pull request!`
+                }}
+            },
+            GitHubConnection: {
+                ajax: (url) => { return {
+                    name: 'GitHubConnectionAjax',
+                    message: `An error occured during the GitHubConnection.ajax call for the URL: ${url}`
+                }}
+            }
         }
+    },
+    stash: {
+        creating_loading:  () => { return {
+            name: 'StashCreatingLoading',
+            message: `An error occurred while creating or loading a stash.`
+        }}
     },
     user: {
         get_master_account: (userUID, userName) => { return {
@@ -356,6 +530,11 @@ module.exports = {
         get_open_trades: (userUID, userName) => { return {
             name: 'UserGetOpenTrades',
             message: `Error caught getting the user's open trades of [${userUID}] - ${userName}!`
+        }},
+
+        not_found: (filter) => { return {
+            name: 'USER-NOT-FOUND',
+            message: `The user for the filter "${JSON.stringify(filter)}" wasn't found!`
         }}
     }
 };

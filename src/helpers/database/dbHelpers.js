@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const configs = require('../../../config.json');
+const configs = require('@config');
 
 function isCollectionExist(collection) {
     try {
@@ -9,12 +9,25 @@ function isCollectionExist(collection) {
     }
 }
 
+function isDocExist(collectionName, filter) {
+    return new Promise((resolve, reject) => {
+        mongoose.model(collectionName).exists(filter, (err, res) => {
+            if (err) {
+                reject(new Error.Log(err));
+            }
+
+            resolve(res);
+        });
+    });
+
+}
+
 function getCollectionModel(collection) {
     try {
         if (isCollectionExist(collection)) {
             return mongoose.model(collection);
         } else {
-            throw new Error.Log(err).append('database.collection_dont_exist', collection);
+            throw new Error.Log('database.collection_dont_exist', collection);
         }
     } catch(err) {
         throw new Error.Log(err).append('helpers.get_collection_model', collection);
@@ -37,10 +50,9 @@ async function createCounter(collection){
     } catch(err) {
         throw new Error.Log(err).append('helpers.create_counter', collection.name);
     }
-
 }
 
-async function increaseCounter(collection) {   
+async function increaseCounter(collection) {
     try {
         const Counters = mongoose.model(configs.database.counterCollection);
         const counter = await Counters.findByIdAndUpdate(collection, { $inc: { value: 1 }});
@@ -59,6 +71,17 @@ async function increaseLog(logUID) {
         return logCounter.toObject();
     } catch(err) {
         throw new Error.Log(err).append('helpers.increase_log');
+    }
+}
+
+async function increaseDocProp(collectionName, filter, data) {   
+    try {
+        const DBModel = mongoose.model(collectionName);
+        const doc = await DBModel.findOneAndUpdate(filter, { $inc: data });
+
+        return doc.initialize();
+    } catch(err) {
+        throw new Error.Log(err).append('helpers.increase_doc_prop', collectionName, filter, data);
     }
 }
 
@@ -93,8 +116,7 @@ function treatFilter(filter) {
             throw new Error.Log('common.bad_format_param',
                 'filter',
                 'treatFilter',
-                ['String(ObjectId._id)',
-                'Object'],
+                ['String(ObjectId._id)', 'Object'],
                 filter,
                 'dbHelpers.js'
             );
@@ -154,7 +176,9 @@ module.exports = {
     createCounter,
     increaseCounter,
     increaseLog,
+    increaseDocProp,
     isCollectionExist,
+    isDocExist,
     getCollectionModel,
     pickQueryType,
     treatFilter,

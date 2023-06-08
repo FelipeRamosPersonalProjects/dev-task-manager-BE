@@ -1,30 +1,42 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
+const TemplateOptionsMap = require('./map/TemplatesOptions');
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'space_desks',
     symbol: 'SPDK',
-    schema: {
-        spaceName: {
+    displayName: 'SpaceDesks',
+    pluralLabel: 'SpaceDesks',
+    singularLabel: 'SpaceDesk',
+    fieldsSet: [
+        {
+            fieldName: 'spaceName',
             type: String,
             required: true
         },
-        owner: {
+        {
+            fieldName: 'owner',
             type: ObjectId,
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'spaceDesks',
                 type: 'array-oid'
-            })
+            }
         },
-        projects: {
+        {
+            fieldName: 'projects',
             type: [ObjectId],
             default: [],
             ref: 'projects',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'spaceDesks',
                 type: 'array-oid'
-            })
+            }
+        },
+        {
+            fieldName: 'templates',
+            type: TemplateOptionsMap,
+            default: {}
         }
-    }
+    ]
 });

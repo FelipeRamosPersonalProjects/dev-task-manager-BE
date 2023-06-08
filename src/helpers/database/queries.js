@@ -58,8 +58,15 @@ function populateAll(options) {
     }
 }
 
-async function initialize(){
-    const docs = await this.exec();
+async function initialize(populate){
+    let docs;
+
+    if (populate) {
+        docs = await this.exec().defaultPopulate();
+    } else {
+        docs = await this.exec();
+    }
+
     let result = [];
 
     try {
@@ -68,7 +75,7 @@ async function initialize(){
                 const initialized = doc.initialize();
                 result.push(initialized);
             });
-        } else {
+        } else if (docs && docs.initialize) {
             result = docs.initialize();
         }
     } catch(err) {

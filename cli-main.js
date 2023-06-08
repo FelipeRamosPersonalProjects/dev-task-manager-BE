@@ -1,14 +1,25 @@
+require('module-alias/register');
 // Declaring globals
-require('./src/global');
+require('@global');
+
+const FS = require('@services/FS');
+const CLI = require('@interface/CLI');
+const config = require('@config');
+
 // Initializing MongoDB
-require('./src/services/database/init').then(async (started) => {
+require('@services/database/init').then(async () => {
     try {
-        const CLI = require('./src/interface/CLI');
+        const isSessionExist = FS.isExist(config.sessionPath);
+        const session = Object(isSessionExist && require('@SESSION_CLI'));
+        const currentUser = session.currentUser;
+        const token = currentUser && session[currentUser] && session[currentUser].token;
+
         await new CLI({
-            startView: 'crud/menu'
+            startView: 'user/authView',
+            startViewParams: { token, redirectTo: 'home' }
         }).init();
     } catch(err) {
-        console.error(err.stack);
+        throw err.stack
     }
 }).catch(err => {
     throw new Error.Log(err);

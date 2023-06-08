@@ -1,8 +1,6 @@
-const ViewCLI = require('../../ViewCLI');
-const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const MainMenuDescription = require('../../components/MainMenuDescription');
-const CRUD = require('../../../../services/database/crud');
-const ToolsCLI = require('../../ToolsCLI');
+const ViewCLI = require('@CLI/ViewCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
+const ToolsCLI = require('@CLI/ToolsCLI');
 const tools = new ToolsCLI();
 
 const bodySchema = {
@@ -33,7 +31,9 @@ const bodySchema = {
     }
 };
 
-function ReadView() {
+async function ReadView(params) {
+    const { defaultData } = params || {};
+
     return new ViewCLI({
         name: 'crud/read',
         Template: new DashedHeaderLayout({
@@ -50,9 +50,7 @@ function ReadView() {
                 onEnd: async (ev) => {
                     try {
                         const data = ev.current.formCtrl.formData;
-                        const response = await CRUD.getDoc(data);
-    
-                        tools.printTable(response.initialize())
+                        await ev.goToView('docDisplay', data);
                     } catch(err) {
                         throw new Error.Log(err);
                     }
@@ -62,10 +60,11 @@ function ReadView() {
                 {
                     id: 'read-doc-form',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        defaultData,
+                        schema: bodySchema,
                         events: {
-                            onEnd: (ev) => {
-                                debugger
+                            onEnd: async (ev) => {
+                                return await ev.parent.goNext();
                             }
                         }
                     }

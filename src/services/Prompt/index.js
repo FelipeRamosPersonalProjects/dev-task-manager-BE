@@ -1,24 +1,29 @@
-const { execSync, exec, spawn } = require('child_process');
+const { execSync, exec } = require('child_process');
 const readline = require('readline');
+const ToolsCLI = require('@CLI/ToolsCLI');
+const StringTemplate = require('@interface/StringTemplateBuilder');
+const config = require('@config');
+const toolsCLI = new ToolsCLI();
 
 class Prompt {
-    constructor(setup = {
-        rootPath: ''
-    }) {
-        const {rootPath} = setup || {};
+    constructor(setup) {
+        const {rootPath} = Object(setup);
 
-        this.rootPath = rootPath;
+        this.rootPath = rootPath || __dirname;
     }
 
-    cmd(command, options) {
+    cmd(command, options, dontPrint) {
         try {
             if (command) {
                 const cmd = execSync(command, {cwd: this.rootPath, ...options});
 
                 if (cmd) {
+                    const output = cmd.toString();
+                    
+                    output && !dontPrint && toolsCLI.print(output);
                     return {
                         success: true,
-                        out: cmd.toString()
+                        out: output
                     };
                 }
 
@@ -61,9 +66,17 @@ class Prompt {
                     input: process.stdin,
                     output: process.stdout
                 });
-    
-                rl.question(questionText, (answer) => {
+                const question = new StringTemplate()
+                    .separator()
+                    .newLine()
+                    .text(`[QUESTION][${config.projectName.toUpperCase()}] -> ${questionText} `)
+                .end();
+
+                rl.question(question, (answer) => {
                     rl.close();
+                    const separator = new StringTemplate();
+                    separator.separator();
+                    console.log(separator.end());
                     resolve(answer);
                 });
             } catch(err) {

@@ -1,10 +1,22 @@
-const StringTemplateBuilder = require('../StringTemplateBuilder');
 const ToolsCLI = require('./ToolsCLI');
 const ViewNavigator = require('./ViewNavigator');
 
+/**
+ * @class
+ */
 class ViewCLI extends ToolsCLI {
     static ViewNavigator = ViewNavigator;
 
+    /**
+     * Creates an instance of EventsHandlers.
+     * @constructor
+     * @param {Object} [setup] - The configuration for the instance.
+     * @param {string} [setup.name] - 
+     * @param {PoolForm} [setup.poolForm] - 
+     * @param {ViewNavigator} [setup.navigator] - 
+     * @param {Component} [setup.Template] - 
+     * @param {CLI} [cli] - 
+     */
     constructor(setup = {
         name: '',
         poolForm: PoolForm.prototype,
@@ -24,17 +36,17 @@ class ViewCLI extends ToolsCLI {
         
         if (!this.poolForm) {
             this.poolForm = new PoolForm(ViewNavigator.navDefaultQuestions, this);
-            this.poolForm.setListener('onAnswer', (_, answer) => {
-                this.navigator.navTo(answer);
+            this.poolForm.setListener('onAnswer', (ev) => {
+                this.navigator.navTo(ev.answer);
             });
         }
 
         this.cli = () => cli;
     }
 
-    goToView(viewPath) {
+    goToView(viewPath, params) {
         try {
-            this.cli().loadView(viewPath);
+            this.cli().loadView(viewPath, params);
         } catch(err) {
             throw new Error.Log(err);
         }
@@ -42,10 +54,7 @@ class ViewCLI extends ToolsCLI {
 
     getString() {
         if (this.Template) {
-            return new StringTemplateBuilder()
-                .newLine().newLine().newLine()
-                .text(this.Template.getString())
-            .end();
+            return this.Template.renderToString();
         } else {
             return '';
         }
@@ -55,12 +64,12 @@ class ViewCLI extends ToolsCLI {
         try {
             this.cli().printTemplate(this.getString());
 
-            if (this.navigator) {
-                this.navigator.render(tableHeaders);
-            }
-
             if (this.poolForm) {
                 this.poolForm.start();
+            }
+            
+            if (this.navigator) {
+                this.navigator.render(tableHeaders);
             }
         } catch(err) {
             throw new Error.Log(err);
@@ -68,4 +77,7 @@ class ViewCLI extends ToolsCLI {
     }
 }
 
+/**
+ * @module ViewCLI
+ */
 module.exports = ViewCLI;

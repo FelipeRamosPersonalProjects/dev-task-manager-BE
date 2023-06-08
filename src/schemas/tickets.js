@@ -1,81 +1,143 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
 const { SLA } = require('./map');
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'tickets',
     symbol: 'TICK',
-    schema: {
-        ticketID: {
+    displayName: 'Tickets',
+    pluralLabel: 'tickets',
+    singularLabel: 'ticket',
+    fieldsSet: [
+        {
+            fieldName: 'source',
+            type: String,
+            default: 'jira',
+            enum: ['jira', 'github']
+        },
+        {
+            fieldName: 'ticketID',
+            type: String,
+            immutable: true,
+            unique: true
+        },
+        {
+            fieldName: 'ticketURL',
             type: String,
             required: true,
             immutable: true,
             unique: true
         },
-        ticketURL: {
-            type: String,
-            required: true
-        },
-        assignedUsers: {
+        {
+            fieldName: 'assignedUsers',
             type: [ObjectId],
             default: [],
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'tickets',
                 type: 'array-oid'
-            })
+            }
         },
-        project: {
+        {
+            fieldName: 'project',
             type: ObjectId,
             required: true,
             ref: 'projects',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'tickets',
                 type: 'array-oid'
-            })
+            }
         },
-        title: {
+        {
+            fieldName: 'title',
             type: String,
             required: true
         },
-        description: {
+        {
+            fieldName: 'description',
             type: String
         },
-        status: {
+        {
+            fieldName: 'status',
             type: String,
-            default: 'progress',
-            enum: ['progress', 'development', 'testing', 'pending-client', 'resolved', 'closed']
+            default: 'TO-START',
+            enum: [
+                'TO-START',
+                'INVESTIGATING',
+                'ESTIMATION',
+                'TO-DEVELOP',
+                'IN-DEVELOPMENT',
+                'DEVELOPMENT-DONE',
+                'CODE-REVIEW',
+                'VALIDATION',
+                'COMPLETED',
+                'ABORTED',
+                'SHARED',
+                'ON-HOLD'
+            ]
         },
-        sla: {
+        {
+            fieldName: 'sla',
             type: SLA,
             default: {}
         },
-        tasks: {
+        {
+            fieldName: 'estimations',
+            type: [ObjectId],
+            default: [],
+            ref: 'estimations',
+            refConfig: {
+                type: 'ObjectId',
+                relatedField: 'ticket'
+            }
+        },
+        {
+            fieldName: 'tasks',
             type: [ObjectId],
             default: [],
             ref: 'tasks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'ticket',
                 type: 'ObjectId'
-            })
+            }
         },
-        comments: {
+        {
+            fieldName: 'comments',
             type: [ObjectId],
             default: [],
             ref: 'comments',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'ticket',
                 type: 'ObjectId'
-            })
+            }
         },
-        pullRequests: {
+        {
+            fieldName: 'pullRequests',
             type: [ObjectId],
             default: [],
             ref: 'pull_requests',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'ticket',
                 type: 'ObjectId'
-            })
+            }
+        },
+        {
+            fieldName: 'stashes',
+            type: [ObjectId],
+            ref: 'stashes',
+            refConfig: {
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            }
+        },
+        {
+            fieldName: 'codeReviews',
+            type: [ObjectId],
+            ref: 'code_reviews',
+            refConfig: {
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            }
         }
-    }
+    ]
 });

@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const {getGlobalSchema} = require('../schemas/_globals');
 const schemasClass = require('../schemas/class');
-const RefConfig = require('./SchemaRefConfig');
+const RefConfig = require('./settings/SchemaRefConfig');
 const {database: {dbHelpers, queries, events}} = require('../helpers');
-const configs = require('../../config.json');
+const configs = require('@config');
 const GlobalClass = schemasClass.GlobalClass;
+const customQueries = require('@schemas/queries');
+const customEvents = require('@schemas/events');
 
 class SchemaDB {
     static RefConfig = RefConfig;
@@ -21,10 +23,20 @@ class SchemaDB {
         try {
             this.name = setup.name;
             this.symbol = setup.symbol;
+            
+
+            if (Array.isArray(setup.fieldsSet)) {
+                if (!setup.schema) setup.schema = {};
+                this.fieldsSet = setup.fieldsSet;
+
+                setup.fieldsSet.map(item => {
+                    setup.schema[item.fieldName] = item;
+                });
+            }
+
             this.schema = new mongoose.Schema({...getGlobalSchema(setup.excludeGlobals), ...setup.schema});
-            this.links = setup.links || {};
-            this.queries = setup.queries || {};
-            this.events = setup.events || {};
+            this.queries = setup.queries || Object(customQueries[this.name]);
+            this.events = setup.events || Object(customEvents[this.name]);
             this.DB = null;
 
             // Initializing queries, events and classes
@@ -56,10 +68,10 @@ class SchemaDB {
                 initializedCollections.push(this.symbol);
                 this.DB = mongoose.model(this.name, this.schema);
             } else {
-                const error = new Error.Log('database.duplicated_schema', this.name, this.symbol);
-                if (isDup) error.append('database.duplicated_schema_name', this.name);
-                if (isDupSymbol) error.append('database.duplicated_schema_symbol', this.symbol);
-                throw error;
+                // const error = new Error.Log('database.duplicated_schema', this.name, this.symbol);
+                // if (isDup) error.append('database.duplicated_schema_name', this.name);
+                // if (isDupSymbol) error.append('database.duplicated_schema_symbol', this.symbol);
+                // throw error;
             }
         } catch(err) {
             throw new Error.Log(err).append('database.schema_init');
@@ -81,11 +93,16 @@ class SchemaDB {
             this.schema.pre('save', events.preSave);
             this.schema.post('save', events.postSave);
             this.schema.pre(['updateOne', 'findOneAndUpdate'], events.preUpdateOne);
+            this.schema.post(['updateOne', 'findOneAndUpdate'], events.postUpdateOne);
             this.schema.pre(['deleteOne', 'deleteMany'], events.preDelete);
             this.schema.post(['deleteOne', 'deleteMany'], events.postDelete);
 
             // Adding custom events for the schema
+            if (this.events.preSave) this.schema.pre('save', this.events.preSave);
             if (this.events.postSave) this.schema.post('save', this.events.postSave);
+            if (this.events.preFindOne) this.schema.pre('findOne', this.events.preFindOne);
+            if (this.events.postFindOne) this.schema.post('findOne', this.events.postFindOne);
+            if (this.events.preUpdate) this.schema.pre(['updateOne', 'findOneAndUpdate'], this.events.preUpdate);
             if (this.events.postUpdate) this.schema.post(['updateOne', 'findOneAndUpdate'], this.events.postUpdate);
         } catch(err) {
             throw new Error.Log(err).append('database.init_events');

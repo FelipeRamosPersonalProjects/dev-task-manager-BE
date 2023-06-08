@@ -1,11 +1,17 @@
 const database = require('./database');
 const GitHubAPI = require('./GitHubAPI');
-const XMLManager = require('./XMLManager');
+const AuthService = require('./Auth');
+const Backup = require('./Backup');
+const FS = require('./FS');
 const Prompt = require('./Prompt');
+const XMLManager = require('./XMLManager');
 
 module.exports = {
     database,
     GitHubAPI,
-    XMLManager,
-    Prompt
+    AuthService,
+    Backup,
+    FS,
+    Prompt,
+    XMLManager
 }

@@ -4,11 +4,13 @@ const ToolsCLI = require('./ToolsCLI');
 class CLI extends ToolsCLI {
     constructor(setup = {
         startView,
+        startViewParams
     }) {
         super();
-        const { startView } = setup || {};
+        const { startView, startViewParams } = setup || {};
 
         this.startView = startView;
+        this.startViewParams = startViewParams;
         this._currView;
 
         this.getCurrentView = () => {
@@ -17,7 +19,7 @@ class CLI extends ToolsCLI {
     }
 
     async init() {
-        this.loadView(this.startView);
+        await this.loadView(this.startView, this.startViewParams);
         return this;
     }
 
@@ -26,8 +28,8 @@ class CLI extends ToolsCLI {
         return this._currView;
     }
 
-    loadView(viewPath) {
-        console.log('[dev-task]: Loading view "' + viewPath + '"...');
+    async loadView(viewPath, viewParams) {
+        this.print('Loading view "' + viewPath + '"...', 'LOG');
         const parsedPath = viewPath.split('/');
         let View = views;
 
@@ -38,12 +40,12 @@ class CLI extends ToolsCLI {
         });
 
         if (typeof View === 'function') {
-            const loadedView = View.call(this);
+            const loadedView = await View.call(this, {viewParams});
             
             this.setCurrentView(loadedView);
-            loadedView.render();
+            await loadedView.render();
 
-            return this;
+            return loadedView;
         } else {
             this.printError(new Error.Log({
                 name: 'LoadingView',
@@ -52,8 +54,8 @@ class CLI extends ToolsCLI {
         }
     }
 
-    goToStart() {
-        return this.loadView(this.startView);
+    async goToStart() {
+        return await this.loadView(this.startView);
     }
 }
 

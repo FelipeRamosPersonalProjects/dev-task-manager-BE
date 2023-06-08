@@ -1,82 +1,152 @@
-const Schema = require('../models/SchemaDB');
-const { ObjectId } = Schema.mongoSchema.Types;
+const Collection = require('@Collection');
+const { ObjectId } = Collection.Types;
+const FileChange = require('./map/FileChange');
 
-module.exports = new Schema({
+module.exports = new Collection({
     name: 'pull_requests',
     symbol: 'PR',
-    schema: {
-        prName: {
+    displayName: 'Pull Requests',
+    pluralLabel: 'Pull Requests',
+    singularLabel: 'Pull Request',
+    fieldsSet: [
+        {
+            fieldName: 'gitHubPR',
+            type: Object,
+            default: {}
+        },
+        {
+            fieldName: 'name',
             type: String,
             required: true
         },
-        prGitHubID: {
-            type: String,
-            required: true
-        },
-        description: {
+        {
+            fieldName: 'remoteID',
             type: String
         },
-        fileChanges: {
-            type: [Object]
+        {
+            fieldName: 'status',
+            type: String,
+            default: 'OPEN',
+            enum: ['OPEN', 'CLOSED', 'CHANGES-REQUESTED']
         },
-        owner: {
+        {
+            fieldName: 'prStage',
+            type: String,
+            required: true,
+            default: 'initialized',
+            enum: [
+                'initialized',
+                'branch-created',
+                'commit-created',
+                'compare-filled',
+                'changes-description-filled',
+                'published',
+                'pendingChanges',
+                'aborted',
+                'merged'
+            ]
+        },
+        {
+            fieldName: 'isCurrentVersion',
+            type: Boolean,
+            default: true
+        },
+        {
+            fieldName: 'version',
+            type: Number,
+            required: true,
+            default: 1
+        },
+        {
+            fieldName: 'base',
+            type: String,
+            required: true
+        },
+        {
+            fieldName: 'head',
+            type: String,
+            required: true
+        },
+        {
+            fieldName: 'description',
+            type: String
+        },
+        {
+            fieldName: 'summary',
+            type: String
+        },
+        {
+            fieldName: 'fileChanges',
+            type: [FileChange],
+            default: []
+        },
+        {
+            fieldName: 'owner',
             type: ObjectId,
             ref: 'users',
             required: true,
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'pullRequests',
                 type: 'array-oid'
-            })
+            }
         },
-        assignedUsers: {
+        {
+            fieldName: 'assignedUsers',
             type: [ObjectId],
             default: [],
             ref: 'users',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'pullRequests',
                 type: 'array-oid'
-            })
+            }
         },
-        reviewers: {
+        {
+            fieldName: 'codeReviews',
             type: [ObjectId],
             default: [],
-            ref: 'users',
-            refConfig: new Schema.RefConfig({
-                relatedField: 'myReviews',
-                type: 'array-oid'
-            })
+            ref: 'code_reviews',
+            refConfig: {
+                relatedField: 'pull_request',
+                type: 'ObjectId'
+            }
         },
-        labels: {
-            type: [String]
+        {
+            fieldName: 'labels',
+            type: [String],
+            default: []
         },
-        bmConfigs: {
+        {
+            fieldName: 'bmConfigs',
             type: [Object],
             default: []
         },
-        comments: {
+        {
+            fieldName: 'comments',
             type: [ObjectId],
             default: [],
             ref: 'comments',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'pullRequest',
                 type: 'ObjectId'
-            })
+            }
         },
-        ticket: {
+        {
+            fieldName: 'ticket',
             type: ObjectId,
             ref: 'tickets',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'pullRequests',
                 type: 'array-oid'
-            })
+            }
         },
-        task: {
+        {
+            fieldName: 'task',
             type: ObjectId,
             ref: 'tasks',
-            refConfig: new Schema.RefConfig({
+            refConfig: {
                 relatedField: 'pullRequests',
                 type: 'array-oid'
-            })
+            }
         }
-    }
+    ]
 });

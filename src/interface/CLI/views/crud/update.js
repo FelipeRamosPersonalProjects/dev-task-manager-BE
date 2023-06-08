@@ -10,29 +10,13 @@ const bodySchema = {
         required: true
     },
     filter: {
-        type: Object,
-        required: true
-    },
-    options: {
-        default: {},
-        type: {
-            paginate: {
-                views: { type: Number },
-                page: { type: Number },
-                seeMore: { type: Boolean }
-            },
-            select: {
-                default: [],
-                type: Array
-            },
-            populate: {
-                type: Object
-            }
-        }
+        type: Object
     }
 };
 
-function UpdateView() {
+async function UpdateView(params) {
+    const { defaultData } = params || {};
+
     return new ViewCLI({
         name: 'crud/update',
         Template: new DashedHeaderLayout({
@@ -58,17 +42,23 @@ function UpdateView() {
                     id: 'fetching-document',
                     next: 'updating-data',
                     formCtrl: {
-                        schema: { obj: bodySchema },
+                        schema: bodySchema,
+                        defaultData,
                         events: {
                             onStart: async (ev) => {
                                 tools.print('Starting "fetching-document"');
                             },
                             onEnd: async (ev) => {
                                 try {
-                                    const currentDoc = await CRUD.getDoc(ev.formData);
-                                    
+                                    const currentDoc = await CRUD.getDoc({...ev.formData, filter: Object(ev.formData.filter)});
+                                    if (!currentDoc || currentDoc instanceof Error.Log) {
+                                        tools.print(`Document not found for filter "${JSON.stringify(Object(ev.formData))}"!`, 'DOC-NOT-FOUND');
+                                        return;
+                                    }
+
                                     ev.view().setValue('docFilter', ev.formData);
                                     ev.view().setValue('currentDoc', currentDoc.initialize());
+                                    return await ev.parent.goNext();
                                 } catch (err) {
                                     throw new Error.Log(err);
                                 }
@@ -86,6 +76,7 @@ function UpdateView() {
                             },
                             onEnd: async (ev) => {
                                 ev.view().setValue('updates', ev.formData);
+                                return await ev.parent.goNext();
                             }
                         }
                     }
