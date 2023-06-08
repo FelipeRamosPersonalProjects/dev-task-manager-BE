@@ -7,7 +7,7 @@ const tools = new ToolsCLI();
 
 async function DocDisplay(params) {
     tools.print(`Loading view's resources from database...`);
-    const { collectionName, filter, headerText, headerDescription, docData } = params || {};
+    const { viewParams: { collectionName, filter, headerText, headerDescription, docData }} = Object(params);
 
     if (!docData && !collectionName && !filter) {
         throw new Error.Log('common.missing_params', ['collectionName', 'filter'], 'DocDisplay', 'docDisplay.js');

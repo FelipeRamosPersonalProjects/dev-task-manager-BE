@@ -11,7 +11,7 @@ class DisplayDocument extends Component {
         const { document, excludeProps } = setup || {};
 
         this.document = document;
-        this.excludeProps = Array.isArray(excludeProps) ? excludeProps : ['_schema', '_id', 'index', 'author', 'ModelDB'];
+        this.excludeProps = Array.isArray(excludeProps) ? excludeProps : ['_schema', '_id', 'index', 'author', 'ModelDB', 'gitHub'];
         this.outputModel = this.getString();
     }
 
