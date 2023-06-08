@@ -1,6 +1,6 @@
-const ViewCLI = require('../../ViewCLI');
-const DashedHeaderLayout = require('../../templates/DashedHeaderLayout');
-const ToolsCLI = require('../../ToolsCLI');
+const ViewCLI = require('@CLI/ViewCLI');
+const DashedHeaderLayout = require('@CLI/templates/DashedHeaderLayout');
+const ToolsCLI = require('@CLI/ToolsCLI');
 const tools = new ToolsCLI();
 
 const bodySchema = {

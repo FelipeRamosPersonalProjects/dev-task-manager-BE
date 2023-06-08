@@ -17,13 +17,8 @@ async function DocDisplay(params) {
         let document;
         
         if (!docData) {
-            document = await CRUD.getDoc({ collectionName, filter: filter || {} });
-
-            if (document.defaultPopulate) {
-                document = document.defaultPopulate().initialize();
-            } else {
-                document = document.initialize();
-            }
+            document = await CRUD.getDoc({ collectionName, filter: filter || {} }).defaultPopulate();
+            document = document.initialize();
         } else {
             document = docData;
         }
