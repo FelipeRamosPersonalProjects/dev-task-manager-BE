@@ -57,7 +57,7 @@ async function SaveStashBackupView({ viewParams }) {
                 },
                 {
                     id: 'confirmation',
-                    text: `Do you confirm to create${!isOnlyBackup ? 'the stash ' : ''}${!isOnlyStash ? ' and the files backup' : ''} (Y/N)? `,
+                    text: `Do you confirm to create ${!isOnlyBackup ? 'the stash ' : ''}${!isOnlyStash ? ' and the files backup' : ''} (Y/N)? `,
                     events: {
                         onAnswer:  async (ev, {boolAnswer, print}, answer) => {
                             try {
