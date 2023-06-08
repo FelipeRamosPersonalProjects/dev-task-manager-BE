@@ -10,8 +10,7 @@ const bodySchema = {
         required: true
     },
     filter: {
-        type: Object,
-        required: true
+        type: Object
     }
 };
 
@@ -51,8 +50,12 @@ async function UpdateView(params) {
                             },
                             onEnd: async (ev) => {
                                 try {
-                                    const currentDoc = await CRUD.getDoc(ev.formData);
-                                    
+                                    const currentDoc = await CRUD.getDoc({...ev.formData, filter: Object(ev.formData.filter)});
+                                    if (!currentDoc || currentDoc instanceof Error.Log) {
+                                        tools.print(`Document not found for filter "${JSON.stringify(Object(ev.formData))}"!`, 'DOC-NOT-FOUND');
+                                        return;
+                                    }
+
                                     ev.view().setValue('docFilter', ev.formData);
                                     ev.view().setValue('currentDoc', currentDoc.initialize());
                                     return await ev.parent.goNext();
