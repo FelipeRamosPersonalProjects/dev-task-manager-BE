@@ -403,7 +403,10 @@ class RepoManager extends GitHubConnection {
     }
 
     async createPullRequest(data) {
+        const User = require('@models/collections/User');
+
         try {
+            const currentUser = await User.getMyUser();
             const PR = await this.ajax(
                 `/repos/${this.repoPath}/pulls`,
                 data,
@@ -414,17 +417,28 @@ class RepoManager extends GitHubConnection {
                 throw PR;
             }
 
+            // Adding assignees to PR
             const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                assignees: [this.userName]
+                assignees: [currentUser.gitHubUser]
             }, {method: 'POST'});
 
             if (addAssignees instanceof Error.Log) {
                 throw addAssignees;
             }
 
-            if (Array.isArray(data.labels)) {
+            // Adding reviewers to PR
+            const addReviewers = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/requested_reviewers`, {
+                reviewers: data.reviewers.map(item => item.gitHubUser)
+            }, {method: 'POST'});
+
+            if (addReviewers instanceof Error.Log) {
+                throw addReviewers;
+            }
+
+            // Adding labels to PR
+            if (Array.isArray(data.labels) && data.labels.length) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
-                    labels: ['support'],
+                    labels: data.labels.map(item => item.name),
                 }, {method: 'POST'});
 
                 if (addLabels instanceof Error.Log) {

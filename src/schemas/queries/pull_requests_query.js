@@ -11,6 +11,14 @@ function defaultPopulate() {
                         {
                             path: 'spaceDesk',
                             model: 'space_desks'
+                        },
+                        {
+                            path: 'prLabels',
+                            model: 'labels'
+                        },
+                        {
+                            path: 'reviewers',
+                            model: 'users'
                         }
                     ]
                 },

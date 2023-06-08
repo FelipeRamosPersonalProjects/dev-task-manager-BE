@@ -12,7 +12,7 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup || {});
+        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
 
         try {
             this.ticketURL = ticketURL;

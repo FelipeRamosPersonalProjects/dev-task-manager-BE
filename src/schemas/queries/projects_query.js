@@ -19,6 +19,10 @@ function defaultPopulate() {
         {
             path: 'organization',
             model: 'organizations'
+        },
+        {
+            path: 'reviewers',
+            model: 'users'
         }
     ])
 }
