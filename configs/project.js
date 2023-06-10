@@ -24,19 +24,19 @@ class ProjectConfig {
      * The local path of the project.
      * @type {string}
      */
-    static projectLocalPath = 'C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE';
+    static projectLocalPath = __dirname;
 
     /**
      * The path to the session file for the project.
      * @type {string}
      */
-    static sessionPath = 'C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE/sessionCLI.json';
+    static sessionPath = this.projectLocalPath + '\\sessionCLI.json';
 
     /**
      * The backup folder path for the project.
      * @type {string}
      */
-    static backupFolder = 'C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE/temp';
+    static backupFolder = this.projectLocalPath + '\\temp';
 
     /**
      * The database configuration.

@@ -1,23 +1,14 @@
 require('module-alias/register');
-const express = require('express');
-const app = express();
-const cors = require('cors');
+const app = require("./app.js");
+ 
+require("greenlock-express").init({
+    packageRoot: __dirname,
 
-// Declaring globals
-require('./src/global');
-// Initializing MongoDB
-require('./src/services/database/init');
+    // contact for security and critical bug notices
+    configDir: "./greenlock.d",
 
-// Importing Routes
-const routes = require('./src/routes');
+    // whether or not to run at cloudscale
+    cluster: false,
 
-// Configuring server
-app.use(cors());
-app.use(express.json());
-
-// Server routes
-app.use('/collection', routes.collection);
-
-app.listen(80, ()=>{
-    console.log('Server connected in http://localhost:80');
-});
+    maintainerEmail: 'felipe@feliperamos.info'
+}).serve(app);
