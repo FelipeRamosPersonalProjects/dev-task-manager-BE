@@ -20,6 +20,9 @@ require('@services/database/init').then(async () => {
 
     // Server routes
     app.use('/collection', routes.collection);
+    app.get('/health-check', async (req, res) => {
+        res.status(200).end('API Health: OK');
+    });
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
         const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');
