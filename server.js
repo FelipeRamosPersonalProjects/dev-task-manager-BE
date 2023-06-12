@@ -32,7 +32,7 @@ require('@services/database/init').then(async () => {
             };
 
             https.createServer(options, app).listen(Number(process.env.PORT_HTTPS), () => {
-                console.log(`Server listening on port ${PORT}`);
+                console.log(`Server listening on port ${process.env.PORT_HTTPS}`);
             });
         } else {
             throw new Error.Log({
