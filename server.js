@@ -20,6 +20,7 @@ require('@services/database/init').then(async () => {
 
     // Server routes
     app.use('/collection', routes.collection);
+    app.use('/user', routes.pages.user);
     app.get('/health-check', async (req, res) => {
         res.status(200).end('API Health: OK');
     });
