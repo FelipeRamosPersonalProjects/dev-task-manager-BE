@@ -19,6 +19,7 @@ require('@services/database/init').then(async () => {
     app.use(express.json());
 
     // Server routes
+    app.use('/auth', routes.auth);
     app.use('/collection', routes.collection);
     app.use('/user', routes.pages.user);
     app.get('/health-check', async (req, res) => {

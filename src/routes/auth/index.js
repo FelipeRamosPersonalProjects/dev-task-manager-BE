@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ctrl = require('@controllers');
 
-// Child Routes
-router.get('/signup', ctrl.pages.user.signup);
-router.get('/signin', ctrl.pages.user.signin);
+router.post('/register', ctrl.auth.register);
+router.post('/login', ctrl.auth.login);
 
 module.exports = router;

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign UP</title>
+</head>
+<body>
+    <h1>Sign UP</h1>
+    
+    <form>
+        <fieldset>
+            <label>First Name</label>
+            <input type="text" name="firstName" />
+        </fieldset>
+
+        <fieldset>
+            <label>Last Name</label>
+            <input type="text" name="lastName" />
+        </fieldset>
+
+        <fieldset>
+            <label>E-mail</label>
+            <input type="text" name="email" />
+        </fieldset>
+
+        <fieldset>
+            <label>Password</label>
+            <input type="password" name="password" />
+        </fieldset>
+
+        <fieldset>
+            <label>Confirm Password</label>
+            <input type="password" name="confirmPassword" />
+        </fieldset>
+
+        <button type="submit">Sign UP</button>
+    </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', (ev) => {
+            ev.preventDefault();
+            const inputs = ev.target.querySelectorAll('[name]');
+            const data = {};
+
+            inputs.forEach(item => (data[item.name] = item.value));
+
+            fetch('/auth/register', {
+                headers: { 'Content-Type': 'application/json' },
+                method: 'post',
+                body: JSON.stringify(data)
+            }).then(res => {
+                debugger;
+            }).catch(err => {
+                throw err;
+            });
+        });
+    </script>
+</body>
+</html>
