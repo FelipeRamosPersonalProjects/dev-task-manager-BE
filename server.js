@@ -22,8 +22,8 @@ require('@services/database/init').then(async () => {
     app.use('/collection', routes.collection);
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
-        const SSL_KEY = fs.readFileSync(__dirname + '\\cert\\ca.key');
-        const SSL_CERT = fs.readFileSync(__dirname + '\\cert\\ca.crt');
+        const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');
+        const SSL_CERT = fs.readFileSync(__dirname + '/cert/ca.crt');
 
         if (SSL_KEY && SSL_CERT) {
             const options = {
