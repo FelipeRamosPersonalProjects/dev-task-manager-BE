@@ -8,9 +8,7 @@ class SignUp extends Component {
     constructor(settings) {
         super(settings);
 
-        const { firstField } = Object(settings);
-        
-        this.firstField = 'This is the variable example';
+        const {  } = Object(settings);
     }
 }
 
