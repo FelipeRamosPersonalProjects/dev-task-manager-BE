@@ -13,6 +13,14 @@ class LogBase {
         this.resource = resource;
     }
 
+    toJSON() {
+        try {
+            return JSON.stringify({...this});
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     notify() {}
 
     emailNotify() {}

@@ -45,13 +45,22 @@
 
             inputs.forEach(item => (data[item.name] = item.value));
 
+            if (data.password !== data.confirmPassword) {
+                return alert('The passwords does not match! Try again.');
+            }
+
             fetch('/auth/register', {
                 headers: { 'Content-Type': 'application/json' },
                 method: 'post',
                 body: JSON.stringify(data)
-            }).then(res => {
-                debugger;
+            }).then(res => res.json()).then(data => {
+                if (data.error) {
+                    return alert(data.message);
+                }
+
+                debugger
             }).catch(err => {
+                debugger;
                 throw err;
             });
         });
