@@ -105,6 +105,8 @@ dist
 # TernJS port file
 .tern-port
 
+cert/*.crt
+cert/*.key
 .env
 temp
 draft.js
