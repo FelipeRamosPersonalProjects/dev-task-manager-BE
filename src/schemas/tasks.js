@@ -184,10 +184,21 @@ module.exports = new Collection({
                 type: 'ObjectId'
             }
         },
-        
-        DiscoveryTask.toObject(),
-        DevelopmentTask.toObject(),
-        ValidationTask.toObject(),
-        TODOReminderTask.toObject()
+        {
+            fieldName: 'discovery',
+            type: DiscoveryTask.toObject()
+        },
+        {
+            fieldName: 'discovery',
+            type: DevelopmentTask.toObject()
+        },
+        {
+            fieldName: 'discovery',
+            type: ValidationTask.toObject()
+        },
+        {
+            fieldName: 'discovery',
+            type: TODOReminderTask.toObject()
+        }
     ]
 });
