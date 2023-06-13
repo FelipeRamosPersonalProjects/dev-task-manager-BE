@@ -1,6 +1,7 @@
 require('module-alias/register');
 
 const express = require('express');
+const session = require('express-session');
 const https = require('https');
 const app = express();
 const cors = require('cors');
@@ -17,6 +18,14 @@ require('@services/database/init').then(async () => {
     // Configuring server
     app.use(cors());
     app.use(express.json());
+    app.use(session({
+        secret: process.env.API_SECRET,
+        resave: true,
+        saveUninitialized: true,
+        cookie: {
+            maxAge: 120000
+        }
+    }));
 
     // Server routes
     app.use('/auth', routes.auth);

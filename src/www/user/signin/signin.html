@@ -8,7 +8,7 @@
 <body>
     <h1>Sign IN</h1>
     
-    <form method="POST" action="/auth/login">
+    <form>
         <fieldset>
             <label>E-mail</label>
             <input type="text" name="email" />
@@ -20,6 +20,31 @@
         </fieldset>
 
         <button type="submit">Login</button>
+        <a href="/user/signup">Create new account</a>
     </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', (ev) => {
+            ev.preventDefault();
+            const inputs = ev.target.querySelectorAll('[name]');
+            const data = {};
+
+            inputs.forEach(item => (data[item.name] = item.value));
+
+            fetch('/auth/login', {
+                headers: { 'Content-Type': 'application/json' },
+                method: 'post',
+                body: JSON.stringify(data)
+            }).then(res => res.json()).then(data => {
+                if (data.error) {
+                    return alert(data.message);
+                }
+
+                return window.location.href = '/dashboard';
+            }).catch(err => {
+                return alert(err.message);
+            });
+        });
+    </script>
 </body>
 </html>

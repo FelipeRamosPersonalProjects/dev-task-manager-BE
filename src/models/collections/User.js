@@ -137,8 +137,8 @@ class User extends _Global {
         }
     }
 
-    toPublic() {
-        const dataOut = {...this};
+    toPublic(append) {
+        const dataOut = {...this, ...append};
 
         delete dataOut.auth;
         delete dataOut._schema;
