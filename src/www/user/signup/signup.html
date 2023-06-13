@@ -58,10 +58,9 @@
                     return alert(data.message);
                 }
 
-                debugger
+                return window.location.href = '/dashboard';
             }).catch(err => {
-                debugger;
-                throw err;
+                alert(err.message);
             });
         });
     </script>
