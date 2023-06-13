@@ -1,0 +1,37 @@
+<h1>Create new Ticket</h1>
+
+<form>
+    <fieldset>
+        <label>Ticket ID:</label>
+        <input type="text" name="ticketID" />
+    </fieldset>
+
+    <fieldset>
+        <label>Ticket URL:</label>
+        <input type="text" name="ticketURL" />
+    </fieldset>
+
+    <fieldset>
+        <label>Title:</label>
+        <input type="text" name="title" />
+    </fieldset>
+
+    <fieldset>
+        <label>Description:</label>
+        <textarea name="description"></textarea>
+    </fieldset>
+
+    <button type="submit">Confirm</button>
+</form>
+
+<script>
+    document.querySelector('form').addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const fields = ev.target.querySelectorAll('[name]');
+        const data = {};
+
+        fields.forEach(field => (data[field.name] = field.value));
+
+        debugger;
+    });
+</script>
