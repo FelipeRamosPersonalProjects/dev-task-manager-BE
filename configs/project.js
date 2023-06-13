@@ -39,6 +39,18 @@ class ProjectConfig {
     static backupFolder = 'C:/Users/Felipe/Documents/my-lab/dev-task-manager-BE/temp';
 
     /**
+     * The session age.
+     * @type {number}
+     */
+    static sessionMaxAge = 120000;
+
+    /**
+     * Id cookies only accept from HTTPS
+     * @type {number}
+     */
+    static secureCookies = false;
+
+    /**
      * The database configuration.
      * @type {Object}
      * @property {string} counterCollection - The name of the counter collection in the database.

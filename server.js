@@ -1,10 +1,12 @@
 require('module-alias/register');
 
 const express = require('express');
+const session = require('express-session');
 const https = require('https');
 const app = express();
 const cors = require('cors');
 const fs = require('fs');
+const Config = require('@config');
 
 // Declaring globals
 require('./src/global');
@@ -17,13 +19,20 @@ require('@services/database/init').then(async () => {
     // Configuring server
     app.use(cors());
     app.use(express.json());
+    app.use(session({
+        secret: process.env.API_SECRET,
+        resave: true,
+        saveUninitialized: true,
+        cookie: { maxAge: Config.sessionMaxAge }
+    }));
 
-    // Server routes
+    // API routes
+    app.use('/auth', routes.auth);
     app.use('/collection', routes.collection);
+
+    // Front-end routes
+    app.get('/dashboard', routes.pages.dashboard);
     app.use('/user', routes.pages.user);
-    app.get('/health-check', async (req, res) => {
-        res.status(200).end('API Health: OK');
-    });
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
         const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');

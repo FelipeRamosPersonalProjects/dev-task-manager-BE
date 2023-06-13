@@ -22,11 +22,13 @@
             "@models/*": ["./src/models/*"],
             "@resources/*": ["./src/resources/en_US/*"],
             "@routes/*": ["./src/routes/*"],
+            "@middlewares/*": ["./src/middlewares/*"],
             "@schemas/*": ["./src/schemas/*"],
             "@services/*": ["./src/services/*"],
             "@validation/*": ["./src/validation/*"],
             "@CLI/*": ["./src/interface/CLI/*"],
-            "@templates/*": ["./src/resources/en_US/templates/*"]
+            "@templates/*": ["./src/resources/en_US/templates/*"],
+            "@www/*": ["./src/www/*"]
         }
     }
 }

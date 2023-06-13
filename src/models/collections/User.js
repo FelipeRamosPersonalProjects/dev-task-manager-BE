@@ -137,6 +137,15 @@ class User extends _Global {
         }
     }
 
+    toPublic(append) {
+        const dataOut = {...this, ...append};
+
+        delete dataOut.auth;
+        delete dataOut._schema;
+        delete dataOut.gitHubConnection;
+        return dataOut;
+    }
+
     static async addPreUser(data) {
         const { firstName, lastName, email, phone, gitHubUser, slackName } = Object(data);
 
@@ -218,7 +227,7 @@ class User extends _Global {
 
     static async create(setup, options) {
         try {
-            const { userName, email, password, gitHubUser } = Object(setup);
+            const { userName, email, password, gitHubUser, gitHubToken } = Object(setup);
             const { preventSignIn } = Object(options);
 
             // Check if the userName or email (that can be an userName) is already in use

@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('@controllers');
+const middlewares = require('@middlewares');
 
-// Child Routes
-router.get('/signup', ctrl.pages.user.signup);
-router.get('/signin', ctrl.pages.user.signin);
+router.get('/dashboard', middlewares.authVerify, ctrl.pages.dashboard);
 
 module.exports = router;
