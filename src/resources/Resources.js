@@ -16,6 +16,10 @@ class Resources {
             return () => '';
         }
 
+        if (typeof path === 'object') {
+            return path.renderToString;
+        }
+
         const current = this.getPath('templates.' + path);
 
         if (Boolean.isValid(current).function().eval()) {

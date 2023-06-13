@@ -7,6 +7,14 @@ async function defaultPopulate() {
         {
             path: 'spaceDesks',
             model: 'space_desks'
+        },
+        {
+            path: 'tickets',
+            model: 'tickets'
+        },
+        {
+            path: 'tasks',
+            model: 'tasks'
         }
     ];
 

@@ -1,4 +1,5 @@
 const Component = require('@interface/Component');
+const ListItem = require('@www/components/ListItem');
 
 class Dashboard extends Component {
     get SOURCE_PATH() {
@@ -8,7 +9,14 @@ class Dashboard extends Component {
     constructor(settings) {
         super(settings);
 
-        const {  } = Object(settings);
+        const { tickets, tasks, pullRequests } = Object(settings);
+
+        this.tickets = tickets;
+        this.tasks = tasks;
+        this.pullRequests = pullRequests;
+        this.types = {
+            ListItem
+        }
     }
 }
 
