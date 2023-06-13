@@ -1,6 +1,12 @@
 const Request = require('@models/RequestAPI');
 const User = require('@models/collections/User');
+const Configs = require('@config');
 
+const cookiesConfig = {
+    maxAge: Configs.sessionMaxAge,
+    httpOnly: true,
+    secure: Configs.secureCookies
+};
 const bodySchema = {
     email: { type: String, required: true },
     password: { type: String, required: true }
@@ -22,7 +28,14 @@ module.exports = async function (req, res) {
             return res.status(status).send(user.toJSON());
         }
 
-        const response = user.toPublic({token: user.token});
+        
+        const response = user.toPublic();
+        req.session.currentUser = response;
+        req.session.userToken = user.token;
+
+        res.cookie('sessionToken', user.token, cookiesConfig);
+        res.cookie('currentUserUID', user._id, cookiesConfig);
+
         return res.status(200).send(response.toSuccess().toJSON());
     } catch(err) {
         return res.status(500).send(new Error.Log(err).toJSON());
