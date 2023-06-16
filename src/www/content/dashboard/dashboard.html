@@ -1,1 +1,53 @@
 <h1>Dashboard</h1>
+
+<div>
+    <div>
+        <h2>Tickets</h2>
+    
+        <ul>     
+            ##{{tickets:array:ListItem}}##
+        </ul>
+
+        <a href="/ticket/create">New Ticket</a>
+    </div>
+
+    <div>
+        <h2>Tasks</h2>
+
+        <ul>
+            ##{{tasks:array:ListItem}}##
+        </ul>
+
+        <a href="/task/create">New Task</a>
+    </div>
+
+    <div>
+        <h2>Pull Requests</h2>
+    
+        <ul>
+            ##{{pullRequests:array:ListItem}}##
+        </ul>
+    
+        <a href="/pullrequest/create">New PR</a>
+    </div>
+
+    <div>
+        <h2>Projects</h2>
+    
+        <ul>
+            ##{{projects:array:ListItem}}##
+        </ul>
+    
+        <a href="/projects/create">New Project</a>
+    </div>
+
+    <div>
+        <h2>My Spaces</h2>
+    
+        <ul>
+            ##{{spaces:array:ListItem}}##
+        </ul>
+    
+        <a href="/spaces/create">New Space</a>
+    </div>
+</div>

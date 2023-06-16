@@ -49,6 +49,10 @@ module.exports = new Collection({
             type: Object
         },
         {
+            fieldName: 'jira',
+            type: Object
+        },
+        {
             fieldName: 'repos',
             type: [ObjectId],
             default: [],

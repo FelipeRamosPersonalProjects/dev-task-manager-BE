@@ -6,13 +6,14 @@ class Ticket extends _Global {
         if (!setup || isObjectID(setup)) return;
 
         const Project = require('./Project');
+        const SpaceDesk = require('./SpaceDesk');
         const Task = require('./Task');
         const PullRequest = require('./PullRequest');
         const User = require('./User');
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {ticketID, ticketURL, space, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
 
         try {
             this.ticketURL = ticketURL;
@@ -20,12 +21,13 @@ class Ticket extends _Global {
             this.title = title;
             this.description = description;
             this.status = status;
+            this.space = !space.oid() ? new SpaceDesk(space) : {};
             this.project = !isObjectID(project) ? new Project(project) : {};
             this.sla = !isObjectID(sla) ? new SLAModel(sla) : {};
             this.tasks = Array.isArray(tasks) && !tasks.oid() && tasks.map(task => new Task(task));
-            this.pullRequests = Array.isArray(pullRequests) && !pullRequests.oid() && pullRequests.map(pr => new PullRequest(pr));
-            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user));
-            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment));
+            this.pullRequests = Array.isArray(pullRequests) && !pullRequests.oid() && pullRequests.map(pr => new PullRequest(pr)) || [];
+            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user)) || [];
+            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment)) || [];
 
             this.placeDefault();
         } catch(err) {
@@ -35,6 +37,24 @@ class Ticket extends _Global {
 
     get displayName() {
         return `[${this.ticketID}] ${this.title}`;
+    }
+
+    async jiraCreateTicket() {
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraCreated = await user.jiraConnect.createIssue({
+                    issueType: '10048',
+                    externalKey: this.ticketID,
+                    projectKey: this.space.jiraProject,
+                    title: this.title,
+                    description: this.description
+                });
+
+                return jiraCreated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 }
 

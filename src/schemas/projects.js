@@ -10,6 +10,13 @@ module.exports = new Collection({
     singularLabel: 'Project',
     fieldsSet: [
         {
+            fieldName: 'projectKey',
+            type: String,
+            required: true,
+            unique: true,
+            immutable: true
+        },
+        {
             fieldName: 'projectName',
             type: String,
             required: true

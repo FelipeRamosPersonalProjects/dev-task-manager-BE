@@ -31,8 +31,19 @@ module.exports = new Collection({
         {
             fieldName: 'assignedUsers',
             type: [ObjectId],
+            required: true,
             default: [],
             ref: 'users',
+            refConfig: {
+                relatedField: 'tickets',
+                type: 'array-oid'
+            }
+        },
+        {
+            fieldName: 'space',
+            type: ObjectId,
+            required: true,
+            ref: 'space_desks',
             refConfig: {
                 relatedField: 'tickets',
                 type: 'array-oid'

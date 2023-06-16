@@ -1,0 +1,58 @@
+<h1>Create new Space</h1>
+
+<form>
+    <fieldset>
+        <label>JIRA Project:</label>
+        ##{{jiraProjects:string}}##
+    </fieldset>
+
+    <fieldset>
+        <label>Space Name:</label>
+        <input type="text" name="spaceName" />
+    </fieldset>
+
+    <fieldset>
+        <label>Templates:</label>
+        <textarea name="templates"></textarea>
+    </fieldset>
+
+    <button type="submit">Confirm</button>
+</form>
+
+<script>
+    document.querySelector('form').addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const fields = ev.target.querySelectorAll('[name]');
+        const data = {};
+
+        fields.forEach(field => (data[field.name] = field.value));
+        data.owner = sessionStorage.getItem('currentUserUID');
+
+        if (!data.templates) {
+            data.templates = {};
+        } else {
+            try {
+                data.templates = JSON.parse(data.templates);
+            } catch (err) {
+                return alert('JSON is not valid at "templates" field!');
+            }
+        }
+
+        fetch('/collection/create', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'post',
+            body: JSON.stringify({
+                collectionName: 'space_desks',
+                data
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.error) {
+                return alert(data.message);
+            }
+
+            return window.location.href = '/dashboard';
+        }).catch(err => {
+            return alert(err.message);
+        });
+    });
+</script>

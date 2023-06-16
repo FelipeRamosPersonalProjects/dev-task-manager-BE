@@ -42,7 +42,7 @@ class ProjectConfig {
      * The session age.
      * @type {number}
      */
-    static sessionMaxAge = 120000;
+    static sessionMaxAge = 3600000;
 
     /**
      * Id cookies only accept from HTTPS
@@ -75,6 +75,15 @@ class ProjectConfig {
      */
     static github = {
         apiHostURL: 'https://api.github.com'
+    };
+
+    /**
+     * The JIRA configuration.
+     * @type {Object}
+     * @property {string} apiRootURL - The API host URL for JIRA.
+     */
+    static jira = {
+        apiRootURL: 'https://feliperamosdev.atlassian.net/rest/api/3'
     };
 }
 

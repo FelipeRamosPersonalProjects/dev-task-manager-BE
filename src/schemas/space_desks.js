@@ -15,6 +15,10 @@ module.exports = new Collection({
             required: true
         },
         {
+            fieldName: 'jiraProject',
+            type: String
+        },
+        {
             fieldName: 'owner',
             type: ObjectId,
             ref: 'users',
