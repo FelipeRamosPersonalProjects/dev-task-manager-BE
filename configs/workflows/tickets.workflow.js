@@ -39,11 +39,11 @@ module.exports = new Workflow({
         {
             statusID: 'TO-START',
             displayName: 'To Start',
-            next: 'INVESTIGATING'
+            next: 'INVESTIGATION'
         },
         {
-            statusID: 'INVESTIGATING',
-            displayName: 'Investigating',
+            statusID: 'INVESTIGATION',
+            displayName: 'Investigation',
             next: 'ESTIMATION',
             events: [{
                 name: 'transition',
@@ -59,25 +59,15 @@ module.exports = new Workflow({
         {
             statusID: 'ESTIMATION',
             displayName: 'Estimating',
-            next: 'TO-DEVELOP'
+            next: 'DEVELOPMENT'
         },
         {
-            statusID: 'TO-DEVELOP',
-            displayName: 'To Develop',
-            next: 'IN-DEVELOPMENT'
+            statusID: 'DEVELOPMENT',
+            displayName: 'Development',
+            next: 'PULL-REQUEST'
         },
         {
-            statusID: 'IN-DEVELOPMENT',
-            displayName: 'In Development',
-            next: 'DEVELOPMENT-DONE'
-        },
-        {
-            statusID: 'DEVELOPMENT-DONE',
-            displayName: 'Development Done',
-            next: 'CODE-REVIEW'
-        },
-        {
-            statusID: 'CODE-REVIEW',
+            statusID: 'PULL-REQUEST',
             displayName: 'Code Review',
             next: 'VALIDATION'
         },

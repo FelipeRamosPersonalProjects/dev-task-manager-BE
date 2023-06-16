@@ -5,10 +5,9 @@ class JIRAIssue {
 
     constructor(setup) {
         try {
-            const { issueType, projectKey, key, summary, description } = Object(setup);
+            const { issueKey, issueType, projectKey, summary, description } = Object(setup);
 
-            this.key = new JIRAFields(key).text();
-
+            this.key = new JIRAFields(issueKey).text();
             this.fields = {
                 project: new JIRAFields(projectKey).project(),
                 issuetype: new JIRAFields(issueType).issuetype(),
@@ -24,6 +23,18 @@ class JIRAIssue {
         return {
             fields: this.fields
         }
+    }
+
+    toUpdate() {
+        const update = {...this};
+
+        Object.keys(result).filter(key => {
+            if (!result[key]) {
+                delete result[key];
+            }
+        });
+
+        return { update };
     }
 }
 

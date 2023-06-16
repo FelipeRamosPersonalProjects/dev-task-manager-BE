@@ -13,14 +13,16 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {ticketID, ticketURL, space, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {ticketID, ticketURL, space, jiraIssue, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
 
         try {
+            this.collectionName = 'tickets';
             this.ticketURL = ticketURL;
             this.ticketID = ticketID;
             this.title = title;
             this.description = description;
             this.status = status;
+            this.jiraIssue = jiraIssue;
             this.space = !space.oid() ? new SpaceDesk(space) : {};
             this.project = !isObjectID(project) ? new Project(project) : {};
             this.sla = !isObjectID(sla) ? new SLAModel(sla) : {};
@@ -50,6 +52,7 @@ class Ticket extends _Global {
                     description: this.description
                 });
 
+                await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
                 return jiraCreated;
             };
         } catch (err) {
