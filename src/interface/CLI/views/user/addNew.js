@@ -46,7 +46,7 @@ async function AddNewUserView() {
                                     password: tempPass
                                 }, {preventSignIn: true});
 
-                                debugger;
+                                return await ev.goNext();
                             } catch (err) {
                                 throw new Error.Log(err);
                             }

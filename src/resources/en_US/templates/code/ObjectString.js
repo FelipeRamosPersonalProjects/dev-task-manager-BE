@@ -21,8 +21,6 @@ class ObjectString extends Component {
                 value: item
             });
         });
-
-        debugger;
     }
 }
 

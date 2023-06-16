@@ -1,4 +1,5 @@
 const JIRAConnect = require('./JIRAConnect');
+const JIRATicket = require('@models/jira/issues/TicketIssue')
 
 class JIRA extends JIRAConnect {
     constructor (setup) {
@@ -30,32 +31,16 @@ class JIRA extends JIRAConnect {
     }
 
     async createIssue(data) {
-        const { issueType, ticketID, projectKey, title, description } = Object(data);
-
+        const { issueType, externalKey, projectKey, title, description } = Object(data);
+        
         try {
-            const created = await this.request(`/issue`, {
-                fields: {
-                    project: { key: projectKey },
-                    issuetype: { id: issueType },
-                    summary: title,
-                    customfield_10085: ticketID,
-                    description: {
-                        content: [
-                            {
-                                content: [
-                                    {
-                                        text: description,
-                                        type: 'text'
-                                    }
-                                ],
-                                type: 'paragraph'
-                            }
-                        ],
-                        type: 'doc',
-                        version: 1
-                    }
-                }
-            }, { method: 'post' });
+            const created = await this.request(`/issue`, new JIRATicket({
+                issueType,
+                externalKey,
+                projectKey,
+                summary: title,
+                description
+            }).toObject(), { method: 'post' });
 
             return created;
         } catch (err) {

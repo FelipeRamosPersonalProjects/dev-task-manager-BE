@@ -23,7 +23,8 @@ module.exports = new Workflow({
 
                     const ticket = populated.initialize();
                     const created = await ticket.jiraCreateTicket();
-                    debugger;
+                    
+                    return created;
                 } catch (err) {
                     throw new Error.Log(err);
                 }
