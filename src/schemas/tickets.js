@@ -40,6 +40,16 @@ module.exports = new Collection({
             }
         },
         {
+            fieldName: 'space',
+            type: ObjectId,
+            required: true,
+            ref: 'space_desks',
+            refConfig: {
+                relatedField: 'tickets',
+                type: 'array-oid'
+            }
+        },
+        {
             fieldName: 'project',
             type: ObjectId,
             required: true,

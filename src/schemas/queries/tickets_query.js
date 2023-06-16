@@ -5,6 +5,10 @@ function defaultPopulate() {
             model: 'tasks'
         },
         {
+            path: 'space',
+            model: 'space_desks'
+        },
+        {
             path: 'project',
             model: 'projects'
         },

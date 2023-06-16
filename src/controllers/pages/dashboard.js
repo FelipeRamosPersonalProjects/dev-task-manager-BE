@@ -24,13 +24,17 @@ module.exports = async (req, res) => {
     const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
     const projects = projectsQuery.map(item => item.initialize());
 
+    const spacesQuery = await CRUD.query({ collectionName: 'space_desks', owner: req.session.currentUser._id });
+    const spaces = spacesQuery.map(item => item.initialize());
+
     const content = new Page({
         pageTitle: 'Dashboard Page',
         body: new Dashboard({
             tickets,
             tasks,
             pullRequests,
-            projects
+            projects,
+            spaces
         }).renderToString()
     });
 

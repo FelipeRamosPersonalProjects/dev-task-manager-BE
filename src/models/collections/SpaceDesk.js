@@ -10,9 +10,11 @@ class SpaceDesk extends _Global {
         const TemplateOptions = require('../maps/TemplatesOptions');
 
         try {
-            const { spaceName, owner, projects, templates } = setup || {};
+            const { jiraProject, spaceName, owner, projects, templates } = setup || {};
 
+            this.displayName = spaceName;
             this.spaceName = spaceName;
+            this.jiraProject = jiraProject;
             this.owner = owner && new User(owner);
             this.projects = Array.isArray(projects) && projects.map(project => new Project(project));
             this.templates = new TemplateOptions(templates || {});

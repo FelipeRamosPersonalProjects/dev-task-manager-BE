@@ -16,14 +16,21 @@ class JIRA extends JIRAConnect {
 
     async mySelf() {
         try {
-            const created = await this.request('/myself');
-
-            if (!created || created instanceof Error.Log) {
-                throw created;
+            const me = await this.request('/myself');
+            if (!me || me instanceof Error.Log) {
+                throw me;
             }
 
-            if (created.success) {
-                return created.data.toSuccess();
+            const myProjects = await this.request('/project/search');
+            if (!myProjects || myProjects instanceof Error.Log) {
+                throw myProjects;
+            }
+
+            if (me.success && myProjects.success) {
+                const user = me.data;
+
+                user.projects = myProjects.data;
+                return user.toSuccess();
             }
         } catch (err) {
             throw new Error.Log(err);

@@ -18,6 +18,10 @@ module.exports = new Workflow({
                         {
                             path: 'project',
                             model: 'projects'
+                        },
+                        {
+                            path: 'space',
+                            model: 'space_desks'
                         }
                     ]);
 

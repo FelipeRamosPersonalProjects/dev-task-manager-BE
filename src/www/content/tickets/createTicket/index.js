@@ -9,10 +9,14 @@ class TicketCreate extends Component {
     constructor(settings) {
         super(settings);
 
-        const { fieldName, projects } = Object(settings);
+        const { projects, spaces } = Object(settings);
 
+        this.spaces = new SelectInput({
+            fieldName: 'space',
+            options: spaces.map(item => ({ label: item.spaceName, value: item._id }))
+        }).renderToString();
         this.projects = new SelectInput({
-            fieldName,
+            fieldName: 'project',
             options: projects.map(item => ({ label: item.projectName, value: item._id }))
         }).renderToString();
     }
