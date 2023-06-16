@@ -4,6 +4,7 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     const user = req.session.currentUser;
+
     const ticketsQuery = await CRUD.query({collectionName: 'tickets', filter: {
         assignedUsers: { $in: [ user._id ]}
     }}).defaultPopulate();
@@ -20,12 +21,16 @@ module.exports = async (req, res) => {
     }}).defaultPopulate();
     const pullRequests = prsQuery.map(item => item.initialize());
 
+    const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
+    const projects = projectsQuery.map(item => item.initialize());
+
     const content = new Page({
         pageTitle: 'Dashboard Page',
         body: new Dashboard({
             tickets,
             tasks,
-            pullRequests
+            pullRequests,
+            projects
         }).renderToString()
     });
 

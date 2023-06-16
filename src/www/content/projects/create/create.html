@@ -1,0 +1,80 @@
+<h1>Create new Project</h1>
+
+<form>
+    <fieldset>
+        <label>Project Key:</label>
+        <input type="text" name="projectKey" required />
+    </fieldset>
+
+    <fieldset>
+        <label>Project Name:</label>
+        <input type="text" name="projectName" required />
+    </fieldset>
+
+    <fieldset>
+        <label>Description:</label>
+        <textarea name="description"></textarea>
+    </fieldset>
+
+    <fieldset>
+        <label>Space:</label>
+        ##{{spaces:string}}##
+    </fieldset>
+
+    <fieldset>
+        <label>Templates:</label>
+        <input type="text" name="templates" />
+    </fieldset>
+
+    <fieldset>
+        <label>Reviewers:</label>
+        <input type="text" name="reviewers" />
+    </fieldset>
+
+    <fieldset>
+        <label>PR Labels:</label>
+        <input type="text" name="prLabels" />
+    </fieldset>
+
+    <button type="submit">Create</button>
+</form>
+
+<script>
+    document.querySelector('form').addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const fields = ev.target.querySelectorAll('[name]');
+        const data = {};
+
+        fields.forEach(field => (data[field.name] = field.value));
+        data.author = sessionStorage.getItem('currentUserUID');
+
+        if (!data.templates) {
+            data.templates = {};
+        }
+
+        if (!data.reviewers) {
+            data.reviewers = [];
+        }
+
+        if (!data.prLabels) {
+            data.prLabels = [];
+        }
+
+        fetch('/collection/create', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'post',
+            body: JSON.stringify({
+                collectionName: 'projects',
+                data
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.error) {
+                return alert(data.message);
+            }
+
+            return window.location.href = '/dashboard';
+        }).catch(err => {
+            return alert(err.message);
+        });
+    });
+</script>

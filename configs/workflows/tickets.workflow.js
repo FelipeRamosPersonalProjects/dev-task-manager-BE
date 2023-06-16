@@ -1,4 +1,5 @@
 const Workflow = require('@models/settings/Workflow');
+const CRUD = require('@CRUD');
 
 module.exports = new Workflow({
     collection: 'tickets',
@@ -8,6 +9,20 @@ module.exports = new Workflow({
             name: 'create',
             handler: async function (target) {
                 try {
+                    const populated = await target.populate([
+                        {
+                            path: 'assignedUsers',
+                            model: 'users',
+                            populate: [{ path: 'auth', model: 'auth_buckets'}]
+                        },
+                        {
+                            path: 'project',
+                            model: 'projects'
+                        }
+                    ]);
+
+                    const ticket = populated.initialize();
+                    const created = await ticket.jiraCreateTicket();
                     debugger;
                 } catch (err) {
                     throw new Error.Log(err);

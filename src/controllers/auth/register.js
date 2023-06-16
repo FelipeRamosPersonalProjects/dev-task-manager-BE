@@ -6,7 +6,11 @@ const bodySchema = {
     lastName: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    gitHubToken: { type: String }
+    confirmPassword: { type: String, required: true },
+    gitHubUser: { type: String },
+    gitHubToken: { type: String },
+    jiraUser: { type: String },
+    jiraToken: { type: String }
 };
 
 module.exports = async function (req, res) {

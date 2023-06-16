@@ -1,4 +1,5 @@
 const GitHubConnection = require('@services/GitHubAPI/GitHubConnection');
+const JIRA = require('@services/JIRA');
 
 async function preSave(next) {
     try {
@@ -6,9 +7,22 @@ async function preSave(next) {
 
         if (this.raw.gitHubUser) {
             const gitHubUserInstance = new GitHubConnection({userName: this.raw.gitHubUser});
+            const gitHubUserData = await gitHubUserInstance.getUser();
 
-            gitHubUserData = await gitHubUserInstance.getUser();
             this.gitHub = gitHubUserData;
+        }
+
+        if (this.raw.jiraUser) {
+            const jiraService = new JIRA({ userName: this.raw.jiraUser, jiraToken: this.raw.jiraToken });
+            const mySelf = await jiraService.mySelf();
+
+            if (mySelf instanceof Error.Log) {
+                throw mySelf;
+            }
+
+            if (mySelf.success) {
+                this.jira = mySelf.data;
+            }
         }
         
         if (signedUp instanceof Error.Log || !signedUp){

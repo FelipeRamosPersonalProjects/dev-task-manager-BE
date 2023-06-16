@@ -35,11 +35,12 @@
                 headers: { 'Content-Type': 'application/json' },
                 method: 'post',
                 body: JSON.stringify(data)
-            }).then(res => res.json()).then(data => {
-                if (data.error) {
-                    return alert(data.message);
+            }).then(res => res.json()).then(user => {
+                if (user.error) {
+                    return alert(user.message);
                 }
 
+                sessionStorage.setItem('currentUserUID', user.data._id);
                 return window.location.href = '/dashboard';
             }).catch(err => {
                 return alert(err.message);
