@@ -43,13 +43,12 @@ class Ticket extends _Global {
             for (let user of this.assignedUsers) {
                 const jiraCreated = await user.jiraConnect.createIssue({
                     issueType: '10048',
-                    ticketID: this.ticketID,
+                    externalKey: this.ticketID,
                     projectKey: this.project.projectKey,
                     title: this.title,
                     description: this.description
                 });
 
-                debugger;
                 return jiraCreated;
             };
         } catch (err) {

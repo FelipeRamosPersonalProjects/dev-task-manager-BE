@@ -135,7 +135,7 @@ async function onUpdate() {
         const updated = await Promise.all(promises);
         return updated;
     } catch(err) {
-        debugger
+        throw new Error.Log(err);
     }
 }
 
