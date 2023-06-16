@@ -9,11 +9,12 @@ class Dashboard extends Component {
     constructor(settings) {
         super(settings);
 
-        const { tickets, tasks, pullRequests } = Object(settings);
+        const { tickets, tasks, pullRequests, projects } = Object(settings);
 
         this.tickets = tickets;
         this.tasks = tasks;
         this.pullRequests = pullRequests;
+        this.projects = projects;
         this.types = {
             ListItem
         }

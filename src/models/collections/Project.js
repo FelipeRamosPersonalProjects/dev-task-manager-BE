@@ -14,9 +14,10 @@ class Project extends _Global {
         const User = require('./User');
 
         try {
-            const {projectName, description, tickets, repos, tasks, urls, spaceDesk, templates, baseBranch, reviewers, prLabels} = Object(setup);
+            const { projectKey, projectName, description, tickets, repos, tasks, urls, spaceDesk, templates, baseBranch, reviewers, prLabels } = Object(setup);
 
             this.displayName = `${projectName}`;
+            this.projectKey = projectKey;
             this.projectName = projectName;
             this.description = description;
             this.urls = urls;

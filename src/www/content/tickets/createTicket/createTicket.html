@@ -2,6 +2,10 @@
 
 <form>
     <fieldset>
+        <label>Project:</label>
+        ##{{projects:string}}##
+    </fieldset>
+    <fieldset>
         <label>Ticket ID:</label>
         <input type="text" name="ticketID" />
     </fieldset>
@@ -31,7 +35,23 @@
         const data = {};
 
         fields.forEach(field => (data[field.name] = field.value));
+        data.assignedUsers = [sessionStorage.getItem('currentUserUID')];
 
-        debugger;
+        fetch('/collection/create', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'post',
+            body: JSON.stringify({
+                collectionName: 'tickets',
+                data
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.error) {
+                return alert(data.message);
+            }
+
+            return window.location.href = '/dashboard';
+        }).catch(err => {
+            return alert(err.message);
+        });
     });
 </script>

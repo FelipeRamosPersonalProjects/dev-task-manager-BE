@@ -31,6 +31,7 @@ module.exports = new Collection({
         {
             fieldName: 'assignedUsers',
             type: [ObjectId],
+            required: true,
             default: [],
             ref: 'users',
             refConfig: {

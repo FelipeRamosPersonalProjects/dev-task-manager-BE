@@ -9,7 +9,7 @@ class JIRA extends JIRAConnect {
 
 
         } catch (err) {
-            throw new Error(err);
+            throw new Error.Log(err);
         }
     }
 
@@ -24,6 +24,40 @@ class JIRA extends JIRAConnect {
             if (created.success) {
                 return created.data.toSuccess();
             }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async createIssue(data) {
+        const { issueType, ticketID, projectKey, title, description } = Object(data);
+
+        try {
+            const created = await this.request(`/issue`, {
+                fields: {
+                    project: { key: projectKey },
+                    issuetype: { id: issueType },
+                    summary: title,
+                    customfield_10085: ticketID,
+                    description: {
+                        content: [
+                            {
+                                content: [
+                                    {
+                                        text: description,
+                                        type: 'text'
+                                    }
+                                ],
+                                type: 'paragraph'
+                            }
+                        ],
+                        type: 'doc',
+                        version: 1
+                    }
+                }
+            }, { method: 'post' });
+
+            return created;
         } catch (err) {
             throw new Error.Log(err);
         }

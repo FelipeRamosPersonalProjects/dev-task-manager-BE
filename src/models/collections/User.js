@@ -8,12 +8,11 @@ const PullRequest = require('./PullRequest');
 const Comment = require('./Comment');
 const CRUD = require('@CRUD');
 const dbHelpers = require('@helpers/database/dbHelpers');
-const Success = require('@SUCCESS');
 const FS = require('@services/FS');
 const config = require('@config');
 const sessionCLI = FS.isExist(config.sessionPath) && require('@SESSION_CLI') || {};
 const GitHubConnection = require('@services/GitHubAPI/GitHubConnection');
-const crypto = require('crypto');
+const JIRA = require('@services/JIRA');
 
 class User extends _Global {
     constructor(setup){
@@ -36,7 +35,8 @@ class User extends _Global {
             myReviews,
             pullRequestsAssigned,
             myComments,
-            gitHub
+            gitHub,
+            jira
         } = Object(setup);
 
         try {
@@ -57,10 +57,19 @@ class User extends _Global {
             this.pullRequestsAssigned = isCompleteDoc(pullRequestsAssigned) && pullRequestsAssigned.map(item => new PullRequest(item));
             this.myComments = isCompleteDoc(myComments) && myComments.map(item => new Comment(item));
             this.gitHub = gitHub;
+            this.jira = jira;
             
-            this.gitHubConnection = new GitHubConnection({ userName: this.getSafe('gitHub.login') });
             this._auth = () => new AuthBucket(Object(auth), this);
             this.placeDefault();
+
+            this.gitHubConnection = new GitHubConnection({
+                userName: this.getSafe('gitHub.login')
+            });
+            this.jiraConnect = new JIRA({
+                userName: this.jiraUser,
+                userUID: this._id,
+                jiraToken: this.auth.jiraToken
+            });
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'User');
         }
@@ -92,6 +101,10 @@ class User extends _Global {
 
     get gitHubUser() {
         return Object(this.gitHub).getSafe('login');
+    }
+
+    get jiraUser() {
+        return this.getSafe('jira.emailAddress')
     }
 
     static userSession() {
@@ -144,24 +157,6 @@ class User extends _Global {
         delete dataOut._schema;
         delete dataOut.gitHubConnection;
         return dataOut;
-    }
-
-    static async addPreUser(data) {
-        const { firstName, lastName, email, phone, gitHubUser, slackName } = Object(data);
-
-        try {
-            const toSave = {
-                firstName,
-                lastName,
-                email,
-                phone,
-                slackName,
-                password: crypto.randomBytes(4)
-            };
-            debugger;
-        } catch (err) {
-            throw new Error.Log(err);
-        }
     }
 
     static async getMyUser(filter) {
@@ -227,7 +222,7 @@ class User extends _Global {
 
     static async create(setup, options) {
         try {
-            const { userName, email, password, gitHubUser, gitHubToken } = Object(setup);
+            const { userName, email, password } = Object(setup);
             const { preventSignIn } = Object(options);
 
             // Check if the userName or email (that can be an userName) is already in use
@@ -240,11 +235,6 @@ class User extends _Global {
             const newUser = await CRUD.create('users', setup);
             if (newUser instanceof Error.Log) {
                 throw newUser;
-            }
-
-            if (!preventSignIn) {
-                const signedIn = await this.signIn(newUser.userName, password);
-                return Object(signedIn).toSuccess();
             }
 
             return Object().toSuccess();

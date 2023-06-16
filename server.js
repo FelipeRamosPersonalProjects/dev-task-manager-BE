@@ -33,6 +33,7 @@ require('@services/database/init').then(async () => {
     // Front-end routes
     app.get('/dashboard', routes.pages.dashboard);
     app.use('/ticket', routes.pages.ticket);
+    app.use('/projects', routes.pages.projects);
     app.use('/user', routes.pages.user);
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {

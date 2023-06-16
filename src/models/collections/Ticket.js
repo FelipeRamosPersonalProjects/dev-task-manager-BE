@@ -1,4 +1,5 @@
 const _Global = require('../maps/_Global');
+const JIRA = require('@src/services/JIRA');
 
 class Ticket extends _Global {
     constructor(setup){
@@ -23,9 +24,9 @@ class Ticket extends _Global {
             this.project = !isObjectID(project) ? new Project(project) : {};
             this.sla = !isObjectID(sla) ? new SLAModel(sla) : {};
             this.tasks = Array.isArray(tasks) && !tasks.oid() && tasks.map(task => new Task(task));
-            this.pullRequests = Array.isArray(pullRequests) && !pullRequests.oid() && pullRequests.map(pr => new PullRequest(pr));
-            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user));
-            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment));
+            this.pullRequests = Array.isArray(pullRequests) && !pullRequests.oid() && pullRequests.map(pr => new PullRequest(pr)) || [];
+            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user)) || [];
+            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment)) || [];
 
             this.placeDefault();
         } catch(err) {
@@ -35,6 +36,25 @@ class Ticket extends _Global {
 
     get displayName() {
         return `[${this.ticketID}] ${this.title}`;
+    }
+
+    async jiraCreateTicket() {
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraCreated = await user.jiraConnect.createIssue({
+                    issueType: '10048',
+                    ticketID: this.ticketID,
+                    projectKey: this.project.projectKey,
+                    title: this.title,
+                    description: this.description
+                });
+
+                debugger;
+                return jiraCreated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 }
 

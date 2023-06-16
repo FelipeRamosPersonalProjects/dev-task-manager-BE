@@ -1,12 +1,21 @@
 const Config = require('@config');
+const CRUD = require('@CRUD');
 
 class JIRAConnect {
     constructor(setup) {
         try {
-            const { jiraToken, user } = Object(setup);
+            const { jiraToken, userName, userUID } = Object(setup);
+
+            if ((!jiraToken && !userName) && !userUID) {
+                throw new Error.Log({
+                    name: 'JIRA_USER_CREDENTIALS_REQUIRED',
+                    message: `Any "userUID", "jiraToken" or "userName" was provided to JIRA Service! It's required to provide "userUID" or ("jiraToken" and "userName").`
+                });
+            }
 
             this._jiraToken = () => jiraToken;
-            this.user = user;
+            this.userName = userName;
+            this.userUID = userUID;
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -22,11 +31,22 @@ class JIRAConnect {
 
     async request(relativePath, data, options) {
         const { method } = Object(options);
-
+        
         try {
-            const response = await ajax(this.apiRoot + relativePath, Object(data))[method || 'get']({
+            if (this.userUID && (!this.userName || !this.jiraToken)) {
+                const userQuery = await CRUD.query({ collectionName: 'users', filter: this.userUID }).defaultPopulate();
+                if (!userQuery || userQuery instanceof Error.Log) {
+                    throw new Error.Log(userQuery);
+                }
+
+                const user = userQuery.initialize();
+                this.userName = user.jiraUser;
+                this.jiraToken = user.auth.jiraToken;
+            }
+
+            const response = await ajax(this.apiRoot + relativePath, data)[method || 'get']({
                 headers: {
-                    'Authorization': `Basic ${Buffer.from(`${this.user.userName}:${process.env.JIRA_TOKEN}`).toString('base64')}`,
+                    'Authorization': `Basic ${Buffer.from(`${this.userName}:${this.jiraToken}`).toString('base64')}`,
                     'Accept': 'application/json'
                 }
             });
