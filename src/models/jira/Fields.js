@@ -9,7 +9,7 @@ class JIRAFields {
 
     project() {
         try {
-            return { key: this.value };
+            return this.value ? { key: this.value } : null;
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -17,7 +17,7 @@ class JIRAFields {
 
     issuetype() {
         try {
-            return { id: this.value };
+            return this.value ? { id: this.value } : null;
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -33,7 +33,7 @@ class JIRAFields {
 
     paragraph() {
         try {
-            return {
+            return this.value ? {
                 content: [
                     {
                         content: [
@@ -47,7 +47,7 @@ class JIRAFields {
                 ],
                 type: 'doc',
                 version: 1
-            };
+            } : null;
         } catch (err) {
             throw new Error.Log(err);
         }

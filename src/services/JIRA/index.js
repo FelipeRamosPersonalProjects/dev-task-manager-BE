@@ -47,9 +47,21 @@ class JIRA extends JIRAConnect {
                 projectKey,
                 summary: title,
                 description
-            }).toObject(), { method: 'post' });
+            }).toCreate(), { method: 'post' });
 
             return created;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async updateIssue(issueKey, data) {
+        try {
+            const updated = await this.request(`/issue/${issueKey}`, new JIRATicket(data).toEdit(), {
+                method: 'put'
+            });
+
+            debugger;
         } catch (err) {
             throw new Error.Log(err);
         }
