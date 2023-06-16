@@ -1,5 +1,4 @@
 const _Global = require('../maps/_Global');
-const JIRA = require('@src/services/JIRA');
 
 class Ticket extends _Global {
     constructor(setup){
@@ -7,13 +6,14 @@ class Ticket extends _Global {
         if (!setup || isObjectID(setup)) return;
 
         const Project = require('./Project');
+        const SpaceDesk = require('./SpaceDesk');
         const Task = require('./Task');
         const PullRequest = require('./PullRequest');
         const User = require('./User');
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {ticketID, ticketURL, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {ticketID, ticketURL, space, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
 
         try {
             this.ticketURL = ticketURL;
@@ -21,6 +21,7 @@ class Ticket extends _Global {
             this.title = title;
             this.description = description;
             this.status = status;
+            this.space = !space.oid() ? new SpaceDesk(space) : {};
             this.project = !isObjectID(project) ? new Project(project) : {};
             this.sla = !isObjectID(sla) ? new SLAModel(sla) : {};
             this.tasks = Array.isArray(tasks) && !tasks.oid() && tasks.map(task => new Task(task));
@@ -44,7 +45,7 @@ class Ticket extends _Global {
                 const jiraCreated = await user.jiraConnect.createIssue({
                     issueType: '10048',
                     externalKey: this.ticketID,
-                    projectKey: this.project.projectKey,
+                    projectKey: this.space.jiraProject,
                     title: this.title,
                     description: this.description
                 });
