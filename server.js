@@ -19,6 +19,7 @@ require('@services/database/init').then(async () => {
     // Configuring server
     app.use(cors());
     app.use(express.json());
+    app.use(express.static('./src/www/static'));
     app.use(session({
         secret: process.env.API_SECRET,
         resave: true,
@@ -32,7 +33,7 @@ require('@services/database/init').then(async () => {
 
     // Front-end routes
     app.get('/dashboard', routes.pages.dashboard);
-    app.use('/ticket', routes.pages.ticket);
+    app.use('/tickets', routes.pages.ticket);
     app.use('/projects', routes.pages.projects);
     app.use('/spaces', routes.pages.spaces);
     app.use('/user', routes.pages.user);
