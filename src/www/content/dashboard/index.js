@@ -11,7 +11,10 @@ class Dashboard extends Component {
 
         const { tickets, tasks, pullRequests, projects, spaces } = Object(settings);
 
-        this.tickets = tickets;
+        this.tickets = Array.isArray(tickets) ? tickets.map(ticket => {
+            ticket.url = `/tickets/read-edit/${ticket.index}`;
+            return ticket;
+        }) : [];
         this.tasks = tasks;
         this.pullRequests = pullRequests;
         this.projects = projects;

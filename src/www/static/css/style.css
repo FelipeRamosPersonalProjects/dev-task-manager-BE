@@ -1,0 +1,43 @@
+p {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+input {
+    width: 100%;
+    margin-bottom: 0.3rem;
+}
+
+textarea {
+    min-height: 10rem;
+    width: 100%;
+}
+
+progress {
+    display: none;
+    width: 100%;
+}
+
+progress.active {
+    display: inline-block;
+}
+
+.readedit-form {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.readedit-form label {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.readedit-form[view="read"] [view="edit"] {
+    display: none;
+}
+
+.readedit-form[view="edit"] [view="read"] {
+    display: none;
+}

@@ -1,5 +1,5 @@
 const PageTemplate = require('@src/www/layouts/standardPage');
-const CreateTicket = require('@src/www/content/tickets/createTicket');
+const ReadEditTicket = require('@src/www/content/tickets/readEditTicket');
 const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
@@ -13,11 +13,16 @@ module.exports = async (req, res) => {
         return res.status(500).send(spacesQuery.toJSON());
     }
 
+    const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: { index: req.params.index }}).defaultPopulate();
+    if (ticketDoc instanceof Error.Log || !ticketDoc) {
+        return res.status(500).send(ticketDoc.toJSON());
+    }
+
     const projects = projectsQuery.map(item => item.initialize());
     const spaces = spacesQuery.map(item => item.initialize());
     const content = new PageTemplate({
-        pageTitle: 'Create Ticket',
-        body: new CreateTicket({ fieldName: 'project',  projects, spaces}).renderToString()
+        pageTitle: 'Edit Ticket',
+        body: new ReadEditTicket({ fieldName: 'project',  projects, spaces, ticketDoc: ticketDoc.initialize()}).renderToString()
     });
 
     res.setHeader('Content-Type', 'text/html');

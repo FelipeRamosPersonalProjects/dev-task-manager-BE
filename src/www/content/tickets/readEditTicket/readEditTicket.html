@@ -1,0 +1,52 @@
+<h1>##{{displayName:string}}##</h1>
+
+<div>
+    <form class="readedit-form" view="read">
+        <label>Space:</label>
+        ##{{spaces:string}}##
+    </form>
+
+    <form class="readedit-form" view="read">
+        <label>Project:</label>
+        ##{{projects:string}}##
+    </form>
+
+    <form class="readedit-form">
+        <label>Ticket ID:</label>
+
+        <p>##{{ticketID:string}}##</p>
+    </form>
+
+    <form class="readedit-form" view="read">
+        <label>Ticket URL:</label>
+
+        <p view="read">##{{ticketURL:string}}##</p>
+        <button type="button" class="edit-btn" view="read">Edit</button>
+
+        <input type="text" name="title" value="##{{ticketURL:string}}##" view="edit" />
+        <button type="button" class="cancel-btn" view="edit">Cancel</button>
+        <button type="submit" view="edit">Save</button>
+    </form>
+
+    <form class="readedit-form" view="read">
+        <label>Title:</label>
+
+        <p view="read">##{{title:string}}##</p>
+        <button type="button" class="edit-btn" view="read">Edit</button>
+
+        <input type="text" name="title" value="##{{title:string}}##" view="edit" />
+        <button type="button" class="cancel-btn" view="edit">Cancel</button>
+        <button type="submit" view="edit">Save</button>
+    </form>
+
+    <form class="readedit-form" view="read">
+        <label>Description:</label>
+
+        <p view="read">##{{description:string}}##</p>
+        <button type="button" class="edit-btn" view="read">Edit</button>
+
+        <textarea name="description" view="edit" value="##{{description:string}}##">##{{description:string}}##</textarea>
+        <button type="button" class="cancel-btn" view="edit">Cancel</button>
+        <button type="submit" view="edit">Save</button>
+    </form>
+</div>
