@@ -5,13 +5,13 @@ class JIRAIssue {
 
     constructor(setup) {
         try {
-            const { issueKey, issueType, projectKey, summary, description } = Object(setup);
+            const { issueKey, issueType, projectKey, title, description } = Object(setup);
 
             this.key = new JIRAFields(issueKey).text();
             this.fields = {
                 project: new JIRAFields(projectKey).project(),
                 issuetype: new JIRAFields(issueType).issuetype(),
-                summary: new JIRAFields(summary).text(),
+                summary: new JIRAFields(title).text(),
                 description: new JIRAFields(description).paragraph()
             }
         } catch (err) {
@@ -26,15 +26,15 @@ class JIRAIssue {
     }
 
     toUpdate() {
-        const update = {...this};
+        const update = {...this.fields};
 
-        Object.keys(result).filter(key => {
-            if (!result[key]) {
-                delete result[key];
+        Object.keys(update).filter(key => {
+            if (!update[key]) {
+                delete update[key];
             }
         });
 
-        return { update };
+        return { fields: update };
     }
 }
 

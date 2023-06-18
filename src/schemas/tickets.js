@@ -21,16 +21,11 @@ module.exports = new Collection({
         },
         {
             fieldName: 'externalKey',
-            type: String,
-            immutable: true,
-            unique: true
+            type: String
         },
         {
             fieldName: 'externalURL',
-            type: String,
-            required: true,
-            immutable: true,
-            unique: true
+            type: String
         },
         {
             fieldName: 'assignedUsers',

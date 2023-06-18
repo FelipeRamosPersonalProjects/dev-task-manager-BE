@@ -19,6 +19,10 @@ module.exports = new Collection({
             type: String
         },
         {
+            fieldName: 'jiraBaseURL',
+            type: String
+        },
+        {
             fieldName: 'owner',
             type: ObjectId,
             ref: 'users',

@@ -14,13 +14,13 @@
     <form class="readedit-form">
         <label>Ticket ID:</label>
 
-        <p>##{{externalKey:string}}##</p>
+        <span>##{{externalKey:string}}##</span>
     </form>
 
     <form class="readedit-form" view="read">
         <label>Ticket URL:</label>
 
-        <p view="read">##{{externalURL:string}}##</p>
+        <a href="##{{externalURL:string}}##" view="read">##{{externalURL:string}}##</a>
         <button type="button" class="edit-btn" view="read">Edit</button>
 
         <input type="text" name="externalURL" value="##{{externalURL:string}}##" view="edit" />
@@ -31,7 +31,7 @@
     <form class="readedit-form" view="read">
         <label>Title:</label>
 
-        <p view="read">##{{title:string}}##</p>
+        <span view="read">##{{title:string}}##</span>
         <button type="button" class="edit-btn" view="read">Edit</button>
 
         <input type="text" name="title" value="##{{title:string}}##" view="edit" />

@@ -33,6 +33,20 @@ module.exports = new Workflow({
                     throw new Error.Log(err);
                 }
             }
+        },
+        {
+            name: 'update',
+            handler: async (target) => {
+                try {
+                    const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                    const ticket = ticketDoc.initialize();
+                    const updateProps = target.getUpdateProps();
+                    
+                    return await ticket.jiraUpdateTicket(updateProps);
+                } catch (err) {
+                    throw new Error.Log(err);
+                }
+            }
         }
     ],
     statuses: [

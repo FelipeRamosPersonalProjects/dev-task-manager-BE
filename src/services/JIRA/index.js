@@ -57,11 +57,11 @@ class JIRA extends JIRAConnect {
 
     async updateIssue(issueKey, data) {
         try {
-            const updated = await this.request(`/issue/${issueKey}`, new JIRATicket(data).toEdit(), {
+            const updated = await this.request(`/issue/${issueKey}`, new JIRATicket(data).toUpdate(), {
                 method: 'put'
             });
 
-            debugger;
+            return updated;
         } catch (err) {
             throw new Error.Log(err);
         }

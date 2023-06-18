@@ -1,4 +1,4 @@
-const PageTemplate = require('@src/www/layouts/standardPage');
+const PageTemplate = require('@src/www/pages/standardPage');
 const SpaceCreate = require('@src/www/content/spaces/createSpace');
 const ErrorPage = require('@src/www/error');
 

@@ -1,4 +1,4 @@
-const PageTemplate = require('@src/www/layouts/standardPage');
+const PageTemplate = require('@src/www/pages/standardPage');
 const ProjectCreate = require('@src/www/content/projects/create');
 const ErrorPage = require('@src/www/error');
 const CRUD = require('@CRUD');

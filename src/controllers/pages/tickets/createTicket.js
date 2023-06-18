@@ -1,9 +1,9 @@
-const PageTemplate = require('@src/www/layouts/standardPage');
+const PageTemplate = require('@src/www/pages/standardPage');
 const CreateTicket = require('@src/www/content/tickets/createTicket');
 const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
-    const projectsQuery = await CRUD.query({collectionName: 'projects', filter: {}}).defaultPopulate();
+    const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
     if (projectsQuery instanceof Error.Log || !projectsQuery) {
         return res.status(500).send(projectsQuery.toJSON());
     }
@@ -17,7 +17,11 @@ module.exports = async (req, res) => {
     const spaces = spacesQuery.map(item => item.initialize());
     const content = new PageTemplate({
         pageTitle: 'Create Ticket',
-        body: new CreateTicket({ fieldName: 'project',  projects, spaces}).renderToString()
+        body: new CreateTicket({
+            fieldName: 'project',
+            projects,
+            spaces
+        }).renderToString()
     });
 
     res.setHeader('Content-Type', 'text/html');
