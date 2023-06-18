@@ -4,7 +4,7 @@ class TicketsClass {
     static Model = Ticket;
 
     get displayName() {
-        return `[${this.externalKey}] ${this.title}`;
+        return `${this.title}`;
     }
 }
 

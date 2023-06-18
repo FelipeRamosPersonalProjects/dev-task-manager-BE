@@ -14,6 +14,13 @@ async function readable(options) {
 
 };
 
+function getUpdateProps() {
+    const updateProps = {...this._update.$set};
+
+    delete updateProps.modifiedAt;
+    return updateProps;
+}
+
 function paginate(options) {
     let {
         views,
@@ -89,5 +96,6 @@ module.exports = {
     readable,
     paginate,
     populateAll,
-    initialize
+    initialize,
+    getUpdateProps
 };

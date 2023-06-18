@@ -13,13 +13,14 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {externalKey, externalURL, space, jiraIssue, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {externalKey, externalURL, space, jiraIssue, project, displayName, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
 
         try {
             this.collectionName = 'tickets';
             this.externalURL = externalURL;
             this.externalKey = externalKey;
             this.title = title;
+            this.displayName = displayName;
             this.description = description;
             this.status = status;
             this.jiraIssue = jiraIssue;
@@ -37,10 +38,6 @@ class Ticket extends _Global {
         }
     }
 
-    get displayName() {
-        return `[${this.externalKey}] ${this.title}`;
-    }
-
     async jiraCreateTicket() {
         try {
             for (let user of this.assignedUsers) {
@@ -54,6 +51,22 @@ class Ticket extends _Global {
 
                 await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
                 return jiraCreated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async jiraUpdateTicket(data) {
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, data);
+
+                if (jiraUpdated instanceof Error.Log) {
+                    throw jiraUpdated
+                }
+
+                return jiraUpdated;
             };
         } catch (err) {
             throw new Error.Log(err);

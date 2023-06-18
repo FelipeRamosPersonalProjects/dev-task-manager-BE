@@ -17,6 +17,7 @@ module.exports = async function (req, res) {
         const body = request.getBody();
 
         // Creating document
+        body.data.sessionUser = req.session.currentUser;
         const doc = await CRUD.create(body.collectionName, body.data, body.options);
 
         if (!doc.errors) {

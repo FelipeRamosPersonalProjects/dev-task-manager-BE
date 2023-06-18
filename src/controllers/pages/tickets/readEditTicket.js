@@ -1,4 +1,4 @@
-const PageTemplate = require('@src/www/layouts/standardPage');
+const PageTemplate = require('@src/www/pages/standardPage');
 const ErrorPage = require('@src/www/error');
 const ReadEditTicket = require('@src/www/content/tickets/readEditTicket');
 const CRUD = require('@CRUD');
@@ -24,9 +24,9 @@ module.exports = async (req, res) => {
                 message: `The ticket "${req.params.index}" requested wasn't found!`
             }).renderToString());
         }
+
         if (ticketDoc instanceof Error.Log) {
-            res.setHeader('Content-Type', 'text/html');
-            return res.status(500).send(new ErrorPage(err).renderToString());
+            throw ticketDoc;
         }
 
         const projects = projectsQuery.map(item => item.initialize());

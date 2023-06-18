@@ -20,17 +20,13 @@ module.exports = (url, data) => {
 
                 return response;
             } catch(err) {
-                const errorRes = err && err.response;
-
-                if (errorRes) {
-                    throw new Error.Log({
-                        status: errorRes.status,
-                        name: errorRes.statusText,
-                        message: errorRes.data ? errorRes.data.message : ''
-                    });
-                } else {
-                    throw new Error.Log(err);
-                }
+                const errorResponse = err.response;
+                const errorData = errorResponse && errorResponse.data;
+                throw new Error.Log({
+                    status: errorResponse.status,
+                    name: errorResponse.statusText,
+                    message: errorData.errorMessages.join('\n')
+                });
             }
         }, 
         post: async (config, getAxiosResponse) => {
@@ -46,7 +42,13 @@ module.exports = (url, data) => {
 
                 return response;
             } catch(err) {
-                throw new Error.Log(err);
+                const errorResponse = err.response;
+                const errorData = errorResponse && errorResponse.data;
+                throw new Error.Log({
+                    status: errorResponse.status,
+                    name: errorResponse.statusText,
+                    message: errorData.errorMessages.join('\n')
+                });
             }
         },
         put: async (config, getAxiosResponse) => {
@@ -62,7 +64,13 @@ module.exports = (url, data) => {
 
                 return response;
             } catch(err) {
-                throw new Error.Log(err);
+                const errorResponse = err.response;
+                const errorData = errorResponse && errorResponse.data;
+                throw new Error.Log({
+                    status: errorResponse.status,
+                    name: errorResponse.statusText,
+                    message: errorData.errorMessages.join('\n')
+                });
             }
         },
         delete: async (config, getAxiosResponse) => {
@@ -79,7 +87,13 @@ module.exports = (url, data) => {
 
                 return new Error.Log(response);
             } catch(err) {
-                throw new Error.Log(err);
+                const errorResponse = err.response;
+                const errorData = errorResponse && errorResponse.data;
+                throw new Error.Log({
+                    status: errorResponse.status,
+                    name: errorResponse.statusText,
+                    message: errorData.errorMessages.join('\n')
+                });
             }
         }
     }

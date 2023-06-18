@@ -34,6 +34,10 @@ progress.active {
     width: 100%;
 }
 
+.readedit-form a {
+    display: inline-block;
+}
+
 .readedit-form[view="read"] [view="edit"] {
     display: none;
 }

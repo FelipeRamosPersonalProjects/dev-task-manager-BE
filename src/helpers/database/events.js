@@ -52,6 +52,8 @@ async function postUpdateOne() {
         if ($set.status) {
             process.emit(`status:transition:${collection}`, this);
         }
+
+        process.emit(`update:${collection}`, this);
     } catch (err) {
         throw new Error.Log(err);
     }
