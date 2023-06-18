@@ -12,10 +12,6 @@ class JIRATicketIssue extends JIRAIssue {
             throw new Error.Log(err);
         }
     }
-
-    toObject() {
-        return {...this};
-    }
 }
 
 module.exports = JIRATicketIssue;

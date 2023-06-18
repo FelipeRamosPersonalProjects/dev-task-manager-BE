@@ -18,13 +18,10 @@ module.exports = new Collection({
             required: true,
             default: 'master-task',
             enum: [
-                'master-task',
-                'sub-task',
-                'bug',
-                'discovery',
-                'code-review',
-                'development',
-                'validation'
+                'INVESTIGATION',
+                'DEVELOPMENT',
+                'VALIDATION',
+                'TODO'
             ]
         },
         {
@@ -50,17 +47,12 @@ module.exports = new Collection({
             required: true
         },
         {
-            fieldName: 'taskID',
-            type: String,
-            immutable: true,
-            unique: true
+            fieldName: 'externalKey',
+            type: String
         },
         {
-            fieldName: 'taskURL',
-            type: String,
-            required: true,
-            immutable: true,
-            unique: true
+            fieldName: 'externalURL',
+            type: String
         },
         {
             fieldName: 'description',

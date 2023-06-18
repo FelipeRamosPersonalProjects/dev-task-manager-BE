@@ -8,11 +8,11 @@ class MyPrDescription extends Component {
 
     constructor(settings) {
         super(settings, {
-            ticketURL: {
+            externalTicketURL: {
                 type: String,
                 required: true
             },
-            taskURL: {
+            externalTaskURL: {
                 type: String,
                 required: true
             },
@@ -34,10 +34,10 @@ class MyPrDescription extends Component {
             }
         });
 
-        const { ticketURL, taskURL, summary, fileChanges, images, videos } = Object(settings || {});
+        const { externalTicketURL, externalTaskURL, summary, fileChanges, images, videos } = Object(settings || {});
 
-        this.ticketURL = ticketURL;
-        this.taskURL = taskURL;
+        this.externalTicketURL = externalTicketURL;
+        this.externalTaskURL = externalTaskURL;
         this.summary = summary;
         this.fileChanges = fileChanges;
         this.images = images;

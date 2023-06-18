@@ -8,9 +8,10 @@ class ListItem extends Component {
     constructor(settings) {
         super(settings);
 
-        const { displayName } = Object(settings);
+        const { displayName, url } = Object(settings);
         
         this.displayName = displayName;
+        this.url = url;
     }
 }
 

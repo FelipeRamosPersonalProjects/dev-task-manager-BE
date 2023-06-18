@@ -1,15 +1,15 @@
 ##{{DashedHeader:component}}##
 
-    Ticket ID:          ##{{ticketID:string}}##
+    Ticket ID:          ##{{externalKey:string}}##
     ---------------------------------------------------------------------------------------
 
     Task Name:          ##{{taskName:string}}##
     ---------------------------------------------------------------------------------------
 
-    Task URL:           ##{{taskURL:string}}##
+    Task URL:           ##{{externalURL:string}}##
     ---------------------------------------------------------------------------------------
 
-    Ticket URL:         ##{{ticketURL:string}}##
+    Ticket URL:         ##{{externalURL:string}}##
     ---------------------------------------------------------------------------------------
 
     Current Version:    v##{{taskVersion:string}}##

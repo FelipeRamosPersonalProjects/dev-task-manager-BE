@@ -23,7 +23,6 @@ class SchemaDB {
         try {
             this.name = setup.name;
             this.symbol = setup.symbol;
-            
 
             if (Array.isArray(setup.fieldsSet)) {
                 if (!setup.schema) setup.schema = {};
@@ -68,10 +67,10 @@ class SchemaDB {
                 initializedCollections.push(this.symbol);
                 this.DB = mongoose.model(this.name, this.schema);
             } else {
-                // const error = new Error.Log('database.duplicated_schema', this.name, this.symbol);
-                // if (isDup) error.append('database.duplicated_schema_name', this.name);
-                // if (isDupSymbol) error.append('database.duplicated_schema_symbol', this.symbol);
-                // throw error;
+                const error = new Error.Log('database.duplicated_schema', this.name, this.symbol);
+                if (isDup) error.append('database.duplicated_schema_name', this.name);
+                if (isDupSymbol) error.append('database.duplicated_schema_symbol', this.symbol);
+                throw error;
             }
         } catch(err) {
             throw new Error.Log(err).append('database.schema_init');

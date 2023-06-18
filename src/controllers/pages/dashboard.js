@@ -1,4 +1,4 @@
-const Page = require('@src/www/templates/standardPage');
+const Page = require('@src/www/pages/standardPage');
 const Dashboard = require('@www/content/dashboard');
 const CRUD = require('@CRUD');
 

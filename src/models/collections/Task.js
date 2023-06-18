@@ -23,15 +23,15 @@ class Task extends _Global {
                 isInternal,
                 source,
                 prStage,
+                jiraIssue,
                 taskVersion,
                 taskName,
-                taskID,
-                taskURL,
+                externalKey,
+                externalURL,
                 description,
                 parentTask,
                 subTasks,
                 project,
-                assignedUser,
                 ticket,
                 dueDate,
                 sharedWith,
@@ -41,7 +41,8 @@ class Task extends _Global {
                 discoveries,
                 developments,
                 validations,
-                todoReminders
+                todoReminders,
+                assignedUsers
             } = new Object(setup);
 
             this.collectionName = 'tasks';
@@ -49,35 +50,40 @@ class Task extends _Global {
             this.isInternal = isInternal;
             this.source = source;
             this.prStage = prStage;
+            this.jiraIssue = jiraIssue;
             this.taskVersion = taskVersion;
             this.taskName = taskName;
-            this.taskID = taskID;
-            this.taskURL = taskURL;
+            this.externalKey = externalKey;
+            this.externalURL = externalURL;
             this.description = description;
             this.dueDate = dueDate;
             this.parentTask = isCompleteDoc(parentTask) ? new Task(parentTask) : {};
             this.subTasks = isCompleteDoc(subTasks) ? subTasks.map(sub => new Task(sub)) : [];
-            this.assignedUser = isCompleteDoc(assignedUser) ? new User(assignedUser) : {};
             this.ticket = isCompleteDoc(ticket) ? new Ticket(ticket) : {};
             this.sharedWith = isCompleteDoc(sharedWith) ? new User(sharedWith) : {};
             this.pullRequests = isCompleteDoc(pullRequests) ? pullRequests.map(pullRequest => new PullRequest(pullRequest)) : [];
             this.comments = isCompleteDoc(comments) ? comments.map(comment => new Comment(comment)) : [];
             this.project = isCompleteDoc(project) ? new Project(project) : {};
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
+            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() ? assignedUsers.map(item => new User(item)) : [];
 
-            if (this.taskType === 'discovery') {
-                this.discoveries = discoveries && new DiscoveriesModel(discoveries);
+            if (this.taskType === 'INVESTIGATION') {
+                this.discoveries = discoveries && new DiscoveryModel(discoveries);
             }
             
-            else if (this.taskType === 'development') {
+            else if (this.taskType === 'DEVELOPMENT') {
                 this.developments = developments && new DevelopmentModel(developments);
             }
             
-            else if (this.taskType === 'validation') {
+            else if (this.taskType === 'PULL-REQUEST') {
+                this.validations = validations && new ValidationModel(validations);
+            }
+
+            else if (this.taskType === 'VALIDATION') {
                 this.validations = validations && new ValidationModel(validations);
             }
             
-            else if (this.taskType === 'todo-reminder') {
+            else if (this.taskType === 'TODO') {
                 this.todoReminders = todoReminders && new TODOReminder(todoReminders);
             }
             
@@ -96,16 +102,20 @@ class Task extends _Global {
         return (typeof this.repo === 'object') && this.repo.repoManager;
     }
 
-    get ticketID() {
-        return this.ticket && this.ticket.ticketID;
+    get spaceJiraProject() {
+        return this.getSafe('ticket.space.jiraProject');
+    }
+
+    get externalTicketKey() {
+        return this.ticket && this.ticket.externalKey;
     }
 
     get ticketUID() {
         return this.ticket && this.ticket._id;
     }
 
-    get ticketURL() {
-        return this.ticket && this.ticket.ticketURL;
+    get externalTicketURL() {
+        return this.ticket && this.ticket.externalURL;
     }
 
     get taskBranch() {
@@ -141,15 +151,44 @@ class Task extends _Global {
         try {
             const version = customVersion || (this.taskVersion ? this.taskVersion : 1);
 
-            if (!this.taskID) {
-                throw new Error.Log('common.missing_params', 'Task.taskID', 'Task.taskBranch', 'Task.js');
+            if (!this.externalKey) {
+                throw new Error.Log('common.missing_params', 'Task.externalKey', 'Task.taskBranch', 'Task.js');
             }
 
             if (version > 1) {
-                return `feature/${this.taskID}-v${version}`;
+                return `feature/${this.externalKey}-v${version}`;
             } else {
-                return `feature/${this.taskID}`;
+                return `feature/${this.externalKey}`;
             }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+    
+    async jiraCreateTask() {
+        try {
+            for (let user of this.assignedUsers) {
+                if (!user || !user.jiraConnect) return;
+
+                const jiraCreated = await user.jiraConnect.createIssue({
+                    issueType: '10051',
+                    externalKey: this.externalTicketKey,
+                    projectKey: this.spaceJiraProject,
+                    title: this.taskName,
+                    description: this.description
+                });
+
+                await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
+                return jiraCreated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async jiraUpdatetask() {
+        try {
+    
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -216,7 +255,7 @@ class Task extends _Global {
                 return populatedLoad;
             } else {
                 const prTitleTemplate = this.repo.getProjectTemplate('prTitle');
-                const prName = prTitleTemplate.renderToString({taskID: this.taskID, taskTitle: this.taskName});
+                const prName = prTitleTemplate.renderToString({externalKey: this.externalKey, taskTitle: this.taskName});
 
                 const currentUser = await this.getCurrentUser();
                 const newDocPR = await CRUD.create('pull_requests', {
@@ -228,9 +267,9 @@ class Task extends _Global {
                     repo: this.repo._id,
                     task: this._id,
                     ticket: this.ticketUID,
-                    taskID: this.taskID,
-                    taskURL: this.taskURL,
-                    ticketURL: this.ticketURL,
+                    externalKey: this.externalKey,
+                    externalURL: this.externalURL,
+                    externalURL: this.externalURL,
                     assignedUsers: user._id,
                     summary: this.description
                 });
@@ -292,6 +331,21 @@ class Task extends _Global {
             this.taskVersion = increased.taskVersion;
             return increased;
         } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    static async createTask(data) {
+        data.taskType = 'INVESTIGATION';
+
+        try {
+            const created = await CRUD.create('tasks', data);
+            if (created instanceof Error.Log) {
+                throw created;
+            }
+
+            return created;
+        } catch (err) {
             throw new Error.Log(err);
         }
     }

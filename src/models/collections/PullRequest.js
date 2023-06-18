@@ -61,8 +61,8 @@ class PullRequest extends _Global {
                 this.description = description;
             } else {
                 this.description = description && description.toMarkdown({
-                    ticketURL: ticket.ticketURL,
-                    taskURL: task.taskURL,
+                    externalURL: ticket.externalURL,
+                    externalURL: task.externalURL,
                     summary: task.description,
                     fileChanges
                 });
@@ -96,12 +96,12 @@ class PullRequest extends _Global {
         }
     }
 
-    get taskID() {
-        return this.task && this.task.taskID;
+    get externalKey() {
+        return this.task && this.task.externalKey;
     }
 
-    get ticketID() {
-        return this.parentTicket && this.parentTicket.ticketID;
+    get externalKey() {
+        return this.parentTicket && this.parentTicket.externalKey;
     }
 
     get project() {
@@ -111,8 +111,8 @@ class PullRequest extends _Global {
     async updateDescription(dontSave) {
         const descriptionTemplate = this.project.getTemplate('prDescription');
         const newDescription = descriptionTemplate.renderToString({
-            ticketURL: this.parentTicket.ticketURL,
-            taskURL: this.task.taskURL,
+            externalURL: this.parentTicket.externalURL,
+            externalURL: this.task.externalURL,
             summary: this.summary,
             fileChanges: this.fileChanges
         });

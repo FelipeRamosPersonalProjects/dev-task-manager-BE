@@ -1,10 +1,10 @@
 ---------------------------------------------------------------------------------------------------------------------------------------
 
         Task name:
-        [##{{taskID:string}}##] ##{{taskName:string}}##
+        [##{{externalKey:string}}##] ##{{taskName:string}}##
 
         URL:
-        ##{{taskURL:string}}##
+        ##{{externalURL:string}}##
 
         Task Branch:
         ##{{taskBranch:string}}##

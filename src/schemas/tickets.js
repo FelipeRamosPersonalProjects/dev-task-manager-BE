@@ -10,23 +10,22 @@ module.exports = new Collection({
     singularLabel: 'ticket',
     fieldsSet: [
         {
-            fieldName: 'source',
+            fieldName: 'externalSource',
             type: String,
             default: 'jira',
             enum: ['jira', 'github']
         },
         {
-            fieldName: 'ticketID',
-            type: String,
-            immutable: true,
-            unique: true
+            fieldName: 'jiraIssue',
+            type: Object
         },
         {
-            fieldName: 'ticketURL',
-            type: String,
-            required: true,
-            immutable: true,
-            unique: true
+            fieldName: 'externalKey',
+            type: String
+        },
+        {
+            fieldName: 'externalURL',
+            type: String
         },
         {
             fieldName: 'assignedUsers',
@@ -74,12 +73,10 @@ module.exports = new Collection({
             default: 'TO-START',
             enum: [
                 'TO-START',
-                'INVESTIGATING',
+                'INVESTIGATION',
                 'ESTIMATION',
-                'TO-DEVELOP',
-                'IN-DEVELOPMENT',
-                'DEVELOPMENT-DONE',
-                'CODE-REVIEW',
+                'DEVELOPMENT',
+                'PULL-REQUEST',
                 'VALIDATION',
                 'COMPLETED',
                 'ABORTED',

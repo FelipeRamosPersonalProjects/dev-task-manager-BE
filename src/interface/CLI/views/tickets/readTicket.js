@@ -15,8 +15,8 @@ async function ReadTicketView() {
                         try {
                             const query = await CRUD.query({collectionName: 'tickets', filter: {
                                 $or: [
-                                    { ticketID: answer },
-                                    { ticketURL: answer }
+                                    { externalKey: answer },
+                                    { externalURL: answer }
                                 ]
                             }}).defaultPopulate();
                             if (query instanceof Error.Log) {

@@ -22,12 +22,12 @@ class StashManager {
         return this._repoManager();
     }
 
-    buildStashName({_id, type, ticketID, taskID, taskVersion}) {
-        ticketID = ticketID || this.repo && this.repo.ticketID;
-        taskID = taskID || this.repo && this.repo.taskID;
+    buildStashName({_id, type, externalKey, taskExternalKey, taskVersion}) {
+        externalKey = externalKey || this.repo && this.repo.externalKey;
+        taskExternalKey = taskExternalKey || this.repo && this.repo.taskExternalKey;
         taskVersion = this.repo && this.repo.parentTask && this.repo.parentTask.taskVersion;
 
-        return `[${config.projectName}]${_id}__${type}${ticketID ? `__${ticketID}` : ''}${taskID ? `__${taskID}` : ''}${taskVersion ? '-v'+taskVersion : ''}`;
+        return `[${config.projectName}]${_id}__${type}${externalKey ? `__${externalKey}` : ''}${taskExternalKey ? `__${taskExternalKey}` : ''}${taskVersion ? '-v'+taskVersion : ''}`;
     }
 
     async createStash(setup) {

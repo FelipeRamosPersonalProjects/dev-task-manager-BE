@@ -64,15 +64,15 @@ class Repo extends _Global {
         return this._parentTask();
     }
 
-    get taskID() {
+    get externalKey() {
         const task = this.parentTask;
-        return task && task.taskID;
+        return task && task.externalKey;
     }
 
-    get ticketID() {
+    get externalKey() {
         const task = this.parentTask;
         const ticket = task && task.ticket;
-        return ticket && ticket.ticketID;
+        return ticket && ticket.externalKey;
     }
 
     get repoManager() {
@@ -115,7 +115,7 @@ class Repo extends _Global {
             }
     
             if (path.length > 1) {
-                const match = path.find(item => item.match(task.taskID));
+                const match = path.find(item => item.match(task.externalKey));
     
                 if (match) {
                     return true;
@@ -175,7 +175,7 @@ class Repo extends _Global {
             const isValidBranch = this.isCurrentBranchValid();
             const task = this.parentTask;
             const titleTemplate = this.getProjectTemplate('prTitle');
-            const title = titleTemplate.renderToString({taskID: task.taskID, taskTitle: task.taskName});
+            const title = titleTemplate.renderToString({externalKey: task.externalKey, taskTitle: task.taskName});
 
             if (isValidBranch) {
                 const commit = await this.repoManager.commit(title, summary || task.description, {fileChanges});

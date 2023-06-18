@@ -34,14 +34,14 @@ class JIRAConnect {
         
         try {
             if (this.userUID && (!this.userName || !this.jiraToken)) {
-                const userQuery = await CRUD.query({ collectionName: 'users', filter: this.userUID }).defaultPopulate();
+                const userQuery = await CRUD.getDoc({ collectionName: 'users', filter: this.userUID }).defaultPopulate();
                 if (!userQuery || userQuery instanceof Error.Log) {
                     throw new Error.Log(userQuery);
                 }
 
-                const user = userQuery.initialize();
-                this.userName = user.jiraUser;
-                this.jiraToken = user.auth.jiraToken;
+                this.user = userQuery.initialize();
+                this.userName = this.user.jiraUser;
+                this._jiraToken = () => this.user.auth.jiraToken;
             }
 
             const response = await ajax(this.apiRoot + relativePath, data)[method || 'get']({

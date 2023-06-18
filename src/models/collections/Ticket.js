@@ -13,14 +13,17 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {ticketID, ticketURL, space, project, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {externalKey, externalURL, space, jiraIssue, project, displayName, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
 
         try {
-            this.ticketURL = ticketURL;
-            this.ticketID = ticketID;
+            this.collectionName = 'tickets';
+            this.externalURL = externalURL;
+            this.externalKey = externalKey;
             this.title = title;
+            this.displayName = displayName;
             this.description = description;
             this.status = status;
+            this.jiraIssue = jiraIssue;
             this.space = !space.oid() ? new SpaceDesk(space) : {};
             this.project = !isObjectID(project) ? new Project(project) : {};
             this.sla = !isObjectID(sla) ? new SLAModel(sla) : {};
@@ -35,23 +38,60 @@ class Ticket extends _Global {
         }
     }
 
-    get displayName() {
-        return `[${this.ticketID}] ${this.title}`;
-    }
-
     async jiraCreateTicket() {
         try {
             for (let user of this.assignedUsers) {
                 const jiraCreated = await user.jiraConnect.createIssue({
                     issueType: '10048',
-                    externalKey: this.ticketID,
+                    externalKey: this.externalKey,
                     projectKey: this.space.jiraProject,
                     title: this.title,
                     description: this.description
                 });
 
+                await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
                 return jiraCreated;
             };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async jiraUpdateTicket(data) {
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, data);
+
+                if (jiraUpdated instanceof Error.Log) {
+                    throw jiraUpdated
+                }
+
+                return jiraUpdated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async jiraTransitionStatus(event) {
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraUpdated = await user.jiraConnect.transitionIssue(this.jiraIssue.key, event);
+
+                if (jiraUpdated instanceof Error.Log) {
+                    throw jiraUpdated
+                }
+
+                return jiraUpdated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async transitionStatus(status) {
+        try {
+            return await this.updateDB({data: { status }});
         } catch (err) {
             throw new Error.Log(err);
         }
