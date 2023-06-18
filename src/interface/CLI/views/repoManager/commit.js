@@ -25,8 +25,8 @@ async function CommitView() {
                                 const task = await CRUD.getDoc({
                                     collectionName: 'tasks',
                                     filter: { $or: [
-                                        { taskID: answer },
-                                        { taskURL: answer }
+                                        { externalKey: answer },
+                                        { externalURL: answer }
                                     ]}
                                 }).defaultPopulate();
 

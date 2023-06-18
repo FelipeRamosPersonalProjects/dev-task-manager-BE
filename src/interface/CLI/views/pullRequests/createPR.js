@@ -15,10 +15,10 @@ async function CreatePRsView({ task }) {
         ev.setValue(ev.id, answer);
     }
 
-    async function initializeTaskAndPR(ev, print, taskID) {
-        const taskQuery = await CRUD.getDoc({collectionName: 'tasks', filter: {taskID}}).defaultPopulate();
+    async function initializeTaskAndPR(ev, print, externalKey) {
+        const taskQuery = await CRUD.getDoc({collectionName: 'tasks', filter: {externalKey}}).defaultPopulate();
         if (!taskQuery) {
-            print(`The task "${taskID}" provided, wasn't found! Please try again...`, 'TASK-NOT-FOUND');
+            print(`The task "${externalKey}" provided, wasn't found! Please try again...`, 'TASK-NOT-FOUND');
             return ev.trigger();
         }
 
@@ -145,7 +145,7 @@ async function CreatePRsView({ task }) {
                                     }
                                 }
 
-                                const initialized = await initializeTaskAndPR(ev, print, task.taskID);
+                                const initialized = await initializeTaskAndPR(ev, print, task.externalKey);
                                 return initialized;
                             } catch (err) {
                                 throw new Error.Log(err);
@@ -334,7 +334,7 @@ async function CreatePRsView({ task }) {
                     const reviewers = Object(task).getSafe('project.reviewers') || [];
                     const comp = new FinalTempl({
                         externalURL: task.externalURL,
-                        taskURL: task.taskURL,
+                        externalURL: task.externalURL,
                         prLink: published.gitHubPR.html_url,
                         reviewers: reviewers.map(item => item.slackName).join(' ')
                     });

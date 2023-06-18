@@ -1,12 +1,15 @@
 const CRUD = require('@CRUD');
 
 function getTaskIdFromURL(url) {
-    const slittedURL = url.split('/');
-    return slittedURL[slittedURL.length - 1];
+    const splittedURL = url.split('/');
+    return splittedURL[slittedURL.length - 1];
 }
 
 async function preSave(next) {
-    this.taskID = getTaskIdFromURL(this.taskURL);
+    if (this.externalURL) {
+        this.externalKey = getTaskIdFromURL(this.externalURL);
+    }
+
     return next();
 }
 

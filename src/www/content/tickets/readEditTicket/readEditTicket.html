@@ -11,6 +11,17 @@
         ##{{projects:string}}##
     </form>
 
+    <form class="readedit-form" view="read">
+        <label>Status:</label>
+
+        <span view="read">##{{currentStatus:string}}##</span>
+        ##{{status:string}}##
+        <button type="button" class="edit-btn" view="read">Edit</button>
+
+        <button type="button" class="cancel-btn" view="edit">Cancel</button>
+        <button type="submit" view="edit">Save</button>
+    </form>
+
     <form class="readedit-form">
         <label>Ticket ID:</label>
 

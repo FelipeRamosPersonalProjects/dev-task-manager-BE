@@ -21,7 +21,7 @@ async function ReadPRView({ viewParams, defaultData, dataDoc }) {
                             { 'gitHubPR.html_url': answer }
                         ];
 
-                        const task = await CRUD.getDoc({ collectionName: 'tasks', filter: { taskID: answer }});
+                        const task = await CRUD.getDoc({ collectionName: 'tasks', filter: { externalKey: answer }});
                         const ticket = await CRUD.getDoc({ collectionName: 'tickets', filter: { externalKey: answer }});
 
                         if (task) {

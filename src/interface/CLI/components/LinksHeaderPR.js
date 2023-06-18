@@ -8,10 +8,10 @@ class LinksHeaderPR extends Component {
     constructor(settings) {
         super(settings);
 
-        const { externalURL, taskURL, prLink, reviewers } = Object(settings);
+        const { externalURL, externalURL, prLink, reviewers } = Object(settings);
         
         this.externalURL = externalURL;
-        this.taskURL = taskURL;
+        this.externalURL = externalURL;
         this.prLink = prLink;
         this.reviewers = reviewers;
     }

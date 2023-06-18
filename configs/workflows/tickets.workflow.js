@@ -1,4 +1,5 @@
 const Workflow = require('@models/settings/Workflow');
+const Task = require('@src/models/collections/Task');
 const CRUD = require('@CRUD');
 
 module.exports = new Workflow({
@@ -57,13 +58,27 @@ module.exports = new Workflow({
         },
         {
             statusID: 'INVESTIGATION',
+            jiraID: 21,
             displayName: 'Investigation',
             next: 'ESTIMATION',
             events: [{
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        debugger;
+                        const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const ticket = ticketDoc.initialize();
+                        const newTask = await Task.createTask({
+                            taskType: 'INVESTIGATION',
+                            taskName: 'Investigation',
+                            ticket: ticket._id,
+                            assignedUsers: ticket.assignedUsers.map(item => item._id)
+                        });
+
+                        if (newTask instanceof Error.Log) {
+                            throw newTask;
+                        }
+                        
+                        return await ticket.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }

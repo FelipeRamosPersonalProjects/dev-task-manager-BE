@@ -23,7 +23,6 @@ class SchemaDB {
         try {
             this.name = setup.name;
             this.symbol = setup.symbol;
-            
 
             if (Array.isArray(setup.fieldsSet)) {
                 if (!setup.schema) setup.schema = {};

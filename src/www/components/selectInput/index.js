@@ -9,10 +9,11 @@ class SelectInput extends Component {
     constructor(settings) {
         super(settings);
 
-        const { fieldName, options } = Object(settings);
+        const { selectState, fieldName, options } = Object(settings);
         
         this.fieldName = fieldName;
         this.options = options;
+        this.selectState = selectState;
         this.types = {
             SelectOption
         }

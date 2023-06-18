@@ -77,11 +77,20 @@ class Workflow {
     
     addListeners() {
         try {
-            this.workflowEvents.map(event => event.add());
+            this.workflowEvents.map(event => event.add(this));
             this.statuses.map(status => status.addListeners());
         } catch (err) {
             throw new Error.Log(err);
         }
+    }
+
+    getStatus(statusID) {
+        return this.statuses.find(item => item.statusID === statusID);
+    }
+
+    getJiraID(statusID) {
+        const current = this.getStatus(statusID);
+        return current && current.statusID;
     }
 }
 

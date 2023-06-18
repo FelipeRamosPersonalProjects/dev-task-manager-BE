@@ -31,7 +31,7 @@ class EventStd {
              */
             this.target = target;
 
-            this.add();
+            this.add(target)
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -45,9 +45,9 @@ class EventStd {
         }
     }
     
-    add() {
+    add(status) {
         try {
-            this.listener = process.on(this.name, this.handler.bind(this));
+            this.listener = process.on(this.name, this.handler.bind(status));
             return this.listener;
         } catch (err) {
             throw new Error.Log(err);
