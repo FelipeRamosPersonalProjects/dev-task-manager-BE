@@ -4,13 +4,13 @@ const FileChange = require('../default_file_change');
 class DefaultPRDescription extends Component {
     constructor(settings = {
         ...Component.prototype,
-        ticketURL,
+        externalURL,
         taskURL,
         summary,
         fileChanges
     }) {
         super(settings, {
-            ticketURL: {
+            externalURL: {
                 type: String,
                 required: true
             },
@@ -26,10 +26,10 @@ class DefaultPRDescription extends Component {
             },
         });
 
-        const { ticketURL, taskURL, summary, fileChanges } = settings || {};
+        const { externalURL, taskURL, summary, fileChanges } = settings || {};
 
         this.SOURCE_PATH = require.resolve('./source/default_pr_description.md');
-        this.ticketURL = ticketURL;
+        this.externalURL = externalURL;
         this.taskURL = taskURL;
         this.summary = summary;
         this.fileChanges = fileChanges;

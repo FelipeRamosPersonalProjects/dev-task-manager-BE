@@ -1,5 +1,5 @@
 🎟️ Links
-Ticket: ##{{ticketURL:string}}##
+Ticket: ##{{externalURL:string}}##
 Jira Task: ##{{taskURL:string}}##
 Pull Request: ##{{prLink:string}}##
 

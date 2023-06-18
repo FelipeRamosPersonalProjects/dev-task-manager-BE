@@ -22,7 +22,7 @@ async function ReadPRView({ viewParams, defaultData, dataDoc }) {
                         ];
 
                         const task = await CRUD.getDoc({ collectionName: 'tasks', filter: { taskID: answer }});
-                        const ticket = await CRUD.getDoc({ collectionName: 'tickets', filter: { ticketID: answer }});
+                        const ticket = await CRUD.getDoc({ collectionName: 'tickets', filter: { externalKey: answer }});
 
                         if (task) {
                             searchParams.push({ task: task._id });

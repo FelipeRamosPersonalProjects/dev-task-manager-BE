@@ -61,7 +61,7 @@ class PullRequest extends _Global {
                 this.description = description;
             } else {
                 this.description = description && description.toMarkdown({
-                    ticketURL: ticket.ticketURL,
+                    externalURL: ticket.externalURL,
                     taskURL: task.taskURL,
                     summary: task.description,
                     fileChanges
@@ -100,8 +100,8 @@ class PullRequest extends _Global {
         return this.task && this.task.taskID;
     }
 
-    get ticketID() {
-        return this.parentTicket && this.parentTicket.ticketID;
+    get externalKey() {
+        return this.parentTicket && this.parentTicket.externalKey;
     }
 
     get project() {
@@ -111,7 +111,7 @@ class PullRequest extends _Global {
     async updateDescription(dontSave) {
         const descriptionTemplate = this.project.getTemplate('prDescription');
         const newDescription = descriptionTemplate.renderToString({
-            ticketURL: this.parentTicket.ticketURL,
+            externalURL: this.parentTicket.externalURL,
             taskURL: this.task.taskURL,
             summary: this.summary,
             fileChanges: this.fileChanges

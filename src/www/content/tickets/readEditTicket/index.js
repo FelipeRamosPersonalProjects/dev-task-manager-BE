@@ -10,11 +10,11 @@ class TicketEdit extends Component {
         super(settings);
 
         const { projects, spaces, ticketDoc } = Object(settings);
-        const { displayName, ticketID, ticketURL, title, description } = Object(ticketDoc);
+        const { displayName, externalKey, externalURL, title, description } = Object(ticketDoc);
 
         this.displayName = displayName;
-        this.ticketID = ticketID;
-        this.ticketURL = ticketURL;
+        this.externalKey = externalKey;
+        this.externalURL = externalURL;
         this.title = title;
         this.description = description;
         this.spaces = new SelectInput({

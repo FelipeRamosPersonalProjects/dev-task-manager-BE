@@ -20,13 +20,13 @@ module.exports = new Collection({
             type: Object
         },
         {
-            fieldName: 'ticketID',
+            fieldName: 'externalKey',
             type: String,
             immutable: true,
             unique: true
         },
         {
-            fieldName: 'ticketURL',
+            fieldName: 'externalURL',
             type: String,
             required: true,
             immutable: true,

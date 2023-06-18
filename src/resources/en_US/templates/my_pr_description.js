@@ -8,7 +8,7 @@ class MyPrDescription extends Component {
 
     constructor(settings) {
         super(settings, {
-            ticketURL: {
+            externalURL: {
                 type: String,
                 required: true
             },
@@ -34,9 +34,9 @@ class MyPrDescription extends Component {
             }
         });
 
-        const { ticketURL, taskURL, summary, fileChanges, images, videos } = Object(settings || {});
+        const { externalURL, taskURL, summary, fileChanges, images, videos } = Object(settings || {});
 
-        this.ticketURL = ticketURL;
+        this.externalURL = externalURL;
         this.taskURL = taskURL;
         this.summary = summary;
         this.fileChanges = fileChanges;

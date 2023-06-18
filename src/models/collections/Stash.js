@@ -44,7 +44,7 @@ class Stash extends _Global {
         return this.stashManager && this.stashManager.buildStashName({
             _id: this._id,
             type: this.type,
-            ticketID: this.ticket && this.ticket.ticketID,
+            externalKey: this.ticket && this.ticket.externalKey,
             taskID: this.task && this.task.taskID,
             taskVersion: this.task && this.task.taskVersion
         });
