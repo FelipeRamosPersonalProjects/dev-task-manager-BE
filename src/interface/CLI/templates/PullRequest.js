@@ -9,13 +9,13 @@ class PullRequestTemplate extends Component {
 
     constructor(settings) {
         super(settings);
-        const { displayName, name, summary, ticketID, taskID, base, head, fileChanges } = settings || {};
+        const { displayName, name, summary, externalKey, taskID, base, head, fileChanges } = settings || {};
         
         this.displayName = displayName;
         this.name = name;
         this.base = base;
         this.head = head;
-        this.ticketID = ticketID;
+        this.externalKey = externalKey;
         this.taskID = taskID;
         this.fileChanges = fileChanges;
 

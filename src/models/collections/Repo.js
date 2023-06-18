@@ -69,10 +69,10 @@ class Repo extends _Global {
         return task && task.taskID;
     }
 
-    get ticketID() {
+    get externalKey() {
         const task = this.parentTask;
         const ticket = task && task.ticket;
-        return ticket && ticket.ticketID;
+        return ticket && ticket.externalKey;
     }
 
     get repoManager() {

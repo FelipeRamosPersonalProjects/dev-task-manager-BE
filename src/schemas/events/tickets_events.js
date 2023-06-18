@@ -4,7 +4,7 @@ function getTicketIdFromURL(url) {
 }
 
 async function preSave(next) {
-    this.ticketID = getTicketIdFromURL(this.ticketURL);
+    this.externalKey = getTicketIdFromURL(this.externalURL);
     return next();
 }
 

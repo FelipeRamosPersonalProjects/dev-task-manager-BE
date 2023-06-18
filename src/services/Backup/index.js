@@ -16,7 +16,7 @@ class BackupService {
         const parsedTitle = title && title.replace(/ /g, '_');
         const date = new Date();
         const repoPath = repo.repoPath;
-        const ticket = repo.ticketID;
+        const ticket = repo.externalKey;
         const branch = currentBranch;
         const headBranch = repo.parentTask && repo.parentTask.taskBranch;
         const year = date.getFullYear();

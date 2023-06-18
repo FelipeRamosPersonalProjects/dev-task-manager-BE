@@ -10,11 +10,11 @@ class TaskTemplate extends Component {
     constructor(settings) {
         super(settings);
 
-        const { displayName, taskID, ticketID, ticketURL, project } = new Object(settings || {});
+        const { displayName, taskID, externalKey, externalURL, project } = new Object(settings || {});
 
         Object.assign(this, settings);
-        this.ticketID = ticketID;
-        this.ticketURL = ticketURL;
+        this.externalKey = externalKey;
+        this.externalURL = externalURL;
 
         this.ProjectTile = new DefaultTile({index: project.cod, displayName: project.displayName});
         this.DashedHeader = new DashedHeader({

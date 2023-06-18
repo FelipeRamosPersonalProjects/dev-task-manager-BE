@@ -333,7 +333,7 @@ async function CreatePRsView({ task }) {
                     const task = ev.getValue('task');
                     const reviewers = Object(task).getSafe('project.reviewers') || [];
                     const comp = new FinalTempl({
-                        ticketURL: task.ticketURL,
+                        externalURL: task.externalURL,
                         taskURL: task.taskURL,
                         prLink: published.gitHubPR.html_url,
                         reviewers: reviewers.map(item => item.slackName).join(' ')

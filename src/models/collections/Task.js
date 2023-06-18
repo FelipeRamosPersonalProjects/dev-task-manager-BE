@@ -96,16 +96,16 @@ class Task extends _Global {
         return (typeof this.repo === 'object') && this.repo.repoManager;
     }
 
-    get ticketID() {
-        return this.ticket && this.ticket.ticketID;
+    get externalKey() {
+        return this.ticket && this.ticket.externalKey;
     }
 
     get ticketUID() {
         return this.ticket && this.ticket._id;
     }
 
-    get ticketURL() {
-        return this.ticket && this.ticket.ticketURL;
+    get externalURL() {
+        return this.ticket && this.ticket.externalURL;
     }
 
     get taskBranch() {
@@ -230,7 +230,7 @@ class Task extends _Global {
                     ticket: this.ticketUID,
                     taskID: this.taskID,
                     taskURL: this.taskURL,
-                    ticketURL: this.ticketURL,
+                    externalURL: this.externalURL,
                     assignedUsers: user._id,
                     summary: this.description
                 });

@@ -14,16 +14,16 @@
     <form class="readedit-form">
         <label>Ticket ID:</label>
 
-        <p>##{{ticketID:string}}##</p>
+        <p>##{{externalKey:string}}##</p>
     </form>
 
     <form class="readedit-form" view="read">
         <label>Ticket URL:</label>
 
-        <p view="read">##{{ticketURL:string}}##</p>
+        <p view="read">##{{externalURL:string}}##</p>
         <button type="button" class="edit-btn" view="read">Edit</button>
 
-        <input type="text" name="title" value="##{{ticketURL:string}}##" view="edit" />
+        <input type="text" name="externalURL" value="##{{externalURL:string}}##" view="edit" />
         <button type="button" class="cancel-btn" view="edit">Cancel</button>
         <button type="submit" view="edit">Save</button>
     </form>

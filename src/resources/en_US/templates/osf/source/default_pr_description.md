@@ -1,5 +1,5 @@
 ### :ticket: Links
-- Ticket: ##{{ticketURL:string}}##
+- Ticket: ##{{externalURL:string}}##
 - Jira Task: ##{{taskURL:string}}##
 
 ### Bug or Enhancement Description
