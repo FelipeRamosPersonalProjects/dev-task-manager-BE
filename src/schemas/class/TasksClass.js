@@ -4,7 +4,7 @@ class TasksClass {
     static Model = Task;
 
     get displayName() {
-        return `[${this.taskID}] ${this.taskName}`;
+        return `[${this.externalKey}] ${this.taskName}`;
     }
 }
 

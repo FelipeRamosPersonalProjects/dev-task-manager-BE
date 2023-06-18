@@ -72,6 +72,30 @@ class Ticket extends _Global {
             throw new Error.Log(err);
         }
     }
+
+    async jiraTransitionStatus(event) {
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraUpdated = await user.jiraConnect.transitionIssue(this.jiraIssue.key, event);
+
+                if (jiraUpdated instanceof Error.Log) {
+                    throw jiraUpdated
+                }
+
+                return jiraUpdated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async transitionStatus(status) {
+        try {
+            return await this.updateDB({data: { status }});
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = Ticket;

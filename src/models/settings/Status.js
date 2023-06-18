@@ -17,7 +17,7 @@ class Status {
      */
     constructor(setup, workflow) {
         try {
-            const { statusID, displayName, next, events } = Object(setup);
+            const { statusID, jiraID, displayName, next, events } = Object(setup);
 
             /**
              * The parent Workflow wrapping the Status.
@@ -30,6 +30,12 @@ class Status {
              * @property {string}
              */
             this.statusID = statusID;
+
+            /**
+             * String with a identification for the Status on JIRA.
+             * @property {string}
+             */
+            this.jiraID = jiraID;
 
             /**
              * A name for the workflow to be displayed to the user.
@@ -47,7 +53,11 @@ class Status {
              * Array with the EventStd configured.
              * @property {EventStd[]}
              */
-            this.events = Array.isArray(events) ? events.map(ev => new EventStd({...ev, name: `status:${ev.name}:${this.workflow.collection}`})) : [];
+            this.events = Array.isArray(events) ? events.map(ev => new EventStd({
+                ...ev,
+                name: `status:${ev.name}:${this.workflow.collection}`,
+                target: this
+            })) : [];
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -55,23 +65,7 @@ class Status {
     
     addListeners() {
         try {
-            this.events.map(event => event.add());
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    async switchToNext() {
-        try {
-    
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    async jumpTo(statusID) {
-        try {
-    
+            this.events.map(event => event.add(this));
         } catch (err) {
             throw new Error.Log(err);
         }

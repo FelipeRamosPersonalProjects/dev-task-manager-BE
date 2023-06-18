@@ -15,8 +15,8 @@ async function ReadTaskView() {
                     onAnswer: async (ev, _, answer) => {
                         try {
                             const tasks = await CRUD.query({collectionName: 'tasks', filter: { $or: [
-                                { taskID: answer },
-                                { taskURL: answer }
+                                { externalKey: answer },
+                                { externalURL: answer }
                             ]}}).defaultPopulate();
 
                             const initTasks = tasks.map(task => task.initialize());

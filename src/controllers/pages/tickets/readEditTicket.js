@@ -37,6 +37,7 @@ module.exports = async (req, res) => {
                 fieldName: 'project',
                 projects,
                 spaces,
+                formState: 'read',
                 ticketDoc: ticketDoc.initialize()
             }).renderToString()
         });

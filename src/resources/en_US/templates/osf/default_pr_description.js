@@ -5,16 +5,16 @@ class DefaultPRDescription extends Component {
     constructor(settings = {
         ...Component.prototype,
         externalURL,
-        taskURL,
+        externalURL,
         summary,
         fileChanges
     }) {
         super(settings, {
-            externalURL: {
+            externalTicketURL: {
                 type: String,
                 required: true
             },
-            taskURL: {
+            externalTaskURL: {
                 type: String,
                 required: true
             },
@@ -26,11 +26,11 @@ class DefaultPRDescription extends Component {
             },
         });
 
-        const { externalURL, taskURL, summary, fileChanges } = settings || {};
+        const { externalTicketURL, externalTaskURL, summary, fileChanges } = settings || {};
 
         this.SOURCE_PATH = require.resolve('./source/default_pr_description.md');
-        this.externalURL = externalURL;
-        this.taskURL = taskURL;
+        this.externalTicketURL = externalTicketURL;
+        this.externalTaskURL = externalTaskURL;
         this.summary = summary;
         this.fileChanges = fileChanges;
         this.types = {

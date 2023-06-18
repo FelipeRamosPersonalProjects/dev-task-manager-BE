@@ -45,7 +45,7 @@ class Stash extends _Global {
             _id: this._id,
             type: this.type,
             externalKey: this.ticket && this.ticket.externalKey,
-            taskID: this.task && this.task.taskID,
+            externalKey: this.task && this.task.externalKey,
             taskVersion: this.task && this.task.taskVersion
         });
     }

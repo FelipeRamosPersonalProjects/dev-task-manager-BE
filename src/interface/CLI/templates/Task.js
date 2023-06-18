@@ -10,7 +10,7 @@ class TaskTemplate extends Component {
     constructor(settings) {
         super(settings);
 
-        const { displayName, taskID, externalKey, externalURL, project } = new Object(settings || {});
+        const { displayName, externalKey, externalKey, externalURL, project } = new Object(settings || {});
 
         Object.assign(this, settings);
         this.externalKey = externalKey;
@@ -18,7 +18,7 @@ class TaskTemplate extends Component {
 
         this.ProjectTile = new DefaultTile({index: project.cod, displayName: project.displayName});
         this.DashedHeader = new DashedHeader({
-            headerText: `[${taskID}] - ${displayName}`,
+            headerText: `[${externalKey}] - ${displayName}`,
             headerDescription: 'Check below the task data loaded.'
         });
     }

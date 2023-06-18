@@ -34,7 +34,8 @@ progress.active {
     width: 100%;
 }
 
-.readedit-form a {
+.readedit-form a,
+.readedit-form select {
     display: inline-block;
 }
 
