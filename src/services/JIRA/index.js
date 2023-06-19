@@ -39,10 +39,11 @@ class JIRA extends JIRAConnect {
     }
 
     async createIssue(data) {
-        const { issueType, externalKey, projectKey, title, description } = Object(data);
+        const { parentKey, issueType, externalKey, projectKey, title, description } = Object(data);
         
         try {
             const created = await this.request(`/issue`, new JIRATicket({
+                parentKey,
                 issueType,
                 externalKey,
                 projectKey,

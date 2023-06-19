@@ -114,6 +114,10 @@ class Task extends _Global {
         return this.ticket && this.ticket._id;
     }
 
+    get ticketJIRA() {
+        return this.getSafe('ticket.jiraIssue');
+    }
+
     get externalTicketURL() {
         return this.ticket && this.ticket.externalURL;
     }
@@ -171,6 +175,7 @@ class Task extends _Global {
                 if (!user || !user.jiraConnect) return;
 
                 const jiraCreated = await user.jiraConnect.createIssue({
+                    parentKey: this.ticketJIRA && this.ticketJIRA.id,
                     issueType: '10051',
                     externalKey: this.externalTicketKey,
                     projectKey: this.spaceJiraProject,
