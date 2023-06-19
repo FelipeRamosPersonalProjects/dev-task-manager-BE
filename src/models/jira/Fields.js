@@ -15,6 +15,18 @@ class JIRAFields {
         }
     }
 
+    parent(key) {
+        try {
+            if (key) {
+                return this.value ? { key } : null;
+            }
+
+            return this.value ? { id: this.value } : null;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     issuetype() {
         try {
             return this.value ? { id: this.value } : null;

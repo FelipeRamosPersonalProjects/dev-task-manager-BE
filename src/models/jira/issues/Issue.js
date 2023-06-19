@@ -5,10 +5,11 @@ class JIRAIssue {
 
     constructor(setup) {
         try {
-            const { issueKey, issueType, projectKey, title, description } = Object(setup);
+            const { parentKey, issueKey, issueType, projectKey, title, description } = Object(setup);
 
             this.key = new JIRAFields(issueKey).text();
             this.fields = {
+                parent: new JIRAFields(parentKey).parent(),
                 project: new JIRAFields(projectKey).project(),
                 issuetype: new JIRAFields(issueType).issuetype(),
                 summary: new JIRAFields(title).text(),
