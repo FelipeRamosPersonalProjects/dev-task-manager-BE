@@ -38,7 +38,13 @@ class EventStd {
     }
 
     trigger(target) {
+        const Status = require('@models/settings/Status');
+
         try {
+            if (target instanceof Status) {
+                this.name += ':' + this.target.statusID;
+            }
+
             return process.emit(this.name, target);
         } catch (err) {
             throw new Error.Log(err);
@@ -46,7 +52,13 @@ class EventStd {
     }
     
     add(status) {
+        const Status = require('@models/settings/Status');
+
         try {
+            if (this.target instanceof Status) {
+                this.name += ':' + this.target.statusID;
+            }
+
             this.listener = process.on(this.name, this.handler.bind(status));
             return this.listener;
         } catch (err) {

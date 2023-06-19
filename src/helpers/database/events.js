@@ -50,11 +50,11 @@ async function postUpdateOne() {
         const $set = this._update.$set;
 
         if ($set.status) {
-            process.emit(`status:transition:${collection}`, this);
-        } else {
-            process.emit(`update:${collection}`, this);
+            process.emit(`status:transition:${collection}:${$set.status}`, this);
         }
-
+        
+        delete $set.status;
+        process.emit(`update:${collection}`, this);
     } catch (err) {
         throw new Error.Log(err);
     }
