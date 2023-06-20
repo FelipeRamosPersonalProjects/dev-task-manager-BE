@@ -1,0 +1,31 @@
+<h1>Create new Task</h1>
+
+##{{docForm:component}}##
+
+<script>
+    document.querySelector('form').addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const fields = ev.target.querySelectorAll('[name]');
+        const data = {};
+
+        fields.forEach(field => (data[field.name] = field.value));
+        data.assignedUsers = [sessionStorage.getItem('currentUserUID')];
+
+        fetch('/collection/create', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'post',
+            body: JSON.stringify({
+                collectionName: 'tickets',
+                data
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.error) {
+                return alert(data.message);
+            }
+
+            return window.location.href = '/dashboard';
+        }).catch(err => {
+            return alert(err.message);
+        });
+    });
+</script>
