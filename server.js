@@ -34,6 +34,10 @@ require('@services/database/init').then(async () => {
     // Front-end routes
     app.get('/dashboard', routes.pages.dashboard);
     app.use('/tickets', routes.pages.ticket);
+    app.use('/tasks', routes.pages.tasks);
+    app.use('/estimations', routes.pages.estimations);
+    app.use('/pullrequests', routes.pages.pullrequests);
+    app.use('/validations', routes.pages.validations);
     app.use('/projects', routes.pages.projects);
     app.use('/repos', routes.pages.repos);
     app.use('/spaces', routes.pages.spaces);
