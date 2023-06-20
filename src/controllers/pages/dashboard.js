@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
             pullRequests,
             projects,
             spaces
-        }).renderToString()
+        })
     });
 
     res.setHeader('Content-Type', 'text/html');

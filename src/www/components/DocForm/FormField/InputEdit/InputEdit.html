@@ -1,0 +1,10 @@
+<form class="readedit-form" view="##{{view:string}}##">
+    <label>##{{label:string}}##</label>
+
+    <span view="read">##{{currentValue:string}}##</span>
+    <button type="button" class="edit-btn" view="read">Edit</button>
+
+    <input type="##{{inputType:string}}##" name="##{{fieldName:string}}##" value="##{{currentValue:string}}##" view="edit" />
+    <button type="button" class="cancel-btn" view="edit">Cancel</button>
+    <button type="submit" view="edit">Save</button>
+</form>

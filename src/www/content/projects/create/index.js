@@ -1,5 +1,5 @@
 const Component = require('@interface/Component');
-const SelectInput = require('@www/components/selectInput');
+const SelectInput = require('@www/components/DocForm/FormField/SelectInput');
 
 class ProjectCreate extends Component {
     get SOURCE_PATH() {
