@@ -35,6 +35,7 @@ require('@services/database/init').then(async () => {
     app.get('/dashboard', routes.pages.dashboard);
     app.use('/tickets', routes.pages.ticket);
     app.use('/projects', routes.pages.projects);
+    app.use('/repos', routes.pages.repos);
     app.use('/spaces', routes.pages.spaces);
     app.use('/user', routes.pages.user);
 

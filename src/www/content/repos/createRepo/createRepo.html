@@ -1,4 +1,4 @@
-<h1>Create new Ticket</h1>
+<h1>Add Repository</h1>
 
 ##{{docForm:component}}##
 
@@ -15,7 +15,7 @@
             headers: { 'Content-Type': 'application/json' },
             method: 'post',
             body: JSON.stringify({
-                collectionName: 'tickets',
+                collectionName: 'repos',
                 data
             })
         }).then(res => res.json()).then(data => {

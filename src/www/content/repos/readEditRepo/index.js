@@ -3,7 +3,7 @@ const workflow = require('@CONFIGS/workflows/tickets.workflow');
 const DocForm = require('@www/components/DocForm');
 const { InputEdit, SelectInputEdit, TextArea } = require('@www/components/DocForm/FormField/fields');
 
-class TicketEdit extends Component {
+class ReadEditRepo extends Component {
     get SOURCE_PATH() {
         return require.resolve('./readEditTicket.html');
     }
@@ -17,19 +17,9 @@ class TicketEdit extends Component {
 
         this.displayName = displayName;
         this.docForm = new DocForm({
-            collection: 'tickets',
+            collection: 'repos',
             wrapperTag: 'div',
             fields: [
-                new SelectInputEdit({
-                    label: 'Status:',
-                    fieldName: 'status',
-                    view: 'read',
-                    currentValue: currentStatus && currentStatus.statusID || '',
-                    options: workflow.statuses.map(item => ({
-                        label: item.displayName.toUpperCase(),
-                        value: item.statusID
-                    }))
-                }),
                 new SelectInputEdit({
                     fieldName: 'space',
                     label: 'Space:',
@@ -51,20 +41,10 @@ class TicketEdit extends Component {
                     fieldName: 'externalURL',
                     label: 'External URL:',
                     currentValue: externalURL
-                }),
-                new InputEdit({
-                    fieldName: 'title',
-                    label: 'Ticket Title:',
-                    currentValue: title
-                }),
-                new TextArea({
-                    fieldName: 'description',
-                    label: 'Description:',
-                    currentValue: description
                 })
             ]
         });
     }
 }
 
-module.exports = TicketEdit;
+module.exports = ReadEditRepo;

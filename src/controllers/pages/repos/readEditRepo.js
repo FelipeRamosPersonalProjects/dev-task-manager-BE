@@ -1,6 +1,6 @@
 const PageTemplate = require('@src/www/pages/standardPage');
 const ErrorPage = require('@src/www/error');
-const ReadEditTicket = require('@src/www/content/tickets/readEditTicket');
+const ReadEditRepo = require('@src/www/content/repos/readEditRepo');
 const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
         const spaces = spacesQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageTitle: 'Edit Ticket',
-            body: new ReadEditTicket({
+            body: new ReadEditRepo({
                 fieldName: 'project',
                 projects,
                 spaces,

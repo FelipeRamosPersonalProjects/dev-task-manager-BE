@@ -2,7 +2,7 @@ const Component = require('@interface/Component');
 
 class SelectOption extends Component {
     get SOURCE_PATH() {
-        return require.resolve('./selectOption.html');
+        return require.resolve('./SelectOption.html');
     }
 
     constructor(settings) {

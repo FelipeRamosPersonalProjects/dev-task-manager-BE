@@ -78,6 +78,14 @@ class Collection extends SchemaDB {
     }
 
     static Types = SchemaDB.mongoSchema.Types;
+
+    getFieldSet(fieldName) {
+        try {
+            return this.fieldsSet.find(item => item.fieldName === fieldName);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = Collection;
