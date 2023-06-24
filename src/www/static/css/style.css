@@ -66,8 +66,7 @@ progress.active {
 }
 
 .card-grid .card {
-    max-width: calc(50% - 1rem);
-    min-width: calc(50% - 1rem);
+    min-width: 400px;
     flex: 1;
     padding: 1rem;
     border-radius: 5px;
