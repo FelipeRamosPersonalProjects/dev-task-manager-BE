@@ -1,6 +1,6 @@
 const Component = require('@interface/Component');
 const DocForm = require('@www/components/DocForm');
-const { Input, SelectInput, TextArea } = require('@www/components/DocForm/FormField/fields');
+const { Input, SingleRelation, TextArea } = require('@www/components/DocForm/FormField/fields');
 
 class TicketCreate extends Component {
     get SOURCE_PATH() {
@@ -15,15 +15,15 @@ class TicketCreate extends Component {
         this.docForm = new DocForm({
             collection: 'tickets',
             fields: [
-                new SelectInput({
+                new SingleRelation({
                     fieldName: 'space',
                     label: 'Space:',
-                    options: spaces.map(item => ({ label: item.spaceName, value: item._id }))
+                    options: spaces
                 }),
-                new SelectInput({
+                new SingleRelation({
                     fieldName: 'project',
                     label: 'Project:',
-                    options: projects.map(item => ({ label: item.projectName, value: item._id }))
+                    options: projects
                 }),
                 new Input({
                     fieldName: 'externalKey',

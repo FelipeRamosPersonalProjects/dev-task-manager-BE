@@ -5,40 +5,28 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
-        const projectsQuery = await CRUD.query({collectionName: 'projects', filter: {}}).defaultPopulate();
-        if (projectsQuery instanceof Error.Log || !projectsQuery) {
-            return res.status(500).send(projectsQuery.toJSON());
-        }
+        const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
+        const repoDoc = await CRUD.getDoc({collectionName: 'repos', filter: { index: req.params.index }}).defaultPopulate();
 
-        const spacesQuery = await CRUD.query({collectionName: 'space_desks'});
-        if (spacesQuery instanceof Error.Log || !spacesQuery) {
-            return res.status(500).send(spacesQuery.toJSON());
-        }
-
-        const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: { index: req.params.index }}).defaultPopulate();
-        if (!ticketDoc) {
+        if (!repoDoc || !projectsQuery) {
             res.setHeader('Content-Type', 'text/html');
             return res.status(500).send(new ErrorPage({
                 code: '404',
                 name: 'Document not found',
-                message: `The ticket "${req.params.index}" requested wasn't found!`
+                message: `The repo "${req.params.index}" requested wasn't found!`
             }).renderToString());
         }
 
-        if (ticketDoc instanceof Error.Log) {
-            throw ticketDoc;
+        if (repoDoc instanceof Error.Log || projectsQuery instanceof Error.Log) {
+            throw repoDoc;
         }
 
         const projects = projectsQuery.map(item => item.initialize());
-        const spaces = spacesQuery.map(item => item.initialize());
         const content = new PageTemplate({
-            pageTitle: 'Edit Ticket',
+            pageTitle: 'Edit Repository',
             body: new ReadEditRepo({
-                fieldName: 'project',
                 projects,
-                spaces,
-                formState: 'read',
-                ticketDoc: ticketDoc.initialize()
+                repoDoc: repoDoc.initialize()
             })
         });
 

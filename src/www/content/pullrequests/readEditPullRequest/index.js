@@ -1,5 +1,5 @@
 const Component = require('@interface/Component');
-const workflow = require('@CONFIGS/workflows/pullRequests.workflow');
+const workflow = require('@CONFIGS/workflows/pullrequests.workflow');
 const DocForm = require('@www/components/DocForm');
 const { InputEdit, SelectInputEdit, TextArea } = require('@www/components/DocForm/FormField/fields');
 
@@ -16,7 +16,7 @@ class PullRequestEdit extends Component {
 
         this.displayName = displayName;
         this.docForm = new DocForm({
-            collection: 'pullRequests',
+            collection: 'pull_requests',
             wrapperTag: 'div',
             fields: [
             ]

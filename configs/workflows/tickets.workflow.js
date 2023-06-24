@@ -67,10 +67,13 @@ module.exports = new Workflow({
                     try {
                         const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
                         const ticket = ticketDoc.initialize();
+                        const repos = ticket.getSafe('project.repos');
                         const newTask = await Task.createTask({
                             taskType: 'INVESTIGATION',
                             taskName: 'Investigation',
                             ticket: ticket._id,
+                            project: ticket.getSafe('project._id'),
+                            repo: repos.length && repos[0]._id,
                             assignedUsers: ticket.assignedUsers.map(item => item._id)
                         });
 

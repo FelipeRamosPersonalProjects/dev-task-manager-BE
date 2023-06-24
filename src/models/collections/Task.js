@@ -19,6 +19,8 @@ class Task extends _Global {
 
         try {
             const {
+                frontURL,
+                displayName,
                 taskType,
                 isInternal,
                 source,
@@ -46,6 +48,7 @@ class Task extends _Global {
             } = new Object(setup);
 
             this.collectionName = 'tasks';
+            this.frontURL = frontURL;
             this.taskType = taskType;
             this.isInternal = isInternal;
             this.source = source;
@@ -66,6 +69,8 @@ class Task extends _Global {
             this.project = isCompleteDoc(project) ? new Project(project) : {};
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
             this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() ? assignedUsers.map(item => new User(item)) : [];
+
+            this.displayName = `[${this.getSafe('ticket.externalKey') || this.cod}] ${this.taskName}`;
 
             if (this.taskType === 'INVESTIGATION') {
                 this.discoveries = discoveries && new DiscoveryModel(discoveries);
@@ -92,10 +97,6 @@ class Task extends _Global {
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Task');
         }
-    }
-
-    get displayName() {
-        return this.taskName;
     }
 
     get repoManager() {
@@ -179,7 +180,7 @@ class Task extends _Global {
                     issueType: '10051',
                     externalKey: this.externalTicketKey,
                     projectKey: this.spaceJiraProject,
-                    title: this.taskName,
+                    title: this.displayName,
                     description: this.description
                 });
 

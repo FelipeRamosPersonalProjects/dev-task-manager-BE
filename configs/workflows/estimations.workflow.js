@@ -2,37 +2,37 @@ const Workflow = require('@models/settings/Workflow');
 const CRUD = require('@CRUD');
 
 module.exports = new Workflow({
-    collection: 'tasks',
-    displayName: 'Tasks - Workflow',
+    collection: 'estimations',
+    displayName: 'Estimations - Workflow',
     workflowEvents: [
         {
             name: 'create',
             handler: async function (target) {
                 try {
-                    const populated = await target.populate([
-                        {
-                            path: 'assignedUsers',
-                            model: 'users',
-                            populate: [
-                                { path: 'auth', model: 'auth_buckets'}
-                            ]
-                        },
-                        {
-                            path: 'ticket',
-                            model: 'tickets',
-                            populate: [
-                                {
-                                    path: 'space',
-                                    model: 'space_desks'
-                                }
-                            ]
-                        }
-                    ]);
+                    // const populated = await target.populate([
+                    //     {
+                    //         path: 'assignedUsers',
+                    //         model: 'users',
+                    //         populate: [
+                    //             { path: 'auth', model: 'auth_buckets'}
+                    //         ]
+                    //     },
+                    //     {
+                    //         path: 'ticket',
+                    //         model: 'tickets',
+                    //         populate: [
+                    //             {
+                    //                 path: 'space',
+                    //                 model: 'space_desks'
+                    //             }
+                    //         ]
+                    //     }
+                    // ]);
 
-                    const task = populated.initialize();
-                    const created = await task.jiraCreateTask();
+                    // const task = populated.initialize();
+                    // const created = await task.jiraCreateTask();
                     
-                    return created;
+                    // return created;
                 } catch (err) {
                     throw new Error.Log(err);
                 }
@@ -41,15 +41,15 @@ module.exports = new Workflow({
         {
             name: 'update',
             handler: async (target) => {
-                try {
-                    const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                    const task = taskDoc.initialize();
-                    const updateProps = target.getUpdateProps();
+                // try {
+                //     const taskDoc = await CRUD.getDoc({collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
+                //     const task = taskDoc.initialize();
+                //     const updateProps = target.getUpdateProps();
                     
-                    return await task.jiraUpdatetask(updateProps);
-                } catch (err) {
-                    throw new Error.Log(err);
-                }
+                //     return await task.jiraUpdatetask(updateProps);
+                // } catch (err) {
+                //     throw new Error.Log(err);
+                // }
             }
         }
     ],
@@ -66,14 +66,14 @@ module.exports = new Workflow({
             events: [{
                 name: 'transition',
                 handler: async function(target) {
-                    try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
+                    // try {
+                    //     const taskDoc = await CRUD.getDoc({collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
+                    //     const task = taskDoc.initialize();
 
-                        return await task.jiraTransitionStatus(this);
-                    } catch (err) {
-                        throw new Error.Log(err);
-                    }
+                    //     return await task.jiraTransitionStatus(this);
+                    // } catch (err) {
+                    //     throw new Error.Log(err);
+                    // }
                 }
             }]
         },

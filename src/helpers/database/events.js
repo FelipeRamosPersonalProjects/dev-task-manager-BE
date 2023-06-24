@@ -33,6 +33,8 @@ async function preUpdateOne(next) {
 
         // Updating the modifiedAt timestamp
         this._update.modifiedAt = Date.now();
+        this.sessionUser = this._update.sessionUser;
+        delete this._update.sessionUser;
         
         if (!this._update.onlyAct && collection !== config.database.counterCollection) {
             await relationalHelper.onUpdate.call(this);
