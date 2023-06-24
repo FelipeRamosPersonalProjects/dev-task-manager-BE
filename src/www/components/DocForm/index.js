@@ -9,10 +9,16 @@ class DocForm extends Component {
     constructor(settings) {
         super(settings);
 
-        const { collection, fields, wrapperTag } = Object(settings);
+        const { collection, fields, wrapperTag, classes } = Object(settings);
 
+        this.collection = collection;
         this.wrapperTag = wrapperTag || 'form';
-        this.fields = Array.isArray(fields) ? fields.map(item => item.addSchema(collection)) : [];
+        this.classes = classes ? `class="docform ${classes}"` : 'class="docform"';
+        this.fields = Array.isArray(fields) ? fields.map(item => {
+            item.collection = collection;
+            item.addSchema(collection);
+            return item;
+        }) : [];
     }
 
     static getForm(formName) {

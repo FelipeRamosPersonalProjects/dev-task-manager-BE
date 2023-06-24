@@ -13,6 +13,8 @@ class Repo extends _Global {
 
         try {
             const {
+                displayName,
+                frontURL,
                 nodeVersion,
                 baseBranch,
                 url,
@@ -29,6 +31,8 @@ class Repo extends _Global {
             this._parentTask = () => parentTask;
             this.backup = new BackupService();
 
+            this.displayName = displayName;
+            this.frontURL = frontURL;
             this.nodeVersion = nodeVersion;
             this.baseBranch = baseBranch;
             this.url = url;

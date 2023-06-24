@@ -1,9 +1,9 @@
-<form class="readedit-form" view="##{{view:string}}##">
+<form class="readedit-form" view="##{{view:string}}##" collection-name="##{{collection:string}}##">
     <label>##{{label:string}}##</label>
     <span view="read">##{{currentValue:string}}##</span>
     <button type="button" class="edit-btn" view="read">Edit</button>
 
-    <select name="##{{fieldName:string}}##" value="##{{currentValue:string}}##" view="edit">
+    <select name="##{{fieldName:string}}##" value="##{{currentValue:string}}##" view="edit" field>
         ##{{options:array:SelectOption}}##
     </select>
 

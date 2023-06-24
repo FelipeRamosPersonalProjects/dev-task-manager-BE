@@ -37,6 +37,7 @@ class FormField extends Component {
             }
 
             const fieldSet = collection.getFieldSet(this.fieldName);
+            this.collection = collectionName;
             Object.keys(Object(fieldSet)).map(key => {
                 self[key] = fieldSet[key]
             });

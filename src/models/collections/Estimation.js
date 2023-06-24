@@ -5,8 +5,10 @@ class Estimation extends _Global {
         try {
             super({...setup, validationRules: 'estimations'}, this);
             if (!setup || isObjectID(setup)) return;
-            const {  } = setup || {};
+            const { displayName, frontURL } = setup || {};
 
+            this.displayName = displayName;
+            this.frontURL = frontURL;
             this.placeDefault();
         } catch(err) {
             new Error.Log(err).append('common.model_construction', 'Estimation');

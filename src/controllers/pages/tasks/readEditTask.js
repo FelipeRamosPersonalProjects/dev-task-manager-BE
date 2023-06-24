@@ -19,13 +19,23 @@ module.exports = async (req, res) => {
             throw taskDoc;
         }
 
+        const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
+        if (projectsQuery instanceof Error.Log || !projectsQuery) {
+            return res.status(500).send(projectsQuery.toJSON());
+        }
+
+        const reposQuery = await CRUD.query({collectionName: 'repos', filter: { projects: { $in: [taskDoc.getSafe('project.id')] } }}).defaultPopulate();
+        if (reposQuery instanceof Error.Log || !reposQuery) {
+            return res.status(500).send(reposQuery.toJSON());
+        }
+
+        const repos = reposQuery.map(item => item.initialize());
+        const projects = projectsQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageTitle: 'Edit Task',
             body: new ReadEditTask({
-                fieldName: 'project',
+                repos,
                 projects,
-                spaces,
-                formState: 'read',
                 taskDoc: taskDoc.initialize()
             })
         });

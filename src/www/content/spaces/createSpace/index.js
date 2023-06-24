@@ -1,5 +1,6 @@
 const Component = require('@interface/Component');
-const SelectInput = require('@www/components/DocForm/FormField/SelectInput');
+const DocForm = require('@www/components/DocForm');
+const { Input, SelectInput, TextArea, SingleRelation } = require('@www/components/DocForm/FormField/fields');
 
 class CreateSpace extends Component {
     get SOURCE_PATH() {
@@ -9,14 +10,26 @@ class CreateSpace extends Component {
     constructor(settings) {
         super(settings);
 
-        const { spaceName, jiraProjects, templates } = Object(settings);
+        const { jiraProjects } = Object(settings);
 
-        this.spaceName = spaceName;
-        this.templates = templates;
-        this.jiraProjects = new SelectInput({
-            fieldName: 'jiraProject',
-            options: jiraProjects.map(item => ({ label: item.name, value: item.key }))
-        }).renderToString();
+        this.docForm = new DocForm({
+            collection: 'space_desks',
+            fields: [
+                new SelectInput({
+                    fieldName: 'jiraProject',
+                    label: 'JIRA Project:',
+                    options: jiraProjects.map(item => ({ label: item.name, value: item.key }))
+                }),
+                new Input({
+                    fieldName: 'spaceName',
+                    label: 'Space Name:'
+                }),
+                new TextArea({
+                    fieldName: 'templates',
+                    label: 'Templates:'
+                })
+            ]
+        })
     }
 }
 

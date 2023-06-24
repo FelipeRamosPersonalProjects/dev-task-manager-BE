@@ -1,7 +1,7 @@
 const Component = require('@interface/Component');
 const workflow = require('@CONFIGS/workflows/tickets.workflow');
 const DocForm = require('@www/components/DocForm');
-const { InputEdit, SelectInputEdit, TextArea } = require('@www/components/DocForm/FormField/fields');
+const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, MultiRelation } = require('@www/components/DocForm/FormField/fields');
 
 class TicketEdit extends Component {
     get SOURCE_PATH() {
@@ -11,10 +11,12 @@ class TicketEdit extends Component {
     constructor(settings) {
         super(settings);
 
-        const { projects, spaces, ticketDoc, formState } = Object(settings);
-        const { status, displayName, externalKey, externalURL, title, description, space, project } = Object(ticketDoc);
+        const { projects, spaces, projectTasks, ticketDoc } = Object(settings);
+        const { _id, status, displayName, externalKey, externalURL, title, description, space, project, tasks } = Object(ticketDoc);
         const currentStatus = workflow.getStatus(status);
 
+        this.UID = _id;
+        this.collection = ticketDoc.getSafe('ModelDB.modelName');
         this.displayName = displayName;
         this.docForm = new DocForm({
             collection: 'tickets',
@@ -29,18 +31,6 @@ class TicketEdit extends Component {
                         label: item.displayName.toUpperCase(),
                         value: item.statusID
                     }))
-                }),
-                new SelectInputEdit({
-                    fieldName: 'space',
-                    label: 'Space:',
-                    options: spaces.map(item => ({ label: item.spaceName, value: item._id })),
-                    currentValue: space && space.spaceName
-                }),
-                new SelectInputEdit({
-                    fieldName: 'project',
-                    label: 'Project:',
-                    options: projects.map(item => ({ label: item.projectName, value: item._id })),
-                    currentValue: project && project.projectName
                 }),
                 new InputEdit({
                     fieldName: 'externalKey',
@@ -57,10 +47,31 @@ class TicketEdit extends Component {
                     label: 'Ticket Title:',
                     currentValue: title
                 }),
-                new TextArea({
+                new TextAreaEdit({
                     fieldName: 'description',
                     label: 'Description:',
                     currentValue: description
+                }),
+                new SingleRelation({
+                    view: 'read',
+                    fieldName: 'space',
+                    label: 'Space:',
+                    options: spaces,
+                    currentValue: space
+                }),
+                new SingleRelation({
+                    view: 'read',
+                    fieldName: 'project',
+                    label: 'Project:',
+                    options: projects,
+                    currentValue: project
+                }),
+                new MultiRelation({
+                    view: 'read',
+                    fieldName: 'tasks',
+                    label: 'Tasks:',
+                    options: projectTasks || [],
+                    currentValue: tasks
                 })
             ]
         });

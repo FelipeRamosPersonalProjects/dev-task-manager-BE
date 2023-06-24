@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
             pageTitle: 'Create Space',
             body: new SpaceCreate({
                 jiraProjects: req.session.currentUser.jira.projects.values
-            }).renderToString()
+            })
         });
     
         res.setHeader('Content-Type', 'text/html');

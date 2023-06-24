@@ -18,7 +18,6 @@ module.exports = async (req, res) => {
     const content = new PageTemplate({
         pageTitle: 'Create Ticket',
         body: new CreateTicket({
-            fieldName: 'project',
             projects,
             spaces
         })

@@ -13,7 +13,23 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {externalKey, externalURL, space, jiraIssue, project, displayName, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {
+            frontURL,
+            externalKey,
+            externalURL,
+            space,
+            jiraIssue,
+            project,
+            displayName,
+            title,
+            description,
+            status,
+            sla,
+            tasks,
+            pullRequests,
+            assignedUsers,
+            comments
+        } = new Object(setup);
 
         try {
             this.collectionName = 'tickets';
@@ -21,6 +37,7 @@ class Ticket extends _Global {
             this.externalKey = externalKey;
             this.title = title;
             this.displayName = displayName;
+            this.frontURL = frontURL;
             this.description = description;
             this.status = status;
             this.jiraIssue = jiraIssue;
