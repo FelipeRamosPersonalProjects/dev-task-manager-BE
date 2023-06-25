@@ -8,19 +8,3 @@
     data-docuid="##{{UID:string}}##"
     data-collection="##{{collection:string}}##"
 >Delete</button>
-
-<script defer>
-    document.querySelectorAll('.readedit-form').forEach(form => {
-        form.addEventListener('submit', (ev) => {
-            ev.preventDefault();
-            
-            editField({ ev, dataMiddleware: (data) => {
-                if (data.templates) {
-                    data.templates = JSON.parse(data.templates);
-                }
-
-                return data;
-            } })
-        });
-    });
-</script>

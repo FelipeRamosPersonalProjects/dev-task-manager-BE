@@ -111,3 +111,4 @@ cert/*.key
 temp
 draft.js
 sessionCLI.json
+static

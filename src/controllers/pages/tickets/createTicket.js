@@ -16,6 +16,7 @@ module.exports = async (req, res) => {
     const projects = projectsQuery.map(item => item.initialize());
     const spaces = spacesQuery.map(item => item.initialize());
     const content = new PageTemplate({
+        pageID: 'tickets/createTicket',
         pageTitle: 'Create Ticket',
         body: new CreateTicket({
             projects,

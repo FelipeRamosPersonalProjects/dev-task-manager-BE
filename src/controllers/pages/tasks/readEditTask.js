@@ -32,6 +32,7 @@ module.exports = async (req, res) => {
         const repos = reposQuery.map(item => item.initialize());
         const projects = projectsQuery.map(item => item.initialize());
         const content = new PageTemplate({
+            pageID: 'tasks/readEditTask',
             pageTitle: 'Edit Task',
             body: new ReadEditTask({
                 repos,

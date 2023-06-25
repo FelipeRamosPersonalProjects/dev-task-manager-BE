@@ -15,6 +15,12 @@ require('./src/global');
 require('@services/database/init').then(async () => {
     // Importing Routes
     const routes = require('./src/routes');
+    const { execSync } = require('child_process');
+
+    // Compiling frontend code
+    const compile = execSync('npm run build');
+    // Printiting webpack compile result
+    console.log(compile.toString());
 
     // Configuring server
     app.use(cors());

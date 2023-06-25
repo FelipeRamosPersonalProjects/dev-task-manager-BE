@@ -1,0 +1,74 @@
+p {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+input {
+    width: 100%;
+    margin-bottom: 0.3rem;
+}
+
+textarea {
+    min-height: 10rem;
+    width: 100%;
+}
+
+.readedit-form {
+    margin-bottom: 1rem;
+    width: 100%;
+    
+    label {
+        display: inline-block;
+        font-weight: bold;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    a,
+    select {
+        display: inline-block;
+    }
+}
+
+[view="create"] {
+    [view="edit"] {
+        display: block;
+    }
+    
+    [view="read"] {
+        display: none;
+    }
+}
+
+
+[view="read"] {
+    [view="edit"] {
+        display: none;
+    }
+}
+
+[view="edit"] {
+    [view="read"] {
+        display: none;
+    }
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+
+    .checkbox-option {
+        display: flex;
+        justify-items: start;
+        flex: 1;
+
+        input {
+            width: auto;
+        }
+
+        label {
+            margin-right: auto;
+        }
+    }
+    
+}

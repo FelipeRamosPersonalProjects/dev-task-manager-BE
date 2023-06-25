@@ -24,6 +24,7 @@ module.exports = async (req, res) => {
         const spaces = spacesQuery.map(item => item.initialize());
         const repos = reposQuery.map(item => item.initialize());
         const content = new PageTemplate({
+            pageID: 'projects/readEditProject',
             pageTitle: 'Edit Project',
             body: new ReadEditProject({
                 spaces,
