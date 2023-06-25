@@ -10,6 +10,7 @@ module.exports = async (req, res) => {
 
     const projects = projectsQuery.map(item => item.initialize());
     const content = new PageTemplate({
+        pageID: 'repos/createRepo',
         pageTitle: 'Add Repository',
         body: new CreateRepo({
             fieldName: 'repos',

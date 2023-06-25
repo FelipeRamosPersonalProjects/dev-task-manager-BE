@@ -23,6 +23,7 @@ module.exports = async (req, res) => {
 
         const projects = projectsQuery.map(item => item.initialize());
         const content = new PageTemplate({
+            pageID: 'repos/readEditRepo',
             pageTitle: 'Edit Repository',
             body: new ReadEditRepo({
                 projects,

@@ -5,6 +5,7 @@ const ErrorPage = require('@src/www/error');
 module.exports = async (req, res) => {
     try {
         const content = new PageTemplate({
+            pageID: 'spaces/createSpace',
             pageTitle: 'Create Space',
             body: new SpaceCreate({
                 jiraProjects: req.session.currentUser.jira.projects.values

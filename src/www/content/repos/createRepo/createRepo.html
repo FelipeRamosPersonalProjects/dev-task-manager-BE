@@ -1,16 +1,3 @@
 <h1>Add Repository</h1>
 
 ##{{docForm:component}}##
-
-<script defer>
-    document.querySelectorAll('.docform').forEach(form => {
-        form.addEventListener('submit', (ev) => {
-            ev.preventDefault();
-
-            return createDoc({ ev, collection: 'repos', redirect: '/dashboard', dataMiddleware: (data) => {
-                data.collaborators = [sessionStorage.getItem('currentUserUID')];
-                return data;
-            } });
-        });
-    });
-</script>

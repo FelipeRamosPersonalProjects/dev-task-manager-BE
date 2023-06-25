@@ -8,8 +8,9 @@ class StandardPage extends Component {
     constructor(settings) {
         super(settings);
 
-        const { pageTitle, body } = Object(settings);
+        const { pageID, pageTitle, body } = Object(settings);
         
+        this.pageID = pageID;
         this.pageTitle = pageTitle;
         this.body = body;
     }
