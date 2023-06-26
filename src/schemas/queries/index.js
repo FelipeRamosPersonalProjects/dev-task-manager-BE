@@ -5,6 +5,7 @@ const pull_requests = require('./pull_requests_query');
 const stashes = require('./stashes_query');
 const projects = require('./projects_query');
 const space_desks = require('./space_desks_query');
+const estimations = require('./estimations_query');
 const users = require('./users_query');
 
 module.exports = {
@@ -15,5 +16,6 @@ module.exports = {
     stashes,
     projects,
     space_desks,
+    estimations,
     users
 };

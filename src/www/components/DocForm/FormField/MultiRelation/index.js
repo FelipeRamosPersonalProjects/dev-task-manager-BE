@@ -13,7 +13,6 @@ class MultiRelation extends FormField {
 
         const { view, wrapperTag, classes, options } = Object(settings);
 
-        this.currentValue = this.currentValue;
         this.view = view || 'create';
         this.wrapperTag = this.view === 'create' ? 'div' : 'form';
         this.classes = this.view === 'create' ? `class="${classes || ''}"` : `class="readedit-form ${classes || ''}"`;

@@ -19,6 +19,7 @@ class FormField extends Component {
             this.fieldName = fieldName || '';
             this.label = label || '';
             this.placeholder = placeholder || '';
+            this.wrapperTag = this.view === 'create' ? 'div' : 'form';
         } catch (err) {
             throw new Error.Log(err);
         }

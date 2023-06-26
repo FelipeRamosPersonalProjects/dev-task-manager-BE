@@ -51,6 +51,9 @@ Object.prototype.getSafe = function(path, obj) {
     return utils.getObjectPath(obj || this, path);
 }
 
+Date.convertToMillis = utils.convertToMillis;
+Date.convertMillisTo = utils.convertMillisTo;
+
 String.prototype.toCamelCase = function() {
     return this.valueOf().replace(/[-_ ](.)/g, (_, char) => char.toUpperCase()).replace(/^(.)/, (_, char) => char.toUpperCase());
 }

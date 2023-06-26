@@ -4,7 +4,15 @@
     <span view="read">##{{currentValue:string}}##</span>
     <button type="button" class="edit-btn" view="read">Edit</button>
 
-    <input type="##{{inputType:string}}##" name="##{{fieldName:string}}##" value="##{{currentValue:string}}##" view="edit" field />
+    <input
+        type="##{{inputType:string}}##"
+        name="##{{fieldName:string}}##"
+        value="##{{currentValue:string}}##"
+        step="0.1"
+        view="edit"
+        field
+        field-type="input-##{{inputType:string}}##"
+    />
     <button type="button" class="cancel-btn" view="edit">Cancel</button>
     <button type="submit" view="edit">Save</button>
 </form>

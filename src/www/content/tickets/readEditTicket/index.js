@@ -1,7 +1,7 @@
 const Component = require('@interface/Component');
 const workflow = require('@CONFIGS/workflows/tickets.workflow');
 const DocForm = require('@www/components/DocForm');
-const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, MultiRelation } = require('@www/components/DocForm/FormField/fields');
+const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, MultiRelation, StatusInput } = require('@www/components/DocForm/FormField/fields');
 
 class TicketEdit extends Component {
     get SOURCE_PATH() {
@@ -22,14 +22,17 @@ class TicketEdit extends Component {
             collection: 'tickets',
             wrapperTag: 'div',
             fields: [
-                new SelectInputEdit({
+                new StatusInput({
                     label: 'Status:',
                     fieldName: 'status',
                     view: 'read',
-                    currentValue: currentStatus && currentStatus.statusID || '',
+                    currentValue: Object(currentStatus),
                     options: workflow.statuses.map(item => ({
-                        label: item.displayName.toUpperCase(),
-                        value: item.statusID
+                        collection: this.collection,
+                        docUID: this.UID,
+                        displayName: item.displayName.toUpperCase(),
+                        statusID: item.statusID,
+                        transitionID: item.jiraID
                     }))
                 }),
                 new InputEdit({

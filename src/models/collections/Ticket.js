@@ -32,6 +32,7 @@ class Ticket extends _Global {
         } = new Object(setup);
 
         try {
+            this.jiraIssueType = '10048';
             this.collectionName = 'tickets';
             this.externalURL = externalURL;
             this.externalKey = externalKey;
@@ -59,7 +60,7 @@ class Ticket extends _Global {
         try {
             for (let user of this.assignedUsers) {
                 const jiraCreated = await user.jiraConnect.createIssue({
-                    issueType: '10048',
+                    issueType: this.jiraIssueType,
                     externalKey: this.externalKey,
                     projectKey: this.space.jiraProject,
                     title: this.title,
