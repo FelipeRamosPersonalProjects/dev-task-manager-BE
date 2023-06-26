@@ -31,6 +31,10 @@ export async function createDoc({ev, collection, dataMiddleware, redirect}) {
             return (dataDoc[fieldName] = value);
         }
 
+        if (field.getAttribute('field-type') === 'input-number') {
+            return !isNaN(input.value) ? Number(input.value) : 0;
+        }
+
         return (dataDoc[field.name] = field.value);
     });
     
@@ -79,7 +83,13 @@ export async function editField({ ev, redirect, dataMiddleware }) {
         const docIndex = Number(pathname[pathname.length - 1]);
         const collection = ev.target.getAttribute('collection-name');
     
-        fields.forEach(field => (dataDoc[field.name] = field.value));
+        fields.forEach(field => {
+            if (field.getAttribute('field-type') === 'input-number') {
+                dataDoc[field.name] = !isNaN(field.value) ? Number(field.value) : 0;
+            } else {
+                dataDoc[field.name] = field.value;
+            }
+        });
 
         if (ev.target.getAttribute('field-type') === 'multi-relation') {
             const fieldName = ev.target.getAttribute('name');
@@ -136,5 +146,31 @@ export async function editField({ ev, redirect, dataMiddleware }) {
     } catch (err) {
         toggleProgress();
         throw alert(err.message);
+    }
+}
+
+export async function statusTransition({ ev }) {
+    const { target } = Object(ev);
+    const collection = target.dataset.collection;
+    const docUID = target.dataset.docuid;
+    const statusID = target.dataset.statusid;
+
+    try {
+        const response = await fetch('/collection/update/document', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'put',
+            body: JSON.stringify({
+                collectionName: collection,
+                filter: { _id: docUID },
+                data: { status: statusID }
+            })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            return alert(data.message);
+        }
+    } catch (err) {
+        throw err;
     }
 }

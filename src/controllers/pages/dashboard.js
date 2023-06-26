@@ -25,14 +25,14 @@ module.exports = async (req, res) => {
     const projects = projectsQuery.map(item => item.initialize());
 
     const reposQuery = await CRUD.query({collectionName: 'repos', filter: {
-        // collaborators: { $in: [ user._id ]}
+        collaborators: { $in: [ user._id ]}
     }}).defaultPopulate();
     const repos = reposQuery.map(item => item.initialize());
 
     const spacesQuery = await CRUD.query({ collectionName: 'space_desks', owner: user._id });
     const spaces = spacesQuery.map(item => item.initialize());
 
-    const estimationsQuery = await CRUD.query({ collectionName: 'estimations', 'ticket.assignedUsers': { $in: [ user._id ]} });
+    const estimationsQuery = await CRUD.query({ collectionName: 'estimations', assignedUsers: { $in: [user._id] } }).defaultPopulate();
     const estimations = estimationsQuery.map(item => item.initialize());
 
     const content = new Page({

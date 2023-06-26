@@ -1,3 +1,6 @@
+import { statusTransition } from '/src/www/client/js/helpers/docHelpers';
+import { toggleEditInput } from '/src/www/client/js/helpers/tools';
+
 function readEditFormListeners() {
     const readEditForms = document.querySelectorAll('.readedit-form');
     
@@ -5,12 +8,24 @@ function readEditFormListeners() {
         const editBtn = item.querySelector('.edit-btn');
         const cancelBtn = item.querySelector('.cancel-btn');
     
-        editBtn && editBtn.addEventListener('click', (ev) => {
-            item.setAttribute('view', 'edit');
-        });
+        editBtn && editBtn.addEventListener('click', () => toggleEditInput(item));
+        cancelBtn && cancelBtn.addEventListener('click', () => toggleEditInput(item));
+    });
+}
+
+function statusButtonsListeners() {
+    document.querySelectorAll('.readedit-form').forEach(form => {
+        const statusButtons = form.querySelectorAll('[js=status-button]');
+
+        statusButtons && statusButtons.forEach(button => {
+            button.addEventListener('click', async (ev) => {
+                toggleProgress();
+                statusButtons.forEach(item => (item.disabled = false));
+                ev.target.disabled = true;
     
-        cancelBtn && cancelBtn.addEventListener('click', (ev) => {
-            item.setAttribute('view', 'read');
+                await statusTransition({ ev });
+                toggleProgress();
+            });
         });
     });
 }
@@ -23,13 +38,13 @@ function deleteButtonListeners() {
             try {
                 const collection = ev.target.dataset.collection;
                 const docuid = ev.target.dataset.docuid;
-                
+
                 const response = await fetch('/collection/delete', {
                     headers: { 'Content-Type': 'application/json' },
                     method: 'delete',
                     body: JSON.stringify({
                         collectionName: collection,
-                        filter: docuid
+                        filter: {_id: docuid}
                     })
                 });
 
@@ -47,7 +62,8 @@ function deleteButtonListeners() {
     });
 }
 
-(function () {
+window.addEventListener('load', () => {
     readEditFormListeners();
     deleteButtonListeners();
-})();
+    statusButtonsListeners();
+});

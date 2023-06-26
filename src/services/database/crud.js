@@ -74,7 +74,7 @@ async function update(setup) {
         const updateType = helpers.pickQueryType(filter, type);
         const query = helpers.treatFilter(filter);
         const Collection = helpers.getCollectionModel(collectionName);
-        
+
         switch (updateType) {
             case 'one': {
                 try {

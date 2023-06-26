@@ -6,6 +6,7 @@ const TextArea = require('./TextArea');
 const TextAreaEdit = require('./TextAreaEdit');
 const SingleRelation = require('./SingleRelation');
 const MultiRelation = require('./MultiRelation');
+const StatusInput = require('./StatusInput');
 
 module.exports = {
     Input,
@@ -15,5 +16,6 @@ module.exports = {
     TextArea,
     TextAreaEdit,
     SingleRelation,
-    MultiRelation
+    MultiRelation,
+    StatusInput
 };
