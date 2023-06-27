@@ -46,7 +46,7 @@ module.exports = new Workflow({
                     const task = taskDoc.initialize();
                     const updateProps = target.getUpdateProps();
                     
-                    return await task.jiraUpdatetask(updateProps);
+                    return await task.jiraUpdate(updateProps);
                 } catch (err) {
                     throw new Error.Log(err);
                 }
@@ -56,13 +56,9 @@ module.exports = new Workflow({
     statuses: [
         {
             statusID: 'TO-INVESTIGATE',
+            jiraID: 11,
             displayName: 'To Investigate',
-            next: 'UNDER-INVESTIGATION'
-        },
-        {
-            statusID: 'UNDER-INVESTIGATION',
-            displayName: 'Under Investigation',
-            next: 'COMPLETED',
+            taskType: 'INVESTIGATION',
             events: [{
                 name: 'transition',
                 handler: async function(target) {
@@ -78,20 +74,458 @@ module.exports = new Workflow({
             }]
         },
         {
-            statusID: 'COMPLETED',
-            displayName: 'Completed'
+            statusID: 'UNDER-INVESTIGATION',
+            jiraID: 21,
+            displayName: 'Under Investigation',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'ASK-TO-CLIENT',
+            jiraID: 31,
+            displayName: 'Ask to Client',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'ASK-TO-TEAM',
+            jiraID: 41,
+            displayName: 'Ask to Team',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TO-REPLY-CLIENT',
+            jiraID: 51,
+            displayName: 'To Reply Client',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TO-TEST',
+            jiraID: 81,
+            displayName: 'To Test',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'DONE',
+            jiraID: 71,
+            displayName: 'Done',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ABORTED',
-            displayName: 'Aborted'
+            jiraID: 61,
+            displayName: 'Aborted',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'SHARED',
-            displayName: 'Shared'
+            displayName: 'Shared',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ON-HOLD',
-            displayName: 'On Hold'
+            displayName: 'On Hold',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 11,
+            statusID: 'TO-START-DEVELOPMENT',
+            displayName: 'To Start Development',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 21,
+            statusID: 'IN-DEVELOPMENT',
+            displayName: 'In Development',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 31,
+            statusID: 'DONE',
+            displayName: 'Done',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 41,
+            statusID: 'ABORTED',
+            displayName: 'Aborted',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 51,
+            statusID: 'ON-HOLD',
+            displayName: 'On Hold',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 61,
+            statusID: 'STUCK',
+            displayName: 'Stuck',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 71,
+            statusID: 'QUESTION-RAISED',
+            displayName: 'Question Raised',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 81,
+            statusID: 'ASK-TO-CLIENT',
+            displayName: 'Ask to Client',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 91,
+            statusID: 'ASK-TO-PM',
+            displayName: 'Ask To PM',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 101,
+            statusID: 'ASK-TO-TEAM',
+            displayName: 'Ask to Team',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 111,
+            statusID: 'TO-REPLY-CLIENT',
+            displayName: 'To Reply Client',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 121,
+            statusID: 'TO-TEST',
+            displayName: 'To Test',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 131,
+            statusID: 'TO-CREATE-PROOFS',
+            displayName: 'To Create Proofs',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 141,
+            statusID: 'BUG-DETECTED',
+            displayName: 'Bug Detected',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            jiraID: 151,
+            statusID: 'SHARED',
+            displayName: 'Shared',
+            taskType: 'DEVELOPMENT',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         }
     ]
 });

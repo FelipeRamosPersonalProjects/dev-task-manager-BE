@@ -1,7 +1,7 @@
 const Component = require('@interface/Component');
 const workflow = require('@CONFIGS/workflows/tasks.workflow');
 const DocForm = require('@www/components/DocForm');
-const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, MultiRelation } = require('@www/components/DocForm/FormField/fields');
+const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, StatusInput } = require('@www/components/DocForm/FormField/fields');
 
 class TaskEdit extends Component {
     get SOURCE_PATH() {
@@ -12,7 +12,7 @@ class TaskEdit extends Component {
         super(settings);
 
         const { taskDoc, repos } = Object(settings);
-        const { _id, displayName, taskType, taskVersion, externalKey, externalURL, taskName, description, ticket, project, repo } = Object(taskDoc);
+        const { _id, status, displayName, taskType, taskVersion, externalKey, externalURL, taskName, description, ticket, project, repo } = Object(taskDoc);
 
         this.UID = _id;
         this.collection = taskDoc.getSafe('ModelDB.modelName');
@@ -21,6 +21,20 @@ class TaskEdit extends Component {
             collection: 'tasks',
             wrapperTag: 'div',
             fields: [
+                new StatusInput({
+                    label: 'Status:',
+                    fieldName: 'status',
+                    view: 'read',
+                    currentValue: Object(workflow.getStatus(status)),
+                    options: workflow.statuses.map(item => ({
+                        collection: this.collection,
+                        docUID: this.UID,
+                        displayName: item.displayName.toUpperCase(),
+                        statusID: item.statusID,
+                        transitionID: item.jiraID,
+                        taskType: item.taskType
+                    })).filter(item => item.taskType === taskType)
+                }),
                 new SelectInputEdit({
                     fieldName: 'taskType',
                     label: 'Task Type:',

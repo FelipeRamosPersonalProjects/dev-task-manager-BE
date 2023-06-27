@@ -53,9 +53,23 @@ module.exports = new Workflow({
     ],
     statuses: [
         {
-            statusID: 'TO-START',
-            displayName: 'To Start',
-            next: 'INVESTIGATION'
+            statusID: 'FIRST-LOOK',
+            jiraID: 11,
+            displayName: 'First Look',
+            next: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'INVESTIGATION',
@@ -74,7 +88,7 @@ module.exports = new Workflow({
                             taskName: 'Investigation',
                             ticket: ticket._id,
                             project: ticket.getSafe('project._id'),
-                            repo: repos.length && repos[0]._id,
+                            repo: repos.length ? repos[0]._id : undefined,
                             assignedUsers: ticket.assignedUsers.map(item => item._id)
                         });
 
@@ -133,7 +147,7 @@ module.exports = new Workflow({
                             taskName: 'Development',
                             ticket: ticket._id,
                             project: ticket.getSafe('project._id'),
-                            repo: repos.length && repos[0]._id,
+                            repo: repos.length ? repos[0]._id : undefined,
                             assignedUsers: ticket.assignedUsers.map(item => item._id)
                         });
 
@@ -158,24 +172,128 @@ module.exports = new Workflow({
             statusID: 'VALIDATION',
             jiraID: 61,
             displayName: 'Validation',
-            next: 'COMPLETED'
+            next: 'CLOSED',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
-            statusID: 'COMPLETED',
+            statusID: 'CLOSED',
             jiraID: 71,
-            displayName: 'Completed'
+            displayName: 'Closed',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ABORTED',
-            displayName: 'Aborted'
+            jiraID: 81,
+            displayName: 'Aborted',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'SHARED',
-            displayName: 'Shared'
+            jiraID: 111,
+            displayName: 'Shared',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TESTING',
+            jiraID: 131,
+            displayName: 'Shared',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ON-HOLD',
-            displayName: 'On Hold'
+            jiraID: 91,
+            displayName: 'On Hold',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'STUCK',
+            jiraID: 101,
+            displayName: 'Stuck',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         }
     ]
 });
