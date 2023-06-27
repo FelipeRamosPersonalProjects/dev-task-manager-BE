@@ -17,7 +17,7 @@ class Status {
      */
     constructor(setup, workflow) {
         try {
-            const { statusID, jiraID, displayName, next, events } = Object(setup);
+            const { taskType, statusID, jiraID, displayName, next, events } = Object(setup);
 
             /**
              * The parent Workflow wrapping the Status.
@@ -36,6 +36,12 @@ class Status {
              * @property {string}
              */
             this.jiraID = jiraID;
+
+            /**
+             * The issue type of the task
+             * @property {string}
+             */
+            this.taskType = taskType;
 
             /**
              * A name for the workflow to be displayed to the user.

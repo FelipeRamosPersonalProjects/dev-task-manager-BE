@@ -1,7 +1,7 @@
 const Component = require('@interface/Component');
 const workflow = require('@CONFIGS/workflows/spaces.workflow');
 const DocForm = require('@www/components/DocForm');
-const { InputEdit, SingleRelation, MultiRelation, TextArea } = require('@www/components/DocForm/FormField/fields');
+const { InputEdit, SingleRelation, MultiRelation, TextAreaEdit } = require('@www/components/DocForm/FormField/fields');
 
 class SpaceEdit extends Component {
     get SOURCE_PATH() {
@@ -50,7 +50,7 @@ class SpaceEdit extends Component {
                     currentValue: projects,
                     options: settings.projects
                 }),
-                new TextArea({
+                new TextAreaEdit({
                     fieldName: 'templates',
                     label: 'Templates:',
                     currentValue: JSON.stringify(templates)

@@ -18,6 +18,7 @@ class Task extends _Global {
 
         try {
             const {
+                status,
                 frontURL,
                 taskType,
                 isInternal,
@@ -46,6 +47,7 @@ class Task extends _Global {
             } = new Object(setup);
 
             this.collectionName = 'tasks';
+            this.status = status;
             this.frontURL = frontURL;
             this.taskType = taskType;
             this.isInternal = isInternal;

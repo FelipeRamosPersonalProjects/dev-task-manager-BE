@@ -58,13 +58,13 @@ class Workflow {
                 const currStatus = {};
 
                 statuses.map(item => {
-                    if (currStatus[item.statusID]) {
+                    if (currStatus[item.statusID] && item.taskType === currStatus[item.statusID].taskType) {
                         throw new Error.Log({
                             name: 'DUPLICATED-STATUS',
                             message: `The status "${item.statusID}" on the workflow "${this.workflowID}" is duplicated, the statuses ID should be unique.`
                         });
                     } else {
-                        currStatus[item.statusID] = true;
+                        currStatus[item.statusID] = item;
                     }
                 });
 
