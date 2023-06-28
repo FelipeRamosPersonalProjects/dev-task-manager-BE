@@ -107,6 +107,7 @@ dist
 
 cert/*.crt
 cert/*.key
+cert/*.crs
 .env
 temp
 draft.js
