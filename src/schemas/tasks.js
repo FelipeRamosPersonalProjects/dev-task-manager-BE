@@ -25,15 +25,15 @@ module.exports = new Collection({
                 'TO-TEST',
                 'DONE',
                 'ABORTED',
-                'SHARED',
                 'ON-HOLD',
                 'TO-START-DEVELOPMENT',
                 'IN-DEVELOPMENT',
-                'STUCK',
+                'BLOCKED',
                 'QUESTION-RAISED',
                 'ASK-TO-PM',
                 'TO-CREATE-PROOFS',
-                'BUG-DETECTED'
+                'BUG-DETECTED',
+                'SELF-TEST'
             ]
         },
         {

@@ -1,5 +1,4 @@
 const Component = require('@interface/Component');
-const workflow = require('@CONFIGS/workflows/spaces.workflow');
 const DocForm = require('@www/components/DocForm');
 const { InputEdit, SingleRelation, MultiRelation, TextAreaEdit } = require('@www/components/DocForm/FormField/fields');
 

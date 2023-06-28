@@ -224,63 +224,9 @@ module.exports = new Workflow({
             }]
         },
         {
-            statusID: 'SHARED',
-            jiraID: 111,
-            displayName: 'Shared',
-            events: [{
-                name: 'transition',
-                handler: async function(target) {
-                    try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
-                    } catch (err) {
-                        throw new Error.Log(err);
-                    }
-                }
-            }]
-        },
-        {
-            statusID: 'TESTING',
-            jiraID: 131,
-            displayName: 'Shared',
-            events: [{
-                name: 'transition',
-                handler: async function(target) {
-                    try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
-                    } catch (err) {
-                        throw new Error.Log(err);
-                    }
-                }
-            }]
-        },
-        {
             statusID: 'ON-HOLD',
             jiraID: 91,
             displayName: 'On Hold',
-            events: [{
-                name: 'transition',
-                handler: async function(target) {
-                    try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
-                    } catch (err) {
-                        throw new Error.Log(err);
-                    }
-                }
-            }]
-        },
-        {
-            statusID: 'STUCK',
-            jiraID: 101,
-            displayName: 'Stuck',
             events: [{
                 name: 'transition',
                 handler: async function(target) {

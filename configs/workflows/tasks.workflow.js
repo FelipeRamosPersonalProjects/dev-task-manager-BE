@@ -131,6 +131,44 @@ module.exports = new Workflow({
             }]
         },
         {
+            statusID: 'ASK-TO-PM',
+            jiraID: 91,
+            displayName: 'Ask to PM',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'QUESTION-RAISED',
+            jiraID: 101,
+            displayName: 'Question Raised',
+            taskType: 'INVESTIGATION',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
+                        const task = taskDoc.initialize();
+
+                        return await task.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
             statusID: 'TO-REPLY-CLIENT',
             jiraID: 51,
             displayName: 'To Reply Client',
@@ -191,24 +229,6 @@ module.exports = new Workflow({
             statusID: 'ABORTED',
             jiraID: 61,
             displayName: 'Aborted',
-            taskType: 'INVESTIGATION',
-            events: [{
-                name: 'transition',
-                handler: async function(target) {
-                    try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
-                    } catch (err) {
-                        throw new Error.Log(err);
-                    }
-                }
-            }]
-        },
-        {
-            statusID: 'SHARED',
-            displayName: 'Shared',
             taskType: 'INVESTIGATION',
             events: [{
                 name: 'transition',
@@ -339,8 +359,8 @@ module.exports = new Workflow({
         },
         {
             jiraID: 61,
-            statusID: 'STUCK',
-            displayName: 'Stuck',
+            statusID: 'BLOCKED',
+            displayName: 'Blocked',
             taskType: 'DEVELOPMENT',
             events: [{
                 name: 'transition',
@@ -453,8 +473,8 @@ module.exports = new Workflow({
         },
         {
             jiraID: 121,
-            statusID: 'TO-TEST',
-            displayName: 'To Test',
+            statusID: 'SELF-TEST',
+            displayName: 'Self Test',
             taskType: 'DEVELOPMENT',
             events: [{
                 name: 'transition',
@@ -493,25 +513,6 @@ module.exports = new Workflow({
             jiraID: 141,
             statusID: 'BUG-DETECTED',
             displayName: 'Bug Detected',
-            taskType: 'DEVELOPMENT',
-            events: [{
-                name: 'transition',
-                handler: async function(target) {
-                    try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
-                    } catch (err) {
-                        throw new Error.Log(err);
-                    }
-                }
-            }]
-        },
-        {
-            jiraID: 151,
-            statusID: 'SHARED',
-            displayName: 'Shared',
             taskType: 'DEVELOPMENT',
             events: [{
                 name: 'transition',

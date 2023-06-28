@@ -78,9 +78,8 @@ module.exports = new Collection({
                 'DEVELOPMENT',
                 'PULL-REQUEST',
                 'VALIDATION',
-                'COMPLETED',
+                'CLOSED',
                 'ABORTED',
-                'SHARED',
                 'ON-HOLD'
             ]
         },

@@ -2,8 +2,8 @@ const Workflow = require('@models/settings/Workflow');
 const CRUD = require('@CRUD');
 
 module.exports = new Workflow({
-    collection: 'tasks',
-    displayName: 'Tasks - Workflow',
+    collection: 'validations',
+    displayName: 'Validations - Workflow',
     workflowEvents: [
         {
             name: 'create',
@@ -54,44 +54,6 @@ module.exports = new Workflow({
         }
     ],
     statuses: [
-        {
-            statusID: 'TO-INVESTIGATE',
-            displayName: 'To Investigate',
-            next: 'UNDER-INVESTIGATION'
-        },
-        {
-            statusID: 'UNDER-INVESTIGATION',
-            displayName: 'Under Investigation',
-            next: 'COMPLETED',
-            events: [{
-                name: 'transition',
-                handler: async function(target) {
-                    // try {
-                    //     const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                    //     const task = taskDoc.initialize();
-
-                    //     return await task.jiraTransitionStatus(this);
-                    // } catch (err) {
-                    //     throw new Error.Log(err);
-                    // }
-                }
-            }]
-        },
-        {
-            statusID: 'COMPLETED',
-            displayName: 'Completed'
-        },
-        {
-            statusID: 'ABORTED',
-            displayName: 'Aborted'
-        },
-        {
-            statusID: 'SHARED',
-            displayName: 'Shared'
-        },
-        {
-            statusID: 'ON-HOLD',
-            displayName: 'On Hold'
-        }
+        
     ]
 });

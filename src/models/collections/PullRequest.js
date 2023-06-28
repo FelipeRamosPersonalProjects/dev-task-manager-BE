@@ -14,6 +14,7 @@ class PullRequest extends _Global {
 
         const {
             status,
+            state,
             owner,
             name,
             head,
@@ -39,6 +40,7 @@ class PullRequest extends _Global {
         
         try {
             this.collectionName = 'pull_requests';
+            this.state = state;
             this.gitHubPR = gitHubPR;
             this.displayName = displayName;
             this.frontURL = frontURL;
