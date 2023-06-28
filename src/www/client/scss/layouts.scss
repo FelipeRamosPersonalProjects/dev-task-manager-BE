@@ -5,3 +5,10 @@
         align-items: center;
     }
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 97%;
+    max-width: 1220px;
+}
