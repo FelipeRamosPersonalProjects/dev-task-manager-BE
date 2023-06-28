@@ -35,6 +35,9 @@ function deleteButtonListeners() {
 
     deleteDocBtns.forEach(button => {
         button.addEventListener('click', async (ev) => {
+            const confirm = window.confirm('Do you confirm to delete this document? It will be permanent!');
+            if (!confirm) return;
+
             try {
                 const collection = ev.target.dataset.collection;
                 const docuid = ev.target.dataset.docuid;
