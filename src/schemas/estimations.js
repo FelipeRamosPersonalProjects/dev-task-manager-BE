@@ -12,7 +12,17 @@ module.exports = new Collection({
             fieldName: 'status',
             type: String,
             default: 'TO-ESTIMATE',
-            enum: ['TO-ESTIMATE', 'WAITING-APPROVAL', 'ESTIMATION-REJECTED', 'ESTIMATION-APPROVED']
+            enum: [
+                'TO-ESTIMATE',
+                'WAITING-APPROVAL',
+                'REJECTED',
+                'ESTIMATION-APPROVED',
+                'ABORTED',
+                'ASK-TO-CLIENT',
+                'REPLY-TO-CLIENT',
+                'ON-HOLD',
+                'CHANGES-REQUESTED',
+            ]
         },
         {
             fieldName: 'type',
