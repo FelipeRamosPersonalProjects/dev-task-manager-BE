@@ -65,11 +65,24 @@ module.exports = new Workflow({
             statusID: 'TO-ESTIMATE',
             jiraID: 11,
             displayName: 'To Estimate',
-            next: 'WAITING-APPROVAL'
+            next: 'WAITING-APPROVAL',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
+                        const estimation = estimationDoc.initialize();
+
+                        return await estimation.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'WAITING-APPROVAL',
-            jiraID: '21',
+            jiraID: 21,
             displayName: 'Waiting Approval',
             next: 'ESTIMATION-APPROVED',
             events: [{
@@ -141,9 +154,45 @@ module.exports = new Workflow({
             }]
         },
         {
-            statusID: 'SHARED',
-            jiraID: 111,
-            displayName: 'Shared',
+            statusID: 'ASK-TO-CLIENT',
+            jiraID: 51,
+            displayName: 'Ask to Client',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
+                        const estimation = estimationDoc.initialize();
+
+                        return await estimation.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'REPLY-TO-CLIENT',
+            jiraID: 61,
+            displayName: 'To Reply Client',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
+                        const estimation = estimationDoc.initialize();
+
+                        return await estimation.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'ASK-TO-PM',
+            jiraID: 71,
+            displayName: 'Ask To PM',
             events: [{
                 name: 'transition',
                 handler: async function(target) {
@@ -162,6 +211,24 @@ module.exports = new Workflow({
             statusID: 'ON-HOLD',
             jiraID: 121,
             displayName: 'On Hold',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
+                        const estimation = estimationDoc.initialize();
+
+                        return await estimation.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'CHANGES-REQUESTED',
+            jiraID: 101,
+            displayName: 'Changes Requested',
             events: [{
                 name: 'transition',
                 handler: async function(target) {
