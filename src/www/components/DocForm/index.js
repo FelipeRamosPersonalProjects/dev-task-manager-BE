@@ -1,4 +1,5 @@
 const Component = require('@interface/Component');
+const Button = require('./FormField/Button');
 
 class DocForm extends Component {
 
@@ -9,7 +10,7 @@ class DocForm extends Component {
     constructor(settings) {
         super(settings);
 
-        const { collection, fields, wrapperTag, classes } = Object(settings);
+        const { collection, fields, wrapperTag, classes, } = Object(settings);
 
         this.collection = collection;
         this.wrapperTag = wrapperTag || 'form';
@@ -19,6 +20,14 @@ class DocForm extends Component {
             item.addSchema(collection);
             return item;
         }) : [];
+
+          
+        if (this.wrapperTag === 'form') {
+            this.confirmButton = new Button({
+                type: 'submit',
+                label: 'Confirm'
+            });
+        }
     }
 
     static getForm(formName) {

@@ -30,26 +30,30 @@ textarea {
     }
 }
 
+[view] [view] {
+    display: none;
+}
+
 [view="create"] {
     [view="edit"] {
-        display: block;
+        display: inline-block;
     }
-    
-    [view="read"] {
+
+    button[view="edit"] {
         display: none;
     }
 }
 
 
 [view="read"] {
-    [view="edit"] {
-        display: none;
+    [view="read"] {
+        display: inline-block;
     }
 }
 
 [view="edit"] {
-    [view="read"] {
-        display: none;
+    [view="edit"] {
+        display: inline-block;
     }
 }
 
