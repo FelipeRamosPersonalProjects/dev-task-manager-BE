@@ -43,6 +43,16 @@ class JIRAFields {
         }
     }
 
+    number() {
+        try {
+            if (isNaN(this.value)) throw new Error.Log('Is NaN');
+
+            return this.value;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     paragraph() {
         try {
             return this.value ? {

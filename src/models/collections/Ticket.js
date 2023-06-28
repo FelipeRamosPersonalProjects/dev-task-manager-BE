@@ -62,9 +62,12 @@ class Ticket extends _Global {
                 const jiraCreated = await user.jiraConnect.createIssue({
                     issueType: this.jiraIssueType,
                     externalKey: this.externalKey,
+                    externalURL: this.externalURL,
                     projectKey: this.space.jiraProject,
                     title: this.title,
-                    description: this.description
+                    description: this.description,
+                    infoDisplay: '<h1>Test</h1>',
+                    priorityIndex: 9
                 });
 
                 await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
