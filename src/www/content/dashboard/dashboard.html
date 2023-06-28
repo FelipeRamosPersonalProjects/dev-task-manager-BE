@@ -1,7 +1,7 @@
 <h1>Dashboard</h1>
 
-<div>
-    <div>
+<div class="card-grid">
+    <div class="card">
         <h2>Tickets</h2>
     
         <ul>     
@@ -11,7 +11,7 @@
         <a href="/tickets/create">New Ticket</a>
     </div>
 
-    <div>
+    <div class="card">
         <h2>Tasks</h2>
 
         <ul>
@@ -21,17 +21,17 @@
         <a href="/tasks/create">New Task</a>
     </div>
 
-    <div>
+    <div class="card">
         <h2>Pull Requests</h2>
     
         <ul>
             ##{{pullRequests:array:ListItem}}##
         </ul>
     
-        <a href="/pullrequests/create">New PR</a>
+        <a href="/pullrequests/create">New Pull Request</a>
     </div>
 
-    <div>
+    <div class="card">
         <h2>Projects</h2>
     
         <ul>
@@ -41,7 +41,17 @@
         <a href="/projects/create">New Project</a>
     </div>
 
-    <div>
+    <div class="card">
+        <h2>Repositories</h2>
+    
+        <ul>
+            ##{{repos:array:ListItem}}##
+        </ul>
+    
+        <a href="/repos/create">New Project</a>
+    </div>
+
+    <div class="card">
         <h2>My Spaces</h2>
     
         <ul>
@@ -49,5 +59,25 @@
         </ul>
     
         <a href="/spaces/create">New Space</a>
+    </div>
+
+    <div class="card">
+        <h2>Estimations</h2>
+    
+        <ul>
+            ##{{estimations:array:ListItem}}##
+        </ul>
+    
+        <a href="/estimations/create">New Estimation</a>
+    </div>
+
+    <div class="card">
+        <h2>Validations</h2>
+    
+        <ul>
+            ##{{validations:array:ListItem}}##
+        </ul>
+    
+        <a href="/validations/create">New Validation</a>
     </div>
 </div>

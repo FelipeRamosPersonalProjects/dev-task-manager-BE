@@ -5,13 +5,18 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
-        const spaces = await CRUD.query({collectionName: 'space_desks'});
-    
+        const spacesQuery = await CRUD.query({collectionName: 'space_desks', filter: { owner: req.session.currentUser._id }});
+        if (spacesQuery instanceof Error.Log || !spacesQuery) {
+            return res.status(500).send(spacesQuery.toJSON());
+        }
+
+        const spaces = spacesQuery.map(item => item.initialize());
         const content = new PageTemplate({
+            pageID: 'projects/create',
             pageTitle: 'Create Project',
             body: new ProjectCreate({
                 spaces
-            }).renderToString()
+            })
         });
     
         res.setHeader('Content-Type', 'text/html');

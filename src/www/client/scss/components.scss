@@ -1,0 +1,64 @@
+progress {
+    display: none;
+    width: 100%;
+
+    &.active {
+        display: inline-block;
+    }
+}
+
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+
+    .card {
+        min-width: 400px;
+        flex: 1;
+        padding: 1rem;
+        border-radius: 5px;
+        box-shadow: 0 0 51px #d5d5d5;
+    }
+}
+
+.status-input {
+    .cancel-btn {
+        width: 100%;
+    }
+}
+
+.header-topbar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .container {
+        flex-direction: row;
+
+        > div {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .logo-wrap {
+        margin-right: auto;
+    }
+
+    .icon-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.2rem;
+        border-radius: 0.2rem;
+        width: auto;
+        height: 3.5rem;
+        text-decoration: none;
+        cursor: pointer;
+
+        .logo-image {
+            width: auto;
+            height: 100%;
+        }
+    }
+}

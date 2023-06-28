@@ -140,6 +140,24 @@ class GlobalMap extends ValidateSchema {
             throw new Error.Log('helpers.increase_doc_prop', this.collectionName, this._id, increaseValue);
         }
     }
+
+    async jiraTransitionStatus(event) {
+        if (!this.jiraIssue) return;
+
+        try {
+            for (let user of this.assignedUsers) {
+                const jiraUpdated = await user.jiraConnect.transitionIssue(this.jiraIssue.key, event);
+
+                if (jiraUpdated instanceof Error.Log) {
+                    throw jiraUpdated
+                }
+
+                return jiraUpdated;
+            };
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = GlobalMap;

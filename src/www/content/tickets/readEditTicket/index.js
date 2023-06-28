@@ -1,6 +1,7 @@
 const Component = require('@interface/Component');
-const SelectInput = require('@www/components/selectInput');
 const workflow = require('@CONFIGS/workflows/tickets.workflow');
+const DocForm = require('@www/components/DocForm');
+const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, MultiRelation, StatusInput } = require('@www/components/DocForm/FormField/fields');
 
 class TicketEdit extends Component {
     get SOURCE_PATH() {
@@ -10,33 +11,73 @@ class TicketEdit extends Component {
     constructor(settings) {
         super(settings);
 
-        const { projects, spaces, ticketDoc, formState } = Object(settings);
-        const { status, displayName, externalKey, externalURL, title, description } = Object(ticketDoc);
+        const { projects, spaces, projectTasks, ticketDoc } = Object(settings);
+        const { _id, status, displayName, externalKey, externalURL, title, description, space, project, tasks } = Object(ticketDoc);
         const currentStatus = workflow.getStatus(status);
 
+        this.UID = _id;
+        this.collection = ticketDoc.getSafe('ModelDB.modelName');
         this.displayName = displayName;
-        this.externalKey = externalKey;
-        this.externalURL = externalURL;
-        this.title = title;
-        this.description = description;
-        this.currentStatus = currentStatus && currentStatus.displayName.toUpperCase() || '';
-        this.status = new SelectInput({
-            fieldName: 'status',
-            selectState: formState === 'read' ? 'edit' : 'read',
-            currentValue: currentStatus && currentStatus.statusID || '',
-            options: workflow.statuses.map(item => ({
-                label: item.displayName.toUpperCase(),
-                value: item.statusID
-            }))
-        }).renderToString();
-        this.spaces = new SelectInput({
-            fieldName: 'space',
-            options: spaces.map(item => ({ label: item.spaceName, value: item._id }))
-        }).renderToString();
-        this.projects = new SelectInput({
-            fieldName: 'project',
-            options: projects.map(item => ({ label: item.projectName, value: item._id }))
-        }).renderToString();
+        this.docForm = new DocForm({
+            collection: 'tickets',
+            wrapperTag: 'div',
+            fields: [
+                new StatusInput({
+                    label: 'Status:',
+                    fieldName: 'status',
+                    view: 'read',
+                    currentValue: Object(currentStatus),
+                    options: workflow.statuses.map(item => ({
+                        collection: this.collection,
+                        docUID: this.UID,
+                        displayName: item.displayName.toUpperCase(),
+                        statusID: item.statusID,
+                        transitionID: item.jiraID
+                    }))
+                }),
+                new InputEdit({
+                    fieldName: 'externalKey',
+                    label: 'External Key:',
+                    currentValue: externalKey
+                }),
+                new InputEdit({
+                    fieldName: 'externalURL',
+                    label: 'External URL:',
+                    currentValue: externalURL
+                }),
+                new InputEdit({
+                    fieldName: 'title',
+                    label: 'Ticket Title:',
+                    currentValue: title
+                }),
+                new TextAreaEdit({
+                    fieldName: 'description',
+                    label: 'Description:',
+                    currentValue: description
+                }),
+                new SingleRelation({
+                    view: 'read',
+                    fieldName: 'space',
+                    label: 'Space:',
+                    options: spaces,
+                    currentValue: space
+                }),
+                new SingleRelation({
+                    view: 'read',
+                    fieldName: 'project',
+                    label: 'Project:',
+                    options: projects,
+                    currentValue: project
+                }),
+                new MultiRelation({
+                    view: 'read',
+                    fieldName: 'tasks',
+                    label: 'Tasks:',
+                    options: projectTasks || [],
+                    currentValue: tasks
+                })
+            ]
+        });
     }
 }
 

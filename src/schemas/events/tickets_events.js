@@ -17,8 +17,6 @@ async function preSave(next) {
         this.externalURL = getExternalURLFromKey(this.raw.sessionUser, this.externalKey);
     }
 
-    this.title = this.displayName;
-
     return next();
 }
 

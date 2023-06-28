@@ -38,6 +38,7 @@ module.exports = async function (req, res) {
     const body = request.getBody();
 
     try {
+        body.data.sessionUser = req.session.currentUser;
         const updated = await CRUD.update(body);        
         const response = new Response(updated, body.collection);
 

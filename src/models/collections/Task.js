@@ -1,7 +1,6 @@
 const _Global = require('../maps/_Global');
 const DiscoveryModel = require('@models/tasks/Discovery');
 const DevelopmentModel = require('@models/tasks/Development');
-const ValidationModel = require('@models/tasks/Validation');
 const TODOReminder = require('@models/tasks/TODOReminder');
 const CRUD = require('@CRUD');
 
@@ -19,6 +18,8 @@ class Task extends _Global {
 
         try {
             const {
+                status,
+                frontURL,
                 taskType,
                 isInternal,
                 source,
@@ -46,6 +47,8 @@ class Task extends _Global {
             } = new Object(setup);
 
             this.collectionName = 'tasks';
+            this.status = status;
+            this.frontURL = frontURL;
             this.taskType = taskType;
             this.isInternal = isInternal;
             this.source = source;
@@ -67,35 +70,28 @@ class Task extends _Global {
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
             this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() ? assignedUsers.map(item => new User(item)) : [];
 
+            this.displayName = `[${this.getSafe('ticket.externalKey') || this.cod}] ${this.taskName}`;
+
             if (this.taskType === 'INVESTIGATION') {
+                this.jiraIssueType = '10051';
                 this.discoveries = discoveries && new DiscoveryModel(discoveries);
             }
-            
+
             else if (this.taskType === 'DEVELOPMENT') {
+                this.jiraIssueType = '10052';
                 this.developments = developments && new DevelopmentModel(developments);
             }
-            
-            else if (this.taskType === 'PULL-REQUEST') {
-                this.validations = validations && new ValidationModel(validations);
-            }
 
-            else if (this.taskType === 'VALIDATION') {
-                this.validations = validations && new ValidationModel(validations);
-            }
-            
             else if (this.taskType === 'TODO') {
+                this.jiraIssueType = '10060';
                 this.todoReminders = todoReminders && new TODOReminder(todoReminders);
             }
-            
+
             this.placeDefault();
             this.parentTicket = () => parentTicket;
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Task');
         }
-    }
-
-    get displayName() {
-        return this.taskName;
     }
 
     get repoManager() {
@@ -176,10 +172,10 @@ class Task extends _Global {
 
                 const jiraCreated = await user.jiraConnect.createIssue({
                     parentKey: this.ticketJIRA && this.ticketJIRA.id,
-                    issueType: '10051',
+                    issueType: this.jiraIssueType,
                     externalKey: this.externalTicketKey,
                     projectKey: this.spaceJiraProject,
-                    title: this.taskName,
+                    title: this.displayName,
                     description: this.description
                 });
 
@@ -191,9 +187,17 @@ class Task extends _Global {
         }
     }
 
-    async jiraUpdatetask() {
+    async jiraUpdate(data) {
         try {
-    
+            for (let user of this.assignedUsers) {
+                const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, data);
+
+                if (jiraUpdated instanceof Error.Log) {
+                    throw jiraUpdated
+                }
+
+                return jiraUpdated;
+            };
         } catch (err) {
             throw new Error.Log(err);
         }
@@ -341,8 +345,6 @@ class Task extends _Global {
     }
 
     static async createTask(data) {
-        data.taskType = 'INVESTIGATION';
-
         try {
             const created = await CRUD.create('tasks', data);
             if (created instanceof Error.Log) {

@@ -1,0 +1,12 @@
+* {
+    box-sizing: border-box;
+}
+
+pre {
+    text-wrap: wrap;
+    max-height: 25rem;
+    overflow-y: auto;
+    display: inline-block;
+    width: 100%;
+    max-width: 100%;
+}

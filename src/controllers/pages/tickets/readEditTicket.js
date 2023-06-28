@@ -5,7 +5,7 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
-        const projectsQuery = await CRUD.query({collectionName: 'projects', filter: {}}).defaultPopulate();
+        const projectsQuery = await CRUD.query({collectionName: 'projects', filter: { }}).defaultPopulate();
         if (projectsQuery instanceof Error.Log || !projectsQuery) {
             return res.status(500).send(projectsQuery.toJSON());
         }
@@ -28,18 +28,29 @@ module.exports = async (req, res) => {
         if (ticketDoc instanceof Error.Log) {
             throw ticketDoc;
         }
+        
+        const projectTasksQuery = await CRUD.query({collectionName: 'tasks', filter: {
+            project: ticketDoc.getSafe('project._id')
+        }});
 
+        if (projectTasksQuery instanceof Error.Log || !projectTasksQuery) {
+            return res.status(500).send(projectTasksQuery.toJSON());
+        }
+
+        const projectTasks = projectTasksQuery.map(item => item.initialize());
         const projects = projectsQuery.map(item => item.initialize());
         const spaces = spacesQuery.map(item => item.initialize());
         const content = new PageTemplate({
+            pageID: 'tickets/readEditTicket',
             pageTitle: 'Edit Ticket',
             body: new ReadEditTicket({
                 fieldName: 'project',
                 projects,
                 spaces,
+                projectTasks,
                 formState: 'read',
                 ticketDoc: ticketDoc.initialize()
-            }).renderToString()
+            })
         });
 
         res.setHeader('Content-Type', 'text/html');

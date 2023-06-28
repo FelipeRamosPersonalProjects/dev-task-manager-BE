@@ -3,21 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
     <title>##{{pageTitle:string}}##</title>
 </head>
-<body>
+<body pageid="##{{pageID:string}}##">
     <progress></progress>
+    <header class="header-topbar">
+        <div class="container">
+            <div class="logo-wrap">
+                <a href="/dashboard" class="icon-btn">
+                    <img class="logo-image" src="/images/logo.svg" alt="DevDesk - Home">
+                </a>
+            </div>
 
-    <div>
+            <div class="topmenu-account">
+                <a href="/user/profile">My Profile</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
         <nav>
+            ##{{menu:component}}##
         </nav>
 
-        <div>
-            ##{{body:string}}##
+        <div class="main-content">
+            ##{{body:component}}##
         </div>
     </div>
 
-    <script src="/js/main.js"></script>
+    <script src="/app_bundle.js"></script>
 </body>
 </html>

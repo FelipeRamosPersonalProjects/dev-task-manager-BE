@@ -24,8 +24,16 @@ module.exports = async (req, res) => {
     const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
     const projects = projectsQuery.map(item => item.initialize());
 
-    const spacesQuery = await CRUD.query({ collectionName: 'space_desks', owner: req.session.currentUser._id });
+    const reposQuery = await CRUD.query({collectionName: 'repos', filter: {
+        collaborators: { $in: [ user._id ]}
+    }}).defaultPopulate();
+    const repos = reposQuery.map(item => item.initialize());
+
+    const spacesQuery = await CRUD.query({ collectionName: 'space_desks', owner: user._id });
     const spaces = spacesQuery.map(item => item.initialize());
+
+    const estimationsQuery = await CRUD.query({ collectionName: 'estimations', assignedUsers: { $in: [user._id] } }).defaultPopulate();
+    const estimations = estimationsQuery.map(item => item.initialize());
 
     const content = new Page({
         pageTitle: 'Dashboard Page',
@@ -34,8 +42,10 @@ module.exports = async (req, res) => {
             tasks,
             pullRequests,
             projects,
-            spaces
-        }).renderToString()
+            spaces,
+            repos,
+            estimations
+        })
     });
 
     res.setHeader('Content-Type', 'text/html');

@@ -27,6 +27,7 @@ class User extends _Global {
             lastName,
             email,
             phone,
+            frontURL,
             repos,
             spaceDesks,
             tickets,
@@ -48,6 +49,7 @@ class User extends _Global {
             this.lastName = lastName;
             this.email = email;
             this.phone = phone;
+            this.frontURL = frontURL;
             this.repos = isCompleteDoc(repos) && repos.map(item => new Repo(item));
             this.spaceDesks = isCompleteDoc(spaceDesks) && spaceDesks.map(item => new SpaceDesk(item));
             this.tickets = isCompleteDoc(tickets) && tickets.map(item => new Ticket(item));

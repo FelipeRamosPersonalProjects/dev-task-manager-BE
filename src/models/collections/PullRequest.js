@@ -20,6 +20,8 @@ class PullRequest extends _Global {
             base,
             remoteID,
             prStage,
+            displayName,
+            frontURL,
             isCurrentVersion,
             version,
             summary,
@@ -38,6 +40,8 @@ class PullRequest extends _Global {
         try {
             this.collectionName = 'pull_requests';
             this.gitHubPR = gitHubPR;
+            this.displayName = displayName;
+            this.frontURL = frontURL;
             this.name = name;
             this.remoteID = remoteID;
             this.status = status;
@@ -72,10 +76,6 @@ class PullRequest extends _Global {
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'PullRequests');
         }
-    }
-
-    get displayName() {
-        return `[${this.cod}] ${this.name}`;
     }
 
     get repoManager() {

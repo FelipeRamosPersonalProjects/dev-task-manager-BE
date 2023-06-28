@@ -10,7 +10,13 @@ function defaultPopulate() {
         },
         {
             path: 'project',
-            model: 'projects'
+            model: 'projects',
+            populate: [
+                {
+                    path: 'repos',
+                    model: 'repos'
+                }
+            ]
         },
         {
             path: 'pullRequests',

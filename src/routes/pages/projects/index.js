@@ -5,5 +5,6 @@ const middlewares = require('@middlewares');
 
 // Child Routes
 router.get('/create', middlewares.authVerify, ctrl.pages.projects.createProject);
+router.get('/read-edit/:index', middlewares.authVerify, ctrl.pages.projects.readEditProject);
 
 module.exports = router;

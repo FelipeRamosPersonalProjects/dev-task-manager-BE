@@ -1,3 +1,5 @@
+const { ObjectId } = require('mongoose').SchemaTypes;
+
 function getGlobalSchema(exclude) {
     const out = {...getGlobalSchema.standardGlobal};
 
@@ -31,6 +33,10 @@ getGlobalSchema.standardGlobal = {
     modifiedAt: {
         type: Date,
         default: Date.now
+    },
+    author: {
+        type: ObjectId,
+        immutable: true
     }
 }
 

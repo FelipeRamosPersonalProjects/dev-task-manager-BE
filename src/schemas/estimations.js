@@ -9,21 +9,67 @@ module.exports = new Collection({
     singularLabel: 'Estimation',
     fieldsSet: [
         {
-            fieldName: 'type',
+            fieldName: 'status',
             type: String,
-            required: true,
-            enum: ['FE', 'BE', 'QA']
+            default: 'TO-ESTIMATE',
+            enum: ['TO-ESTIMATE', 'WAITING-APPROVAL', 'ESTIMATION-REJECTED', 'ESTIMATION-APPROVED']
         },
         {
-            fieldName: 'timeAmount',
+            fieldName: 'type',
+            type: String,
+            default: 'DEV',
+            enum: ['DEV', 'CR'],
+            labels: {
+                'DEV': 'Development',
+                'CR': 'Changes Request'
+            }
+        },
+        {
+            fieldName: 'jiraIssue',
+            type: Object
+        },
+        {
+            fieldName: 'FE',
             type: Number,
-            required: true,
+            default: 0,
             min: 0
+        },
+        {
+            fieldName: 'BE',
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        {
+            fieldName: 'QA',
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        {
+            fieldName: 'others',
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        {
+            fieldName: 'unit',
+            type: String,
+            default: 'HOUR',
+            enum: ['MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR']
+        },
+        {
+            fieldName: 'title',
+            type: String,
+            default: 'Estimation'
+        },
+        {
+            fieldName: 'description',
+            type: String
         },
         {
             fieldName: 'ticket',
             type: ObjectId,
-            required: true,
             ref: 'tickets',
             refConfig: {
                 type: 'array-oid',
@@ -33,11 +79,20 @@ module.exports = new Collection({
         {
             fieldName: 'task',
             type: ObjectId,
-            required: true,
-            ref: 'task',
+            ref: 'tasks',
             refConfig: {
                 type: 'array-oid',
                 relatedField: 'estimations'
+            }
+        },
+        {
+            fieldName: 'assignedUsers',
+            type: [ObjectId],
+            default: [],
+            ref: 'users',
+            refConfig: {
+                relatedField: 'estimations',
+                type: 'array-oid'
             }
         }
     ]

@@ -9,16 +9,15 @@ class Dashboard extends Component {
     constructor(settings) {
         super(settings);
 
-        const { tickets, tasks, pullRequests, projects, spaces } = Object(settings);
+        const { tickets, tasks, pullRequests, projects, spaces, repos, estimations } = Object(settings);
 
-        this.tickets = Array.isArray(tickets) ? tickets.map(ticket => {
-            ticket.url = `/tickets/read-edit/${ticket.index}`;
-            return ticket;
-        }) : [];
-        this.tasks = tasks;
-        this.pullRequests = pullRequests;
-        this.projects = projects;
-        this.spaces = spaces;
+        this.tickets = tickets || [];
+        this.tasks = tasks || [];
+        this.pullRequests = pullRequests || [];
+        this.projects = projects || [];
+        this.repos = repos || [];
+        this.spaces = spaces || [];
+        this.estimations = estimations || [];
         this.types = {
             ListItem
         }

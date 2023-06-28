@@ -31,7 +31,7 @@ class Component extends ValidateSchema {
             this.placeDefault();
 
             try {
-                this.outputModel = this.loadSourceFile();
+                this.loadSourceFile();
                 const keys = Object.keys(this.types || {});
     
                 for (let key of keys) {
@@ -67,6 +67,7 @@ class Component extends ValidateSchema {
                 throw loaded;
             }
 
+            this.outputModel = loaded;
             return loaded;
         } catch(err) {
             throw new Error.Log(err);
@@ -75,25 +76,30 @@ class Component extends ValidateSchema {
 
     string(value = '') {
         if (typeof value === 'string' || typeof value === 'number') {
-            return String(value || '--empty--');
+            return String(value || '');
         } else {
             throw new Error.Log('common.bad_format_param', 'value', 'StringComponent', 'string', value, 'StringComponent.js');
         }
     }
 
-    array(value = [], childTypeName) {
+    array(itemValue = [], childTypeName) {
         const Child = this.types[childTypeName];
         let result = '';
 
-        if (Array.isArray(value) && Child) {
-            for (let i = 0; i < value.length; i++) {
-                const item = value[i];
+        if (Array.isArray(itemValue) && (Child || childTypeName === 'component')) {
+            for (let i = 0; i < itemValue.length; i++) {
+                const item = itemValue[i];
 
                 item.selfIndex = String(i);
-                result += new Child(item).renderToString();
+
+                if (childTypeName === 'component') {
+                    result += item.renderToString();
+                } else {
+                    result += new Child(item).renderToString();
+                }
             }
         } else {
-            result += '--empty--';
+            result += '';
         }
 
         return result;
@@ -153,7 +159,7 @@ class Component extends ValidateSchema {
             }
 
             if (type === 'component') {
-                value = paramValue ? paramValue.renderToString(params) : ' ';
+                value = paramValue && paramValue.renderToString ? paramValue.renderToString() : ' ';
                 toReplaceString = `##{{${sub}}}##`;
             }
 

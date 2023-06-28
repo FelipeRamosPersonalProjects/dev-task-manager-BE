@@ -13,14 +13,32 @@ class Ticket extends _Global {
         const Comment = require('./Comment');
         const SLAModel = require('../maps/SLA');
 
-        const {externalKey, externalURL, space, jiraIssue, project, displayName, title, description, status, sla, tasks, pullRequests, assignedUsers, comments} = new Object(setup);
+        const {
+            frontURL,
+            externalKey,
+            externalURL,
+            space,
+            jiraIssue,
+            project,
+            displayName,
+            title,
+            description,
+            status,
+            sla,
+            tasks,
+            pullRequests,
+            assignedUsers,
+            comments
+        } = new Object(setup);
 
         try {
+            this.jiraIssueType = '10048';
             this.collectionName = 'tickets';
             this.externalURL = externalURL;
             this.externalKey = externalKey;
             this.title = title;
             this.displayName = displayName;
+            this.frontURL = frontURL;
             this.description = description;
             this.status = status;
             this.jiraIssue = jiraIssue;
@@ -42,7 +60,7 @@ class Ticket extends _Global {
         try {
             for (let user of this.assignedUsers) {
                 const jiraCreated = await user.jiraConnect.createIssue({
-                    issueType: '10048',
+                    issueType: this.jiraIssueType,
                     externalKey: this.externalKey,
                     projectKey: this.space.jiraProject,
                     title: this.title,

@@ -13,15 +13,36 @@ module.exports = new Collection({
     singularLabel: 'Task',
     fieldsSet: [
         {
+            fieldName: 'status',
+            type: String,
+            default: 'TO-INVESTIGATE',
+            enum: [
+                'TO-INVESTIGATE',
+                'UNDER-INVESTIGATION',
+                'ASK-TO-CLIENT',
+                'ASK-TO-TEAM',
+                'TO-REPLY-CLIENT',
+                'TO-TEST',
+                'DONE',
+                'ABORTED',
+                'SHARED',
+                'ON-HOLD',
+                'TO-START-DEVELOPMENT',
+                'IN-DEVELOPMENT',
+                'STUCK',
+                'QUESTION-RAISED',
+                'ASK-TO-PM',
+                'TO-CREATE-PROOFS',
+                'BUG-DETECTED'
+            ]
+        },
+        {
             fieldName: 'taskType',
             type: String,
             required: true,
-            default: 'master-task',
             enum: [
                 'INVESTIGATION',
-                'DEVELOPMENT',
-                'VALIDATION',
-                'TODO'
+                'DEVELOPMENT'
             ]
         },
         {
@@ -95,6 +116,10 @@ module.exports = new Collection({
                 relatedField: 'tasks',
                 type: 'array-oid'
             }
+        },
+        {
+            fieldName: 'jiraIssue',
+            type: Object
         },
         {
             fieldName: 'ticket',
@@ -181,15 +206,15 @@ module.exports = new Collection({
             type: DiscoveryTask.toObject()
         },
         {
-            fieldName: 'discovery',
+            fieldName: 'development',
             type: DevelopmentTask.toObject()
         },
         {
-            fieldName: 'discovery',
+            fieldName: 'validation',
             type: ValidationTask.toObject()
         },
         {
-            fieldName: 'discovery',
+            fieldName: 'todo',
             type: TODOReminderTask.toObject()
         }
     ]

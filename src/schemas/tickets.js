@@ -70,9 +70,9 @@ module.exports = new Collection({
         {
             fieldName: 'status',
             type: String,
-            default: 'TO-START',
+            default: 'FIRST-LOOK',
             enum: [
-                'TO-START',
+                'FIRST-LOOK',
                 'INVESTIGATION',
                 'ESTIMATION',
                 'DEVELOPMENT',
