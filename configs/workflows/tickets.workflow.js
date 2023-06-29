@@ -11,23 +11,7 @@ module.exports = new Workflow({
             name: 'create',
             handler: async function (target) {
                 try {
-                    const populated = await target.populate([
-                        {
-                            path: 'assignedUsers',
-                            model: 'users',
-                            populate: [{ path: 'auth', model: 'auth_buckets'}]
-                        },
-                        {
-                            path: 'project',
-                            model: 'projects'
-                        },
-                        {
-                            path: 'space',
-                            model: 'space_desks'
-                        }
-                    ]);
-
-                    const ticket = populated.initialize();
+                    const ticket = target.populated;
                     const created = await ticket.jiraCreateTicket();
                     
                     return created;
@@ -40,8 +24,7 @@ module.exports = new Workflow({
             name: 'update',
             handler: async (target) => {
                 try {
-                    const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                    const ticket = ticketDoc.initialize();
+                    const ticket = target.populated;
                     const updateProps = target.getUpdateProps();
                     
                     return await ticket.jiraUpdateTicket(updateProps);
@@ -61,10 +44,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -80,8 +60,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const ticketDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const ticket = ticketDoc.initialize();
+                        const ticket = target.populated;
                         const repos = ticket.getSafe('project.repos');
                         const newTask = await Task.createTask({
                             taskType: 'INVESTIGATION',
@@ -112,8 +91,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const ticketDoc = await CRUD.getDoc({ collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const ticket = ticketDoc.initialize();
+                        const ticket = target.populated;
                         const newEstimation = await Estimation.create({
                             ticket: ticket._id,
                             assignedUsers: ticket.assignedUsers.map(item => item._id)
@@ -139,8 +117,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function (target) {
                     try {
-                        const ticketDoc = await CRUD.getDoc({ collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const ticket = ticketDoc.initialize();
+                        const ticket = target.populated;
                         const repos = ticket.getSafe('project.repos');
                         const newDevTask = await Task.createTask({
                             taskType: 'DEVELOPMENT',
@@ -177,10 +154,9 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
+                        const ticket = target.populated;
 
-                        return await task.jiraTransitionStatus(this);
+                        return await ticket.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -195,10 +171,8 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        const ticket = target.populated;
+                        return await ticket.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -213,10 +187,8 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        const ticket = target.populated;
+                        return await ticket.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -231,10 +203,8 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tickets', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        const ticket = target.populated;
+                        return await ticket.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }

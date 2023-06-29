@@ -18,7 +18,7 @@ class Workflow {
      */
     constructor(setup) {
         try {
-            const { collection, workflowID, displayName, workflowEvents, statuses } = Object(setup);
+            const { collection, workflowID, displayName, workflowEvents, statuses, preventStatus } = Object(setup);
 
             /**
              * The parent Collection of wrokflow.
@@ -37,6 +37,12 @@ class Workflow {
              * @property {string}
              */
             this.displayName = displayName;
+
+            /**
+             * Function to prevent handler execution of a status transition if this function return true.
+             * @property {function}
+             */
+            this.preventStatus = preventStatus || function () { return false; };
 
             /**
              * Array with the configurated Status classes for the workflow.
