@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Local",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost/dashboard",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Launch Program",

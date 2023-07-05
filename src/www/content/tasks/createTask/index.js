@@ -1,6 +1,6 @@
 const Component = require('@interface/Component');
 const DocForm = require('@www/components/DocForm');
-const { Input, SelectInput, TextArea, SingleRelation } = require('@www/components/DocForm/FormField/fields');
+const { Input, TextArea, SingleRelation } = require('@www/components/DocForm/FormField/fields');
 
 class TaskCreate extends Component {
     get SOURCE_PATH() {
@@ -29,7 +29,7 @@ class TaskCreate extends Component {
                     label: 'External URL:'
                 }),
                 new Input({
-                    fieldName: 'taskName',
+                    fieldName: 'title',
                     label: 'Task Name:'
                 }),
                 new TextArea({

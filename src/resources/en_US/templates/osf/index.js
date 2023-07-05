@@ -16,7 +16,7 @@ module.exports = {
             componentName: 'OSF pull request title',
             description: 'The main template used by OSF for PR titles',
             outputModel: new StringTemplateBuilder()
-                .text('[').var('externalKey', 'string').text('] : ').var('taskTitle', 'string')
+                .text('[').var('externalKey', 'string').text('] : ').var('title', 'string')
             .end()
         });
     },

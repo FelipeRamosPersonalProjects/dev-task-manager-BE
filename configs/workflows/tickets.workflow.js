@@ -64,7 +64,7 @@ module.exports = new Workflow({
                         const repos = ticket.getSafe('project.repos');
                         const newTask = await Task.createTask({
                             taskType: 'INVESTIGATION',
-                            taskName: 'Investigation',
+                            title: 'Investigation',
                             ticket: ticket._id,
                             project: ticket.getSafe('project._id'),
                             repo: repos.length ? repos[0]._id : undefined,
@@ -121,7 +121,7 @@ module.exports = new Workflow({
                         const repos = ticket.getSafe('project.repos');
                         const newDevTask = await Task.createTask({
                             taskType: 'DEVELOPMENT',
-                            taskName: 'Development',
+                            title: 'Development',
                             ticket: ticket._id,
                             project: ticket.getSafe('project._id'),
                             repo: repos.length ? repos[0]._id : undefined,

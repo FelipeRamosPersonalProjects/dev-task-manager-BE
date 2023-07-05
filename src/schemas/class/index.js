@@ -17,6 +17,7 @@ const threads = require('./ThreadsClass');
 const worklogs = require('./WorklogsClass');
 const code_reviews = require('./CodeReviewsClass');
 const labels = require('./LabelsClass');
+const sf_configs = require('./SfConfigsClass');
 
 module.exports = {
     GlobalClass,
@@ -37,5 +38,6 @@ module.exports = {
     threads,
     worklogs,
     code_reviews,
-    labels
+    labels,
+    sf_configs
 };

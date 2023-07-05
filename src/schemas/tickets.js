@@ -145,6 +145,15 @@ module.exports = new Collection({
                 relatedField: 'ticket',
                 type: 'ObjectId'
             }
+        },
+        {
+            fieldName: 'sfConfigs',
+            type: [ObjectId],
+            ref: 'sf_configs',
+            refConfig: {
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            }
         }
     ]
 });

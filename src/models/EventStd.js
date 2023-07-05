@@ -63,19 +63,24 @@ class EventStd {
             }
 
             this.listener = process.on(this.name, async function (...args) {
-                const populatedTarget = await self.populateTarget.call(context, ...args);
+                try {
+                    const populatedTarget = await self.populateTarget.call(context, ...args);
 
-                // Replacing the targer argument by its populated document. args[0] = target
-                if (args.length) {
-                    args[0].populated = populatedTarget;
+                    // Replacing the targer argument by its populated document. args[0] = target
+                    if (args.length) {
+                        args[0].populated = populatedTarget;
+                    }
+
+                    if (context instanceof Status && context.workflow.preventStatus.call(context, ...args)) {
+                        return;
+                    }
+
+                    self.handler.call(context, ...args);
+                } catch (err) {
+                    throw new Error.Log(err);
                 }
-
-                if (context instanceof Status && context.workflow.preventStatus.call(context, ...args)) {
-                    return;
-                }
-
-                self.handler.call(context, ...args);
             });
+
             return this.listener;
         } catch (err) {
             throw new Error.Log(err);
@@ -83,13 +88,18 @@ class EventStd {
     }
 
     async populateTarget(target) {
-        const collectionName = Object(target).getSafe('_collection.collectionName');
+        let collectionName = Object(target).getSafe('_collection.collectionName');
     
         try {
-            if (!collectionName || !target) {
+            if (!collectionName && !target) {
                 return;
             }
-    
+
+            if (target._id && target._id.oid()) {
+                const docQuery = await CRUD.getDoc({collectionName: target.collection.collectionName, filter: { _id: target.id }}).defaultPopulate();
+                return docQuery.initialize();
+            }
+            
             const docQuery = await CRUD.getDoc({collectionName, filter: target.getFilter() }).defaultPopulate();
             const doc = docQuery.initialize();
             

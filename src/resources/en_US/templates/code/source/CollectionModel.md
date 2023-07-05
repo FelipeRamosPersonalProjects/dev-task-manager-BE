@@ -6,11 +6,15 @@ class ##{{modelName:string}}## extends _Global {
         if (!setup || isObjectID(setup)) return;
 
         const {
+            /*## ModelParams_Start ##*/
 ##{{schemaObj:array:ObjectPropNoValue}}##        } = Object(setup);
+            /*## ModelParams_End ##*/
         
         try {
+            /*## ModelProps_Start ##*/
 ##{{schemaObj:array:ThisDeclaration}}##
             this.placeDefault();
+            /*## ModelProps_End ##*/
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', '##{{modelName:string}}##');
         }

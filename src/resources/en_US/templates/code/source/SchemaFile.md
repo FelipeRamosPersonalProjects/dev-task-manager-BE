@@ -8,4 +8,4 @@ module.exports = new Collection({
     pluralLabel: '##{{pluralLabel:string}}##',
     singularLabel: '##{{singularLabel:string}}##',
     fieldsSet: []
-}).initSchema();
+});

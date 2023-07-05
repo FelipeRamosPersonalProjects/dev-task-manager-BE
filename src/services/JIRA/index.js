@@ -1,6 +1,5 @@
 const JIRAStatusTransition = require('@src/models/jira/StatusTransition');
 const JIRAConnect = require('./JIRAConnect');
-const JIRATicket = require('@models/jira/issues/TicketIssue')
 
 class JIRA extends JIRAConnect {
     constructor (setup) {
@@ -38,22 +37,9 @@ class JIRA extends JIRAConnect {
         }
     }
 
-    async createIssue(data) {
-        const { parentKey, priorityIndex, issueType, externalKey, externalURL, projectKey, title, description, infoDisplay } = Object(data);
-        
+    async createIssue(data) {        
         try {
-            const created = await this.request(`/issue`, new JIRATicket({
-                parentKey,
-                priorityIndex,
-                issueType,
-                externalKey,
-                externalURL,
-                projectKey,
-                title,
-                description,
-                infoDisplay
-            }).toCreate(), { method: 'post' });
-
+            const created = await this.request(`/issue`, data, { method: 'post' });
             return created;
         } catch (err) {
             throw new Error.Log(err);
@@ -62,7 +48,7 @@ class JIRA extends JIRAConnect {
 
     async updateIssue(issueKey, data) {
         try {
-            const updated = await this.request(`/issue/${issueKey}`, new JIRATicket(data).toUpdate(), {
+            const updated = await this.request(`/issue/${issueKey}`, data, {
                 method: 'put'
             });
 

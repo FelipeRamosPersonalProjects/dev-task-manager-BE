@@ -1,32 +1,29 @@
+const { Types: { ObjectId } } = require('@models/settings/Collection')
+
 class DiscoveryTask {
-    static status = {
-        type: String,
-        default: 'TO-INVETIGATE',
-        enum: [
-            'TO-INVETIGATE',
-            'UNDER-INVESTIGATION',
-            'QUESTION-RAISED',
-            'TO-REPLY-CLIENT',
-            'DONE',
-            'STUCK',
-            'ABORTED'
-        ]
-    }
-
     static findings = {
+        type: [ObjectId],
+        default: [],
+        ref: 'comments',
+        refConfig: {
+            relatedField: 'task',
+            type: 'ObjectId'
+        }
+    };
+
+    static rootCauses = {
         type: String
     };
 
-    static issueCauses = {
-        type: String
-    };
-
-    static solution = {
+    static solutionSummary = {
         type: String
     };
 
     static toObject() {
-        return Object.keys(this).map(item => ({...this[item], fieldName: item}));
+        const result = {};
+
+        Object.keys(this).map(item => (result[item] = {...this[item], fieldName: item}));
+        return result;
     }
 }
 

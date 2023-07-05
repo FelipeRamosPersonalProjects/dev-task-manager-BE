@@ -5,7 +5,7 @@ class JIRAIssue {
 
     constructor(setup) {
         try {
-            const { parentKey, issueKey, issueType, projectKey, title, description } = Object(setup);
+            const { parentKey, issueKey, issueType, projectKey, title, description, infoDisplay } = Object(setup);
 
             this.key = new JIRAFields(issueKey).text();
             this.fields = {
@@ -13,16 +13,25 @@ class JIRAIssue {
                 project: new JIRAFields(projectKey).project(),
                 issuetype: new JIRAFields(issueType).issuetype(),
                 summary: new JIRAFields(title).text(),
-                description: new JIRAFields(description).paragraph()
-            }
+                description: new JIRAFields(description).paragraph(),
+                customfield_10093: new JIRAIssue.JIRAFields(infoDisplay).text() // displayInfo
+            };
         } catch (err) {
             throw new Error.Log(err);
         }
     }
 
     toCreate() {
+        const create = {...this.fields};
+
+        Object.keys(create).filter(key => {
+            if (!create[key]) {
+                delete create[key];
+            }
+        });
+
         return {
-            fields: this.fields
+            fields: create
         }
     }
 
