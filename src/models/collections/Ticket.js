@@ -1,4 +1,5 @@
 const _Global = require('../maps/_Global');
+const JIRATicket = require('@models/jira/issues/TicketIssue');
 
 class Ticket extends _Global {
     constructor(setup){
@@ -59,7 +60,7 @@ class Ticket extends _Global {
     async jiraCreateTicket() {
         try {
             for (let user of this.assignedUsers) {
-                const jiraCreated = await user.jiraConnect.createIssue({
+                const jiraCreated = await user.jiraConnect.createIssue(new JIRATicket({
                     issueType: this.jiraIssueType,
                     externalKey: this.externalKey,
                     externalURL: this.externalURL,
@@ -68,7 +69,7 @@ class Ticket extends _Global {
                     description: this.description,
                     infoDisplay: '<h1>Test</h1>',
                     priorityIndex: 9
-                });
+                }).toCreate());
 
                 await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
                 return jiraCreated;

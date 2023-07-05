@@ -12,7 +12,8 @@ class TaskEdit extends Component {
         super(settings);
 
         const { taskDoc, repos } = Object(settings);
-        const { _id, status, displayName, taskType, taskVersion, externalKey, externalURL, taskName, description, ticket, project, repo } = Object(taskDoc);
+        const { _id, status, displayName, taskType, taskVersion, externalKey, externalURL, title, description, ticket, project, repo, discovery } = Object(taskDoc);
+        const { findings, rootCauses, solutionSummary } = Object(discovery);
 
         this.UID = _id;
         this.collection = taskDoc.getSafe('ModelDB.modelName');
@@ -82,9 +83,9 @@ class TaskEdit extends Component {
                     currentValue: taskVersion
                 }),
                 new InputEdit({
-                    fieldName: 'taskName',
+                    fieldName: 'title',
                     label: 'Task Name:',
-                    currentValue: taskName
+                    currentValue: title
                 }),
                 new TextAreaEdit({
                     fieldName: 'description',
@@ -93,6 +94,20 @@ class TaskEdit extends Component {
                 })
             ]
         });
+
+        if (taskType === 'INVESTIGATION') {
+            this.docForm.addFieldTo('fields', new TextAreaEdit({
+                fieldName: 'discovery.rootCauses',
+                label: 'Root Causes',
+                currentValue: rootCauses
+            }));
+
+            this.docForm.addFieldTo('fields', new TextAreaEdit({
+                fieldName: 'discovery.solutionSummary',
+                label: 'Solution Summary',
+                currentValue: solutionSummary
+            }));
+        }
     }
 }
 

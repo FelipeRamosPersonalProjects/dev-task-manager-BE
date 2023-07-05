@@ -74,6 +74,34 @@ class JIRAFields {
             throw new Error.Log(err);
         }
     }
+
+    comments(action) {
+        try {
+            return Array.isArray(this.value) ? this.value.map(value => {
+                return {
+                    [action || 'add']: {
+                        body: {
+                            content: [
+                                {
+                                    content: [
+                                        {
+                                            text: value,
+                                            type: 'text'
+                                        }
+                                    ],
+                                    type: 'paragraph'
+                                }
+                            ],
+                            type: 'doc',
+                            version: 1
+                        }
+                    }
+                }
+            }) : null;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = JIRAFields;

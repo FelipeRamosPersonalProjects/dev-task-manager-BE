@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------------------------------------------
 
         Task name:
-        [##{{externalKey:string}}##] ##{{taskName:string}}##
+        [##{{externalKey:string}}##] ##{{title:string}}##
 
         URL:
         ##{{externalURL:string}}##

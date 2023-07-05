@@ -8,9 +8,14 @@ input {
     margin-bottom: 0.3rem;
 }
 
-textarea {
+textarea,
+[field-type="html-editor"] {
     min-height: 10rem;
     width: 100%;
+
+    img {
+        width: 98%;
+    }
 }
 
 .readedit-form {

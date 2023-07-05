@@ -10,6 +10,10 @@ export async function createDoc({ev, collection, dataMiddleware, redirect}) {
 
     toggleProgress();
     fields.forEach(field => {
+        if (field.getAttribute('field-type') === 'html-editor') {
+            dataDoc[field.getAttribute('name')] = field.innerHTML;
+        }
+        
         if (field.getAttribute('field-type') === 'single-relation') {
             const input = field.querySelector('[relation-input]');
             const fieldName = field.getAttribute('name');
@@ -86,7 +90,13 @@ export async function editField({ ev, redirect, dataMiddleware }) {
         fields.forEach(field => {
             if (field.getAttribute('field-type') === 'input-number') {
                 dataDoc[field.name] = !isNaN(field.value) ? Number(field.value) : 0;
-            } else {
+            }
+            
+            else if (field.getAttribute('field-type') === 'html-editor') {
+                dataDoc[field.getAttribute('name')] = field.innerHTML;
+            }
+            
+            else {
                 dataDoc[field.name] = field.value;
             }
         });

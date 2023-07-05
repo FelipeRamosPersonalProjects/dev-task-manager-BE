@@ -30,6 +30,20 @@ class DocForm extends Component {
         }
     }
 
+    addFieldTo(propName, fieldData) {
+        try {
+            if (!Array.isArray(this[propName])) {
+                throw new Error.Log('common.bad_format_param');
+            }
+
+            fieldData.colletion = this.collection;
+            fieldData.addSchema(this.collection);
+            this[propName].push(fieldData);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     static getForm(formName) {
         try {
             const form = configs[formName];

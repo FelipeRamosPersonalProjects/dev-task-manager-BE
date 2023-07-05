@@ -42,17 +42,21 @@ module.exports = new Workflow({
             name: 'update',
             handler: async (target) => {
                 try {
-                    const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                    const task = taskDoc.initialize();
                     const updateProps = target.getUpdateProps();
-                    
-                    return await task.jiraUpdate(updateProps);
+                    return await target.populated.jiraUpdate(updateProps);
                 } catch (err) {
                     throw new Error.Log(err);
                 }
             }
         }
     ],
+    preventStatus: function (target) {
+        try {
+            return (Object(target).getSafe('populated.taskType') !== this.taskType);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    },
     statuses: [
         {
             statusID: 'TO-INVESTIGATE',
@@ -63,10 +67,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -82,10 +83,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -101,10 +99,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -120,10 +115,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -139,10 +131,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -158,10 +147,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -177,10 +163,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -196,10 +179,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -215,10 +195,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -234,10 +211,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -252,10 +226,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -271,10 +242,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -290,10 +258,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -309,10 +274,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -328,10 +290,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -347,10 +306,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -366,10 +322,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -385,10 +338,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -404,10 +354,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -423,10 +370,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -442,10 +386,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -461,10 +402,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -480,10 +418,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -499,10 +434,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -518,10 +450,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const taskDoc = await CRUD.getDoc({collectionName: 'tasks', filter: target.getFilter() }).defaultPopulate();
-                        const task = taskDoc.initialize();
-
-                        return await task.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }

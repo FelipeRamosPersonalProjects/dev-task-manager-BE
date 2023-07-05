@@ -179,7 +179,7 @@ class Repo extends _Global {
             const isValidBranch = this.isCurrentBranchValid();
             const task = this.parentTask;
             const titleTemplate = this.getProjectTemplate('prTitle');
-            const title = titleTemplate.renderToString({externalKey: task.externalKey, taskTitle: task.taskName});
+            const title = titleTemplate.renderToString({externalKey: task.externalKey, title: task.title});
 
             if (isValidBranch) {
                 const commit = await this.repoManager.commit(title, summary || task.description, {fileChanges});
