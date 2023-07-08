@@ -29,10 +29,6 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(woff|woff2|eot|ttf|otf)$/i,
-                type: 'asset/resource',
-            },
-            {
                 test: /\.(csv|tsv)$/i,
                 use: ['csv-loader'],
             },
@@ -44,6 +40,18 @@ module.exports = {
                 test: /\.html$/i,
                 loader: "html-loader",
             },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192, // Limit file size to inline as Data URL if it's smaller than 8KB
+                            name: 'fonts/[name].[hash:8].[ext]', // Output path and file name pattern
+                        }
+                    }
+                ]
+            }
         ],
     },
     resolve: {

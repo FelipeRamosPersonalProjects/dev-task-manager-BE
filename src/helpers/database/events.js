@@ -49,7 +49,7 @@ async function preUpdateOne(next) {
 async function postUpdateOne() {
     try {
         const collection = this.model.modelName;
-        const $set = this._update.$set;
+        const $set = Object(this).getSafe('_update.$set');
 
         if ($set.status) {
             process.emit(`status:transition:${collection}:${$set.status}`, this);

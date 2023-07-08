@@ -112,4 +112,6 @@ cert/*.crs
 temp
 draft.js
 sessionCLI.json
-static
+src/www/static/fonts
+src/www/static/*.js
+src/www/static/*.ttf

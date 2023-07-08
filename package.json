@@ -42,8 +42,10 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "file-loader": "^6.2.0",
     "module-alias": "^2.2.2",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "url-loader": "^4.1.1"
   },
   "_moduleAliases": {
     "@config": "configs/project",

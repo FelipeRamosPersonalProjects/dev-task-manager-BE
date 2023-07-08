@@ -1,12 +1,38 @@
 * {
     box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    box-sizing: border-box;
 }
 
-pre {
-    text-wrap: wrap;
-    max-height: 25rem;
-    overflow-y: auto;
-    display: inline-block;
-    width: 100%;
-    max-width: 100%;
+h1 {
+    font-size: 2.3rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.3rem;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+h5 {
+    font-size: 1.1rem;
+}
+
+p {
+    font-size: 1rem;
+}
+
+
+h1,
+h2,
+h3,
+h4 {
+    font-weight: bold;
 }

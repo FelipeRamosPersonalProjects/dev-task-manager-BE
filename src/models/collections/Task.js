@@ -166,7 +166,7 @@ class Task extends _Global {
         }
     }
     
-    async jiraCreateTask() {
+    async jiraCreate() {
         try {
             for (let user of this.assignedUsers) {
                 if (!user || !user.jiraConnect) return;
