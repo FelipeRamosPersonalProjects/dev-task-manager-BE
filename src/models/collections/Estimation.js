@@ -7,16 +7,35 @@ const User = require('./User');
 class Estimation extends _Global {
     constructor(setup){
         super({...setup, validationRules: 'estimations'}, () => this);
+        if (!setup || Object(setup).oid()) return;
 
         try {
-            if (!setup || Object(setup).oid()) return;
-            const { frontURL, type, status, jiraIssue, title, description, FE, BE, QA, others, parsedTime, unit, ticket, task, assignedUsers } = Object(setup);
+            const {
+                frontURL,
+                type,
+                status,
+                jiraIssue,
+                title,
+                description,
+                FE,
+                BE,
+                QA,
+                others,
+                totalEstimation,
+                fullEstimation,
+                parsedTime,
+                unit,
+                ticket,
+                task,
+                assignedUsers
+            } = Object(setup);
 
             this.collectionName = 'estimations';
             this.jiraIssueType = '10053';
             this.jiraIssue = jiraIssue;
             this.frontURL = frontURL;
             this.type = type;
+            this.unit = unit;
             this.status = status;
             this.title = title;
             this.description = description;
@@ -24,8 +43,9 @@ class Estimation extends _Global {
             this.BE = BE;
             this.QA = QA;
             this.others = others;
+            this.totalEstimation = totalEstimation;
+            this.fullEstimation = fullEstimation;
             this.parsedTime = parsedTime;
-            this.unit = unit;
             this.ticket = !Object(ticket).oid() ? new Ticket(ticket) : null;
             this.task = !Object(task).oid() ? new Task(task) : null;
             this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() ? assignedUsers.map(item => new User(item)) : [];

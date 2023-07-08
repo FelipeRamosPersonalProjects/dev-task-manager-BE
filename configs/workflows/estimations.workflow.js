@@ -9,34 +9,7 @@ module.exports = new Workflow({
             name: 'create',
             handler: async function (target) {
                 try {
-                    const populated = await target.populate([
-                        {
-                            path: 'assignedUsers',
-                            model: 'users',
-                            populate: [
-                                {
-                                    path: 'auth',
-                                    model: 'auth_buckets'
-                                }
-                            ]
-                        },
-                        {
-                            path: 'ticket',
-                            model: 'tickets',
-                            populate: [
-                                {
-                                    path: 'space',
-                                    model: 'space_desks'
-                                }
-                            ]
-                        },
-                        {
-                            path: 'task',
-                            model: 'tasks'
-                        }
-                    ]);
-
-                    const estimation = populated.initialize();
+                    const estimation = target.populated;
                     const created = await estimation.jiraCreate();
                     
                     return created;
@@ -49,11 +22,8 @@ module.exports = new Workflow({
             name: 'update',
             handler: async function(target) {
                 try {
-                    const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                    const estimation = estimationDoc.initialize();
                     const updateProps = target.getUpdateProps();
-                    
-                    return await estimation.jiraUpdate(updateProps);
+                    return await target.populated.jiraUpdate(updateProps);
                 } catch (err) {
                     throw new Error.Log(err);
                 }
@@ -70,10 +40,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -89,10 +56,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -107,10 +71,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -125,10 +86,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -143,10 +101,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -161,10 +116,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -179,10 +131,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -197,10 +146,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -215,10 +161,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }
@@ -233,10 +176,7 @@ module.exports = new Workflow({
                 name: 'transition',
                 handler: async function(target) {
                     try {
-                        const estimationDoc = await CRUD.getDoc({ collectionName: 'estimations', filter: target.getFilter() }).defaultPopulate();
-                        const estimation = estimationDoc.initialize();
-
-                        return await estimation.jiraTransitionStatus(this);
+                        return await target.populated.jiraTransitionStatus(this);
                     } catch (err) {
                         throw new Error.Log(err);
                     }

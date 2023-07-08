@@ -45,9 +45,20 @@ class JIRAFields {
 
     number() {
         try {
+            if (this.value === undefined || this.value === null) return 0;
             if (isNaN(this.value)) throw new Error.Log('Is NaN');
 
-            return this.value;
+            return Number(this.value);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    select() {
+        try {
+            return {
+                value: this.value
+            }
         } catch (err) {
             throw new Error.Log(err);
         }

@@ -9,28 +9,8 @@ module.exports = new Workflow({
             name: 'create',
             handler: async function (target) {
                 try {
-                    const populated = await target.populate([
-                        {
-                            path: 'assignedUsers',
-                            model: 'users',
-                            populate: [
-                                { path: 'auth', model: 'auth_buckets'}
-                            ]
-                        },
-                        {
-                            path: 'ticket',
-                            model: 'tickets',
-                            populate: [
-                                {
-                                    path: 'space',
-                                    model: 'space_desks'
-                                }
-                            ]
-                        }
-                    ]);
-
-                    const task = populated.initialize();
-                    const created = await task.jiraCreateTask();
+                    const tasks = target.populated;
+                    const created = await tasks.jiraCreate();
                     
                     return created;
                 } catch (err) {
