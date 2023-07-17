@@ -9,6 +9,7 @@ const pull_requests = require('./PullRequestsClass');
 const comments = require('./CommentsClass');
 const components = require('./ComponentsClass');
 const estimations = require('./EstimationsClass');
+const validations = require('./ValidationsClass');
 const stashes = require('./StashesClass');
 const space_desks = require('./SpaceDesksClass');
 const organizations = require('./OrganizationsClass');
@@ -31,6 +32,7 @@ module.exports = {
     comments,
     components,
     estimations,
+    validations,
     stashes,
     space_desks,
     organizations,
