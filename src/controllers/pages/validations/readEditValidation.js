@@ -1,32 +1,40 @@
 const PageTemplate = require('@src/www/pages/standardPage');
 const ErrorPage = require('@src/www/error');
-const ReadEditPullRequest = require('@src/www/content/pullrequests/readEditPullRequest');
+const ValidationEdit = require('@src/www/content/validations/ReadEditValidation');
+const schemas = require('@schemas');
 const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
-        const pullrequestDoc = await CRUD.getDoc({collectionName: 'pullrequests', filter: { index: req.params.index }}).defaultPopulate();
-        if (!pullrequestDoc) {
+        const ticketsQuery = await CRUD.query({ collectionName: 'tickets', filter: { assignedUsers: { $in: [req.session.currentUser._id] } }});
+        const tasksQuery = await CRUD.query({ collectionName: 'tasks', filter: { assignedUsers: { $in: [req.session.currentUser._id] } }});
+        const validationDoc = await CRUD.getDoc({collectionName: 'validations', filter: { index: req.params.index }}).defaultPopulate();
+        if (!validationDoc) {
             res.setHeader('Content-Type', 'text/html');
             return res.status(500).send(new ErrorPage({
                 code: '404',
                 name: 'Document not found',
-                message: `The pullrequest "${req.params.index}" requested wasn't found!`
+                message: `The validation "${req.params.index}" requested wasn't found!`
             }).renderToString());
         }
 
-        if (pullrequestDoc instanceof Error.Log) {
-            throw pullrequestDoc;
+        if (validationDoc instanceof Error.Log) {
+            throw validationDoc;
         }
 
+        
+        const tickets = ticketsQuery.map(item => item.initialize());
+        const tasks = tasksQuery.map(item => item.initialize());
+        const instances = Object(schemas).getSafe('validations.schema.obj.instance.enum');
         const content = new PageTemplate({
-            pageTitle: 'Edit PullRequest',
-            body: new ReadEditPullRequest({
-                fieldName: 'project',
-                projects,
-                spaces,
+            pageID: 'validations/ReadEditValidation',
+            pageTitle: 'Edit Validation',
+            body: new ValidationEdit({
                 formState: 'read',
-                pullrequestDoc: pullrequestDoc.initialize()
+                tickets,
+                tasks,
+                instances: Array.isArray(instances) && instances.map(item => ({ label: item, value: item })),
+                validationDoc: validationDoc.initialize()
             })
         });
 
