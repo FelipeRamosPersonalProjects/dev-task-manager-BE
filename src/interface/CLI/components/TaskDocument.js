@@ -7,10 +7,10 @@ class TaskDocumentComponent extends Component {
 
     constructor(settings) {
         super(settings);
-        const { externalKey, taskName, externalURL, taskBranch, description } = new Object(settings || {});
+        const { externalKey, title, externalURL, taskBranch, description } = new Object(settings || {});
 
         this.externalKey = externalKey;
-        this.taskName = taskName;
+        this.title = title;
         this.externalURL = externalURL;
         this.taskBranch = taskBranch;
         this.description = description;

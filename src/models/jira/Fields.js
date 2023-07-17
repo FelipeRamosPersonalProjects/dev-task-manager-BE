@@ -43,6 +43,27 @@ class JIRAFields {
         }
     }
 
+    number() {
+        try {
+            if (this.value === undefined || this.value === null) return 0;
+            if (isNaN(this.value)) throw new Error.Log('Is NaN');
+
+            return Number(this.value);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    select() {
+        try {
+            return {
+                value: this.value
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     paragraph() {
         try {
             return this.value ? {
@@ -60,6 +81,34 @@ class JIRAFields {
                 type: 'doc',
                 version: 1
             } : null;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    comments(action) {
+        try {
+            return Array.isArray(this.value) ? this.value.map(value => {
+                return {
+                    [action || 'add']: {
+                        body: {
+                            content: [
+                                {
+                                    content: [
+                                        {
+                                            text: value,
+                                            type: 'text'
+                                        }
+                                    ],
+                                    type: 'paragraph'
+                                }
+                            ],
+                            type: 'doc',
+                            version: 1
+                        }
+                    }
+                }
+            }) : null;
         } catch (err) {
             throw new Error.Log(err);
         }

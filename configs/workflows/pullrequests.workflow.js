@@ -55,43 +55,202 @@ module.exports = new Workflow({
     ],
     statuses: [
         {
-            statusID: 'TO-INVESTIGATE',
-            displayName: 'To Investigate',
-            next: 'UNDER-INVESTIGATION'
-        },
-        {
-            statusID: 'UNDER-INVESTIGATION',
-            displayName: 'Under Investigation',
-            next: 'COMPLETED',
+            statusID: 'TO-CREATE-PR',
+            displayName: 'To Create PR',
+            jiraID: 11,
             events: [{
                 name: 'transition',
                 handler: async function(target) {
-                    // try {
-                    //     const taskDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
-                    //     const task = taskDoc.initialize();
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
 
-                    //     return await task.jiraTransitionStatus(this);
-                    // } catch (err) {
-                    //     throw new Error.Log(err);
-                    // }
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
                 }
             }]
         },
         {
-            statusID: 'COMPLETED',
-            displayName: 'Completed'
+            statusID: 'FIXING-COMMENTS',
+            displayName: 'Fixing Comments',
+            jiraID: 21,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TO-CHECK-COMMENTS',
+            displayName: 'To Check Comments',
+            jiraID: 31,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TO-REPLY-CLIENT',
+            displayName: 'To Reply Comment',
+            jiraID: 41,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TO-FIX',
+            jiraID: 51,
+            displayName: 'To Fix',
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'WAITING-APPROVAL',
+            displayName: 'Waiting Approval',
+            jiraID: 61,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'MERGED',
+            displayName: 'Merged',
+            jiraID: 81,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'WAITING-MERGE',
+            displayName: 'Waiting Merge',
+            jiraID: 91,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
+        },
+        {
+            statusID: 'TO-PUSH-METADATA',
+            displayName: 'To Push Metadata',
+            jiraID: 121,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ABORTED',
-            displayName: 'Aborted'
-        },
-        {
-            statusID: 'SHARED',
-            displayName: 'Shared'
+            displayName: 'Aborted',
+            jiraID: 101,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         },
         {
             statusID: 'ON-HOLD',
-            displayName: 'On Hold'
+            displayName: 'On Hold',
+            jiraID: 111,
+            events: [{
+                name: 'transition',
+                handler: async function(target) {
+                    try {
+                        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: target.getFilter() }).defaultPopulate();
+                        const pullRequest = pullRequestDoc.initialize();
+
+                        return await pullRequest.jiraTransitionStatus(this);
+                    } catch (err) {
+                        throw new Error.Log(err);
+                    }
+                }
+            }]
         }
     ]
 });

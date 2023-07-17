@@ -24,7 +24,13 @@ function defaultPopulate() {
         },
         {
             path: 'assignedUsers',
-            model: 'users'
+            model: 'users',
+            populate: [
+                {
+                    path: 'auth',
+                    model: 'auth_buckets'
+                }
+            ]
         },
         {
             path: 'ticket',

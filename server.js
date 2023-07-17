@@ -38,6 +38,7 @@ require('@services/database/init').then(async () => {
     app.use('/collection', routes.collection);
 
     // Front-end routes
+    app.get('/', (req, res) => res.redirect('/dashboard'));
     app.get('/dashboard', routes.pages.dashboard);
     app.use('/tickets', routes.pages.ticket);
     app.use('/tasks', routes.pages.tasks);

@@ -25,15 +25,15 @@ module.exports = new Collection({
                 'TO-TEST',
                 'DONE',
                 'ABORTED',
-                'SHARED',
                 'ON-HOLD',
                 'TO-START-DEVELOPMENT',
                 'IN-DEVELOPMENT',
-                'STUCK',
+                'BLOCKED',
                 'QUESTION-RAISED',
                 'ASK-TO-PM',
                 'TO-CREATE-PROOFS',
-                'BUG-DETECTED'
+                'BUG-DETECTED',
+                'SELF-TEST'
             ]
         },
         {
@@ -63,7 +63,7 @@ module.exports = new Collection({
             default: 1
         },
         {
-            fieldName: 'taskName',
+            fieldName: 'title',
             type: String,
             required: true
         },
@@ -192,30 +192,24 @@ module.exports = new Collection({
             }
         },
         {
-            fieldName: 'codeReviews',
-            type: [ObjectId],
-            default: [],
-            ref: 'code_reviews',
-            refConfig: {
-                relatedField: 'devTask',
-                type: 'ObjectId'
-            }
-        },
-        {
             fieldName: 'discovery',
-            type: DiscoveryTask.toObject()
+            type: DiscoveryTask.toObject(),
+            default: {}
         },
         {
             fieldName: 'development',
-            type: DevelopmentTask.toObject()
+            type: DevelopmentTask.toObject(),
+            default: {}
         },
         {
             fieldName: 'validation',
-            type: ValidationTask.toObject()
+            type: ValidationTask.toObject(),
+            default: {}
         },
         {
             fieldName: 'todo',
-            type: TODOReminderTask.toObject()
+            type: TODOReminderTask.toObject(),
+            default: {}
         }
     ]
 });

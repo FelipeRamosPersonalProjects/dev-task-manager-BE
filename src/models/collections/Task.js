@@ -2,6 +2,7 @@ const _Global = require('../maps/_Global');
 const DiscoveryModel = require('@models/tasks/Discovery');
 const DevelopmentModel = require('@models/tasks/Development');
 const TODOReminder = require('@models/tasks/TODOReminder');
+const InvestigationIssue = require('@models/jira/issues/InvestigationIssue');
 const CRUD = require('@CRUD');
 
 class Task extends _Global {
@@ -26,7 +27,7 @@ class Task extends _Global {
                 prStage,
                 jiraIssue,
                 taskVersion,
-                taskName,
+                title,
                 externalKey,
                 externalURL,
                 description,
@@ -39,7 +40,7 @@ class Task extends _Global {
                 pullRequests,
                 comments,
                 repo,
-                discoveries,
+                discovery,
                 developments,
                 validations,
                 todoReminders,
@@ -55,7 +56,7 @@ class Task extends _Global {
             this.prStage = prStage;
             this.jiraIssue = jiraIssue;
             this.taskVersion = taskVersion;
-            this.taskName = taskName;
+            this.title = title;
             this.externalKey = externalKey;
             this.externalURL = externalURL;
             this.description = description;
@@ -70,11 +71,11 @@ class Task extends _Global {
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
             this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() ? assignedUsers.map(item => new User(item)) : [];
 
-            this.displayName = `[${this.getSafe('ticket.externalKey') || this.cod}] ${this.taskName}`;
+            this.displayName = `[${this.getSafe('ticket.externalKey') || this.cod}] ${this.title}`;
 
             if (this.taskType === 'INVESTIGATION') {
                 this.jiraIssueType = '10051';
-                this.discoveries = discoveries && new DiscoveryModel(discoveries);
+                this.discovery = discovery && new DiscoveryModel(discovery);
             }
 
             else if (this.taskType === 'DEVELOPMENT') {
@@ -165,19 +166,17 @@ class Task extends _Global {
         }
     }
     
-    async jiraCreateTask() {
+    async jiraCreate() {
         try {
             for (let user of this.assignedUsers) {
                 if (!user || !user.jiraConnect) return;
 
-                const jiraCreated = await user.jiraConnect.createIssue({
+                const jiraCreated = await user.jiraConnect.createIssue(new InvestigationIssue({
                     parentKey: this.ticketJIRA && this.ticketJIRA.id,
-                    issueType: this.jiraIssueType,
-                    externalKey: this.externalTicketKey,
                     projectKey: this.spaceJiraProject,
-                    title: this.displayName,
-                    description: this.description
-                });
+                    issueType: this.jiraIssueType,
+                    ...this
+                }).toCreate());
 
                 await this.updateDB({ data: { jiraIssue: jiraCreated.data }});
                 return jiraCreated;
@@ -190,7 +189,7 @@ class Task extends _Global {
     async jiraUpdate(data) {
         try {
             for (let user of this.assignedUsers) {
-                const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, data);
+                const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, new InvestigationIssue(data).toUpdate());
 
                 if (jiraUpdated instanceof Error.Log) {
                     throw jiraUpdated
@@ -264,7 +263,7 @@ class Task extends _Global {
                 return populatedLoad;
             } else {
                 const prTitleTemplate = this.repo.getProjectTemplate('prTitle');
-                const prName = prTitleTemplate.renderToString({externalKey: this.externalKey, taskTitle: this.taskName});
+                const prName = prTitleTemplate.renderToString({externalKey: this.externalKey, title: this.title});
 
                 const currentUser = await this.getCurrentUser();
                 const newDocPR = await CRUD.create('pull_requests', {

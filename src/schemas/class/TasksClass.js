@@ -4,7 +4,7 @@ class TasksClass {
     static Model = Task;
 
     get displayName() {
-        return `[${this.externalKey || this.cod}] ${this.taskName}`;
+        return `[${this.externalKey || this.cod}] ${this.title}`;
     }
     
     get frontURL() {

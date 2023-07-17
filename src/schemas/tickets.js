@@ -78,9 +78,8 @@ module.exports = new Collection({
                 'DEVELOPMENT',
                 'PULL-REQUEST',
                 'VALIDATION',
-                'COMPLETED',
+                'CLOSED',
                 'ABORTED',
-                'SHARED',
                 'ON-HOLD'
             ]
         },
@@ -142,6 +141,15 @@ module.exports = new Collection({
             fieldName: 'codeReviews',
             type: [ObjectId],
             ref: 'code_reviews',
+            refConfig: {
+                relatedField: 'ticket',
+                type: 'ObjectId'
+            }
+        },
+        {
+            fieldName: 'sfConfigs',
+            type: [ObjectId],
+            ref: 'sf_configs',
             refConfig: {
                 relatedField: 'ticket',
                 type: 'ObjectId'

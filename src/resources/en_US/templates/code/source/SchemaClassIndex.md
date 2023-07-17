@@ -1,7 +1,7 @@
 const GlobalClass = require('./GlobalClass');
-##{{filesList:array:ImportFileRequire}}##const ##{{newSchema:string}}## = require('./##{{newSchemaClassName:string}}##');
+##{{filesList:array:ImportFileRequire}}## = require('./##{{newSchemaClassName:string}}##');
 
 module.exports = {
     GlobalClass,
-##{{objectProps:array:ObjectPropNoValue}}##    ##{{newSchema:string}}##
+##{{objectProps:array:ObjectPropNoValue}}##
 };

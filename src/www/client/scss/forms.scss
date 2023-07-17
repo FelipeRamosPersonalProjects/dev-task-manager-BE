@@ -8,9 +8,26 @@ input {
     margin-bottom: 0.3rem;
 }
 
-textarea {
+textarea,
+[field-type="html-editor"] {
     min-height: 10rem;
     width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    img {
+        width: 98%;
+    }
+}
+
+.float-input {
+    border: none;
+    box-shadow: 0 0 50px #d5d5d5;
+    border-radius: 0.3rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.7rem;
+    font-size: 1rem;
 }
 
 .readedit-form {

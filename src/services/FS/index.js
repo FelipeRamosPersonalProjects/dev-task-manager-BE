@@ -32,7 +32,7 @@ class FileSystemService {
 
     static async writeJSON(path, jsObject) {
         try {
-            return await this.writeFile(path, JSON.stringify(jsObject, null, 4));
+            return await this.writeFile(path, JSON.stringify(jsObject, null, 4) + '\n');
         } catch (err) {
             throw new Error.Log(err);
         }

@@ -35,6 +35,9 @@ module.exports = async (req, res) => {
     const estimationsQuery = await CRUD.query({ collectionName: 'estimations', assignedUsers: { $in: [user._id] } }).defaultPopulate();
     const estimations = estimationsQuery.map(item => item.initialize());
 
+    const validationsQuery = await CRUD.query({ collectionName: 'validations', assignedUsers: { $in: [user._id] } }).defaultPopulate();
+    const validations = validationsQuery.map(item => item.initialize());
+
     const content = new Page({
         pageTitle: 'Dashboard Page',
         body: new Dashboard({
@@ -44,7 +47,8 @@ module.exports = async (req, res) => {
             projects,
             spaces,
             repos,
-            estimations
+            estimations,
+            validations
         })
     });
 

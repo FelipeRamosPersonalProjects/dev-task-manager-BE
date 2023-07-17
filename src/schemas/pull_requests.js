@@ -24,10 +24,34 @@ module.exports = new Collection({
             type: String
         },
         {
+            fieldName: 'state',
+            type: String,
+            default: 'OPEN',
+            enum: [
+                'OPEN',
+                'CLOSED'
+            ]
+        },
+        {
             fieldName: 'status',
             type: String,
             default: 'OPEN',
-            enum: ['OPEN', 'CLOSED', 'CHANGES-REQUESTED']
+            enum: [
+                'TO-CREATE-PR',
+                'OPEN',
+                'CLOSED',
+                'TO-CREATE-PR',
+                'FIXING-COMMENTS',
+                'TO-CHECK-COMMENTS',
+                'TO-REPLY-CLIENT',
+                'TO-FIX',
+                'WAITING-APPROVAL',
+                'MERGED',
+                'WAITING-MERGE',
+                'TO-PUSH-METADATA',
+                'ABORTED',
+                'ON-HOLD'
+            ]
         },
         {
             fieldName: 'prStage',
