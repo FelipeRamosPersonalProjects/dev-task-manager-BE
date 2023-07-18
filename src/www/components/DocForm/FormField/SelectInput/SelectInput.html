@@ -1,6 +1,12 @@
 <div>
     <label>##{{label:string}}##</label>
-    <select name="##{{fieldName:string}}##" value="##{{currentValue:string}}##" view="##{{view:string}}##" field>
+    <select
+        ##{{classes:string}}##
+        name="##{{fieldName:string}}##"
+        value="##{{currentValue:string}}##"
+        view="##{{view:string}}##"
+        field
+    >
         ##{{options:array:SelectOption}}##
     </select>
 </div>

@@ -105,6 +105,14 @@ class Component extends ValidateSchema {
         return result;
     }
 
+    json(value) {
+        try {
+            return JSON.stringify(Object(value));
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     date(value) {
         try {
             const localString = new Date(value).toLocaleString();
@@ -150,6 +158,11 @@ class Component extends ValidateSchema {
 
             if (type === 'array') {
                 value = this.array(paramValue, child);
+                toReplaceString = `##{{${sub}}}##`;
+            }
+
+            if (type === 'json') {
+                value = this.json(paramValue);
                 toReplaceString = `##{{${sub}}}##`;
             }
 

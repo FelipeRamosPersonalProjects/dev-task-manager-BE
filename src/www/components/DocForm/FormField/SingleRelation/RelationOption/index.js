@@ -8,10 +8,12 @@ class RelationOption extends Component {
     constructor(settings) {
         super(settings);
 
-        const { displayName, _id } = Object(settings);
+        const { displayName, _id, selected } = Object(settings);
         
         this.displayName = displayName;
         this._id = _id;
+        
+        if (selected) this.selected = 'selected';
     }
 }
 

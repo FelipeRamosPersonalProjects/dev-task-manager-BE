@@ -10,7 +10,8 @@ class PullRequestCreate extends Component {
     constructor(settings) {
         super(settings);
 
-        const { tickets, users, labels, reviewers, tasks } = Object(settings);
+        const { tickets, users, labels, reviewers, tasks, pullRequestDoc } = Object(settings);
+        const { ticket, task, base, head } = Object(pullRequestDoc);
 
         this.docForm = new DocForm({
             collection: 'pull_requests',
@@ -18,20 +19,24 @@ class PullRequestCreate extends Component {
                 new SingleRelation({
                     fieldName: 'ticket',
                     label: 'Ticket:',
-                    options: tickets
+                    options: tickets,
+                    currentValue: ticket
                 }),
                 new SingleRelation({
                     fieldName: 'task',
                     label: 'Task:',
-                    options: tasks
+                    options: tasks,
+                    currentValue: task
                 }),
                 new Input({
                     fieldName: 'base',
                     label: 'Base Branch:',
+                    currentValue: base
                 }),
                 new Input({
                     fieldName: 'head',
                     label: 'Head Branch:',
+                    currentValue: head
                 }),
                 new Input({
                     fieldName: 'title',

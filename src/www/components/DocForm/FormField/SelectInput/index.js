@@ -9,10 +9,11 @@ class SelectInput extends FormField {
     constructor(settings) {
         super(settings);
 
-        const { view, options } = Object(settings);
+        const { view, options, classes } = Object(settings);
 
         this.options = options;
         this.view = view || 'edit';
+        this.classes = this.view === 'create' ? `class="float-input ${classes || ''}"` : `class="readedit-form float-input ${classes || ''}"`;
         this.types = {
             SelectOption
         }
