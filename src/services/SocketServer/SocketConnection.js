@@ -15,7 +15,8 @@ class SocketConnection {
     }
 
     init() {
-        this.socket.on('connection:status', this.onConnectionStatus);
+        this.socket.on('connection:status', this.onConnectionStatus.bind(this));
+        this.emitConnectionStatus('Connected');
     }
 
     onConnectionStatus() {
@@ -23,7 +24,7 @@ class SocketConnection {
     }
 
     emitConnectionStatus(status) {
-        this.socket.emit('connection:status', `[connection:status] ${status} at "${this.socket.id}"!`);
+        this.socket.emit('connection:status', `${status} -> "${this.socket.id}"!`);
     }
 }
 
