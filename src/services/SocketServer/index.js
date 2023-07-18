@@ -8,7 +8,7 @@ class SocketServer {
             const { hosts, port } = Object(setup);
 
             this.io = new Server({ cors: {
-                origin: ['http://localhost:80', 'https://localhost:443', ...(hosts || [])]
+                origin: ['http://localhost', 'https://localhost', ...(hosts || [])]
             }});
 
             this.port = port || Config.socketServerPort;
@@ -23,7 +23,7 @@ class SocketServer {
 
     init() {
         try {
-            this.io.on('connection', (socket) => {
+            this.io.on('connect', (socket) => {
                 const connection = new SocketConnection(socket, this);
                 this.connections.push(connection);
             });
