@@ -7,6 +7,7 @@ const app = express();
 const cors = require('cors');
 const fs = require('fs');
 const Config = require('@config');
+const SocketServer = require('@services/SocketServer');
 
 // Declaring globals
 require('./src/global');
@@ -49,6 +50,9 @@ require('@services/database/init').then(async () => {
     app.use('/repos', routes.pages.repos);
     app.use('/spaces', routes.pages.spaces);
     app.use('/user', routes.pages.user);
+
+    // Initializing socket server
+    global.socketServer = new SocketServer();
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
         const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');

@@ -45,6 +45,12 @@ class ProjectConfig {
     static sessionMaxAge = 3600000;
 
     /**
+     * The default port for a socket server.
+     * @type {number}
+     */
+    static socketServerPort = 5555;
+
+    /**
      * Id cookies only accept from HTTPS
      * @type {number}
      */
