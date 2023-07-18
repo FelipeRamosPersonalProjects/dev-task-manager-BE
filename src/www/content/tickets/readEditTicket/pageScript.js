@@ -8,4 +8,19 @@ window.addEventListener('load', () => {
             editField({ ev });
         });
     });
-})
+
+
+    window.socketClient.subscribeDOC({
+        collectionName: 'tickets',
+        filter: { index: 0 },
+        onSuccess: () => {
+            console.log('Subscribed!');
+        },
+        onError: (err) => {
+            console.error(err);
+        },
+        onData: (data) => {
+            console.log('Data received: ', data);
+        }
+    })
+});

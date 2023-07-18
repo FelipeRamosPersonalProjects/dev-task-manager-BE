@@ -152,7 +152,7 @@ export async function editField({ ev, redirect, dataMiddleware }) {
             return window.open(redirect, '_self');
         }
 
-        return window.location.reload();
+        toggleProgress();
     } catch (err) {
         toggleProgress();
         throw alert(err.message);
