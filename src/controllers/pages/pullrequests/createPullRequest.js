@@ -4,6 +4,7 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     const userUID = req.getSafe('session.currentUser._id');
+    const { task, ticket, base, head } = req.query;
 
     try {
         const ticketsQuery = await CRUD.query({collectionName: 'tickets', filter: {
@@ -33,7 +34,13 @@ module.exports = async (req, res) => {
                 tasks,
                 users,
                 labels,
-                reviwers
+                reviwers,
+                pullRequestDoc: {
+                    task,
+                    ticket,
+                    base,
+                    head
+                }
             })
         });
     

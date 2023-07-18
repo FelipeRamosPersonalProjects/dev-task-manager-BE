@@ -25,6 +25,18 @@ progress {
     .cancel-btn {
         width: 100%;
     }
+
+    .options-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+
+        button {
+            flex: 1;
+            min-width: fit-content;
+            padding: 1rem;
+        }
+    }
 }
 
 .header-topbar {
