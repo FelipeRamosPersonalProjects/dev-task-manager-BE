@@ -1,0 +1,26 @@
+[modal=standard] {
+    backdrop-filter: blur(11px);
+
+    .modal-container {
+        background-color: #FFF;
+        border-radius: 0.7rem;
+        box-shadow: 0 0 50px #333;
+        max-width: 1024px;
+        width: 95%;
+
+        &.fullscreen {
+            border-radius: 0;
+            box-shadow: none;
+            height: 100%;
+            width: 100%;
+        }
+
+        .modal-header {
+            padding: 1rem;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+    }
+}
