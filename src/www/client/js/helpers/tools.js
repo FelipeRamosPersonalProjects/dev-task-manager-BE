@@ -12,3 +12,13 @@ export function toggleEditInput(target) {
         target.setAttribute('view', 'read');
     }
 }
+
+export function $toggleEditInput($target) {
+    if ($target.attr('view') === 'read') {
+        $target.attr('view', 'edit');
+    }
+
+    else if ($target.attr('view') === 'edit') {
+        $target.attr('view', 'read');
+    }
+}

@@ -2,6 +2,7 @@ require('module-alias/register');
 
 const express = require('express');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const https = require('https');
 const app = express();
 const cors = require('cors');
@@ -25,6 +26,7 @@ require('@services/database/init').then(async () => {
 
     // Configuring server
     app.use(cors());
+    app.use(bodyParser.json({ limit: '10mb' }));
     app.use(express.json());
     app.use(express.static('./src/www/static'));
     app.use(session({
