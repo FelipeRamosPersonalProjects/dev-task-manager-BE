@@ -9,10 +9,12 @@ window.addEventListener('load', () => {
         });
     });
 
-
+    const urlParsed = window.location.pathname.split('/');
+    const index = urlParsed[urlParsed.length - 1];
+   
     window.socketClient.subscribeDOC({
         collectionName: 'tickets',
-        filter: { index: 0 },
+        filter: { index: Number(index) },
         onSuccess: () => {
             console.log('Subscribed!');
         },

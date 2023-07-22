@@ -37,6 +37,7 @@ require('@services/database/init').then(async () => {
     // API routes
     app.use('/auth', routes.auth);
     app.use('/collection', routes.collection);
+    app.use('/components', routes.components);
 
     // Front-end routes
     app.get('/', (req, res) => res.redirect('/dashboard'));
