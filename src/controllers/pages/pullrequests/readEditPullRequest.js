@@ -7,17 +7,6 @@ module.exports = async (req, res) => {
     const userUID = req.getSafe('session.currentUser._id');
 
     try {
-        const pullRequestDoc = await CRUD.getDoc({collectionName: 'pull_requests', filter: { index: req.params.index }}).defaultPopulate();
-
-        if (!pullRequestDoc) {
-            res.setHeader('Content-Type', 'text/html');
-            return res.status(500).send(new ErrorPage({
-                code: '404',
-                name: 'Document not found',
-                message: `The pullrequest "${req.params.index}" requested wasn't found!`
-            }).renderToString());
-        }
-
         const ticketsQuery = await CRUD.query({collectionName: 'tickets', filter: {
             assignedUsers: { $in: [ userUID ]}
         }}).defaultPopulate();
@@ -37,20 +26,16 @@ module.exports = async (req, res) => {
         const reviwersQuery = await CRUD.query({collectionName: 'users'}).defaultPopulate();
         const reviwers = reviwersQuery.map(item => item.initialize());
 
-        if (pullRequestDoc instanceof Error.Log) {
-            throw pullRequestDoc;
-        }
-
         const content = new PageTemplate({
             pageID: 'pullrequests/readEditPullRequest',
             pageTitle: 'Edit PullRequest',
             body: new ReadEditPullRequest({
+                collection: 'pull_requests',
                 tickets,
                 tasks,
                 users,
                 labels,
-                reviwers,
-                pullRequestDoc: pullRequestDoc.initialize()
+                reviwers
             })
         });
 

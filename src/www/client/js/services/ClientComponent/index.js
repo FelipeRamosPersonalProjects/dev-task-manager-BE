@@ -1,7 +1,9 @@
+import ComponentListener from "./ComponentListener";
+
 export default class ClientComponent {
     constructor(setup) {
         try {
-            const { path, data, stringHTML } = Object(setup);
+            const { path, data, stringHTML, listeners } = Object(setup);
 
             if (!path) {
                 throw new Error('The "path" param is required at ClientComponent!');
@@ -11,6 +13,13 @@ export default class ClientComponent {
             this.data = Object(data);
             this.stringHTML = stringHTML || '';
             this.$element = this.stringHTML ? $(this.stringHTML) : $([]);
+
+            if (!this.$wrap) {
+                this.$wrap = $(`<div class="component-wrap" component-path="${this.path}"></div>`);
+                this.$wrap.html(this.$element);
+            }
+
+            this.listeners = Array.isArray(listeners) ? listeners.map(item => new ComponentListener(item, this.$wrap)) : [];
         } catch (err) {
             throw new Error(err);
         }
@@ -55,6 +64,8 @@ export default class ClientComponent {
         if (this.$wrap) {
             this.$wrap.html(this.$element);
         }
+
+        this.listeners.map(item => item.add());
 
         return string;
     }
