@@ -9,7 +9,7 @@ export default class ModalCtrl {
             this._currentModal;
             this._modals = [];
         } catch (err) {
-            throw new Error(err);
+            throw err;
         }
     }
 
@@ -17,7 +17,7 @@ export default class ModalCtrl {
         try {
             return this._modals.indexOf(modal);
         } catch (err) {
-            throw new Error(err);
+            throw err;
         }
     }
 
@@ -25,7 +25,7 @@ export default class ModalCtrl {
         try {
             return this._modals.find(modal => modal.UID === modalUID);
         } catch (err) {
-            throw new Error(err);
+            throw err;
         }
     }
     
@@ -42,10 +42,41 @@ export default class ModalCtrl {
                 modal.close();
             }
 
-            $(this.modalSpot || 'body').append(modal.$wrap); 
+            $(this.modalSpot || 'body').append(modal.$wrap);
             return modal;
         } catch (err) {
-            throw new Error(err);
+            throw err;
+        }
+    }
+
+    async subscribeModal(setup) {
+        const { path } = Object(setup);
+
+        try {
+            setup.data && (setup.data.isLoading = true);
+            const modal = new Modal(setup, this);
+            await modal.load();
+
+            this._modals.push(modal);
+
+            if (this._autoOpen) {
+                modal.open();
+            } else {
+                modal.close();
+            }
+
+            $(this.modalSpot || 'body').append(modal.$wrap);
+
+            setup.data && (setup.data.isLoading = false);
+            socketClient.subscribeComponent({
+                ...setup,
+                $wrap: modal.$wrap,
+                path: 'modals/' + path
+            });
+
+            return modal;
+        } catch (err) {
+            throw err;
         }
     }
 
@@ -57,7 +88,7 @@ export default class ModalCtrl {
                 modal.open();
             }
         } catch (err) {
-            throw new Error(err);
+            throw err;
         }
     }
 
@@ -69,7 +100,7 @@ export default class ModalCtrl {
                 modal.close();
             }
         } catch (err) {
-            throw new Error.Log(err);
+            throw err;
         }
     }
 
@@ -77,7 +108,7 @@ export default class ModalCtrl {
         try {
             this._modals.map(modal => modal.close());
         } catch (err) {
-            throw new Error.Log(err);
+            throw err;
         }
     }
 
@@ -89,7 +120,7 @@ export default class ModalCtrl {
                 modal.destroy();
             }
         } catch (err) {
-            throw new Error.Log(err);
+            throw err;
         }
     }
 }

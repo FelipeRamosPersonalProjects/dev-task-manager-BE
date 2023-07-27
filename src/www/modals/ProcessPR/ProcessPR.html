@@ -1,9 +1,32 @@
 <div class="modal-container">
     <div class="modal-header">
-        <h1>##{{modalTitle:string}}##</h1>
+        <h2 class="fill-right">##{{modalTitle:string}}## - ##{{title:string}}####{{isLoading:string}}##</h2>
+
+        <button js="minimize-modal">_</button>
+        <button js="close-modal">X</button>
     </div>
 
     <div class="modal-body">
+        <div class="data-display vertical">
+            <div class="data-group">
+                <div class="data-row">
+                    <label>Base Branch:</label>
+                    <p js="prop" class="data-prop">##{{base:string}}##</p>
+                </div>
+                <div class="data-row">
+                    <label>Current Branch:</label>
+                    <p js="prop" class="data-prop">##{{head:string}}##</p>
+                </div>
+            </div>
+
+            <div class="data-row vertical">
+                <label>Summary description:</label>
+                <p js="prop" class="data-prop">##{{summary:string}}##</p>
+            </div>
+        </div>
+
+        ##{{prStep_begin:string}}##
+
         <div class="prompt">##{{promptContent:string}}##</div>
     </div>
 </div>

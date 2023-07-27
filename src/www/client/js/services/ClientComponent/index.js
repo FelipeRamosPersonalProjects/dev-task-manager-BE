@@ -1,7 +1,7 @@
 import ComponentListener from "./ComponentListener";
 
 export default class ClientComponent {
-    constructor(setup) {
+    constructor(setup, $wrap) {
         try {
             const { path, data, stringHTML, listeners } = Object(setup);
 
@@ -15,7 +15,7 @@ export default class ClientComponent {
             this.$element = this.stringHTML ? $(this.stringHTML) : $([]);
 
             if (!this.$wrap) {
-                this.$wrap = $(`<div class="component-wrap" component-path="${this.path}"></div>`);
+                this.$wrap = $wrap || $(`<div class="component-wrap" component-path="${this.path}"></div>`);
                 this.$wrap.html(this.$element);
             }
 
@@ -43,7 +43,6 @@ export default class ClientComponent {
             }
 
             const parsedData = JSON.parse(data);
-            
             if (parsedData.success) {
                 this.data = Object(bodyData);
                 this.updateStringHTML(parsedData.data);

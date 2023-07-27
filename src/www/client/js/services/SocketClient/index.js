@@ -48,28 +48,30 @@ class SocketClient {
     }
 
     subscribeComponent(setup) {
-        const { wrapSelector, path, dataDependencies, onSuccess, onError, onData, listeners } = Object(setup);
+        const { wrapSelector, $wrap, path, dataDependencies, onSuccess, onError, onData, listeners, data } = Object(setup);
+        const $wrapper = $wrap || $(wrapSelector);
+        const subsUID = crypto.randomUUID(8).toString('hex');
 
         try {
-            this.socket.emit('subscribe:component', { path, dataDependencies });
-            this.socket.on('subscribe:component:error', onError || new Function());
-            this.socket.on('subscribe:component:success', (response) => {
+            this.socket.emit('subscribe:component', { path, dataDependencies, subsUID, data });
+            this.socket.on('subscribe:component:error:' + subsUID, onError || new Function());
+            this.socket.on('subscribe:component:success:' + subsUID, (response) => {
                 const parsedResponse = JSON.parse(response);
 
                 if (parsedResponse.success) {
-                    const $component = $(wrapSelector).html(parsedResponse.data);
+                    const $component = $wrapper.html(parsedResponse.data);
                     const cb = onSuccess || new Function();
-    
+
                     typeof listeners === 'function' && listeners($component);
                     return cb($component, response);
                 }
             });
 
-            this.socket.on('subscribe:component:data', (response) => {
+            this.socket.on('subscribe:component:data:' + subsUID, (response) => {
                 const parsedResponse = JSON.parse(response);
 
                 if (parsedResponse.success) {
-                    const $component = $(wrapSelector).html(parsedResponse.data);
+                    const $component = $wrapper.html(parsedResponse.data);
                     const cb = onData || new Function();
     
                     return cb($component, response);

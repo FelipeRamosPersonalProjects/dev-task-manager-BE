@@ -1,6 +1,40 @@
 [modal=standard] {
     backdrop-filter: blur(11px);
 
+    &.minimize {
+        backdrop-filter: blur(0);
+        align-items: end;
+        justify-content: end;
+        left: auto;
+        top: auto;
+
+        .modal-container {
+            max-width: fit-content;
+            min-width: fit-content;
+        }
+
+        .modal-body {
+            display: none;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+
+        .fill-right {
+            margin-right: auto;
+        }
+
+        .fill-left {
+            margin-left: auto;
+        }
+
+        button {
+            margin-left: 0.4rem;
+        }
+    }
+
     .modal-container {
         background-color: #FFF;
         border-radius: 0.7rem;

@@ -57,20 +57,22 @@ class SocketConnection {
     }
 
     async subscribeComponent(setup) {
-        const { path, dataDependencies } = Object(setup);
+        const { path, dataDependencies, data, subsUID } = Object(setup);
 
         try {
             const Component = require('@www/' + path);
-            const comp = new Component({ dataDependencies });
+            const comp = new Component({ dataDependencies, ...data });
             
-            await comp.load();
+            if (comp.load) {
+                await comp.load();
+            }
 
-            comp.dataDependencies.map(item => item.addSocketUpdateListener(this));
-            this.socket.emit('subscribe:component:success', comp.renderToString().toSuccess());
+            comp.dataDependencies.map(item => item.addSocketUpdateListener(this, subsUID));
+            this.socket.emit('subscribe:component:success:' + subsUID, comp.renderToString().toSuccess());
 
             return comp;
         } catch (err) {
-            throw new Error.Log(err);
+            this.socket.emit('subscribe:component:error:' + subsUID, new Error.Log(err).response());
         }
     }
 }

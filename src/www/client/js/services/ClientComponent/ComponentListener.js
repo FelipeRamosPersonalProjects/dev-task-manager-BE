@@ -13,7 +13,7 @@ class ComponentListener {
     }
 
     add() {
-        this.$wrapper.find(this.selector).on(this.eventName, this.handler);
+        this.$wrapper.on(this.eventName, this.selector, this.handler);
     }
 }
 

@@ -79,8 +79,6 @@ export async function editField({ ev, redirect, dataMiddleware }) {
     let dataDoc = {};
 
     try {
-        toggleProgress();
-
         const url = new URL(window.location.href);
         const fields = ev.target.querySelectorAll('[field]');
         const pathname = url.pathname.split('/');
@@ -121,10 +119,12 @@ export async function editField({ ev, redirect, dataMiddleware }) {
         }
     
         if (isNaN(docIndex)) {
+            toggleProgress();
             return alert('Index provided in NaN!');
         }
     
         if (!collection) {
+            toggleProgress();
             return alert(`Collection name wasn't provided`);
         }
 
@@ -144,15 +144,15 @@ export async function editField({ ev, redirect, dataMiddleware }) {
 
         const data = await response.json();
         if (data.error) {
+            toggleProgress();
             return alert(data.message);
         }
     
 
         if (redirect) {
+            toggleProgress();
             return window.open(redirect, '_self');
         }
-
-        toggleProgress();
     } catch (err) {
         toggleProgress();
         throw alert(err.message);
