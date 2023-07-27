@@ -20,18 +20,18 @@ class DataDependency {
         return this._parent();
     }
 
-    addSocketUpdateListener(socketConnection) {
+    addSocketUpdateListener(socketConnection, subsUID) {
         const self = this;
-        process.on(`socket:update:${this.collectionName}:${JSON.stringify(this.filter)}`, (ev) => self.updateComponentHandler.call(this, ev, socketConnection));
+        process.on(`socket:update:${this.collectionName}:${JSON.stringify(this.filter)}`, (ev) => self.updateComponentHandler.call(this, ev, socketConnection, subsUID));
     }
     
-    async updateComponentHandler(ev, socketConnection) {
+    async updateComponentHandler(ev, socketConnection, subsUID) {
         try {
             const newValue = await this.load();
             this.parent.updateMerge({[this.name]: newValue});
 
             const htmlString = this.parent.renderToString();
-            socketConnection.socket.emit('subscribe:component:data', htmlString.toSuccess());
+            socketConnection.socket.emit('subscribe:component:data:' + subsUID, htmlString.toSuccess());
         } catch (err) {
             throw new Error.Log(err);
         }

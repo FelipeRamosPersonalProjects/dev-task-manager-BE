@@ -7,7 +7,7 @@ export default class Modal extends ClientComponent {
         try {
             const { openState, path } = Object(setup);
 
-            this.UID = 'modal-' + crypto.randomUUID(8).toString('hex');
+            this.UID = crypto.randomUUID(8).toString('hex');
             this.path = `modals/${path}`;
             this.openState = openState || false;
             this.$wrap = $('<div class="modal" modal="standard"></div>');
@@ -32,6 +32,19 @@ export default class Modal extends ClientComponent {
             this.$wrap.show();
         } catch (err) {
             throw new Error(err);
+        }
+    }
+
+    toggleMinimize() {
+        try {
+            if (!this.$wrap || !this.$wrap.length) {
+                throw 'The modal no longer exist!';
+            }
+
+            // this.modalCtrl.closeAll();
+            this.$wrap.toggleClass('minimize');
+        } catch (err) {
+            throw err;
         }
     }
 
