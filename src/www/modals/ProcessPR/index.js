@@ -8,11 +8,11 @@ class ProcessPR extends Component {
     constructor(settings) {
         super(settings);
 
-        const { prDoc, modalTitle, modalContent } = Object(settings);
+        const { prDoc, modalTitle, promptContent } = Object(settings);
         const {  } = Object(prDoc);
         
         this.modalTitle = modalTitle;
-        this.modalContent = modalContent;
+        this.promptContent = promptContent;
     }
 }
 

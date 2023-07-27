@@ -74,3 +74,22 @@ progress {
         }
     }
 }
+
+.prompt {
+    background-color: #333;
+    border-radius: 0.7rem;
+    color: #f7f7f7;
+    padding: 1rem;
+    width: 100%;
+
+    p {
+        margin: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    p::before {
+        content: '> ';
+        display: inline;
+        font-weight: bold;
+    }
+}

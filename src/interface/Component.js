@@ -1,6 +1,7 @@
 const ValidateSchema = require('../validation/validateSchema');
 const FS = require('../services/FS');
 const ToolsCLI = require('./CLI/ToolsCLI');
+const DataDependency = require('@models/DataDependency');
 
 const defaultRules = {
     componentName: { type: String, default: () => 'comp-' + Date.now()},
@@ -10,23 +11,19 @@ const defaultRules = {
 }
 
 class Component extends ValidateSchema {
-    constructor(setup = {
-        componentName: '',
-        description: '',
-        outputModel: '',
-        types: {}
-    }, validationRules){
+    constructor(setup, validationRules){
         super(typeof validationRules === 'string' ? validationRules : {...defaultRules, ...validationRules});
         const self = this;
         this.tools = new ToolsCLI();
 
         try {
-            const { componentName, description, outputModel, types } = setup || {};
+            const { componentName, description, outputModel, types, dataDependencies } = setup || {};
 
             this.componentName = componentName;
             this.description = description;
             this.outputModel = outputModel;
             this.types = types;
+            this.dataDependencies = Array.isArray(dataDependencies) ? dataDependencies.map(item => new DataDependency(item, this)) : [];
 
             this.placeDefault();
 
@@ -54,6 +51,37 @@ class Component extends ValidateSchema {
 
     get TEMPLATE_STRING() {
         return FS.readFileSync(this.SOURCE_PATH);
+    }
+
+    async loadDependencies() {
+        try {
+            await Promise.all(this.dataDependencies.map(dep => dep.load()));
+
+            this.dataDependencies.map(item => {
+                this[item.name] = item.value;
+            });
+
+            return this;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    updateMerge(data) {
+        try {
+            Object.keys(data).map(key => {
+                const value = data[key];
+                const setter = this.setters[key];
+
+                if (setter) {
+                    setter(value);
+                } else {
+                    this[key] = value;
+                }
+            });
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     loadSourceFile(path) {

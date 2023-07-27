@@ -1,67 +1,79 @@
 import { editField, statusTransition } from '/src/www/client/js/helpers/docHelpers';
-import ClientComponent from '/src/www/client/js/services/ClientComponent';
 import { $toggleEditInput } from '/src/www/client/js/helpers/tools';
 
 const urlParsed = window.location.pathname.split('/');
-const index = urlParsed[urlParsed.length - 1];
+const index = Number(urlParsed[urlParsed.length - 1]);
+const userUID = sessionStorage.getItem('currentUserUID');
+
+if (!userUID) {
+    throw (location.href = '/user/signin');
+}
 
 function handleToggleInput() {
     const $wrap = $(this).parents('.readedit-form');
     $toggleEditInput($wrap);
 }
 
-window.socketClient.subscribeDOC({
-    collectionName: 'pull_requests',
-    filter: { index: Number(index) },
-    onSuccess: () => {
-        console.log('Subscribed!');
-    },
-    onError: (err) => {
-        console.error(err);
-    },
-    onData: async (data) => {
-        const pageData = $('body').data('body');
-        const component = new ClientComponent({
-            path: 'content/pullrequests/readEditPullRequest',
-            data: {
-                ...pageData.settings,
-                pullRequestDoc: data
-            },
-            listeners: [
-                {
-                    eventName: 'click',
-                    selector: '.edit-btn',
-                    handler: handleToggleInput
-                },
-                {
-                    eventName: 'click',
-                    selector: '.cancel-btn',
-                    handler: handleToggleInput
-                },
-                {
-                    eventName: 'submit',
-                    selector: '.readedit-form',
-                    handler: (ev) => {
-                        ev.preventDefault();
-                        editField({ ev });
-                    }
-                },
-                {
-                    eventName: 'click',
-                    selector: '[js="status-button"]',
-                    handler: async function (ev) {
-                        toggleProgress();
-                        $('[js="status-button"]').map((_, item) => (item.disabled = false));
-                        ev.target.disabled = true;
-            
-                        await statusTransition({ ev });
-                        toggleProgress();
-                    }
-                }
-            ]
+window.socketClient.subscribeComponent({
+    wrapSelector: '.main-content',
+    path: 'content/pullrequests/readEditPullRequest',
+    listeners: ($el) => {
+        $el.on('click', '.edit-btn, .cancel-btn', handleToggleInput);
+
+        $el.on('submit', '.readedit-form', (ev) => {
+            ev.preventDefault();
+            editField({ ev });
         });
-        
-        const $component = await component.load();
-        $('.document-wrap').html($component);
-    }
+
+        $el.on('click', '[js="status-button"]', async (ev) => {
+            toggleProgress();
+            $('[js="status-button"]').map((_, item) => (item.disabled = false));
+            ev.target.disabled = true;
+
+            await statusTransition({ ev });
+            toggleProgress();
+        });
+    },
+    dataDependencies: [
+        {
+            name: 'pullRequestDoc',
+            type: 'doc',
+            collectionName: 'pull_requests',
+            filter: { index }
+        },
+        {
+            name: 'tickets',
+            type: 'list',
+            collectionName: 'tickets',
+            filter: {
+                assignedUsers: { $in: [ userUID ]}
+            }
+        },
+        {
+            name: 'tasks',
+            type: 'list',
+            collectionName: 'tasks',
+            filter: {
+                assignedUsers: { $in: [ userUID ]}
+            }
+        },
+        {
+            name: 'users',
+            type: 'list',
+            collectionName: 'users',
+            filter: {}
+        },
+        {
+            name: 'labels',
+            type: 'list',
+            collectionName: 'labels',
+            filter: {}
+        },
+        {
+            name: 'reviewers',
+            type: 'list',
+            collectionName: 'users',
+            filter: {}
+        }
+    ]
 });
