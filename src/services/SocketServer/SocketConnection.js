@@ -19,7 +19,8 @@ class SocketConnection {
 
     init() {
         this.socket.on('connection:status', this.onConnectionStatus.bind(this));
-        this.socket.on('subscribe:doc', this.subscribeDOC.bind(this))
+        this.socket.on('subscribe:doc', this.subscribeDOC.bind(this));
+        this.socket.on('subscribe:component', this.subscribeComponent.bind(this));
         this.emitConnectionStatus();
     }
 
@@ -50,6 +51,24 @@ class SocketConnection {
                 this.socket.emit('subscribe:doc:success', doc);
                 return subs;
             }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async subscribeComponent(setup) {
+        const { path, dataDependencies } = Object(setup);
+
+        try {
+            const Component = require('@www/' + path);
+            const comp = new Component({ dataDependencies });
+            
+            await comp.load();
+
+            comp.dataDependencies.map(item => item.addSocketUpdateListener(this));
+            this.socket.emit('subscribe:component:success', comp.renderToString().toSuccess());
+
+            return comp;
         } catch (err) {
             throw new Error.Log(err);
         }

@@ -46,6 +46,39 @@ class SocketClient {
             throw new Error.Log(err);
         }
     }
+
+    subscribeComponent(setup) {
+        const { wrapSelector, path, dataDependencies, onSuccess, onError, onData, listeners } = Object(setup);
+
+        try {
+            this.socket.emit('subscribe:component', { path, dataDependencies });
+            this.socket.on('subscribe:component:error', onError || new Function());
+            this.socket.on('subscribe:component:success', (response) => {
+                const parsedResponse = JSON.parse(response);
+
+                if (parsedResponse.success) {
+                    const $component = $(wrapSelector).html(parsedResponse.data);
+                    const cb = onSuccess || new Function();
+    
+                    typeof listeners === 'function' && listeners($component);
+                    return cb($component, response);
+                }
+            });
+
+            this.socket.on('subscribe:component:data', (response) => {
+                const parsedResponse = JSON.parse(response);
+
+                if (parsedResponse.success) {
+                    const $component = $(wrapSelector).html(parsedResponse.data);
+                    const cb = onData || new Function();
+    
+                    return cb($component, response);
+                }
+            });
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = SocketClient;
