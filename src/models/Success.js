@@ -1,5 +1,9 @@
 class Success {
     constructor(data, message) {
+        if (data._schema) {
+            delete data._schema;
+        }
+
         this.success = true;
         this.data = data;
         this.message = message;

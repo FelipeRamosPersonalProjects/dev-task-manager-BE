@@ -4,7 +4,10 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     const userUID = req.getSafe('session.currentUser._id');
-    const { task, ticket, base, head } = req.query;
+    const { task, ticket } = req.query;
+    let base;
+    let head;
+    let title;
 
     try {
         const ticketsQuery = await CRUD.query({collectionName: 'tickets', filter: {
@@ -26,6 +29,15 @@ module.exports = async (req, res) => {
         const reviwersQuery = await CRUD.query({collectionName: 'users'}).defaultPopulate();
         const reviwers = reviwersQuery.map(item => item.initialize());
 
+        if (task) {
+            const currentTask = tasks.find(item => item._id === task);
+            const prTitle = currentTask.project.getTemplate('prTitle');
+
+            head = currentTask.nextBranchName;
+            base = currentTask.project.baseBranch;
+            title = prTitle.renderToString(currentTask);
+        }
+
         const content = new PageTemplate({
             pageID: 'pullrequests/createPullRequest',
             pageTitle: 'Create PullRequest',
@@ -39,7 +51,8 @@ module.exports = async (req, res) => {
                     task,
                     ticket,
                     base,
-                    head
+                    head,
+                    title
                 }
             })
         });

@@ -30,8 +30,9 @@ class SocketClient {
         }
     }
 
-    onConnectionStatus(status) {
-        console.log(`[connection:status] ${status}`);
+    onConnectionStatus(connectionID) {
+        console.log(`[connection:status] ${connectionID}`);
+        sessionStorage.setItem('socket_id', connectionID);
     }
 
     subscribeDOC(setup) {
@@ -77,8 +78,25 @@ class SocketClient {
                     return cb($component, response);
                 }
             });
+
         } catch (err) {
             throw new Error.Log(err);
+        }
+    }
+
+    updateComponent(subsUID, mergeData) {
+        try {
+            if (!subsUID) {
+                throw new Error('The param "subsUID" is required to SocketClient.updateComponent()!');
+            }
+
+            if (!mergeData) {
+                return;
+            }
+
+            this.socket.emit('subscribe:component:clientupdate:' + subsUID, mergeData);
+        } catch (err) {
+            throw err;
         }
     }
 }
