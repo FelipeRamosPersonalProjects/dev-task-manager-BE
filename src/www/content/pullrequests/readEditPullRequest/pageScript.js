@@ -14,10 +14,15 @@ function handleToggleInput() {
     $toggleEditInput($wrap);
 }
 
+function handleToggleInputDblclick() {
+    $toggleEditInput($(this));
+}
+
 window.socketClient.subscribeComponent({
     wrapSelector: '.main-content',
     path: 'content/pullrequests/readEditPullRequest',
     listeners: ($el) => {
+        $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
         $el.on('click', '.edit-btn, .cancel-btn', handleToggleInput);
 
         $el.on('submit', '.readedit-form', async (ev) => {
@@ -37,24 +42,49 @@ window.socketClient.subscribeComponent({
             toggleProgress();
         });
 
-        $el.on('click', '[js="create-pr"]', async function(ev) {
+        $el.on('click', '[js="create-pr"]', async function (ev) {
             const $this = $(this);
             const modalID = $this.data('modal-id');
             const modal = await modalCtrl.subscribeModal({
                 path: 'ProcessPR',
                 data: {
-                    modalTitle: 'Pull Request',
                     promptContent: '<p>Starting job...</p>'
                 },
                 listeners: ($el) => {
                     $el.on('click', (ev) => {
                         if (ev.target.hasAttribute('modal')) {
-                            modal.destroy();
+                            modal.toggleMinimize();
                         }
                     });
 
                     $el.on('click', '[js="minimize-modal"]', () => modal.toggleMinimize());
                     $el.on('click', '[js="close-modal"]', () => modal.destroy());
+
+                    $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
+                    $el.on('click', '.edit-btn, .cancel-btn', handleToggleInput);
+                    $el.on('submit', '.readedit-form', async (ev) => {
+                        ev.preventDefault();
+            
+                        toggleProgress();
+                        await editField({ ev, collectionName: 'pull_requests' });
+                        toggleProgress();
+                    });
+
+                    $el.on('click', '[js="step-begin"]', async function() {
+                        const subscriptionUID = $(this).data('subscription-uid');
+                        const socketConnectionID = sessionStorage.getItem('socket_id');
+
+                        $.ajax({
+                            url: '/pulls/begin',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ prIndex: index, subscriptionUID, socketConnectionID }),
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.error('Error:', errorThrown);
+                                throw textStatus;
+                            }
+                        });
+                    });
                 },
                 dataDependencies: [
                     {
@@ -62,6 +92,28 @@ window.socketClient.subscribeComponent({
                         type: 'doc',
                         collectionName: 'pull_requests',
                         filter: { index }
+                    },
+                    {
+                        name: 'tickets',
+                        type: 'list',
+                        collectionName: 'tickets',
+                        filter: {
+                            assignedUsers: { $in: [ userUID ]}
+                        }
+                    },
+                    {
+                        name: 'tasks',
+                        type: 'list',
+                        collectionName: 'tasks',
+                        filter: {
+                            assignedUsers: { $in: [ userUID ] }
+                        }
+                    },
+                    {
+                        name: 'projects',
+                        type: 'list',
+                        collectionName: 'projects',
+                        filter: {}
                     }
                 ]
             });

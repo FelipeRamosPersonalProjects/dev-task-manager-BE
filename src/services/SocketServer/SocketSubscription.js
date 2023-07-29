@@ -1,10 +1,12 @@
 const CRUD = require('@CRUD');
+const crypto = require('crypto');
 
 class SocketSubscription {
     constructor(setup, socket) {
         try {
             const { collectionName, filter } = Object(setup);
 
+            this.subscriptionUID = crypto.randomBytes(8).toString('hex');
             this.socket = socket;
             this.collectionName = collectionName;
             this.filter = filter;

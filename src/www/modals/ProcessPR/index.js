@@ -1,4 +1,6 @@
 const Component = require('@interface/Component');
+const BranchSwitcher = require('@www/components/BranchSwitcher');
+const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, StatusInput } = require('@www/components/DocForm/FormField/fields');
 
 class ProcessPR extends Component {
     get SOURCE_PATH() {
@@ -8,32 +10,68 @@ class ProcessPR extends Component {
     constructor(settings) {
         super(settings);
 
-        const { isLoading, prDoc, modalTitle, modalContent, promptContent } = Object(settings);
+        const { isLoading, branchSwitcher, tickets, tasks, prDoc, promptContent } = Object(settings);
         
         if (isLoading) {
             this.isLoading = 'Loading...';
         } else {
-            this.modalTitle = modalTitle;
-            this.modalContent = modalContent;
             this.promptContent = promptContent;
+            this.tickets = tickets;
+            this.tasks = tasks;
+            this.setters.branchSwitcher(branchSwitcher);
             this.setters.prDoc(prDoc);
         }
     }
 
     get setters() {
         return {
+            branchSwitcher: (branchSwitcher) => {
+                this.branchSwitcher = new BranchSwitcher(branchSwitcher);
+            },
             prDoc: (value) => {
                 this.prDoc = value || this.prDoc;
                 const { title, summary, base, head, project, ticket, task } = Object(this.prDoc);
                 
                 this.title = title;
-                this.summary = summary;
-                this.base = base;
-                this.head = head;
-                this.base = base;
-                this.project = project;
-                this.ticket = ticket;
-                this.task = task;
+                this.summary = new TextAreaEdit({
+                    view: 'read',
+                    fieldName: 'summary',
+                    label: 'Summary:',
+                    currentValue: summary
+                });
+                this.base = new InputEdit({
+                    view: 'read',
+                    fieldName: 'base',
+                    label: 'Base Branch:',
+                    currentValue: base
+                });
+                this.head = new InputEdit({
+                    view: 'read',
+                    fieldName: 'head',
+                    label: 'Head Branch:',
+                    currentValue: head
+                });
+                this.project = new SingleRelation({
+                    view: 'read',
+                    fieldName: 'project',
+                    label: '📽️ Project:',
+                    currentValue: project,
+                    options: this.projects
+                });
+                this.ticket = new SingleRelation({
+                    view: 'read',
+                    fieldName: 'ticket',
+                    label: '🎟️ Ticket:',
+                    currentValue: ticket,
+                    options: this.tickets
+                });
+                this.task = new SingleRelation({
+                    view: 'read',
+                    fieldName: 'task',
+                    label: '📄 Task:',
+                    currentValue: task,
+                    options: this.tasks
+                });
             }
         }
     }

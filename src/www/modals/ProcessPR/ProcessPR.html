@@ -1,31 +1,61 @@
-<div class="modal-container">
+<div class="modal-container large" subscription-uid="##{{subscriptionUID:string}}##">
     <div class="modal-header">
-        <h2 class="fill-right">##{{modalTitle:string}}## - ##{{title:string}}####{{isLoading:string}}##</h2>
+        <h2 class="long fill-right">##{{title:string}}####{{isLoading:string}}##</h2>
+        <h2 class="short fill-right">##{{title:string}}####{{isLoading:string}}##</h2>
 
-        <button js="minimize-modal">_</button>
-        <button js="close-modal">X</button>
+        <button class="minimize-button" js="minimize-modal">_</button>
+        <button class="close-button" js="close-modal">X</button>
     </div>
 
     <div class="modal-body">
-        <div class="data-display vertical">
-            <div class="data-group">
-                <div class="data-row">
-                    <label>Base Branch:</label>
-                    <p js="prop" class="data-prop">##{{base:string}}##</p>
+        <div class="main-display">
+            <div class="pr-data data-display vertical">
+                ##{{branchSwitcher:component}}##
+
+                <div class="data-group vertical">
+                    <div class="data-group">
+                        <div class="data-row float-input">
+                            ##{{base:component}}##
+                        </div>
+                        <div class="data-row float-input">
+                            ##{{head:component}}##
+                        </div>
+                    </div>
+    
+                    <div class="data-row">
+                        ##{{ticket:component}}##
+                    </div>
+
+                    <div class="data-row">
+                        ##{{task:component}}##
+                    </div>
                 </div>
-                <div class="data-row">
-                    <label>Current Branch:</label>
-                    <p js="prop" class="data-prop">##{{head:string}}##</p>
+    
+                <div class="data-row vertical">
+                    ##{{project:component}}##
+                </div>
+    
+                <div class="data-row vertical float-input">
+                    ##{{summary:component}}##
                 </div>
             </div>
+    
+            <div class="steps-display float-input">
+                <div class="step-wrap current-step" step-id="begin">
+                    <h3>Progress</h3>
 
-            <div class="data-row vertical">
-                <label>Summary description:</label>
-                <p js="prop" class="data-prop">##{{summary:string}}##</p>
+                    <div class="question-wrap">
+                        <p>Would you like to start to create the pull request?</p>
+
+                        <div class="buttons-wrap">
+                            <button type="button" js="step-begin" data-subscription-uid="##{{subscriptionUID:string}}##">Start</button>
+                        </div>
+                    </div>
+
+                    ##{{branchSwitcher:component}}##
+                </div>
             </div>
         </div>
-
-        ##{{prStep_begin:string}}##
 
         <div class="prompt">##{{promptContent:string}}##</div>
     </div>

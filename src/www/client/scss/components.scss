@@ -81,6 +81,8 @@ progress {
     color: #f7f7f7;
     padding: 1rem;
     width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 
     p {
         margin: 0;
@@ -100,9 +102,11 @@ progress {
 
 .data-display {
     display: flex;
+    gap: 1rem;
 
     .data-group {
         display: flex;
+        gap: 1rem;
 
         .data-row {
             flex: 1;

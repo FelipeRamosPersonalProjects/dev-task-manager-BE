@@ -75,7 +75,7 @@ export async function createDoc({ev, collection, dataMiddleware, redirect}) {
     }
 }
 
-export async function editField({ ev, redirect, dataMiddleware }) {
+export async function editField({ ev, collectionName, redirect, dataMiddleware }) {
     let dataDoc = {};
 
     try {
@@ -83,7 +83,7 @@ export async function editField({ ev, redirect, dataMiddleware }) {
         const fields = ev.target.querySelectorAll('[field]');
         const pathname = url.pathname.split('/');
         const docIndex = Number(pathname[pathname.length - 1]);
-        const collection = ev.target.getAttribute('collection-name');
+        const collection = collectionName || ev.target.getAttribute('collection-name');
     
         fields.forEach(field => {
             if (field.getAttribute('field-type') === 'input-number') {

@@ -26,9 +26,21 @@ class SocketServer {
             this.io.on('connect', (socket) => {
                 const connection = new SocketConnection(socket, this);
                 this.connections.push(connection);
+
+                socket.on('disconnect', () => {
+                    this.connections = this.connections.filter(item => item.connected);
+                });
             });
 
             this.io.listen(this.port);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    getConnection(connectionID) {
+        try {
+            return this.connections.find(item => item.socket.id = connectionID);
         } catch (err) {
             throw new Error.Log(err);
         }

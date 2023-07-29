@@ -11,7 +11,7 @@ class PullRequestCreate extends Component {
         super(settings);
 
         const { tickets, users, labels, reviewers, tasks, pullRequestDoc } = Object(settings);
-        const { ticket, task, base, head } = Object(pullRequestDoc);
+        const { ticket, task, base, head, title } = Object(pullRequestDoc);
 
         this.docForm = new DocForm({
             collection: 'pull_requests',
@@ -40,7 +40,8 @@ class PullRequestCreate extends Component {
                 }),
                 new Input({
                     fieldName: 'title',
-                    label: 'Title:'
+                    label: 'Title:',
+                    currentValue: title
                 }),
                 new Input({
                     inputType: 'number',

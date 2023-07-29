@@ -71,14 +71,14 @@ class PullRequestEdit extends Component {
                                 fieldName: 'ticket',
                                 label: 'Ticket:',
                                 options: this.tickets,
-                                currentValue: Object(ticket).displayName
+                                currentValue: ticket
                             }),
                             new SingleRelation({
                                 view: 'read',
                                 fieldName: 'task',
                                 label: 'Task:',
                                 options: this.tasks,
-                                currentValue: Object(task).displayName
+                                currentValue: task
                             }),
                             new InputEdit({
                                 view: 'read',
