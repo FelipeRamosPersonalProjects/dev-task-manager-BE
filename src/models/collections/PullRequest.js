@@ -22,7 +22,6 @@ class PullRequest extends _Global {
             base,
             remoteID,
             prStage,
-            displayName,
             frontURL,
             isCurrentVersion,
             version,
@@ -36,7 +35,8 @@ class PullRequest extends _Global {
             comments,
             ticket,
             task,
-            gitHubPR
+            gitHubPR,
+            logsHistory
         } = Object(setup || {});
 
         try {
@@ -61,6 +61,7 @@ class PullRequest extends _Global {
             this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment, this));
             this.ticket = !Object(ticket).oid() && new Ticket(ticket, this);
             this.task = !Object(task).oid() && new Task(task, this);
+            this.logsHistory = logsHistory || [];
 
             if (typeof description === 'string') {
                 this.description = description;

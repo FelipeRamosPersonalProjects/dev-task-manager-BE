@@ -14,8 +14,12 @@ function handleToggleInput() {
     $toggleEditInput($wrap);
 }
 
-function handleToggleInputDblclick() {
-    $toggleEditInput($(this));
+function handleToggleInputDblclick(ev) {
+    const $this = $(this);
+    
+    if ($this.attr('view') !== 'edit') {
+        $toggleEditInput($this);
+    }
 }
 
 window.socketClient.subscribeComponent({
@@ -48,7 +52,8 @@ window.socketClient.subscribeComponent({
             const modal = await modalCtrl.subscribeModal({
                 path: 'ProcessPR',
                 data: {
-                    promptContent: '<p>Starting job...</p>'
+                    promptContent: '<p>Starting job...</p>',
+                    stepBegin: { isCurrentClass: true }
                 },
                 listeners: ($el) => {
                     $el.on('click', (ev) => {
@@ -70,18 +75,27 @@ window.socketClient.subscribeComponent({
                         toggleProgress();
                     });
 
-                    $el.on('click', '[js="step-begin"]', async function() {
-                        const subscriptionUID = $(this).data('subscription-uid');
+                    $el.on('click', '[js="step-begin"], [js="step-begin:ignore"], [js="step-begin:switchbranch:base"]', async function() {
+                        const $componentWrap = $(this).parents('[subscription-uid]');
+                        const subscriptionUID = $componentWrap.attr('subscription-uid');
                         const socketConnectionID = sessionStorage.getItem('socket_id');
+                        const ajaxBody = { prIndex: index, subscriptionUID, socketConnectionID };
+
+                        if ($(this).attr('js') === 'step-begin:ignore') {
+                            ajaxBody.ignoreBranchName = true;
+                        }
+
+                        if ($(this).attr('js') === 'step-begin:switchbranch:base') {
+                            ajaxBody.switchToBase = true;
+                        }
 
                         $.ajax({
                             url: '/pulls/begin',
                             type: 'POST',
                             contentType: 'application/json',
-                            data: JSON.stringify({ prIndex: index, subscriptionUID, socketConnectionID }),
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                console.error('Error:', errorThrown);
-                                throw textStatus;
+                            data: JSON.stringify(ajaxBody),
+                            error: function(error) {
+                                throw error.responseJSON || error;
                             }
                         });
                     });

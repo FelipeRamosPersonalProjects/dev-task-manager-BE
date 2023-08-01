@@ -2,7 +2,6 @@ const ValidateSchema = require('../validation/validateSchema');
 const FS = require('../services/FS');
 const ToolsCLI = require('./CLI/ToolsCLI');
 const DataDependency = require('@models/DataDependency');
-const SocketSubscription = require('@services/SocketServer/SocketSubscription');
 
 const defaultRules = {
     componentName: { type: String, default: () => 'comp-' + Date.now()},
@@ -18,7 +17,7 @@ class Component extends ValidateSchema {
         this.tools = new ToolsCLI();
 
         try {
-            const { componentName, description, outputModel, types, dataDependencies, subscriptionUID } = setup || {};
+            const { componentName, description, outputModel, types, dataDependencies, subscriptionUID, hide } = setup || {};
 
             this.componentName = componentName;
             this.subscriptionUID = subscriptionUID;
@@ -26,6 +25,10 @@ class Component extends ValidateSchema {
             this.outputModel = outputModel;
             this.types = types;
             this.dataDependencies = Array.isArray(dataDependencies) ? dataDependencies.map(item => new DataDependency(item, this)) : [];
+
+            if (hide) {
+                this.hide = 'hide';
+            }
 
             this.placeDefault();
 
@@ -53,6 +56,10 @@ class Component extends ValidateSchema {
 
     get TEMPLATE_STRING() {
         return FS.readFileSync(this.SOURCE_PATH);
+    }
+
+    get setters() {
+        return {}
     }
 
     addSubscription(subscription) {

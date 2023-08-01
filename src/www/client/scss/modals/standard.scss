@@ -115,8 +115,12 @@
                 max-height: max-content;
 
                 .step-wrap:not(.current-step) {
-                    .buttons-wrap {
+                    > * {
                         display: none;
+                    }
+
+                    > .step-header {
+                        display: block;
                     }
                 }
             }
