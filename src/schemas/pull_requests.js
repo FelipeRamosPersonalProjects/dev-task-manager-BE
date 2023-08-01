@@ -160,6 +160,11 @@ module.exports = new Collection({
                 relatedField: 'pullRequests',
                 type: 'array-oid'
             }
+        },
+        {
+            fieldName: 'logsHistory',
+            type: [String],
+            default: []
         }
     ]
 });

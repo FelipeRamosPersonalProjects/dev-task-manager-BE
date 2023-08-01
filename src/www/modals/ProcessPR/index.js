@@ -1,6 +1,9 @@
 const Component = require('@interface/Component');
+const Spinner = require('@www/components/Spinner');
 const BranchSwitcher = require('@www/components/BranchSwitcher');
-const { InputEdit, SelectInputEdit, TextAreaEdit, SingleRelation, StatusInput } = require('@www/components/DocForm/FormField/fields');
+const StepBegin = require('./StepBegin');
+const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
+const CRUD = require('@CRUD');
 
 class ProcessPR extends Component {
     get SOURCE_PATH() {
@@ -10,14 +13,15 @@ class ProcessPR extends Component {
     constructor(settings) {
         super(settings);
 
-        const { isLoading, branchSwitcher, tickets, tasks, prDoc, promptContent } = Object(settings);
+        const { isLoading, branchSwitcher, stepBegin, tickets, tasks, prDoc, promptContent } = Object(settings);
         
         if (isLoading) {
-            this.isLoading = 'Loading...';
+            this.isLoading = new Spinner();
         } else {
             this.promptContent = promptContent;
             this.tickets = tickets;
             this.tasks = tasks;
+            this.setters.stepBegin(stepBegin);
             this.setters.branchSwitcher(branchSwitcher);
             this.setters.prDoc(prDoc);
         }
@@ -25,8 +29,15 @@ class ProcessPR extends Component {
 
     get setters() {
         return {
-            branchSwitcher: (branchSwitcher) => {
-                this.branchSwitcher = new BranchSwitcher(branchSwitcher);
+            branchSwitcher: (value) => {
+                if (value) {
+                    this.branchSwitcher = new BranchSwitcher(value);
+                }
+            },
+            stepBegin: (value) => {
+                if (value) {
+                    this.stepBegin = new StepBegin(value);
+                }
             },
             prDoc: (value) => {
                 this.prDoc = value || this.prDoc;
@@ -72,6 +83,32 @@ class ProcessPR extends Component {
                     currentValue: task,
                     options: this.tasks
                 });
+            }
+        }
+    }
+
+    get setProps() {
+        return {
+            branchSwitcherGroup: (value) => {
+                try {
+                    this.setters.branchSwitcher(value)
+                    this.stepBegin.setters.branchSwitcher(value);
+                } catch (error) {
+                    throw new Error.Log(err);
+                }
+            }
+        }
+    }
+
+    get setError() {
+        return {
+            BAD_BRANCH_NAME: () => {
+                try {
+                    this.branchSwitcher.setError.BAD_BRANCH_NAME();
+                    this.stepBegin.setError.BAD_BRANCH_NAME();
+                } catch (err) {
+                    throw new Error.Log(err);
+                }
             }
         }
     }

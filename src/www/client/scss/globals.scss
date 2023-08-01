@@ -1,8 +1,9 @@
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
     font-size: 13px;
-    box-sizing: border-box;
 }
 
 h1,
@@ -10,7 +11,7 @@ h2,
 h3,
 h4,
 h5 {
-    margin: 0.2rem;
+    margin: 0.2rem 0;
 }
 
 h1 {
@@ -52,4 +53,8 @@ button {
 
 pre {
     text-wrap: balance;
+}
+
+.hide {
+    display: none !important;
 }

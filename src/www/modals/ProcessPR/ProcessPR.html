@@ -1,13 +1,15 @@
 <div class="modal-container large" subscription-uid="##{{subscriptionUID:string}}##">
     <div class="modal-header">
-        <h2 class="long fill-right">##{{title:string}}####{{isLoading:string}}##</h2>
-        <h2 class="short fill-right">##{{title:string}}####{{isLoading:string}}##</h2>
+        <h2 class="long fill-right">##{{title:string}}##</h2>
+        <h2 class="short fill-right">##{{title:string}}##</h2>
 
         <button class="minimize-button" js="minimize-modal">_</button>
         <button class="close-button" js="close-modal">X</button>
     </div>
 
     <div class="modal-body">
+        ##{{isLoading:component}}##
+
         <div class="main-display">
             <div class="pr-data data-display vertical">
                 ##{{branchSwitcher:component}}##
@@ -21,7 +23,7 @@
                             ##{{head:component}}##
                         </div>
                     </div>
-    
+
                     <div class="data-row">
                         ##{{ticket:component}}##
                     </div>
@@ -30,30 +32,14 @@
                         ##{{task:component}}##
                     </div>
                 </div>
-    
+
                 <div class="data-row vertical">
                     ##{{project:component}}##
                 </div>
-    
-                <div class="data-row vertical float-input">
-                    ##{{summary:component}}##
-                </div>
             </div>
-    
+
             <div class="steps-display float-input">
-                <div class="step-wrap current-step" step-id="begin">
-                    <h3>Progress</h3>
-
-                    <div class="question-wrap">
-                        <p>Would you like to start to create the pull request?</p>
-
-                        <div class="buttons-wrap">
-                            <button type="button" js="step-begin" data-subscription-uid="##{{subscriptionUID:string}}##">Start</button>
-                        </div>
-                    </div>
-
-                    ##{{branchSwitcher:component}}##
-                </div>
+                ##{{stepBegin:component}}##
             </div>
         </div>
 
