@@ -59,6 +59,7 @@
     }
 
     .modal-container {
+        position: relative;
         background-color: #FFF;
         border-radius: 0.7rem;
         box-shadow: 0 0 50px #333;
@@ -114,13 +115,32 @@
                 overflow-y: auto;
                 max-height: max-content;
 
-                .step-wrap:not(.current-step) {
-                    > * {
-                        display: none;
+                .step-wrap {
+                    margin-bottom: 1rem;
+
+                    &:not(.current-step) {
+                        > * {
+                            display: none;
+                        }
+    
+                        > .step-header {
+                            display: block;
+                        }
                     }
 
-                    > .step-header {
-                        display: block;
+                    &[step-id="step-prepare"].error {
+                        .question-wrap.initial {
+                            display: none;
+                        }
+
+                        .question-wrap.custom-name {
+                            display: flex;
+                            flex-direction: column;
+                        }
+                    }
+
+                    .question-wrap.custom-name {
+                        display: none;
                     }
                 }
             }

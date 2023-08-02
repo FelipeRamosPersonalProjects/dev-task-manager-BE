@@ -1,4 +1,4 @@
-<div class="modal-container large" subscription-uid="##{{subscriptionUID:string}}##">
+<div class="modal-container large" modal-id="progress-pr" subscription-uid="##{{subscriptionUID:string}}##">
     <div class="modal-header">
         <h2 class="long fill-right">##{{title:string}}##</h2>
         <h2 class="short fill-right">##{{title:string}}##</h2>
@@ -40,9 +40,11 @@
 
             <div class="steps-display float-input">
                 ##{{stepBegin:component}}##
+                ##{{stepPrepare:component}}##
             </div>
         </div>
 
-        <div class="prompt">##{{promptContent:string}}##</div>
+        <h3>Logs History</h3>
+        <div class="prompt">##{{logsHistory:array:Paragraph}}##</div>
     </div>
 </div>

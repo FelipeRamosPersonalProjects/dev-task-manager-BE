@@ -188,6 +188,10 @@ class Task extends _Global {
 
     async jiraUpdate(data) {
         try {
+            if (!this.this.jiraIssue) {
+                return;
+            }
+
             for (let user of this.assignedUsers) {
                 const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, new InvestigationIssue(data).toUpdate());
 

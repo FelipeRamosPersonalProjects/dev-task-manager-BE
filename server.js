@@ -30,14 +30,12 @@ require('@services/database/init').then(async () => {
     app.use(bodyParser.json({ limit: '10mb' }));
     app.use(express.json());
     app.use(express.static('./src/www/static'));
-
-    const sessionMiddleware = session({
+    app.use(session({
         secret: process.env.API_SECRET,
         resave: true,
         saveUninitialized: true,
         cookie: { maxAge: Config.sessionMaxAge }
-    })
-    app.use(sessionMiddleware);
+    }));
 
     // API routes
     app.use('/auth', routes.auth);
@@ -59,7 +57,7 @@ require('@services/database/init').then(async () => {
     app.use('/user', routes.pages.user);
 
     // Initializing socket server
-    global.socketServer = new SocketServer({hosts: ['http://192.168.15.54']}, sessionMiddleware);
+    global.socketServer = new SocketServer({hosts: ['http://192.168.15.54']});
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
         const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');

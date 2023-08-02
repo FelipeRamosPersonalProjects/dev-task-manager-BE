@@ -83,17 +83,19 @@ progress {
     width: 100%;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    height: 181px;
+    overflow-y: auto;
 
-    p {
+    .paragraph {
         margin: 0;
         margin-bottom: 0.5rem;
     }
 
-    p:last-child {
+    .paragraph:last-child {
         margin-bottom: 0;
     }
 
-    p::before {
+    .paragraph::before {
         content: '> ';
         display: inline;
         font-weight: bold;
