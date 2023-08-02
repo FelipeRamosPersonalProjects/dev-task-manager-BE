@@ -126,6 +126,51 @@ window.socketClient.subscribeComponent({
                             }
                         });
                     });
+
+                    $el.on('click', '[js="step-commit:skip"], [js="step-commit:load-changes"], [js="step-commit:create"]', async function () {
+                        const $this = $(this);
+                        const ajaxBody = {};
+
+                        if ($this.attr('js') === 'step-commit:skip') {
+                            ajaxBody.skip = true;
+                        }
+
+                        if ($this.attr('js') === 'step-commit:load-changes') {
+                            ajaxBody.loadChanges = true;
+                        }
+
+                        if ($this.attr('js') === 'step-commit:create') {
+                            const $form = $el.find('form.changes-form');
+                            const $title = $form.find('[field][name=commitTitle]');
+                            const $description = $form.find('[field][name=commitDescription]');
+                            const $commitChanges = $form.find('[js="commit-file-change"]');
+                            const fileChanges = [];
+
+                            $commitChanges.map(function () {
+                                const $file = $(this);
+                                const filename = $file.attr('filename');
+                                const fileDesc = $file.find('[name="description"]').text();
+
+                                fileChanges.push({ filename, description: fileDesc });
+                            })
+
+                            ajaxBody.commitData = {
+                                title: $title.length ? $title.val() : '',
+                                description: $title.length ? $description.text() : '',
+                                fileChanges
+                            };
+                        }
+
+                        $.ajax({
+                            url: '/pulls/commit',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(ajaxBody),
+                            error: function(error) {
+                                throw error.responseJSON || error;
+                            }
+                        });
+                    });
                 },
                 dataDependencies: [
                     {

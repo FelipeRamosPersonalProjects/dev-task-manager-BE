@@ -4,6 +4,7 @@ const Compare = require('./Compare');
 const FileChange = require('./FileChange');
 const StashManager = require('./StashManager');
 const ToolsCLI = require('@CLI/ToolsCLI');
+const Component = require('@src/interface/Component');
 
 class RepoManager extends GitHubConnection {
     constructor(setup, parent) {
@@ -282,8 +283,10 @@ class RepoManager extends GitHubConnection {
     }
 
     async commit(title, summary, params) {
+        let { fileChanges } = Object(params);
+
         try {
-            if (!params.fileChanges) {
+            if (!fileChanges) {
                 const fileChanges = await this.currentChanges();
                 if (fileChanges instanceof Error.Log) {
                     throw fileChanges;
@@ -294,15 +297,15 @@ class RepoManager extends GitHubConnection {
                 summary = summary.replace(/"/g, '**');
             }
 
-            if (Array.isArray(params.fileChanges)) {
-                params.fileChanges = params.fileChanges.map(file => {
+            if (Array.isArray(fileChanges)) {
+                fileChanges = fileChanges.map(file => {
                     file.description = file.description.replace(/"/g, '**')
                     return file;
                 });
             }
 
             const descriptionTemplate = this.repo.getProjectTemplate('commitDescription');
-            const description = descriptionTemplate ? descriptionTemplate.renderToString({summary, fileChanges: params.fileChanges}) : `-m "${summary}"`;
+            const description = (descriptionTemplate instanceof Component) ? descriptionTemplate.renderToString({summary, fileChanges}) : `-m "${summary}"`;
             const added = await this.addChanges();
             if (added instanceof Error.Log) {
                 throw added;
@@ -317,7 +320,7 @@ class RepoManager extends GitHubConnection {
                 success: true,
                 title,
                 summaryDescription: description,
-                fileChanges: params.fileChanges,
+                fileChanges,
                 commitOutput: out.out
             };
         } catch(err) {

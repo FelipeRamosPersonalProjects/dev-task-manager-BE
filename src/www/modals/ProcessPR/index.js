@@ -3,6 +3,7 @@ const Spinner = require('@www/components/Spinner');
 const BranchSwitcher = require('@www/components/BranchSwitcher');
 const StepBegin = require('./StepBegin');
 const StepPrepare = require('./StepPrepare');
+const StepCommit = require('./StepCommit');
 const Paragraph = require('@src/www/components/Paragraph');
 const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
 
@@ -46,6 +47,11 @@ class ProcessPR extends Component {
             stepPrepare: (value) => {
                 if (value) {
                     this.stepPrepare = new StepPrepare(value);
+                }
+            },
+            stepCommit: (value) => {
+                if (value) {
+                    this.stepCommit = new StepCommit(value);
                 }
             },
             prDoc: (value) => {
@@ -107,6 +113,8 @@ class ProcessPR extends Component {
             },
             commit: () => {
                 this.stepPrepare.resolve();
+                this.setters.stepCommit({prDoc: this.prDoc});
+                this.stepCommit.setCurrent(true);
             }
         };
     }

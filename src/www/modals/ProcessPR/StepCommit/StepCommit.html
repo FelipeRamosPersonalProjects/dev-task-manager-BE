@@ -1,0 +1,23 @@
+<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}##" step-id="step-commit">
+    <div class="step-header">
+        <h2>Step 3 - Commit Changes</h2>
+    </div>
+
+    <form class="changes-form">
+        ##{{commitTitle:component}}##
+        ##{{commitDescription:component}}##
+
+        <h3>Changes description</h3>
+        <p>You can add changes description for the files on your commit. Click on the button below to load the files to describe.</p>
+
+        ##{{loadChangesButton:component}}##
+        ##{{fileChanges:array:FileChange}}##
+
+        <div class="question-wrap initial">
+            <div class="buttons-wrap">
+                ##{{skipButton:component}}##
+                ##{{createCommitButton:component}}##
+            </div>
+        </div>
+    </form>
+</div>
