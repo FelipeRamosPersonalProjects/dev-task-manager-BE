@@ -22,6 +22,12 @@ function handleToggleInputDblclick(ev) {
     }
 }
 
+function scrollLogs() {
+    const scrollableDiv = $('[modal-id="progress-pr"] .prompt');
+    const scrollHeight = scrollableDiv.prop('scrollHeight');
+    scrollableDiv.scrollTop(scrollHeight);
+}
+
 window.socketClient.subscribeComponent({
     wrapSelector: '.main-content',
     path: 'content/pullrequests/readEditPullRequest',
@@ -55,6 +61,8 @@ window.socketClient.subscribeComponent({
                     promptContent: '<p>Starting job...</p>',
                     stepBegin: { isCurrentClass: true }
                 },
+                onSuccess: () => scrollLogs(),
+                onData: () => scrollLogs(),
                 listeners: ($el) => {
                     $el.on('click', (ev) => {
                         if (ev.target.hasAttribute('modal')) {
@@ -91,6 +99,25 @@ window.socketClient.subscribeComponent({
 
                         $.ajax({
                             url: '/pulls/begin',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(ajaxBody),
+                            error: function(error) {
+                                throw error.responseJSON || error;
+                            }
+                        });
+                    });
+
+                    $el.on('click', '[js="step-prepare:create-recommended"], [js="step-prepare:create-branch"]', async function () {
+                        const $input = $el.find('.question-wrap.custom-name [name="branch-name"]');
+                        const ajaxBody = {};
+
+                        if ($(this).attr('js') === 'step-prepare:create-branch') {
+                            ajaxBody.customBranchName = $input.val().trim();
+                        }
+
+                        $.ajax({
+                            url: '/pulls/prepare',
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(ajaxBody),

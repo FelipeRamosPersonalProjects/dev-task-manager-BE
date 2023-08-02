@@ -2,8 +2,9 @@ const Component = require('@interface/Component');
 const Spinner = require('@www/components/Spinner');
 const BranchSwitcher = require('@www/components/BranchSwitcher');
 const StepBegin = require('./StepBegin');
+const StepPrepare = require('./StepPrepare');
+const Paragraph = require('@src/www/components/Paragraph');
 const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
-const CRUD = require('@CRUD');
 
 class ProcessPR extends Component {
     get SOURCE_PATH() {
@@ -13,17 +14,20 @@ class ProcessPR extends Component {
     constructor(settings) {
         super(settings);
 
-        const { isLoading, branchSwitcher, stepBegin, tickets, tasks, prDoc, promptContent } = Object(settings);
+        const { isLoading, branchSwitcher, stepBegin, tickets, tasks, prDoc } = Object(settings);
         
         if (isLoading) {
             this.isLoading = new Spinner();
         } else {
-            this.promptContent = promptContent;
             this.tickets = tickets;
             this.tasks = tasks;
             this.setters.stepBegin(stepBegin);
             this.setters.branchSwitcher(branchSwitcher);
             this.setters.prDoc(prDoc);
+        }
+
+        this.types = {
+            Paragraph
         }
     }
 
@@ -39,11 +43,17 @@ class ProcessPR extends Component {
                     this.stepBegin = new StepBegin(value);
                 }
             },
+            stepPrepare: (value) => {
+                if (value) {
+                    this.stepPrepare = new StepPrepare(value);
+                }
+            },
             prDoc: (value) => {
                 this.prDoc = value || this.prDoc;
-                const { title, summary, base, head, project, ticket, task } = Object(this.prDoc);
+                const { title, summary, base, head, project, ticket, task, logsHistory } = Object(this.prDoc);
                 
                 this.title = title;
+                this.logsHistory = Array.isArray(logsHistory) ? logsHistory.map(text => ({ text })) : [];
                 this.summary = new TextAreaEdit({
                     view: 'read',
                     fieldName: 'summary',
@@ -87,6 +97,20 @@ class ProcessPR extends Component {
         }
     }
 
+    get nextStep() {
+        return {
+            prepare: () => {
+                this.stepBegin.resolve();
+                this.setters.stepPrepare({ currentBranch: this.branchSwitcher.currentBranch, headBranch: this.prDoc.head });
+                this.stepPrepare.setButton.createRecommended(true);
+                this.stepPrepare.setCurrent(true);
+            },
+            commit: () => {
+                this.stepPrepare.resolve();
+            }
+        };
+    }
+
     get setProps() {
         return {
             branchSwitcherGroup: (value) => {
@@ -106,6 +130,13 @@ class ProcessPR extends Component {
                 try {
                     this.branchSwitcher.setError.BAD_BRANCH_NAME();
                     this.stepBegin.setError.BAD_BRANCH_NAME();
+                } catch (err) {
+                    throw new Error.Log(err);
+                }
+            },
+            DUPLICATED_BRANCH: (customBranchName) => {
+                try {
+                    this.stepPrepare.setError.DUPLICATED_BRANCH(customBranchName || this.prDoc.head);
                 } catch (err) {
                     throw new Error.Log(err);
                 }

@@ -29,6 +29,19 @@ class ComponentSubscription extends SocketSubscription {
         }
     }
 
+    toClientError(error) {
+        try {
+            if (!this.component) {
+                return;
+            }
+
+            const err = new Error.Log(error);
+            this.socket.emit('subscribe:component:error:' + this.subscriptionUID, err.response());
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     updateComponent(mergeData) {
         try {
             this.connection.updateComponent(this.subscriptionUID, mergeData);

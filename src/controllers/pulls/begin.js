@@ -1,6 +1,13 @@
 const CRUD = require('@CRUD');
 const Request = require('@models/RequestAPI');
+const SessionProgressPR = require('@src/models/SessionProgressPR');
+const Configs = require('@config');
 
+const cookiesConfig = {
+    maxAge: Configs.sessionMaxAge,
+    httpOnly: true,
+    secure: Configs.secureCookies
+};
 const bodySchema = {
     prIndex: {
         type: Number,
@@ -56,9 +63,12 @@ module.exports = async function (req, res) {
 
         if (switchToBase) {
             const switched = await doc.repoManager.checkout(doc.base, { bringChanges: true });
-            await CRUD.update({collectionName: 'pull_requests', filter: { index: prIndex }, data: {
-                $addToSet: { logsHistory: switched.out }
-            }});
+
+            await CRUD.update({
+                collectionName: 'pull_requests',
+                filter: { index: prIndex },
+                data: { $addToSet: { logsHistory: switched.out } }
+            });
         }
 
         // Getting current branch on local GIT
@@ -70,16 +80,28 @@ module.exports = async function (req, res) {
             return;
         }
 
+        // Storing session
+        if (!req.session.progressPR) {
+            const progress = new SessionProgressPR({
+                docQuery,
+                socketConnectionID,
+                subscriptionUID
+            });
+
+            req.session.progressPR = progress;
+            res.cookie('progressPR', progress, cookiesConfig);
+        }
+
         const subscription = socketConnection.getSubscription(subscriptionUID);
-        const stepComponent = subscription && subscription.component;
+        const stepsComponent = subscription && subscription.component;
         if (currentBranch) {
-            stepComponent.setProps.branchSwitcherGroup({currentBranch});
+            stepsComponent.setProps.branchSwitcherGroup({currentBranch});
         }
 
         if (ignoreBranchName || doc.head === currentBranch || doc.base === currentBranch) {
-            stepComponent.stepBegin.resolve();
+            stepsComponent.nextStep.prepare();
         } else {
-            stepComponent.setError.BAD_BRANCH_NAME();
+            stepsComponent.setError.BAD_BRANCH_NAME();
         }
 
         subscription.toClient();
