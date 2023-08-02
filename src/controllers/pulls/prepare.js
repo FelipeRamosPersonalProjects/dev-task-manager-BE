@@ -20,6 +20,10 @@ module.exports = async function (req, res) {
         const isBranchExist = repoManager && await repoManager.isBranchExist(customBranchName || prDoc.head);
         let head;
 
+        if (!isBranchExist) {
+            throw 'isBranch returned undefined!'
+        }
+
         if (isBranchExist.isExist) {
             progressModal.setError.DUPLICATED_BRANCH(customBranchName);
         } else if (customBranchName) {
