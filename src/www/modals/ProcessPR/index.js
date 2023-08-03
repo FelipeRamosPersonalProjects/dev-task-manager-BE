@@ -4,6 +4,7 @@ const BranchSwitcher = require('@www/components/BranchSwitcher');
 const StepBegin = require('./StepBegin');
 const StepPrepare = require('./StepPrepare');
 const StepCommit = require('./StepCommit');
+const StepPublish = require('./StepPublish');
 const Paragraph = require('@src/www/components/Paragraph');
 const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
 
@@ -52,6 +53,16 @@ class ProcessPR extends Component {
             stepCommit: (value) => {
                 if (value) {
                     this.stepCommit = new StepCommit(value);
+                }
+            },
+            stepPublish: (value) => {
+                if (value) {
+                    this.stepPublish = new StepPublish(value);
+                }
+            },
+            stepCreatePR: (value) => {
+                if (value) {
+                    this.stepCreatePR = new StepPublish(value);
                 }
             },
             prDoc: (value) => {
@@ -109,12 +120,31 @@ class ProcessPR extends Component {
                 this.stepBegin.resolve();
                 this.setters.stepPrepare({ currentBranch: this.branchSwitcher.currentBranch, headBranch: this.prDoc.head });
                 this.stepPrepare.setButton.createRecommended(true);
+                this.stepPrepare.setButton.skip(true);
                 this.stepPrepare.setCurrent(true);
             },
             commit: () => {
                 this.stepPrepare.resolve();
                 this.setters.stepCommit({prDoc: this.prDoc});
                 this.stepCommit.setCurrent(true);
+            },
+            publish: async () => {
+                const repoManager = this.prDoc && this.prDoc.repoManager;
+                let isBranchExist;
+                let currentBranch;
+                
+                this.stepCommit.resolve();
+                if (repoManager) {
+                    currentBranch = repoManager && await repoManager.getCurrentBranch();
+                    isBranchExist = currentBranch && await repoManager.isBranchExist(currentBranch);
+                }
+
+                this.setters.stepPublish({ isBranchExist, currentBranch });
+                this.stepPublish.setCurrent(true);
+            },
+            createPR: () => {
+                this.stepPublish.resolve();
+                this.setters.stepCreatePR({})
             }
         };
     }

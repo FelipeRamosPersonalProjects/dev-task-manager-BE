@@ -9,7 +9,7 @@ const bodySchema = {
 module.exports = async function (req, res) {
     try {
         const request = new Request(req, bodySchema);
-        const { customBranchName } = request.getBody();
+        const { customBranchName, skip } = request.getBody();
 
         const socketConnection = global.socketServer.getConnection(req.session.progressPR.socketConnectionID);
         const subscription = socketConnection.getSubscription(req.session.progressPR.subscriptionUID);
@@ -17,8 +17,15 @@ module.exports = async function (req, res) {
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
+
+        if (skip) {
+            progressModal.nextStep.commit();
+            subscription.toClient();
+            return res.status(200).send(Object().toSuccess());
+        }
+
         const isBranchExist = repoManager && await repoManager.isBranchExist(customBranchName || prDoc.head);
-        let head;
+        let head = prDoc.head;
 
         if (!isBranchExist) {
             throw 'isBranch returned undefined!'
@@ -31,7 +38,7 @@ module.exports = async function (req, res) {
         }
         
         if (head) {
-            repoManager.createBranch(head, prDoc.base, { bringChanges: true }).then(created => {
+            repoManager.createBranch(head, prDoc.base, { bringChanges: true, subscription }).then(created => {
                 progressModal.nextStep.commit();
                 subscription.toClient();
             }).catch(err => {

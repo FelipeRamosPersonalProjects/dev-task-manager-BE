@@ -108,12 +108,16 @@ window.socketClient.subscribeComponent({
                         });
                     });
 
-                    $el.on('click', '[js="step-prepare:create-recommended"], [js="step-prepare:create-branch"]', async function () {
+                    $el.on('click', '[js="step-prepare:create-recommended"], [js="step-prepare:create-branch"], [js="step-prepare:skip"]', async function () {
                         const $input = $el.find('.question-wrap.custom-name [name="branch-name"]');
                         const ajaxBody = {};
 
                         if ($(this).attr('js') === 'step-prepare:create-branch') {
                             ajaxBody.customBranchName = $input.val().trim();
+                        }
+
+                        if ($(this).attr('js') === 'step-prepare:skip') {
+                            ajaxBody.skip = true;
                         }
 
                         $.ajax({
@@ -163,6 +167,27 @@ window.socketClient.subscribeComponent({
 
                         $.ajax({
                             url: '/pulls/commit',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(ajaxBody),
+                            error: function(error) {
+                                throw error.responseJSON || error;
+                            }
+                        });
+                    });
+
+                    $el.on('click', '[js="step-push"], [js="step-push:leave"]', async function () {
+                        const $this = $(this);
+                        const ajaxBody = {};
+
+                        if ($this.attr('js') === 'step-push:leave') {
+                            ajaxBody.leave = true;
+                        } else {
+                            ajaxBody.push = true;
+                        }
+
+                        $.ajax({
+                            url: '/pulls/publish',
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(ajaxBody),

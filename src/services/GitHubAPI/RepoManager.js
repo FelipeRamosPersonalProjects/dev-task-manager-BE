@@ -131,21 +131,24 @@ class RepoManager extends GitHubConnection {
     }
 
     async createBranch(name, baseName, options) {
-        const { bringChanges, backupFolder } = options || {};
+        const { bringChanges, backupFolder } = Object(options);
+        const subscription = options && options.subscription
+        const progressModal = subscription && subscription.component;
+        const prDoc = progressModal && progressModal.prDoc;
 
         try {
             const branch = await this.isBranchExist(name);
             if (branch.isExist) {
-                const increased = await this.parentTask.increaseVersion();
-                const higher = this.parentTask.newerVersion;
+                const increasedVersion = prDoc.version + 1;
 
-                if (higher.version < increased.taskVersion) {
-                    await higher.updateDB({data: { version: increased.taskVersion, head: increased.taskBranch }});
+                if (prDoc.version < increasedVersion) {
+                    prDoc.version = increasedVersion;
+                    prDoc.head = prDoc.recommendedBranchName;
                 }
 
                 toolsCLI.print(`Branch name "${name}" already exists!`, 'BRANCH-EXIST');
-                toolsCLI.print(`Trying to create the "${increased.taskBranch}"...`, 'BRANCH-EXIST');
-                return await this.createBranch(increased.taskBranch, baseName, options);
+                toolsCLI.print(`Trying to create the "${prDoc.head}"...`, 'BRANCH-EXIST');
+                return await this.createBranch(prDoc.head, baseName, options);
             }
 
             const currentBranch = this.getCurrentBranch();

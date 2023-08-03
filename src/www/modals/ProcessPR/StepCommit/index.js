@@ -32,6 +32,7 @@ class StepCommit extends Component {
             label: 'Title',
             fieldName: 'commitTitle'
         });
+
         this.commitDescription = new TextArea({
             label: 'Description',
             fieldName: 'commitDescription'
