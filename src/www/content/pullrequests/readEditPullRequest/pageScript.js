@@ -171,6 +171,27 @@ window.socketClient.subscribeComponent({
                             }
                         });
                     });
+
+                    $el.on('click', '[js="step-publish"], [js="step-publish:leave"]', async function () {
+                        const $this = $(this);
+                        const ajaxBody = {};
+
+                        if ($this.attr('js') === 'step-publish:leave') {
+                            ajaxBody.leave = true;
+                        } else {
+                            ajaxBody.publish = true;
+                        }
+
+                        $.ajax({
+                            url: '/pulls/publish',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(ajaxBody),
+                            error: function(error) {
+                                throw error.responseJSON || error;
+                            }
+                        });
+                    });
                 },
                 dataDependencies: [
                     {

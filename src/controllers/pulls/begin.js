@@ -94,6 +94,9 @@ module.exports = async function (req, res) {
 
         const subscription = socketConnection.getSubscription(subscriptionUID);
         const stepsComponent = subscription && subscription.component;
+
+        stepsComponent.prDoc.task.repo.repoManager.connectAPI(req.session.currentUser);
+
         if (currentBranch) {
             stepsComponent.setProps.branchSwitcherGroup({currentBranch});
         }

@@ -57,6 +57,13 @@ class Repo extends _Global {
                 this.repoPath = repoPath;
             }
 
+            this.repoManager = new RepoManager({
+                localPath: this.localPath,
+                repoName: this.repoName,
+                repoPath: this.repoPath,
+                organization: this.organization
+            }, this);
+
             this.displayName = this.repoPath;
             this.placeDefault();
         } catch(err) {
@@ -77,15 +84,6 @@ class Repo extends _Global {
         const task = this.parentTask;
         const ticket = task && task.ticket;
         return ticket && ticket.externalKey;
-    }
-
-    get repoManager() {
-        return new RepoManager({
-            localPath: this.localPath,
-            repoName: this.repoName,
-            repoPath: this.repoPath,
-            organization: this.organization
-        }, this);
     }
 
     getProjectTemplate(templateName) {

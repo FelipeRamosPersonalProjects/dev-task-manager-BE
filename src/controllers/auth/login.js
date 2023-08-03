@@ -29,9 +29,8 @@ module.exports = async function (req, res) {
         }
 
         
-        const response = user.toPublic();
+        const response = user.toSession();
         req.session.currentUser = response;
-        req.session.userToken = user.token;
 
         res.cookie('sessionToken', user.token, cookiesConfig);
         res.cookie('currentUserUID', user._id, cookiesConfig);

@@ -5,15 +5,28 @@ const AuthService = require('@services/Auth');
 class GitHubConnection extends GitHubUser {
     constructor (setup) {
         super(setup);
-        const { userName, organization } = Object(setup);
+        const { userName, organization, gitHubToken } = Object(setup);
 
         this.userName = userName;
         this.organization = organization || userName;
         this.repoHostURL = Config.github.apiHostURL;
+        this._gitHubToken = gitHubToken;
     }
 
     get GITHUB_USER_TOKEN() {
-        return this.getGitHubToken();
+        if (this._gitHubToken) {
+            return this._gitHubToken;
+        }
+
+        return;
+    }
+
+    get isConnected() {
+        if (this.GITHUB_USER_TOKEN && this.userName) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     getGitHubToken() {
@@ -27,6 +40,11 @@ class GitHubConnection extends GitHubUser {
 
     buildURL(path, raw) {
         return !raw ? this.repoHostURL + path : path;
+    }
+
+    connectAPI(sessionUser) {
+        this._gitHubToken = sessionUser.gitHubToken;
+        this.userName = sessionUser.gitHubUser;
     }
 
     async ajax(path, data, options) {

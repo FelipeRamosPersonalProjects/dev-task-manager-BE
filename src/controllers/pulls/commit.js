@@ -20,15 +20,17 @@ module.exports = async function (req, res) {
         const request = new Request(req, bodySchema);
         const { commitData, loadChanges, skip } = request.getBody();
 
-        if (skip) {
-            return res.status(200).send(Object().toSuccess());
-        }
-
         const socketConnection = global.socketServer.getConnection(req.session.progressPR.socketConnectionID);
         const subscription = socketConnection.getSubscription(req.session.progressPR.subscriptionUID);
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
+
+        if (skip) {
+            progressModal.nextStep.publish();
+            subscription.toClient();
+            return res.status(200).send(Object().toSuccess());
+        }
 
         if (repoManager) {
             if (loadChanges) {
@@ -46,8 +48,8 @@ module.exports = async function (req, res) {
             if (commitData) {
                 const { title, description, fileChanges } = Object(commitData);
 
-                repoManager.commit(title, description, { fileChanges }).then(commited => {
-                    progressModal.stepCommit.resolve();
+                repoManager.commit(title, description, { fileChanges }).then(async (commited) => {
+                    await progressModal.nextStep.publish();
                     subscription.toClient();
                 }).catch(err => {
                     subscription.toClientError(err);

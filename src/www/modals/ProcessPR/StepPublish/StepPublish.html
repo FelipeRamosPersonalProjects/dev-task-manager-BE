@@ -1,0 +1,16 @@
+<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}##" step-id="step-publish">
+    <div class="step-header">
+        <h2>Step 4 - Publish Branch</h2>
+    </div>
+
+    <div class="question-wrap">
+        <p>The current branch <b>##{{currentBranch:string}}##</b> is not published on remote yet. You will need to publish it to be able of create the pull request.</p>
+
+        <h4>Would you like to publish it?</h4>
+        <div class="buttons-wrap">
+            ##{{publishButton:component}}##
+            ##{{pushButton:component}}##
+            ##{{leaveButton:component}}##
+        </div>
+    </div>
+</div>
