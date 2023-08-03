@@ -24,6 +24,7 @@ class StepPrepare extends Component {
             this.nextStep = nextStep;
             this.currentBranch = currentBranch;
             this.headBranch = headBranch;
+            this.setButton.skip(true);
 
             this.setCurrent(isCurrentClass);
         }
@@ -88,7 +89,17 @@ class StepPrepare extends Component {
                 } else {
                     delete this.createBranchButton;
                 }
-            }
+            },
+            skip: (state) => {
+                if (state) {
+                    this.skipButton = new Button({
+                        label: 'Skip Step',
+                        attributes: 'js="step-prepare:skip"'
+                    });
+                } else {
+                    delete this.skipButton;
+                }
+            },
         };
     }
 

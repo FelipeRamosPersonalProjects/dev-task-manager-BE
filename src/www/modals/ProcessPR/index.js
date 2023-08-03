@@ -60,6 +60,11 @@ class ProcessPR extends Component {
                     this.stepPublish = new StepPublish(value);
                 }
             },
+            stepCreatePR: (value) => {
+                if (value) {
+                    this.stepCreatePR = new StepPublish(value);
+                }
+            },
             prDoc: (value) => {
                 this.prDoc = value || this.prDoc;
                 const { title, summary, base, head, project, ticket, task, logsHistory } = Object(this.prDoc);
@@ -115,6 +120,7 @@ class ProcessPR extends Component {
                 this.stepBegin.resolve();
                 this.setters.stepPrepare({ currentBranch: this.branchSwitcher.currentBranch, headBranch: this.prDoc.head });
                 this.stepPrepare.setButton.createRecommended(true);
+                this.stepPrepare.setButton.skip(true);
                 this.stepPrepare.setCurrent(true);
             },
             commit: () => {
@@ -135,6 +141,10 @@ class ProcessPR extends Component {
 
                 this.setters.stepPublish({ isBranchExist, currentBranch });
                 this.stepPublish.setCurrent(true);
+            },
+            createPR: () => {
+                this.stepPublish.resolve();
+                this.setters.stepCreatePR({})
             }
         };
     }

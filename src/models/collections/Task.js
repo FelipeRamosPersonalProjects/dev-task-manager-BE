@@ -135,7 +135,7 @@ class Task extends _Global {
 
     get newerVersion() {
         const sorted = this.prInProgress.sort((a, b) => b.version - a.version);
-        const higher = sorted.length ? sorted[0] : null;
+        const higher = sorted.length ? sorted[0] : {};
 
         return higher;
     }

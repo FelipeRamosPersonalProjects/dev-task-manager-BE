@@ -18,9 +18,9 @@ class StepPublish extends Component {
         this.setButton.leave(true);
 
         if (isBranchExist && isBranchExist.isExist) {
-            if (isBranchExist.isLocal && !isBranchExist.isRemote) {
+            if (isBranchExist.isLocalExist && !isBranchExist.isRemoteExist) {
                 this.setButton.publish(true);
-            } else if (isBranchExist.isLocal && isBranchExist.isRemote) {
+            } else if (isBranchExist.isLocalExist && isBranchExist.isRemoteExist) {
                 this.setButton.push(true);
             }
         }
@@ -58,7 +58,7 @@ class StepPublish extends Component {
                 if (state) {
                     this.publishButton = new Button({
                         label: 'Publish',
-                        attributes: 'js="step-publish"'
+                        attributes: 'js="step-push"'
                     });
                 } else {
                     delete this.publishButton;
@@ -68,7 +68,7 @@ class StepPublish extends Component {
                 if (state) {
                     this.pushButton = new Button({
                         label: 'Push',
-                        attributes: 'js="step-publish:push"'
+                        attributes: 'js="step-push:push"'
                     });
                 } else {
                     delete this.pushButton;
@@ -78,7 +78,7 @@ class StepPublish extends Component {
                 if (state) {
                     this.leaveButton = new Button({
                         label: 'Leave',
-                        attributes: 'js="step-publish:leave"'
+                        attributes: 'js="step-push:leave"'
                     });
                 } else {
                     delete this.leaveButton;

@@ -84,6 +84,18 @@ class PullRequest extends _Global {
         return this.title;
     }
 
+    get recommendedBranchName() {
+        let result = 'feature/'
+
+        if (this.version > 1) {
+            result += this.task.externalKey + '-v' + this.version;
+        } else {
+            result += this.task.externalKey;
+        }
+
+        return result;
+    }
+
     get repoManager() {
         return this.task && this.task.repo.repoManager;
     }
@@ -109,8 +121,8 @@ class PullRequest extends _Global {
     async updateDescription(dontSave) {
         const descriptionTemplate = this.project.getTemplate('prDescription');
         const newDescription = descriptionTemplate.renderToString({
-            externalURL: this.parentTicket.externalURL,
-            externalURL: this.task.externalURL,
+            externalTicketURL: this.parentTicket.externalURL,
+            externalTaskURL: this.task.externalURL,
             summary: this.summary,
             fileChanges: this.fileChanges
         });

@@ -27,8 +27,12 @@ module.exports = async function (req, res) {
         const repoManager = prDoc && prDoc.repoManager;
 
         if (skip) {
-            progressModal.nextStep.publish();
-            subscription.toClient();
+            progressModal.nextStep.publish().then(done => {
+                subscription.toClient();
+            }).catch(err => {
+                subscription.toClientError(err);
+            });
+
             return res.status(200).send(Object().toSuccess());
         }
 
