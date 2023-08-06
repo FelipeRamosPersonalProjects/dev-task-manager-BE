@@ -12,7 +12,6 @@ class StepChangesDescription extends Component {
         super(settings);
 
         const { isLoading, fileChanges } = Object(settings);
-        const { files } = Object(compare);
 
         this.isLoading = new Spinner();
         this.setCurrent(true);

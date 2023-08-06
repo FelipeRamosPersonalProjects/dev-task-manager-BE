@@ -422,10 +422,7 @@ class RepoManager extends GitHubConnection {
     }
 
     async createPullRequest(data) {
-        const User = require('@models/collections/User');
-
         try {
-            const currentUser = await User.getMyUser();
             const PR = await this.ajax(
                 `/repos/${this.repoPath}/pulls`,
                 data,
@@ -438,26 +435,28 @@ class RepoManager extends GitHubConnection {
 
             // Adding assignees to PR
             const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
-                assignees: [currentUser.gitHubUser]
+                assignees: data.assignees
             }, {method: 'POST'});
 
             if (addAssignees instanceof Error.Log) {
                 throw addAssignees;
             }
 
-            // Adding reviewers to PR
-            const addReviewers = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/requested_reviewers`, {
-                reviewers: data.reviewers.map(item => item.gitHubUser)
-            }, {method: 'POST'});
+            // // Adding reviewers to PR
+            if (Array.isArray(data.reviewers) && data.reviewers.length) {
+                const addReviewers = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/requested_reviewers`, {
+                    reviewers: data.reviewers.map(item => item.gitHubUser)
+                }, {method: 'POST'});
 
-            if (addReviewers instanceof Error.Log) {
-                throw addReviewers;
+                if (addReviewers instanceof Error.Log) {
+                    throw addReviewers;
+                }
             }
 
             // Adding labels to PR
             if (Array.isArray(data.labels) && data.labels.length) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
-                    labels: data.labels.map(item => item.name),
+                    labels: data.labels.map(item => item.name)
                 }, {method: 'POST'});
 
                 if (addLabels instanceof Error.Log) {

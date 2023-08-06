@@ -161,18 +161,37 @@ class ProcessPR extends Component {
                     return compare
                 }
 
-                const updated = await this.prDoc.updateDB({ data: { fileChanges: compare.files }});
+                const updated = await this.prDoc.updateDB({ filter: { index: this.prDoc.index }, data: { fileChanges: compare.files }});
                 if (updated instanceof Error.Log) {
                     return updated;
                 }
 
                 this.prDoc.fileChanges = compare.files;
                 this.stepPublish.resolve();
-                this.setters.stepChangesDescription({ fileChanges: this.prDoc.fileChanges });
+                this.setters.stepChangesDescription(this.prDoc);
             },
-            createPR: () => {
+            createPR: async () => {
+                const project = this.prDoc && this.prDoc.project;
+                const templates = project && project.templates;
+                const templatePR = templates && templates.prDescription;
+
                 this.stepChangesDescription.resolve();
-                this.setters.stepCreatePR({});
+
+                if (templatePR) {
+                    this.prDoc.description = templatePR.renderToString({
+                        externalTicketURL: this.prDoc.parentTicket.externalURL,
+                        externalTaskURL: this.prDoc.task.externalURL,
+                        summary: this.prDoc.summary,
+                        fileChanges: this.prDoc.fileChanges
+                    });
+
+                    const updated = await this.prDoc.updateDB({filter: { index: this.prDoc.index }, data: { description: this.prDoc.description }});
+                    if (updated instanceof Error.Log) {
+                        throw updated;
+                    }
+                }
+
+                this.setters.stepCreatePR({ prDoc: this.prDoc });
             }
         };
     }

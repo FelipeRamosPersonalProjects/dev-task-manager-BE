@@ -223,12 +223,13 @@ class PullRequest extends _Global {
             const published = await this.repoManager.createPullRequest({
                 owner: this.repoManager.userName,
                 repo: this.repo.repoName,
-                title: this.name,
+                title: this.title,
                 body: this.description,
                 head: this.head,
                 base: this.base,
-                labels: this.getSafe('project.prLabels'),
-                reviewers: this.getSafe('project.reviewers')
+                assignees: this.assignedUsers.map(user => user.gitHubUser),
+                labels: this.getSafe('project.prLabels') || [],
+                reviewers: this.getSafe('project.reviewers') || []
             });
 
             if (published instanceof Error.Log) {

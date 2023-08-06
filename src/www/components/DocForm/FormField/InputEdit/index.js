@@ -13,6 +13,7 @@ class InputEditField extends FormField {
 
         this.inputType = inputType || 'text';
         this.view = view || 'read';
+        this.css += ' readedit-form';
         this.editButton = new Button({
             label: '✏️',
             classes: ['edit-btn'],

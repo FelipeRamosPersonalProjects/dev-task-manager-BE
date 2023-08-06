@@ -33,6 +33,11 @@ textarea,
 .readedit-form {
     margin-bottom: 1rem;
     width: 100%;
+
+    &[view=read] {
+        cursor: pointer;
+        user-select: none;
+    }
     
     label {
         display: inline-block;
