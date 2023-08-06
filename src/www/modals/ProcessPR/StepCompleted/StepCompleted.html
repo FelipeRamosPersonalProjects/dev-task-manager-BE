@@ -1,0 +1,21 @@
+<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}##" step-id="step-createpr">
+    <div class="step-header">
+        <h2>Step 7 - Completed</h2>
+    </div>
+
+    <div class="pr-data">
+        <h3>##{{title:string}}##</h3>
+        <div class="data-wrap">
+            <label>Remote URL: </label>
+            <a href="##{{remoteURL:string}}##" target="_blank">##{{remoteURL:string}}##</a>
+        </div>
+    </div>
+
+    <div class="question-wrap">
+        <pre>##{{slackFeedback:string}}##</pre>
+
+        <div class="buttons-wrap">
+            ##{{copySlackFeedbackButton:component}}##
+        </div>
+    </div>
+</div>

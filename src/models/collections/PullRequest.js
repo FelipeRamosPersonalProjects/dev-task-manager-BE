@@ -96,6 +96,18 @@ class PullRequest extends _Global {
         return result;
     }
 
+    get externalTicketURL() {
+        if (this.ticket) {
+            return this.ticket.externalURL;
+        }
+    }
+
+    get externalTaskURL() {
+        if (this.task) {
+            return this.task.externalURL;
+        }
+    }
+
     get repoManager() {
         return this.task && this.task.repo.repoManager;
     }
