@@ -1,0 +1,22 @@
+<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}##" step-id="step-createpr">
+    <div class="step-header">
+        <h2>Step 5 - Create Pull Request</h2>
+    </div>
+
+    <div class="question-wrap">
+        <h4>Remote Preview</h4>
+
+        <div class="file-description">
+            ##{{fileChanges:array:FileChange}}##
+        </div>
+
+        <div class="remote-preview">
+            ##{{title:component}}##
+            ##{{description:component}}##
+        </div>
+
+        <div class="buttons-wrap">
+            ##{{createButton:component}}##
+        </div>
+    </div>
+</div>

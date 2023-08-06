@@ -257,6 +257,23 @@ class PullRequest extends _Global {
         }
     }
 
+    async updateVersion(newVersion) {
+        if (!newVersion) return;
+
+        try {
+            const updated = await CRUD.update({collectionName: 'pull_requests', filter: { index: this.index }, data: {
+                version: newVersion,
+                head: this.recommendedBranchName
+            }});
+
+            if (updated.success) {
+                return updated;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     static async save(data = PullRequest.prototype) {
         try {
             const saved = await CRUD.create('pull_requests', data || {});

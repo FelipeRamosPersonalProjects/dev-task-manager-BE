@@ -7,12 +7,8 @@ const bodySchema = {
             description: { type: String }
         }
     },
-    loadChanges: {
-        type: Boolean
-    },
-    skip: {
-        type: Boolean
-    }
+    loadChanges: { type: Boolean },
+    skip: { type: Boolean }
 };
 
 module.exports = async function (req, res) {
@@ -27,7 +23,7 @@ module.exports = async function (req, res) {
         const repoManager = prDoc && prDoc.repoManager;
 
         if (skip) {
-            progressModal.nextStep.publish().then(done => {
+            progressModal.nextStep.publish(req.session.currentUser).then(done => {
                 subscription.toClient();
             }).catch(err => {
                 subscription.toClientError(err);
@@ -52,8 +48,13 @@ module.exports = async function (req, res) {
             if (commitData) {
                 const { title, description, fileChanges } = Object(commitData);
 
-                repoManager.commit(title, description, { fileChanges }).then(async (commited) => {
-                    await progressModal.nextStep.publish();
+                repoManager.commit(title, description, { fileChanges }).then((commited) => {
+                    if (commited.error) {
+                        return subscription.toClientError(commited);
+                    }
+
+                    return progressModal.nextStep.publish(req.session.currentUser);
+                }).then(() => {
                     subscription.toClient();
                 }).catch(err => {
                     subscription.toClientError(err);

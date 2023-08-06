@@ -43,13 +43,24 @@ class GitHubConnection extends GitHubUser {
     }
 
     connectAPI(sessionUser) {
-        this._gitHubToken = sessionUser.gitHubToken;
-        this.userName = sessionUser.gitHubUser;
+        if (sessionUser) {
+            this._gitHubToken = sessionUser.gitHubToken;
+            this.userName = sessionUser.gitHubUser;
+
+            return this;
+        }
     }
 
     async ajax(path, data, options) {
         let {method, rawURL, noToken} = Object(options);
         const url = this.buildURL(path, rawURL);
+
+        if (!this.GITHUB_USER_TOKEN && !noToken) {
+            throw new Error.Log({
+                name: 'GITHUB_MISSING_TOKEN',
+                message: `Your user token is required to perform this action!`
+            });
+        }
 
         if (!method) {
             method = 'get';

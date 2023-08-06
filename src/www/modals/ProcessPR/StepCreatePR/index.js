@@ -1,29 +1,24 @@
 const Component = require('@interface/Component');
 const Button = require('@www/components/DocForm/FormField/Button');
 const Spinner = require('@www/components/Spinner');
+const FileChange = require('@www/components/FileChange');
 
-class StepPublish extends Component {
+class StepCreatePR extends Component {
     get SOURCE_PATH() {
-        return require.resolve('./StepPublish.html');
+        return require.resolve('./StepCreatePR.html');
     }
 
     constructor(settings) {
         super(settings);
 
-        const { isLoading, isBranchExist } = Object(settings);
+        const { isLoading } = Object(settings);
 
         this.isLoading = new Spinner();
-
         this.setCurrent(true);
-        this.setButton.skip(true);
 
-        if (isBranchExist && isBranchExist.isExist) {
-            if (isBranchExist.isLocalExist && !isBranchExist.isRemoteExist) {
-                this.setButton.publish(true);
-            } else if (isBranchExist.isLocalExist && isBranchExist.isRemoteExist) {
-                this.setButton.push(true);
-            }
-        }
+        this.types = {
+            FileChange
+        };
     }
 
     setCurrent(state) {
@@ -63,26 +58,6 @@ class StepPublish extends Component {
                 } else {
                     delete this.publishButton;
                 }
-            },
-            push: (state) => {
-                if (state) {
-                    this.pushButton = new Button({
-                        label: 'Push',
-                        attributes: 'js="step-push:push"'
-                    });
-                } else {
-                    delete this.pushButton;
-                }
-            },
-            skip: (state) => {
-                if (state) {
-                    this.skipButton = new Button({
-                        label: 'Skip',
-                        attributes: 'js="step-push:skip"'
-                    });
-                } else {
-                    delete this.skipButton;
-                }
             }
         };
     }
@@ -101,4 +76,4 @@ class StepPublish extends Component {
     }
 }
 
-module.exports = StepPublish;
+module.exports = StepCreatePR;
