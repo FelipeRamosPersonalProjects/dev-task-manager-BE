@@ -29,12 +29,13 @@ module.exports = async function (req, res) {
                 item.description = change.description;
             });
 
-            prDoc.updateDB({ data: { fileChanges: prDoc.fileChanges }}).then(updated => {
+            prDoc.updateDB({ filter: { index: prDoc.index }, data: { fileChanges: prDoc.fileChanges }}).then(async (updated) => {
                 if (updated instanceof Error.Log) {
                     return subscription.toClientError(updated);
                 }
 
-                progressModal.nextStep.createPR();
+                await progressModal.nextStep.createPR();
+                subscription.toClient();
             }).catch(err => subscription.toClientError(err));
         }
 

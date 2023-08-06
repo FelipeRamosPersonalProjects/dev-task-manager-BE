@@ -1,6 +1,6 @@
 ## 🎟️ Links
-**Ticket:** ##{{externalURL:string}}##
-**Jira Task:** ##{{externalURL:string}}##
+**Ticket:** ##{{externalTicketURL:string}}##
+**Jira Task:** ##{{externalTaskURL:string}}##
  
 ## 🔍 Brief description
 ##{{summary:string}}##

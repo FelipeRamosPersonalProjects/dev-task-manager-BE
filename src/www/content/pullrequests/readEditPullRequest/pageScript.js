@@ -211,6 +211,18 @@ window.socketClient.subscribeComponent({
                             }
                         });
                     });
+
+                    $el.on('click', '[js="step-createpr"]', async function () {
+                        $.ajax({
+                            url: '/pulls/create',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({}),
+                            error: function(error) {
+                                throw error.responseJSON || error;
+                            }
+                        });
+                    });
                 },
                 dataDependencies: [
                     {
