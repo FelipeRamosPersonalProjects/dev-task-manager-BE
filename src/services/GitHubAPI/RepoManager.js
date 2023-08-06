@@ -166,6 +166,8 @@ class RepoManager extends GitHubConnection {
 
             if (prompt.success) {
                 const checkout = await this.checkout(name, { bringChanges, backupFolder });
+
+                prDoc.updateVersion(prDoc.version).catch(err => subscription.toClientError(err));
                 return checkout;
             }
         } catch (err) {

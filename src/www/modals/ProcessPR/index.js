@@ -5,8 +5,11 @@ const StepBegin = require('./StepBegin');
 const StepPrepare = require('./StepPrepare');
 const StepCommit = require('./StepCommit');
 const StepPublish = require('./StepPublish');
+const StepChangesDescription = require('./StepChangesDescription');
+const StepCreatePR = require('./StepCreatePR');
 const Paragraph = require('@src/www/components/Paragraph');
 const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
+const CRUD = require('@CRUD');
 
 class ProcessPR extends Component {
     get SOURCE_PATH() {
@@ -60,9 +63,14 @@ class ProcessPR extends Component {
                     this.stepPublish = new StepPublish(value);
                 }
             },
+            stepChangesDescription: (value) => {
+                if (value) {
+                    this.stepChangesDescription = new StepChangesDescription(value);
+                }
+            },
             stepCreatePR: (value) => {
                 if (value) {
-                    this.stepCreatePR = new StepPublish(value);
+                    this.stepCreatePR = new StepCreatePR(value);
                 }
             },
             prDoc: (value) => {
@@ -117,6 +125,8 @@ class ProcessPR extends Component {
     get nextStep() {
         return {
             prepare: () => {
+                if (!this.prDoc) return;
+
                 this.stepBegin.resolve();
                 this.setters.stepPrepare({ currentBranch: this.branchSwitcher.currentBranch, headBranch: this.prDoc.head });
                 this.stepPrepare.setButton.createRecommended(true);
@@ -128,13 +138,14 @@ class ProcessPR extends Component {
                 this.setters.stepCommit({prDoc: this.prDoc});
                 this.stepCommit.setCurrent(true);
             },
-            publish: async () => {
+            publish: async (userSession) => {
                 const repoManager = this.prDoc && this.prDoc.repoManager;
                 let isBranchExist;
                 let currentBranch;
                 
                 this.stepCommit.resolve();
                 if (repoManager) {
+                    repoManager.connectAPI(userSession);
                     currentBranch = repoManager && await repoManager.getCurrentBranch();
                     isBranchExist = currentBranch && await repoManager.isBranchExist(currentBranch);
                 }
@@ -142,9 +153,26 @@ class ProcessPR extends Component {
                 this.setters.stepPublish({ isBranchExist, currentBranch });
                 this.stepPublish.setCurrent(true);
             },
-            createPR: () => {
+            changesDescription: async () => {
+                const repoManager = this.prDoc && this.prDoc.repoManager;
+                const compare = repoManager && await repoManager.compareBranches(this.prDoc.base, this.prDoc.head);
+
+                if (!compare || compare instanceof Error.Log) {
+                    return compare
+                }
+
+                const updated = await this.prDoc.updateDB({ data: { fileChanges: compare.files }});
+                if (updated instanceof Error.Log) {
+                    return updated;
+                }
+
+                this.prDoc.fileChanges = compare.files;
                 this.stepPublish.resolve();
-                this.setters.stepCreatePR({})
+                this.setters.stepChangesDescription({ fileChanges: this.prDoc.fileChanges });
+            },
+            createPR: () => {
+                this.stepChangesDescription.resolve();
+                this.setters.stepCreatePR({});
             }
         };
     }

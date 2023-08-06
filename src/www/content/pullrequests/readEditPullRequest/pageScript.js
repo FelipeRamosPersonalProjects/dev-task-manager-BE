@@ -144,24 +144,13 @@ window.socketClient.subscribeComponent({
                         }
 
                         if ($this.attr('js') === 'step-commit:create') {
-                            const $form = $el.find('form.changes-form');
+                            const $form = $el.find('form[js="commit-form"]');
                             const $title = $form.find('[field][name=commitTitle]');
                             const $description = $form.find('[field][name=commitDescription]');
-                            const $commitChanges = $form.find('[js="commit-file-change"]');
-                            const fileChanges = [];
-
-                            $commitChanges.map(function () {
-                                const $file = $(this);
-                                const filename = $file.attr('filename');
-                                const fileDesc = $file.find('[name="description"]').text();
-
-                                fileChanges.push({ filename, description: fileDesc });
-                            })
 
                             ajaxBody.commitData = {
                                 title: $title.length ? $title.val() : '',
-                                description: $title.length ? $description.text() : '',
-                                fileChanges
+                                description: $title.length ? $description.text() : ''
                             };
                         }
 
@@ -176,18 +165,44 @@ window.socketClient.subscribeComponent({
                         });
                     });
 
-                    $el.on('click', '[js="step-push"], [js="step-push:leave"]', async function () {
+                    $el.on('click', '[js="step-push"], [js="step-push:skip"]', async function () {
                         const $this = $(this);
                         const ajaxBody = {};
 
-                        if ($this.attr('js') === 'step-push:leave') {
-                            ajaxBody.leave = true;
+                        if ($this.attr('js') === 'step-push:skip') {
+                            ajaxBody.skip = true;
                         } else {
                             ajaxBody.push = true;
                         }
 
                         $.ajax({
                             url: '/pulls/publish',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(ajaxBody),
+                            error: function(error) {
+                                throw error.responseJSON || error;
+                            }
+                        });
+                    });
+
+                    $el.on('click', '[js="step-changesdescription"]', async function () {
+                        const $form = $el.find('form[js="changes-form"]');
+                        const $fileChanges = $form.find('[js="file-change"]');
+                        const ajaxBody = { fileChanges: [] };
+
+                        $fileChanges.map(function () {
+                            const $file = $(this);
+                            const filename = $file.attr('filename');
+                            const fileDesc = $file.find('[name="description"]').text();
+
+                            if (filename && fileDesc) {
+                                ajaxBody.fileChanges.push({ filename, description: fileDesc });
+                            }
+                        });
+
+                        $.ajax({
+                            url: '/pulls/changes-description',
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(ajaxBody),

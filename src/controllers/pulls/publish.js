@@ -12,7 +12,7 @@ const bodySchema = {
 module.exports = async function (req, res) {
     try {
         const request = new Request(req, bodySchema);
-        const { push, leave } = request.getBody();
+        const { push, skip } = request.getBody();
 
         const socketConnection = global.socketServer.getConnection(req.session.progressPR.socketConnectionID);
         const subscription = socketConnection.getSubscription(req.session.progressPR.subscriptionUID);
@@ -20,13 +20,23 @@ module.exports = async function (req, res) {
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
 
-        if (leave) {
-
+        if (skip) {
+            progressModal.nextStep.changesDescription().then(() => {
+                subscription.toClient();
+            }).catch(err => subscription.toClientError(err))
         }
 
         if (push) {
-            repoManager.push().then(pushed => {
-                progressModal.nextStep.createPR();
+            repoManager.push().then(async (pushed) => {
+                if (pushed.error) {
+                    return subscription.toClientError(pushed);
+                }
+
+                const changed = await progressModal.nextStep.changesDescription();
+                if (changed instanceof Error.Log) {
+                    return subscription.toClientError(changed);
+                }
+
                 subscription.toClient();
             }).catch(err => subscription.toClientError(err))
         }

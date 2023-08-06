@@ -1,7 +1,6 @@
 const Component = require('@interface/Component');
 const Spinner = require('@www/components/Spinner');
 const Button = require('@www/components/DocForm/FormField/Button');
-const ErrorMessage = require('@www/components/ErrorMessage');
 const FileChange = require('@www/components/FileChange');
 const { TextArea, Input } = require('@www/components/DocForm/FormField/fields');
 
