@@ -7,6 +7,7 @@ const StepCommit = require('./StepCommit');
 const StepPublish = require('./StepPublish');
 const StepChangesDescription = require('./StepChangesDescription');
 const StepCreatePR = require('./StepCreatePR');
+const StepCompleted = require('./StepCompleted');
 const Paragraph = require('@src/www/components/Paragraph');
 const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
 const CRUD = require('@CRUD');
@@ -71,6 +72,11 @@ class ProcessPR extends Component {
             stepCreatePR: (value) => {
                 if (value) {
                     this.stepCreatePR = new StepCreatePR(value);
+                }
+            },
+            stepCompleted: (value) => {
+                if (value) {
+                    this.stepCompleted = new StepCompleted(value)
                 }
             },
             prDoc: (value) => {
@@ -192,6 +198,10 @@ class ProcessPR extends Component {
                 }
 
                 this.setters.stepCreatePR({ prDoc: this.prDoc });
+            },
+            completed: () => {
+                this.stepCreatePR.resolve();
+                this.setters.stepCompleted({ prDoc: this.prDoc });
             }
         };
     }
