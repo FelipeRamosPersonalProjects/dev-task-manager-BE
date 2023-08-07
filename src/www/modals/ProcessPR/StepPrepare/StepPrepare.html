@@ -5,24 +5,27 @@
 
     <div class="question-wrap initial">
         <p>Let's prepare the branch for the pull request. Your current local branch is <b>##{{currentBranch:string}}##.</b></p>
-        <p>Would you like to create the <b>##{{headBranch:string}}##</b> branch bringing the changes with?</p>
+        ##{{question:string}}##
 
         <div class="buttons-wrap">
             ##{{skipButton:component}}##
             ##{{createRecommendedButton:component}}##
+            ##{{stayCurrentBranchButton:component}}##
         </div>
     </div>
 
     <div class="question-wrap custom-name">
         <div class="input-wrap">
-            <label>Branch Name:</label>
-            <input type="text" name="branch-name" value="##{{headBranch:string}}##" />
+            <label>New Branch Name:</label>
+            <input type="text" name="branch-name" value="##{{recommendedBranch:string}}##" />
             ##{{errorMessage:component}}##
         </div>
 
+        <h4>Choose one of the options below</h4>
         <div class="buttons-wrap">
             ##{{skipButton:component}}##
             ##{{createBranchButton:component}}##
+            ##{{switchBranchButton:component}}##
         </div>
     </div>
 </div>

@@ -130,6 +130,29 @@ class RepoManager extends GitHubConnection {
         }
     }
 
+    async findAvailableBranch(branchName, subscription) {
+        const progressModal = subscription && subscription.component;
+        const prDoc = progressModal && progressModal.prDoc;
+
+        try {
+            const branch = await this.isBranchExist(branchName);
+
+            if (branch.isExist) {
+                const increasedVersion = prDoc.version + 1;
+
+                if (prDoc.version < increasedVersion) {
+                    prDoc.version = increasedVersion;
+                }
+
+                return await this.findAvailableBranch(prDoc.recommendedBranchName, subscription);
+            } else {
+                return branchName;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     async createBranch(name, baseName, options) {
         const { bringChanges, backupFolder } = Object(options);
         const subscription = options && options.subscription

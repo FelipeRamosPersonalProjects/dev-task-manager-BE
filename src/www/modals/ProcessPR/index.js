@@ -135,14 +135,10 @@ class ProcessPR extends Component {
 
                 this.stepBegin.resolve();
                 this.setters.stepPrepare({ currentBranch: this.branchSwitcher.currentBranch, headBranch: this.prDoc.head });
-                this.stepPrepare.setButton.createRecommended(true);
-                this.stepPrepare.setButton.skip(true);
-                this.stepPrepare.setCurrent(true);
             },
             commit: () => {
                 this.stepPrepare.resolve();
                 this.setters.stepCommit({prDoc: this.prDoc});
-                this.stepCommit.setCurrent(true);
             },
             publish: async (userSession) => {
                 const repoManager = this.prDoc && this.prDoc.repoManager;
@@ -229,8 +225,9 @@ class ProcessPR extends Component {
                     throw new Error.Log(err);
                 }
             },
-            DUPLICATED_BRANCH: (customBranchName) => {
+            DUPLICATED_BRANCH: (customBranchName, availableBranch) => {
                 try {
+                    this.stepPrepare.recommendedBranch = availableBranch;
                     this.stepPrepare.setError.DUPLICATED_BRANCH(customBranchName || this.prDoc.head);
                 } catch (err) {
                     throw new Error.Log(err);

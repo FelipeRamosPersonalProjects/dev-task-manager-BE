@@ -22,3 +22,11 @@ export function $toggleEditInput($target) {
         $target.attr('view', 'read');
     }
 }
+
+export function handleToggleInputDblclick() {
+    const $this = $(this);
+    
+    if ($this.attr('view') !== 'edit') {
+        $toggleEditInput($this);
+    }
+}
