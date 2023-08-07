@@ -8,8 +8,13 @@
         ##{{commitDescription:component}}##
 
         <div class="question-wrap">
+            <h4>##{{fileChangesMessage:string}}##</h4>
+
+            <ul>
+                ##{{fileChanges:array:CommitFileChange}}##
+            </ul>
             <div class="buttons-wrap">
-                ##{{skipButton:component}}##
+                ##{{nextStepButton:component}}##
                 ##{{createCommitButton:component}}##
             </div>
         </div>

@@ -18,16 +18,17 @@ module.exports = async function (req, res) {
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
+        const currentChanges = await repoManager.currentChanges();
 
         if (skip || stayCurrent) {
-            progressModal.nextStep.commit();
+            progressModal.nextStep.commit(currentChanges);
             subscription.toClient();
             return res.status(200).send(Object().toSuccess());
         }
 
         if (switchBranch) {
-            repoManager.checkout(prDoc.head, { bringChanges: true }).then(switched => {
-                progressModal.nextStep.commit();
+            repoManager.checkout(prDoc.head, { bringChanges: true, subscription }).then(switched => {
+                progressModal.nextStep.commit(currentChanges);
                 subscription.toClient();
             }).catch(err => subscription.toClientError(err));
 
@@ -50,8 +51,8 @@ module.exports = async function (req, res) {
         }
         
         if (head && !isBranchExist.isExist) {
-            repoManager.createBranch(head, prDoc.base, { bringChanges: true, subscription }).then(created => {
-                progressModal.nextStep.commit();
+            repoManager.createBranch(head, prDoc.base, { bringChanges: true, subscription }).then(async () => {
+                progressModal.nextStep.commit(currentChanges);
                 subscription.toClient();
             }).catch(err => {
                 subscription.toClientError(err);
