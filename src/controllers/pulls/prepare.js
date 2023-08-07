@@ -1,15 +1,16 @@
 const Request = require('@models/RequestAPI');
 
 const bodySchema = {
-    customBranchName: {
-        type: String
-    }
+    customBranchName: { type: String },
+    skip: { type: Boolean },
+    stayCurrent: { type: Boolean },
+    switchBranch: { type: Boolean },
 };
 
 module.exports = async function (req, res) {
     try {
         const request = new Request(req, bodySchema);
-        const { customBranchName, skip } = request.getBody();
+        const { customBranchName, skip, stayCurrent, switchBranch } = request.getBody();
 
         const socketConnection = global.socketServer.getConnection(req.session.progressPR.socketConnectionID);
         const subscription = socketConnection.getSubscription(req.session.progressPR.subscriptionUID);
@@ -18,9 +19,18 @@ module.exports = async function (req, res) {
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
 
-        if (skip) {
+        if (skip || stayCurrent) {
             progressModal.nextStep.commit();
             subscription.toClient();
+            return res.status(200).send(Object().toSuccess());
+        }
+
+        if (switchBranch) {
+            repoManager.checkout(prDoc.head, { bringChanges: true }).then(switched => {
+                progressModal.nextStep.commit();
+                subscription.toClient();
+            }).catch(err => subscription.toClientError(err));
+
             return res.status(200).send(Object().toSuccess());
         }
 
@@ -28,16 +38,18 @@ module.exports = async function (req, res) {
         let head = prDoc.head;
 
         if (!isBranchExist) {
-            throw 'isBranch returned undefined!'
+            throw 'isBranch returned "undefined"!'
         }
 
         if (isBranchExist.isExist) {
-            progressModal.setError.DUPLICATED_BRANCH(customBranchName);
+            const availableBranch = await repoManager.findAvailableBranch(head, subscription);
+
+            progressModal.setError.DUPLICATED_BRANCH(customBranchName, availableBranch);
         } else if (customBranchName) {
             head = customBranchName;
         }
         
-        if (head) {
+        if (head && !isBranchExist.isExist) {
             repoManager.createBranch(head, prDoc.base, { bringChanges: true, subscription }).then(created => {
                 progressModal.nextStep.commit();
                 subscription.toClient();

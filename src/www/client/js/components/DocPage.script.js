@@ -1,15 +1,15 @@
 import { statusTransition } from '/src/www/client/js/helpers/docHelpers';
-import { toggleEditInput } from '/src/www/client/js/helpers/tools';
+import { toggleEditInput, $toggleEditInput, handleToggleInputDblclick } from '/src/www/client/js/helpers/tools';
 
 function readEditFormListeners() {
-    const readEditForms = document.querySelectorAll('.readedit-form');
+    const $readEditForms = $('.readedit-form');
     
-    readEditForms.forEach(item => {
-        const editBtn = item.querySelector('.edit-btn');
-        const cancelBtn = item.querySelector('.cancel-btn');
+    $readEditForms.map(function () {
+        const $this = $(this);
+        const $cancelBtn = $this.find('.cancel-btn');
     
-        editBtn && editBtn.addEventListener('click', () => toggleEditInput(item));
-        cancelBtn && cancelBtn.addEventListener('click', () => toggleEditInput(item));
+        $this.on('dblclick', handleToggleInputDblclick);
+        $cancelBtn.on('click', () => $toggleEditInput($this));
     });
 }
 

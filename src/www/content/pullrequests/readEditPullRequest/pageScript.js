@@ -108,28 +108,40 @@ window.socketClient.subscribeComponent({
                         });
                     });
 
-                    $el.on('click', '[js="step-prepare:create-recommended"], [js="step-prepare:create-branch"], [js="step-prepare:skip"]', async function () {
-                        const $input = $el.find('.question-wrap.custom-name [name="branch-name"]');
-                        const ajaxBody = {};
+                    $el.on(
+                        'click',
+                        '[js="step-prepare:create-recommended"], [js="step-prepare:create-branch"], [js="step-prepare:switch-branch"], [js="step-prepare:staycurrent"], [js="step-prepare:skip"]',
+                        async function () {
+                            const $input = $el.find('.question-wrap.custom-name [name="branch-name"]');
+                            const ajaxBody = {};
 
-                        if ($(this).attr('js') === 'step-prepare:create-branch') {
-                            ajaxBody.customBranchName = $input.val().trim();
-                        }
-
-                        if ($(this).attr('js') === 'step-prepare:skip') {
-                            ajaxBody.skip = true;
-                        }
-
-                        $.ajax({
-                            url: '/pulls/prepare',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(ajaxBody),
-                            error: function(error) {
-                                throw error.responseJSON || error;
+                            if ($(this).attr('js') === 'step-prepare:create-branch') {
+                                ajaxBody.customBranchName = $input.val().trim();
                             }
-                        });
-                    });
+
+                            if ($(this).attr('js') === 'step-prepare:skip') {
+                                ajaxBody.skip = true;
+                            }
+
+                            if ($(this).attr('js') === 'step-prepare:staycurrent') {
+                                ajaxBody.stayCurrent = true;
+                            }
+                            
+                            if ($(this).attr('js') === 'step-prepare:switch-branch') {
+                                ajaxBody.switchBranch = true;
+                            }
+
+                            $.ajax({
+                                url: '/pulls/prepare',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(ajaxBody),
+                                error: function(error) {
+                                    throw error.responseJSON || error;
+                                }
+                            });
+                        }
+                    );
 
                     $el.on('click', '[js="step-commit:skip"], [js="step-commit:load-changes"], [js="step-commit:create"]', async function () {
                         const $this = $(this);
