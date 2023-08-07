@@ -136,9 +136,9 @@ class ProcessPR extends Component {
                 this.stepBegin.resolve();
                 this.setters.stepPrepare({ currentBranch: this.branchSwitcher.currentBranch, headBranch: this.prDoc.head });
             },
-            commit: () => {
+            commit: (currentChanges) => {
                 this.stepPrepare.resolve();
-                this.setters.stepCommit({prDoc: this.prDoc});
+                this.setters.stepCommit({prDoc: this.prDoc, currentChanges});
             },
             publish: async (userSession) => {
                 const repoManager = this.prDoc && this.prDoc.repoManager;

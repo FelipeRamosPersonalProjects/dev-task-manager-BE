@@ -1,7 +1,7 @@
 const Component = require('@interface/Component');
 const Spinner = require('@www/components/Spinner');
 const Button = require('@www/components/DocForm/FormField/Button');
-const FileChange = require('@www/components/FileChange');
+const CommitFileChange = require('./CommitFileChange');
 const { TextArea, Input } = require('@www/components/DocForm/FormField/fields');
 
 class StepCommit extends Component {
@@ -12,7 +12,9 @@ class StepCommit extends Component {
     constructor(settings) {
         super(settings);
 
-        const { isLoading, error } = Object(settings);
+        const { isLoading, error, currentChanges } = Object(settings);
+        const { success, changes } = Object(currentChanges);
+        const hasChanges = Boolean(success && Array.isArray(changes) && changes.length);
 
         if (error) {
             this.setError[error] && this.setError[error];
@@ -23,22 +25,28 @@ class StepCommit extends Component {
         }
 
         this.setCurrent(true);
-        this.setButton.loadChanges(true);
-        this.setButton.createCommit(true);
-        this.setButton.skip(true);
+        this.setButton.nextStep(true);
+        this.fileChangesMessage = `There are ${changes.length} file changes to be commited!`;
+        
+        if (hasChanges) {
+            this.setButton.loadChanges(true);
+            this.setButton.createCommit(true);
 
-        this.commitTitle = new Input({
-            label: 'Title',
-            fieldName: 'commitTitle'
-        });
+            this.commitTitle = new Input({
+                label: 'Title',
+                fieldName: 'commitTitle'
+            });
+    
+            this.commitDescription = new TextArea({
+                label: 'Description',
+                fieldName: 'commitDescription'
+            });
 
-        this.commitDescription = new TextArea({
-            label: 'Description',
-            fieldName: 'commitDescription'
-        });
+            this.fileChanges = changes;
+        }
 
         this.types = {
-            FileChange
+            CommitFileChange
         };
     }
 
@@ -70,14 +78,14 @@ class StepCommit extends Component {
 
     get setButton() {
         return {
-            skip: (state) => {
+            nextStep: (state) => {
                 if (state) {
-                    this.skipButton = new Button({
-                        label: 'Skip Step',
+                    this.nextStepButton = new Button({
+                        label: 'Next Step',
                         attributes: 'js="step-commit:skip"'
                     });
                 } else {
-                    delete this.skipButton;
+                    delete this.nextStepButton;
                 }
             },
             loadChanges: (state) => {
