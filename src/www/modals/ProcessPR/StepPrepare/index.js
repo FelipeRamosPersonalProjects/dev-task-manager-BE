@@ -1,9 +1,9 @@
-const Component = require('@interface/Component');
+const StepModel = require('../StepModel');
 const Spinner = require('@www/components/Spinner');
 const Button = require('@www/components/DocForm/FormField/Button');
 const ErrorMessage = require('@www/components/ErrorMessage');
 
-class StepPrepare extends Component {
+class StepPrepare extends StepModel {
     get SOURCE_PATH() {
         return require.resolve('./StepPrepare.html');
     }
@@ -25,9 +25,7 @@ class StepPrepare extends Component {
             this.headBranch = headBranch;
             this.recommendedBranch = headBranch;
             this.setButton.skip(true);
-            this.setCurrent(true);
 
-            
             if (currentBranch === headBranch) {
                 this.setQuestion.stayCurrent();
                 this.setButton.stayCurrentBranch(true);
@@ -36,18 +34,6 @@ class StepPrepare extends Component {
                 this.setButton.createRecommended(true);
                 this.setButton.switchBranch(true);
             }
-        }
-    }
-
-    setCurrent(state) {
-        try {
-            if (state) {
-                this.isCurrentClass = 'current-step';
-            } else {
-                this.isCurrentClass = '';
-            }
-        } catch (err) {
-            throw new Error.Log(err);
         }
     }
 
@@ -137,27 +123,6 @@ class StepPrepare extends Component {
                 }
             }
         };
-    }
-
-    removeError() {
-        try {
-            delete this.error;
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    resolve() {
-        try {
-            this.resolved = true;
-            this.setCurrent(false);
-            this.removeError();
-
-            // Hiding the buttons
-            Object.keys(this.setButton).map(key => this.setButton[key](false));
-        } catch (err) {
-            throw new Error.Log(err);
-        }
     }
 }
 

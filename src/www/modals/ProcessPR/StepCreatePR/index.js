@@ -1,10 +1,10 @@
-const Component = require('@interface/Component');
+const StepModel = require('../StepModel');
 const Button = require('@www/components/DocForm/FormField/Button');
 const Spinner = require('@www/components/Spinner');
 const FileChange = require('@www/components/FileChange');
 const { TextAreaEdit, InputEdit } = require('@www/components/DocForm/FormField/fields');
 
-class StepCreatePR extends Component {
+class StepCreatePR extends StepModel {
     get SOURCE_PATH() {
         return require.resolve('./StepCreatePR.html');
     }
@@ -16,7 +16,6 @@ class StepCreatePR extends Component {
         const { title, description } = Object(prDoc);
 
         this.isLoading = new Spinner();
-        this.setCurrent(true);
         this.setButton.create(true);
 
         this.setTitle(title);
@@ -47,32 +46,6 @@ class StepCreatePR extends Component {
         });
     }
 
-    setCurrent(state) {
-        try {
-            if (state) {
-                this.isCurrentClass = 'current-step';
-            } else {
-                this.isCurrentClass = '';
-            }
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    removeError() {
-        try {
-            delete this.error;
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    get setError() {        
-        this.error = 'error';
-
-        return {};
-    }
-
     get setButton() {
         return {
             create: (state) => {
@@ -86,19 +59,6 @@ class StepCreatePR extends Component {
                 }
             }
         };
-    }
-
-    resolve() {
-        try {
-            this.resolved = true;
-            this.setCurrent(false);
-            this.removeError();
-
-            // Hiding the buttons
-            Object.keys(this.setButton).map(key => this.setButton[key](false));
-        } catch (err) {
-            throw new Error.Log(err);
-        }
     }
 }
 

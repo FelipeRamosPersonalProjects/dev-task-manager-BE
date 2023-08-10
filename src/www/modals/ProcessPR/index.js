@@ -10,7 +10,6 @@ const StepCreatePR = require('./StepCreatePR');
 const StepCompleted = require('./StepCompleted');
 const Paragraph = require('@src/www/components/Paragraph');
 const { InputEdit, TextAreaEdit, SingleRelation } = require('@www/components/DocForm/FormField/fields');
-const CRUD = require('@CRUD');
 
 class ProcessPR extends Component {
     get SOURCE_PATH() {
