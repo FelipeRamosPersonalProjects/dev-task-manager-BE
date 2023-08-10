@@ -20,6 +20,7 @@ module.exports = async function (req, res) {
         const repoManager = prDoc && prDoc.repoManager;
         const currentChanges = await repoManager.currentChanges();
 
+        repoManager.connectAPI(req.session.currentUser);
         if (skip || stayCurrent) {
             progressModal.nextStep.commit(currentChanges);
             subscription.toClient();

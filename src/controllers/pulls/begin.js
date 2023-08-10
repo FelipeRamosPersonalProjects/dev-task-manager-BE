@@ -61,19 +61,6 @@ module.exports = async function (req, res) {
         const docQuery = await CRUD.getDoc({ collectionName: 'pull_requests', filter: { index: prIndex }}).defaultPopulate();
         const doc = docQuery.initialize();
 
-        if (switchToBase) {
-            const switched = await doc.repoManager.checkout(doc.base, { bringChanges: true });
-
-            await CRUD.update({
-                collectionName: 'pull_requests',
-                filter: { index: prIndex },
-                data: { $addToSet: { logsHistory: switched.out } }
-            });
-        }
-
-        // Getting current branch on local GIT
-        const currentBranch = await doc.repoManager.getCurrentBranch();
-
         // Validating
         const socketConnection = global.socketServer.getConnection(socketConnectionID);
         if (isInvalid({res, socketConnection, subscriptionUID, socketConnectionID})) {
@@ -94,9 +81,21 @@ module.exports = async function (req, res) {
 
         const subscription = socketConnection.getSubscription(subscriptionUID);
         const stepsComponent = subscription && subscription.component;
+        const repoManager = doc && doc.repoManager;
 
-        stepsComponent.prDoc.task.repo.repoManager.connectAPI(req.session.currentUser);
+        repoManager.connectAPI(req.session.currentUser);
+        if (switchToBase) {
+            const switched = await repoManager.checkout(doc.base, { bringChanges: true });
 
+            await CRUD.update({
+                collectionName: 'pull_requests',
+                filter: { index: prIndex },
+                data: { $addToSet: { logsHistory: switched.out } }
+            });
+        }
+
+        // Getting current branch on local GIT
+        const currentBranch = await doc.repoManager.getCurrentBranch();
         if (currentBranch) {
             stepsComponent.setProps.branchSwitcherGroup({currentBranch});
         }
