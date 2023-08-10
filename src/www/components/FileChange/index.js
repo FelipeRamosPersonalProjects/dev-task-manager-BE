@@ -9,14 +9,15 @@ class FileChange extends Component {
     constructor(settings) {
         super(settings);
 
-        const { filename, patch } = Object(settings);
+        const { filename, patch, description } = Object(settings);
         
         this.filename = filename;
         this.patch = patch;
 
         this.description = new TextArea({
             label: 'File Description',
-            fieldName: 'description'
+            fieldName: 'description',
+            currentValue: description
         });
     }
 }

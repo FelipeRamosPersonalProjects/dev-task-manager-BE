@@ -168,7 +168,7 @@ class ProcessPR extends Component {
                     return updated;
                 }
 
-                this.prDoc.fileChanges = compare.files;
+                this.prDoc.fileChanges = compare.files.map(item => ({...item, ...this.prDoc.fileChanges.find(file => file.filename === item.filename)}));
                 this.stepPublish.resolve();
                 this.setters.stepChangesDescription(this.prDoc);
             },
