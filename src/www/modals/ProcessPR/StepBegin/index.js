@@ -1,9 +1,9 @@
-const Component = require('@interface/Component');
+const StepModel = require('../StepModel');
 const BranchSwitcher = require('@src/www/components/BranchSwitcher');
 const Button = require('@www/components/DocForm/FormField/Button');
 const Spinner = require('@www/components/Spinner');
 
-class StepBegin extends Component {
+class StepBegin extends StepModel {
     get SOURCE_PATH() {
         return require.resolve('./StepBegin.html');
     }
@@ -11,7 +11,7 @@ class StepBegin extends Component {
     constructor(settings) {
         super(settings);
 
-        const { isLoading, isCurrentClass, error, subscriptionUID, branchSwitcher, nextStep } = Object(settings);
+        const { isLoading, error, subscriptionUID, branchSwitcher, nextStep } = Object(settings);
         
         if (isLoading) {
             this.isLoading = new Spinner();
@@ -26,7 +26,6 @@ class StepBegin extends Component {
 
             // Configuring elements to render
             this.setters.branchSwitcher(branchSwitcher);
-            this.setCurrent(isCurrentClass);
             this.setButton.start(true);
             this.setButton.ignore(false);
             this.setButton.switchToBase(false);
@@ -40,26 +39,6 @@ class StepBegin extends Component {
                     this.branchSwitcher = new BranchSwitcher(value);
                 }
             }
-        }
-    }
-
-    setCurrent(state) {
-        try {
-            if (state) {
-                this.isCurrentClass = 'current-step';
-            } else {
-                this.isCurrentClass = '';
-            }
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    removeError() {
-        try {
-            delete this.error;
-        } catch (err) {
-            throw new Error.Log(err);
         }
     }
 
@@ -118,19 +97,6 @@ class StepBegin extends Component {
                 }
             }
         };
-    }
-
-    resolve() {
-        try {
-            this.resolved = true;
-            this.setCurrent(false);
-            this.removeError();
-
-            // Hiding the buttons
-            Object.keys(this.setButton).map(key => this.setButton[key](false));
-        } catch (err) {
-            throw new Error.Log(err);
-        }
     }
 }
 

@@ -1,8 +1,8 @@
-const Component = require('@interface/Component');
+const StepModel = require('../StepModel');
 const Button = require('@www/components/DocForm/FormField/Button');
 const Spinner = require('@www/components/Spinner');
 
-class StepPublish extends Component {
+class StepPublish extends StepModel {
     get SOURCE_PATH() {
         return require.resolve('./StepPublish.html');
     }
@@ -13,8 +13,6 @@ class StepPublish extends Component {
         const { isLoading, isBranchExist } = Object(settings);
 
         this.isLoading = new Spinner();
-
-        this.setCurrent(true);
         this.setButton.skip(true);
 
         if (isBranchExist && isBranchExist.isExist) {
@@ -23,26 +21,6 @@ class StepPublish extends Component {
             } else if (isBranchExist.isLocalExist && isBranchExist.isRemoteExist) {
                 this.setButton.push(true);
             }
-        }
-    }
-
-    setCurrent(state) {
-        try {
-            if (state) {
-                this.isCurrentClass = 'current-step';
-            } else {
-                this.isCurrentClass = '';
-            }
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    removeError() {
-        try {
-            delete this.error;
-        } catch (err) {
-            throw new Error.Log(err);
         }
     }
 
@@ -85,19 +63,6 @@ class StepPublish extends Component {
                 }
             }
         };
-    }
-
-    resolve() {
-        try {
-            this.resolved = true;
-            this.setCurrent(false);
-            this.removeError();
-
-            // Hiding the buttons
-            Object.keys(this.setButton).map(key => this.setButton[key](false));
-        } catch (err) {
-            throw new Error.Log(err);
-        }
     }
 }
 

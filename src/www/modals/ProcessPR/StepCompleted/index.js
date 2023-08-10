@@ -1,9 +1,9 @@
 const StringBuild = require('@STRING');
-const Component = require('@interface/Component');
+const StepModel = require('../StepModel');
 const Button = require('@www/components/DocForm/FormField/Button');
 const Spinner = require('@www/components/Spinner');
 
-class StepCompleted extends Component {
+class StepCompleted extends StepModel {
     get SOURCE_PATH() {
         return require.resolve('./StepCompleted.html');
     }
@@ -16,7 +16,6 @@ class StepCompleted extends Component {
         const { html_url } = Object(gitHubPR);
 
         this.isLoading = new Spinner();
-        this.setCurrent(true);
         this.setButton.copySlackFeedback(true);
 
         this.title = title;
@@ -34,32 +33,6 @@ class StepCompleted extends Component {
         this.slackFeedback = slackFeedback.end();
     }
 
-    setCurrent(state) {
-        try {
-            if (state) {
-                this.isCurrentClass = 'current-step';
-            } else {
-                this.isCurrentClass = '';
-            }
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    removeError() {
-        try {
-            delete this.error;
-        } catch (err) {
-            throw new Error.Log(err);
-        }
-    }
-
-    get setError() {        
-        this.error = 'error';
-
-        return {};
-    }
-
     get setButton() {
         return {
             copySlackFeedback: (state) => {
@@ -73,19 +46,6 @@ class StepCompleted extends Component {
                 }
             }
         };
-    }
-
-    resolve() {
-        try {
-            this.resolved = true;
-            this.setCurrent(false);
-            this.removeError();
-
-            // Hiding the buttons
-            Object.keys(this.setButton).map(key => this.setButton[key](false));
-        } catch (err) {
-            throw new Error.Log(err);
-        }
     }
 }
 
