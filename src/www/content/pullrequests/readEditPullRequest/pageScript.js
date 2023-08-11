@@ -28,6 +28,17 @@ function scrollLogs() {
     scrollableDiv.scrollTop(scrollHeight);
 }
 
+function scrollSteps() {
+    const scrollableDiv = $('[modal-id="progress-pr"] .main-display .steps-display');
+    const scrollHeight = scrollableDiv.prop('scrollHeight');
+    scrollableDiv.scrollTop(scrollHeight);
+}
+
+function handlingScrolls() {
+    scrollLogs();
+    scrollSteps();
+}
+
 window.socketClient.subscribeComponent({
     wrapSelector: '.main-content',
     path: 'content/pullrequests/readEditPullRequest',
@@ -61,8 +72,8 @@ window.socketClient.subscribeComponent({
                     promptContent: '<p>Starting job...</p>',
                     stepBegin: { isCurrentClass: true }
                 },
-                onSuccess: () => scrollLogs(),
-                onData: () => scrollLogs(),
+                onSuccess: () => handlingScrolls(),
+                onData: () => handlingScrolls(),
                 listeners: ($el) => {
                     $el.on('click', (ev) => {
                         if (ev.target.hasAttribute('modal')) {

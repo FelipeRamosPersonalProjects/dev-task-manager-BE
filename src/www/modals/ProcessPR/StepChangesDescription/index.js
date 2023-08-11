@@ -43,6 +43,112 @@ class StepChangesDescription extends StepModel {
             }
         };
     }
+
+    get feedback() {
+        this.setLoading(false);
+
+        return {
+            savingDescriptions: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('savingDescriptionsFeedback', 'success', `The file changes descriptions was saved successfully!`);
+                        } else {
+                            delete this.savingDescriptionsFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('savingDescriptionsFeedback', 'error', err.message);
+                        } else {
+                            delete this.savingDescriptionsFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('savingDescriptionsFeedback', 'loading', `Saving file changes descriptions...`);
+                        } else {
+                            delete this.savingDescriptionsFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            skipping: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'success', 'Step skipped!');
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'error', err.message);
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'loading', 'Skipping step...');
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            loadingNext: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('loadingNextFeedback', 'success', 'Ready!');
+                        } else {
+                            delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('loadingNextFeedback', 'error', err.message);
+                        } else {
+                            delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('loadingNextFeedback', 'loading', 'Loading next step...');
+                        } else {
+                            delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            }
+        }
+    }
 }
 
 module.exports = StepChangesDescription;

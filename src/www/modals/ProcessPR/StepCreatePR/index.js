@@ -60,6 +60,79 @@ class StepCreatePR extends StepModel {
             }
         };
     }
+
+    get feedback() {
+        this.setLoading(false);
+
+        return {
+            creatingPR: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('creatingPRFeedback', 'success', `The pull request was created successfully!`);
+                        } else {
+                            delete this.creatingPRFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('creatingPRFeedback', 'error', err.message);
+                        } else {
+                            delete this.creatingPRFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('creatingPRFeedback', 'loading', `Creating pull request on remote...`);
+                        } else {
+                            delete this.creatingPRFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            checkingRemoteConnection: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('checkingRemoteConnectionFeedback', 'success', `Remote connection is ok!`);
+                        } else {
+                            delete this.checkingRemoteConnectionFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('checkingRemoteConnectionFeedback', 'error', err.message);
+                        } else {
+                            delete this.checkingRemoteConnectionFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('checkingRemoteConnectionFeedback', 'loading', `Checking remote connection...`);
+                        } else {
+                            delete this.checkingRemoteConnectionFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            }
+        }
+    }
 }
 
 module.exports = StepCreatePR;

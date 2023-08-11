@@ -243,6 +243,22 @@ class ProcessPR extends Component {
             throw new Error.Log(err);
         }
     }
+
+    setFeedback(stepName, propName, state, message) {
+        try {
+            if (!this[stepName]) {
+                throw new Error.Log({
+                    name: 'UNKNOWN_STEP',
+                    message: `The step provided "${stepName}" doesn't exist!`
+                });
+            }
+
+            this[stepName].setFeedback(propName, state, message);
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
 }
 
 module.exports = ProcessPR;

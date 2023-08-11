@@ -11,7 +11,7 @@ class StepBegin extends StepModel {
     constructor(settings) {
         super(settings);
 
-        const { isLoading, error, subscriptionUID, branchSwitcher, nextStep } = Object(settings);
+        const { isLoading, error, subscriptionUID, branchSwitcher } = Object(settings);
         
         if (isLoading) {
             this.isLoading = new Spinner();
@@ -22,7 +22,6 @@ class StepBegin extends StepModel {
 
             // Setting properties
             this.subscriptionUID = subscriptionUID;
-            this.nextStep = nextStep;
 
             // Configuring elements to render
             this.setters.branchSwitcher(branchSwitcher);
@@ -97,6 +96,135 @@ class StepBegin extends StepModel {
                 }
             }
         };
+    }
+
+    get feedback() {
+        return {
+            repoConnect: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('repoConnectFeedback', 'success', 'Repository successfully connected!');
+                        } else {
+                            delete this.repoConnectFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('repoConnectFeedback', 'error', err.message);
+                        } else {
+                            delete this.repoConnectFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        if (state) {
+                            this.setFeedback('repoConnectFeedback', 'loading', 'Connecting to remote repository...');
+                        } else {
+                            delete this.repoConnectFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            switchToBase: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('switchToBaseFeedback', 'success', `Branch switched!`);
+                        } else {
+                            delete this.switchToBaseFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('switchToBaseFeedback', 'error', err.message);
+                        } else {
+                            delete this.switchToBaseFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        if (state) {
+                            this.setFeedback('switchToBaseFeedback', 'loading', 'Switching branch to the base...');
+                        } else {
+                            delete this.switchToBaseFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            updatingDatabase: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('updatingDatabaseFeedback', 'success', 'Database updated successfully!');
+                        } else {
+                            delete this.updatingDatabaseFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('updatingDatabaseFeedback', 'error', err.message);
+                        } else {
+                            delete this.updatingDatabaseFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        if (state) {
+                            this.setFeedback('updatingDatabaseFeedback', 'loading', 'Updating database...');
+                        } else {
+                            delete this.updatingDatabaseFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            gettingBranch: (subscription) => {
+                return {
+                    setSuccess: (state, currentBranch) => {
+                        if (state) {
+                            this.setFeedback('gettingBranchFeedback', 'success', `Current branch is "${currentBranch}"`);
+                        } else {
+                            delete this.gettingBranchFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('gettingBranchFeedback', 'error', err.message);
+                        } else {
+                            delete this.gettingBranchFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        if (state) {
+                            this.setFeedback('gettingBranchFeedback', 'loading', 'Getting current branch...');
+                        } else {
+                            delete this.gettingBranchFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            }
+        }
     }
 }
 
