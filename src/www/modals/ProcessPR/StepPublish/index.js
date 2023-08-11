@@ -7,8 +7,8 @@ class StepPublish extends StepModel {
         return require.resolve('./StepPublish.html');
     }
 
-    constructor(settings) {
-        super(settings);
+    constructor(settings, parent) {
+        super(settings, parent);
 
         const { isLoading, isBranchExist } = Object(settings);
 
@@ -162,6 +162,37 @@ class StepPublish extends StepModel {
                             this.setFeedback('loadingNextFeedback', 'loading', 'Loading next step...');
                         } else {
                             delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            connectingRemote: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('connectingRemoteFeedback', 'success', `Repository connected!`);
+                        } else {
+                            delete this.connectingRemoteFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('connectingRemoteFeedback', 'error', err.message);
+                        } else {
+                            delete this.connectingRemoteFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        if (state) {
+                            this.setFeedback('connectingRemoteFeedback', 'loading', 'Connection to remote repository...');
+                        } else {
+                            delete this.connectingRemoteFeedback;
                         }
 
                         subscription.toClient();

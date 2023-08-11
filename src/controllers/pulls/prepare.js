@@ -61,7 +61,9 @@ module.exports = async function (req, res) {
 
         if (switchBranch) {
             feedback.switchingBranch(subscription).setLoading(true, prDoc.head);
-            repoManager.checkout(prDoc.head, { bringChanges: true, subscription }).then(switched => {
+            repoManager.checkout(prDoc.head, { bringChanges: true, subscription, logsCB: (message) => {
+                progressModal.addLog(message);
+            } }).then(() => {
                 progressModal.nextStep.commit(currentChanges);
                 feedback.switchingBranch(subscription).setSuccess(true, prDoc.head);
             }).catch(err => feedback.switchingBranch(subscription).setError(true, err));
@@ -98,9 +100,18 @@ module.exports = async function (req, res) {
         if (head && !isBranchExist.isExist) {
             feedback.creatingBranch(subscription).setLoading(true, head);
 
-            repoManager.createBranch(head, prDoc.base, { bringChanges: true, subscription }).then(async () => {
-                progressModal.nextStep.commit(currentChanges);
-                feedback.creatingBranch(subscription).setSuccess(true, head);
+            repoManager.createBranch(head, prDoc.base, {
+                bringChanges: true,
+                subscription,
+                logsCB: (message) => {
+                    progressModal.addLog(message);
+                }
+            }).then(async () => {
+                currentChanges = await repoManager.currentChanges();
+                prDoc.updateDB({ filter: { index: prDoc.index }, data: { head }}).then(() => {
+                    progressModal.nextStep.commit(currentChanges);
+                    feedback.creatingBranch(subscription).setSuccess(true, head);
+                });
             }).catch(err => feedback.creatingBranch(subscription).setError(true, err));
         }
 

@@ -2,14 +2,19 @@ const Component = require('@interface/Component');
 const UserFeedback = require('@www/components/UserFeedback');
 
 class PullRequestStep extends Component {
-    constructor(setup) {
+    constructor(setup, parent) {
         super(setup);
 
         try {
             this.setCurrent(true);
+            this._parent = () => parent;
         } catch (err) {
             throw new Error.Log(err);
         }
+    }
+
+    get parent() {
+        return this._parent() || {};
     }
 
     get setters() {
@@ -60,6 +65,7 @@ class PullRequestStep extends Component {
     setFeedback(propName, state, message) {
         try {
             if (state) {
+                this.parent.addLog(message);
                 this[propName] = new UserFeedback({ state, message });
             } else {
                 delete this[propName];

@@ -14,6 +14,7 @@ module.exports = async function (req, res) {
 
         try {
             feedback.checkingRemoteConnection(subscription).setLoading(true);
+
             repoManager.connectAPI(req.session.currentUser);
             feedback.checkingRemoteConnection(subscription).setSuccess(true);
         } catch (err) {
@@ -21,7 +22,11 @@ module.exports = async function (req, res) {
         }
 
         feedback.creatingPR(subscription).setLoading(true);
-        prDoc.publishPR().then(created => {
+        prDoc.publishPR({
+            logsCB: (message) => {
+                progressModal.addLog(message);
+            }
+        }).then(created => {
             if (created.error) {
                 return feedback.creatingPR(subscription).setError(true, created);
             }

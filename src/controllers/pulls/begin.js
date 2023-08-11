@@ -97,22 +97,13 @@ module.exports = async function (req, res) {
         if (switchToBase) {
             feedback.switchToBase(subscription).setLoading(true);
 
-            repoManager.checkout(doc.base, { bringChanges: true }).then(async switched => {
-                feedback.switchToBase(subscription).setSuccess(true);
-
-                try {
-                    feedback.updatingDatabase(subscription).setLoading(true);
-    
-                    await CRUD.update({
-                        collectionName: 'pull_requests',
-                        filter: { index: prIndex },
-                        data: { $addToSet: { logsHistory: switched.out } }
-                    });
-    
-                    feedback.updatingDatabase(subscription).setSuccess(true);
-                } catch (err) {
-                    feedback.updatingDatabase(subscription).setError(true, err);
+            repoManager.checkout(doc.base, {
+                bringChanges: true,
+                logsCB: (message) => {
+                    stepsComponent.addLog(message);
                 }
+            }).then(async () => {
+                feedback.switchToBase(subscription).setSuccess(true);
             }).catch(err => {
                 feedback.switchToBase(subscription).setError(true, err);
             });
@@ -120,12 +111,17 @@ module.exports = async function (req, res) {
 
         // Getting current branch on local GIT
         feedback.gettingBranch(subscription).setLoading(true);
+
+        stepsComponent.addLog('Getting current branch...');
         const currentBranch = await doc.repoManager.getCurrentBranch();
+
         if (currentBranch) {
+            stepsComponent.addLog('Current branch is ' + currentBranch);
+
             stepsComponent.setProps.branchSwitcherGroup({currentBranch});
             feedback.gettingBranch(subscription).setSuccess(true, currentBranch);
         } else {
-            feedback.gettingBranch(subscription).setError(true, err);
+            feedback.gettingBranch(subscription).setError(true);
         }
 
         if (ignoreBranchName || doc.head === currentBranch || doc.base === currentBranch) {

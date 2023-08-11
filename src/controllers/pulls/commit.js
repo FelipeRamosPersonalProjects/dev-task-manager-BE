@@ -53,7 +53,12 @@ module.exports = async function (req, res) {
                 const { title, description, fileChanges } = Object(commitData);
 
                 feedback.commiting(subscription).setLoading(true);
-                repoManager.commit(title, description, { fileChanges }).then((commited) => {
+                repoManager.commit(title, description, {
+                    fileChanges,
+                    logsCB: (message) => {
+                        progressModal.addLog(message);
+                    }
+                }).then((commited) => {
                     if (commited.error) {
                         return subscription.toClientError(commited);
                     }

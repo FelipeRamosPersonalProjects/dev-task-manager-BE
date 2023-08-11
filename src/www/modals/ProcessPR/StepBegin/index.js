@@ -8,8 +8,8 @@ class StepBegin extends StepModel {
         return require.resolve('./StepBegin.html');
     }
 
-    constructor(settings) {
-        super(settings);
+    constructor(settings, parent) {
+        super(settings, parent);
 
         const { isLoading, error, subscriptionUID, branchSwitcher } = Object(settings);
         

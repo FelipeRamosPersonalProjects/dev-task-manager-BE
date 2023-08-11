@@ -9,8 +9,8 @@ class StepCreatePR extends StepModel {
         return require.resolve('./StepCreatePR.html');
     }
 
-    constructor(settings) {
-        super(settings);
+    constructor(settings, parent) {
+        super(settings, parent);
 
         const { isLoading, prDoc } = Object(settings);
         const { title, description } = Object(prDoc);

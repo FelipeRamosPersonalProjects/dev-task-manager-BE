@@ -155,11 +155,18 @@ class RepoManager extends GitHubConnection {
 
     async createBranch(name, baseName, options) {
         const { bringChanges, backupFolder } = Object(options);
-        const subscription = options && options.subscription
+        const subscription = options && options.subscription;
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
+        
+        let logsCB = options && options.logsCB;
+        if (typeof logsCB !== 'function') {
+            logsCB = () => {};
+        }
 
         try {
+            logsCB(`Creating the new branch "${name}" from "${baseName}"...`);
+
             const branch = await this.isBranchExist(name);
             if (branch.isExist) {
                 const increasedVersion = prDoc.version + 1;
@@ -171,6 +178,8 @@ class RepoManager extends GitHubConnection {
 
                 toolsCLI.print(`Branch name "${name}" already exists!`, 'BRANCH-EXIST');
                 toolsCLI.print(`Trying to create the "${prDoc.head}"...`, 'BRANCH-EXIST');
+                logsCB(`Branch name "${name}" already exists!`, 'GIT-CLI');
+                logsCB(`Trying to create the "${prDoc.head}"...`, 'GIT-CLI');
                 return await this.createBranch(prDoc.head, baseName, options);
             }
 
@@ -188,7 +197,7 @@ class RepoManager extends GitHubConnection {
             }
 
             if (prompt.success) {
-                const checkout = await this.checkout(name, { bringChanges, backupFolder });
+                const checkout = await this.checkout(name, { bringChanges, backupFolder, logsCB });
 
                 prDoc.updateVersion(prDoc.version).catch(err => subscription.toClientError(err));
                 return checkout;
@@ -199,12 +208,19 @@ class RepoManager extends GitHubConnection {
     }
 
     async checkout(branchName, options) {
-        const { bringChanges, backupFolder } = options || {};
+        const { bringChanges, backupFolder } = Object(options);
+        let logsCB = Object(options).logsCB;
+
+        if (typeof logsCB !== 'function') {
+            logsCB = () => {};
+        }
 
         try {
+            logsCB('Starting branch checkout...');
             const branch = await this.isBranchExist(branchName);
             const currentBranch = this.getCurrentBranch();
 
+            logsCB('The current branch is ' + currentBranch);
             if (branchName === currentBranch) {
                 return new Error.Log('services.GitHubAPI.RepoManager.checkout_branch_is_current', branchName);
             }
@@ -217,6 +233,7 @@ class RepoManager extends GitHubConnection {
                 return new Error.Log('services.GitHubAPI.RepoManager.checkout_local_branch_not_found', branchName);
             }
 
+            logsCB('Creating backup stash...');
             const stashed = await this.stashManager.createStash({
                 type: bringChanges ? 'temp' : 'stash',
                 ticketUID:  this.parentTask && this.parentTask.ticket._id,
@@ -228,13 +245,19 @@ class RepoManager extends GitHubConnection {
                 throw stashed.append('services.GitHubAPI.RepoManager.checkout_stashing_error');
             }
 
+            logsCB(`New stash "${stashed.displayName}" created successfully!`);
+            logsCB(`Switching to "${branchName}" branch...`);
             const out = await this.prompt.exec(`git checkout ${branchName}`);
             let message = out.out;
+            
+            logsCB(message, 'GIT-CLI');
             if (out instanceof Error.Log) {
+                logsCB(out.stack);
                 return out.append('services.GitHubAPI.RepoManager.checkout_git_error');
             }
             
             if (bringChanges && stashed.type === 'temp') {
+                logsCB('Applying backup stash...');
                 const apply = await this.stashManager.applyStash(stashed._id);
                 
                 if (apply instanceof Error.Log) {
@@ -244,10 +267,12 @@ class RepoManager extends GitHubConnection {
                         throw apply;
                     }
 
+                    logsCB(apply.stack);
                     return apply;
                 }
 
                 if (apply.success) {
+                    logsCB(apply.out, 'GIT-CLI');
                     message += apply.out + '\n';
                 }
             }
@@ -311,10 +336,16 @@ class RepoManager extends GitHubConnection {
     }
 
     async commit(title, summary, params) {
-        let { fileChanges } = Object(params);
+        let { fileChanges, logsCB } = Object(params);
+
+        if (typeof logsCB !== 'function') {
+            logsCB = () => {};
+        }
 
         try {
             if (!fileChanges) {
+                logsCB('Getting current changes...');
+
                 const fileChanges = await this.currentChanges();
                 if (fileChanges instanceof Error.Log) {
                     throw fileChanges;
@@ -327,7 +358,7 @@ class RepoManager extends GitHubConnection {
 
             if (Array.isArray(fileChanges)) {
                 fileChanges = fileChanges.map(file => {
-                    file.description = file.description.replace(/"/g, '**')
+                    file.description = file.description.replace(/"/g, '**');
                     return file;
                 });
             }
@@ -339,11 +370,14 @@ class RepoManager extends GitHubConnection {
                 throw added;
             }
 
+            logsCB(added, 'GIT-CLI');
+            logsCB('Starting the commit...');
             const out = await this.prompt.exec(`git commit -m "${title}" ${description}`);
             if (out instanceof Error.Log) {
                 throw out;
             }
 
+            logsCB(out.out, 'GIT-CLI');
             return {
                 success: true,
                 title,
@@ -444,8 +478,15 @@ class RepoManager extends GitHubConnection {
         }
     }
 
-    async createPullRequest(data) {
+    async createPullRequest(data, options) {
+        const { logsCB } = Object(options);
+
+        if (typeof logsCB !== 'function') {
+            logsCB = () => {};
+        }
+
         try {
+            logsCB(`Creating pull request on remote for repo "${this.repoPath}"...`);
             const PR = await this.ajax(
                 `/repos/${this.repoPath}/pulls`,
                 data,
@@ -457,6 +498,7 @@ class RepoManager extends GitHubConnection {
             }
 
             // Adding assignees to PR
+            logsCB(`Adding assignees to pull request on remote for repo "${this.repoPath}"...`);
             const addAssignees = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/assignees`, {
                 assignees: data.assignees
             }, {method: 'POST'});
@@ -466,6 +508,7 @@ class RepoManager extends GitHubConnection {
             }
 
             // // Adding reviewers to PR
+            logsCB(`Adding reviewers to pull request on remote for repo "${this.repoPath}"...`);
             if (Array.isArray(data.reviewers) && data.reviewers.length) {
                 const addReviewers = await this.ajax(`/repos/${this.repoPath}/pulls/${PR.number}/requested_reviewers`, {
                     reviewers: data.reviewers.map(item => item.gitHubUser)
@@ -477,6 +520,7 @@ class RepoManager extends GitHubConnection {
             }
 
             // Adding labels to PR
+            logsCB(`Adding labels to pull request on remote for repo "${this.repoPath}"...`);
             if (Array.isArray(data.labels) && data.labels.length) {
                 const addLabels = await this.ajax(`/repos/${this.repoPath}/issues/${PR.number}/labels`, {
                     labels: data.labels.map(item => item.name)

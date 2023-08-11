@@ -22,8 +22,17 @@ module.exports = async function (req, res) {
         const stepPublish = progressModal && progressModal.stepPublish;
         const feedback = stepPublish && stepPublish.feedback;
 
+        try {
+            feedback.connectingRemote(subscription).setLoading(true);
+            repoManager.connectAPI(req.session.currentUser);
+            feedback.connectingRemote(subscription).setSuccess(true);
+        } catch (err) {
+            return feedback.connectingRemote(subscription).setError(true, err);
+        }
+
         if (skip) {
             feedback.skipping(subscription).setLoading(true);
+
             progressModal.nextStep.changesDescription().then(() => {
                 feedback.skipping(subscription).setSuccess(true);
             }).catch(err => feedback.skipping(subscription).setError(true, err))
@@ -31,13 +40,17 @@ module.exports = async function (req, res) {
 
         if (push) {
             feedback.publishing(subscription).setLoading(true, prDoc.head);
+
             repoManager.push().then(async (pushed) => {
                 if (pushed.error) {
                     return feedback.publishing(subscription).setError(true, pushed);
                 }
 
+                progressModal.addLog(pushed.out, 'GIT-CLI');
                 feedback.publishing(subscription).setSuccess(true, prDoc.head);
                 feedback.loadingNext(subscription).setLoading(true);
+
+                progressModal.prDoc.repoManager.connectAPI(req.session.currentUser);
                 const changed = await progressModal.nextStep.changesDescription();
                 if (changed instanceof Error.Log) {
                     return feedback.loadingNext(subscription).setError(true, changed);

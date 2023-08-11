@@ -45,37 +45,37 @@ class ProcessPR extends Component {
             },
             stepBegin: (value) => {
                 if (value) {
-                    this.stepBegin = new StepBegin(value);
+                    this.stepBegin = new StepBegin(value, this);
                 }
             },
             stepPrepare: (value) => {
                 if (value) {
-                    this.stepPrepare = new StepPrepare(value);
+                    this.stepPrepare = new StepPrepare(value, this);
                 }
             },
             stepCommit: (value) => {
                 if (value) {
-                    this.stepCommit = new StepCommit(value);
+                    this.stepCommit = new StepCommit(value, this);
                 }
             },
             stepPublish: (value) => {
                 if (value) {
-                    this.stepPublish = new StepPublish(value);
+                    this.stepPublish = new StepPublish(value, this);
                 }
             },
             stepChangesDescription: (value) => {
                 if (value) {
-                    this.stepChangesDescription = new StepChangesDescription(value);
+                    this.stepChangesDescription = new StepChangesDescription(value, this);
                 }
             },
             stepCreatePR: (value) => {
                 if (value) {
-                    this.stepCreatePR = new StepCreatePR(value);
+                    this.stepCreatePR = new StepCreatePR(value, this);
                 }
             },
             stepCompleted: (value) => {
                 if (value) {
-                    this.stepCompleted = new StepCompleted(value)
+                    this.stepCompleted = new StepCompleted(value, this);
                 }
             },
             prDoc: (value) => {
@@ -259,6 +259,25 @@ class ProcessPR extends Component {
         }
     }
 
+    async addLog(message, prefix) {
+        const date = new Date();
+        const dateString = date.toLocaleDateString();
+        const timeString = date.toLocaleTimeString();
+
+        try {
+            const updated = await this.prDoc.updateDB({
+                collectionName: 'pull_requests',
+                filter: { index: this.prDoc.index },
+                data: { $addToSet: { logsHistory: `[${dateString} at ${timeString}][${prefix || 'LOG'}] ${message}`} }
+            });
+
+            if (updated instanceof Error.Log) {
+                throw updated;
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
 }
 
 module.exports = ProcessPR;

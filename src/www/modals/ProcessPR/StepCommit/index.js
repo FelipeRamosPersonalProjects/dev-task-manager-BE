@@ -9,8 +9,8 @@ class StepCommit extends StepModel {
         return require.resolve('./StepCommit.html');
     }
 
-    constructor(settings) {
-        super(settings);
+    constructor(settings, parent) {
+        super(settings, parent);
 
         const { isLoading, error, currentChanges } = Object(settings);
         const { success, changes } = Object(currentChanges);
