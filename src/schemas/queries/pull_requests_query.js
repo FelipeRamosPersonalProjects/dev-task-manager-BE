@@ -33,6 +33,10 @@ function defaultPopulate() {
             model: 'tickets'
         },
         {
+            path: 'assignedUsers',
+            model: 'users'
+        },
+        {
             path: 'comments',
             model: 'comments'
         }

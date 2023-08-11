@@ -57,7 +57,7 @@ async function postUpdateOne() {
         
         delete $set.status;
         process.emit(`update:${collection}`, this);
-        process.emit(`socket:update:${collection}:${JSON.stringify(this.getFilter())}`);
+        process.emit(`socket:update:${collection}:${JSON.stringify(this.getFilter())}`, this);
     } catch (err) {
         throw new Error.Log(err);
     }

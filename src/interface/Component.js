@@ -1,6 +1,7 @@
 const ValidateSchema = require('../validation/validateSchema');
 const FS = require('../services/FS');
 const ToolsCLI = require('./CLI/ToolsCLI');
+const DataDependency = require('@models/DataDependency');
 
 const defaultRules = {
     componentName: { type: String, default: () => 'comp-' + Date.now()},
@@ -10,23 +11,24 @@ const defaultRules = {
 }
 
 class Component extends ValidateSchema {
-    constructor(setup = {
-        componentName: '',
-        description: '',
-        outputModel: '',
-        types: {}
-    }, validationRules){
+    constructor(setup, validationRules){
         super(typeof validationRules === 'string' ? validationRules : {...defaultRules, ...validationRules});
         const self = this;
         this.tools = new ToolsCLI();
 
         try {
-            const { componentName, description, outputModel, types } = setup || {};
+            const { componentName, description, outputModel, types, dataDependencies, subscriptionUID, hide } = setup || {};
 
             this.componentName = componentName;
+            this.subscriptionUID = subscriptionUID;
             this.description = description;
             this.outputModel = outputModel;
             this.types = types;
+            this.dataDependencies = Array.isArray(dataDependencies) ? dataDependencies.map(item => new DataDependency(item, this)) : [];
+
+            if (hide) {
+                this.hide = 'hide';
+            }
 
             this.placeDefault();
 
@@ -54,6 +56,56 @@ class Component extends ValidateSchema {
 
     get TEMPLATE_STRING() {
         return FS.readFileSync(this.SOURCE_PATH);
+    }
+
+    get setters() {
+        return {}
+    }
+
+    addSubscription(subscription) {
+        try {
+            this.subscriptions.push(subscription);
+        } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    updateSubscription() {
+        try {
+        } catch(err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async loadDependencies() {
+        try {
+            await Promise.all(this.dataDependencies.map(dep => dep.load()));
+
+            this.dataDependencies.map(item => {
+                this[item.name] = item.value;
+            });
+
+            return this;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    updateMerge(data) {
+        try {
+            Object.keys(data).map(key => {
+                const value = data[key];
+                const setter = this.setters[key];
+
+                if (setter) {
+                    setter(value);
+                } else {
+                    this[key] = value;
+                }
+            });
+        } catch (err) {
+            throw new Error.Log(err);
+        }
     }
 
     loadSourceFile(path) {
@@ -105,6 +157,14 @@ class Component extends ValidateSchema {
         return result;
     }
 
+    json(value) {
+        try {
+            return JSON.stringify(Object(value));
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     date(value) {
         try {
             const localString = new Date(value).toLocaleString();
@@ -150,6 +210,11 @@ class Component extends ValidateSchema {
 
             if (type === 'array') {
                 value = this.array(paramValue, child);
+                toReplaceString = `##{{${sub}}}##`;
+            }
+
+            if (type === 'json') {
+                value = this.json(paramValue);
                 toReplaceString = `##{{${sub}}}##`;
             }
 

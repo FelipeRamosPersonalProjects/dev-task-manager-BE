@@ -1,0 +1,213 @@
+[modal=standard] {
+    backdrop-filter: blur(11px);
+
+    &.minimize {
+        backdrop-filter: blur(0);
+        align-items: end;
+        justify-content: end;
+        left: auto;
+        top: auto;
+        right: 1rem;
+        bottom: 1rem;
+
+        .modal-header {
+            .long {
+                display: none;
+            }
+
+            .short {
+                display: block;
+            }
+
+            .close-button {
+                display: none;
+            }
+
+            .minimize-button {
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+            }
+        }
+
+        .modal-container {
+            max-width: fit-content;
+            min-width: fit-content;
+        }
+
+        .modal-body {
+            display: none;
+        }
+    }
+
+    .modal-header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+
+        .short {
+            display: none;
+            font-size: 1.1rem;
+        }
+
+        button {
+            margin-left: 0.4rem;
+        }
+    }
+
+    .modal-container {
+        position: relative;
+        background-color: #FFF;
+        border-radius: 0.7rem;
+        box-shadow: 0 0 50px #333;
+        max-width: 1024px;
+        overflow: hidden;
+        width: 95%;
+
+        &.fullscreen {
+            border-radius: 0;
+            box-shadow: none;
+            height: 100%;
+            width: 100%;
+            max-width: auto;
+        }
+
+        &.small {
+            max-width: 425px;
+            max-height: 50vh;
+        }
+
+        &.medium {
+            max-width: 768px;
+            max-height: 700vh;
+        }
+
+        &.large {
+            max-width: 1440px;
+            max-height: 90vh;
+        }
+
+        .modal-header {
+            padding: 1rem;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+    }
+
+    .main-display {
+        display: flex;
+        gap: 1rem;
+
+        .pr-data {
+            flex: 30%;
+        }
+
+        .steps-display {
+            flex: 70%;
+            overflow-y: auto;
+            max-height: 50vh;
+
+            .step-wrap {
+                margin-bottom: 1rem;
+
+                &:not(.current-step),
+                &.loading {
+                    > * {
+                        display: none;
+                    }
+
+                    > .user-feedback-wrap,
+                    > .user-feedback,
+                    > .step-header {
+                        display: block;
+                    }
+                }
+
+                &[step-id="step-prepare"].error {
+                    .question-wrap.initial {
+                        display: none;
+                    }
+
+                    .question-wrap.custom-name {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                }
+
+                .question-wrap.custom-name {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .question-wrap {
+        width: 100%;
+
+        .buttons-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+            button {
+                width: 100%;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .file-change {
+        &.float-input {
+            margin: 15px 0;
+        }
+
+        &[open] {
+            summary {
+                margin-bottom: 1rem;
+            }
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 0.5rem 0;
+        }
+
+        pre {
+            background: #2d3a47;
+            color: #FFF;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px #111;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        
+        [field-type=html-editor] {
+            min-height: 1rem;
+        }
+    }
+
+    .float-input {
+        margin: 0;
+    }
+
+    .remote-preview {
+        .float-input {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .readedit-form {
+        &.pr-title {
+            span {
+                font-size: 2rem;
+                font-weight: bold;
+            }
+        }
+    }
+}

@@ -19,7 +19,9 @@ class AuthBucket extends _Global {
     }
 
     get gitHubToken() {
-        return this.service.validateToken(this._gitHubToken.toString());
+        if (this._gitHubToken) {
+            return this.service.validateToken(this._gitHubToken.toString());
+        }
     }
 
     get userName() {

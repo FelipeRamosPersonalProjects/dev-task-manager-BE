@@ -135,7 +135,7 @@ class Task extends _Global {
 
     get newerVersion() {
         const sorted = this.prInProgress.sort((a, b) => b.version - a.version);
-        const higher = sorted.length ? sorted[0] : null;
+        const higher = sorted.length ? sorted[0] : {};
 
         return higher;
     }
@@ -188,6 +188,10 @@ class Task extends _Global {
 
     async jiraUpdate(data) {
         try {
+            if (!this.this.jiraIssue) {
+                return;
+            }
+
             for (let user of this.assignedUsers) {
                 const jiraUpdated = await user.jiraConnect.updateIssue(this.jiraIssue.key, new InvestigationIssue(data).toUpdate());
 

@@ -33,6 +33,11 @@ textarea,
 .readedit-form {
     margin-bottom: 1rem;
     width: 100%;
+
+    &[view=read] {
+        cursor: pointer;
+        user-select: none;
+    }
     
     label {
         display: inline-block;
@@ -92,4 +97,16 @@ textarea,
         }
     }
     
+}
+
+.error {
+    background: #ffc7c7;
+    border: 1px solid red;
+
+    .error-message {
+        color: red;
+        font-size: 0.85rem;
+        font-weight: bold;
+        margin: 0;
+    }
 }

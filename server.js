@@ -2,6 +2,8 @@ require('module-alias/register');
 
 const express = require('express');
 const session = require('express-session');
+const sharedSession = require('express-socket.io-session');
+const bodyParser = require('body-parser');
 const https = require('https');
 const app = express();
 const cors = require('cors');
@@ -25,6 +27,7 @@ require('@services/database/init').then(async () => {
 
     // Configuring server
     app.use(cors());
+    app.use(bodyParser.json({ limit: '10mb' }));
     app.use(express.json());
     app.use(express.static('./src/www/static'));
     app.use(session({
@@ -37,6 +40,8 @@ require('@services/database/init').then(async () => {
     // API routes
     app.use('/auth', routes.auth);
     app.use('/collection', routes.collection);
+    app.use('/components', routes.components);
+    app.use('/pulls', routes.pulls);
 
     // Front-end routes
     app.get('/', (req, res) => res.redirect('/dashboard'));
@@ -52,7 +57,7 @@ require('@services/database/init').then(async () => {
     app.use('/user', routes.pages.user);
 
     // Initializing socket server
-    global.socketServer = new SocketServer();
+    global.socketServer = new SocketServer({hosts: ['http://192.168.15.54']});
 
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
         const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');

@@ -7,3 +7,15 @@ document.querySelectorAll('.readedit-form').forEach(form => {
         editField({ ev })
     });
 });
+
+document.querySelectorAll('[js="create-pr"]').forEach(button => {
+    button.addEventListener('click', function () {
+        const $this = $(this);
+        const url = new URL(window.location.origin + '/pullrequests/create');
+
+        url.searchParams.set('ticket', $this.data('ticketid'));
+        url.searchParams.set('task', $this.data('taskid'));
+        
+        window.open(url.toString(), '_self');
+    });
+});

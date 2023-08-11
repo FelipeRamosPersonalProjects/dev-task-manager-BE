@@ -1,4 +1,5 @@
 const FormField = require('..');
+const Button = require('../Button');
 const RelationOption = require('./RelationOption');
 
 class SingleRelation extends FormField {
@@ -9,14 +10,28 @@ class SingleRelation extends FormField {
     constructor(settings) {
         super(settings);
 
-        const { view, wrapperTag, classes, options } = Object(settings);
+        const { view, wrapperTag, classes, options, currentValue } = Object(settings);
 
         this.frontURL = this.currentValue.frontURL;
         this.currentValue = this.currentValue ? this.currentValue.displayName : '';
         this.view = view || 'create';
         this.wrapperTag = this.view === 'create' ? 'div' : 'form';
-        this.classes = this.view === 'create' ? `class="${classes || ''}"` : `class="readedit-form ${classes || ''}"`;
-        this.options = options;
+        this.classes = this.view === 'create' ? `class="float-input ${classes || ''}"` : `class="readedit-form float-input ${classes || ''}"`;
+        
+        this.editButton = new Button({
+            label: '✏️',
+            classes: ['edit-btn'],
+            attributes: 'view="read"'
+        });
+
+        this.options = Array.isArray(options) && options.map(item => {
+            if (item._id === currentValue) {
+                item.selected = true;
+            }
+
+            return item;
+        });
+
         this.types = {
             RelationOption
         }

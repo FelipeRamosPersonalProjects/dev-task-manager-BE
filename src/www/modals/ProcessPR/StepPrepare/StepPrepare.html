@@ -1,0 +1,40 @@
+<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}##" step-id="step-prepare">
+    <div class="step-header">
+        <h2>Step 2 - Prepare Branch</h2>
+    </div>
+
+    <ul class="user-feedback-wrap">
+        ##{{connectingRemoteFeedback:component}}##
+        ##{{gettingCurrentChangesFeedback:component}}##
+        ##{{switchingBranchFeedback:component}}##
+        ##{{checkingBranchExistenceFeedback:component}}##
+        ##{{creatingBranchFeedback:component}}##
+        ##{{preparingBranchFeedback:component}}##
+    </ul>
+
+    <div class="question-wrap initial">
+        <p>Let's prepare the branch for the pull request. Your current local branch is <b>##{{currentBranch:string}}##.</b></p>
+        ##{{question:string}}##
+
+        <div class="buttons-wrap">
+            ##{{skipButton:component}}##
+            ##{{createRecommendedButton:component}}##
+            ##{{stayCurrentBranchButton:component}}##
+        </div>
+    </div>
+
+    <div class="question-wrap custom-name">
+        <div class="input-wrap">
+            <label>New Branch Name:</label>
+            <input type="text" name="branch-name" value="##{{recommendedBranch:string}}##" />
+            ##{{errorMessage:component}}##
+        </div>
+
+        <h4>Choose one of the options below</h4>
+        <div class="buttons-wrap">
+            ##{{skipButton:component}}##
+            ##{{createBranchButton:component}}##
+            ##{{switchBranchButton:component}}##
+        </div>
+    </div>
+</div>

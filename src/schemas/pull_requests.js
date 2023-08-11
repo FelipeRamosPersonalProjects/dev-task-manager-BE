@@ -15,7 +15,7 @@ module.exports = new Collection({
             default: {}
         },
         {
-            fieldName: 'name',
+            fieldName: 'title',
             type: String,
             required: true
         },
@@ -78,7 +78,6 @@ module.exports = new Collection({
         {
             fieldName: 'version',
             type: Number,
-            required: true,
             default: 1
         },
         {
@@ -103,16 +102,6 @@ module.exports = new Collection({
             fieldName: 'fileChanges',
             type: [FileChange],
             default: []
-        },
-        {
-            fieldName: 'owner',
-            type: ObjectId,
-            ref: 'users',
-            required: true,
-            refConfig: {
-                relatedField: 'pullRequests',
-                type: 'array-oid'
-            }
         },
         {
             fieldName: 'assignedUsers',
@@ -140,7 +129,7 @@ module.exports = new Collection({
             default: []
         },
         {
-            fieldName: 'bmConfigs',
+            fieldName: 'sfccConfigs',
             type: [Object],
             default: []
         },
@@ -171,6 +160,11 @@ module.exports = new Collection({
                 relatedField: 'pullRequests',
                 type: 'array-oid'
             }
+        },
+        {
+            fieldName: 'logsHistory',
+            type: [String],
+            default: []
         }
     ]
 });

@@ -65,8 +65,10 @@ class User extends _Global {
             this.placeDefault();
 
             this.gitHubConnection = new GitHubConnection({
-                userName: this.getSafe('gitHub.login')
+                userName: this.getSafe('gitHub.login'),
+                gitHubToken: this._auth().gitHubToken
             });
+
             this.jiraConnect = new JIRA({
                 userName: this.jiraUser,
                 userUID: this._id,
@@ -150,6 +152,21 @@ class User extends _Global {
         } catch (err) {
             throw new Error.Log(err);
         }
+    }
+
+    toSession() {
+        return {
+            _id: this._id,
+            index: this.index,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            fullName: this.fullName,
+            email: this.email,
+            jira: this.jira,
+            userToken: this.token,
+            gitHubToken: this.auth.gitHubToken,
+            gitHubUser: this.auth.gitHubUser,
+        };
     }
 
     toPublic(append) {

@@ -1,27 +1,27 @@
 const _Global = require('../maps/_Global');
-const Comment = require('./Comment');
 const CRUD = require('@CRUD');
 const dbHelpers = require('@helpers/database/dbHelpers');
 
 class PullRequest extends _Global {
     constructor(setup, parent){
         super({...setup, validationRules: 'pull_requests'}, parent);
-        if (!setup || isObjectID(setup)) return;
+        if (!setup || Object(setup).oid()) return;
+
         const User = require('./User');
         const Ticket = require('./Ticket');
         const Task = require('./Task');
+        const Comment = require('./Comment');
+        const Label = require('./Label');
         const FileChange = require('@services/GitHubAPI/FileChange');
 
         const {
             status,
             state,
-            owner,
-            name,
+            title,
             head,
             base,
             remoteID,
             prStage,
-            displayName,
             frontURL,
             isCurrentVersion,
             version,
@@ -31,20 +31,20 @@ class PullRequest extends _Global {
             assignedUsers,
             reviewers,
             labels,
-            bmConfigs,
+            sfccConfigs,
             comments,
             ticket,
             task,
-            gitHubPR
+            gitHubPR,
+            logsHistory
         } = Object(setup || {});
-        
+
         try {
             this.collectionName = 'pull_requests';
             this.state = state;
             this.gitHubPR = gitHubPR;
-            this.displayName = displayName;
             this.frontURL = frontURL;
-            this.name = name;
+            this.title = title;
             this.remoteID = remoteID;
             this.status = status;
             this.prStage = prStage;
@@ -53,16 +53,16 @@ class PullRequest extends _Global {
             this.summary = summary;
             this.head = head;
             this.base = base;
-            this.labels = labels;
-            this.bmConfigs = bmConfigs;
-            this.owner = owner && new User(owner.oid(true));
+            this.sfccConfigs = sfccConfigs;
+            this.labels = Array.isArray(labels) && !labels.oid() && labels.map(label => new Label(label, this));
             this.fileChanges = Array.isArray(fileChanges) && !fileChanges.oid() && fileChanges.map(change => new FileChange(change, this));
-            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user));
-            this.reviewers = Array.isArray(reviewers) && !reviewers.oid() && reviewers.map(user => new User(user));
-            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment));
-            this.ticket = !Object(ticket).oid() && new Ticket(ticket);
-            this.task = !Object(task).oid() && new Task(task);
-            
+            this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() && assignedUsers.map(user => new User(user, this));
+            this.reviewers = Array.isArray(reviewers) && !reviewers.oid() && reviewers.map(user => new User(user, this));
+            this.comments = Array.isArray(comments) && !comments.oid() && comments.map(comment => new Comment(comment, this));
+            this.ticket = !Object(ticket).oid() && new Ticket(ticket, this);
+            this.task = !Object(task).oid() && new Task(task, this);
+            this.logsHistory = logsHistory || [];
+
             if (typeof description === 'string') {
                 this.description = description;
             } else {
@@ -77,6 +77,34 @@ class PullRequest extends _Global {
             this.placeDefault();
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'PullRequests');
+        }
+    }
+
+    get displayName() {
+        return this.title;
+    }
+
+    get recommendedBranchName() {
+        let result = 'feature/'
+
+        if (this.version > 1) {
+            result += this.task.externalKey + '-v' + this.version;
+        } else {
+            result += this.task.externalKey;
+        }
+
+        return result;
+    }
+
+    get externalTicketURL() {
+        if (this.ticket) {
+            return this.ticket.externalURL;
+        }
+    }
+
+    get externalTaskURL() {
+        if (this.task) {
+            return this.task.externalURL;
         }
     }
 
@@ -98,14 +126,6 @@ class PullRequest extends _Global {
         }
     }
 
-    get externalKey() {
-        return this.task && this.task.externalKey;
-    }
-
-    get externalKey() {
-        return this.parentTicket && this.parentTicket.externalKey;
-    }
-
     get project() {
         return this.task && this.task.project && this.task.project;
     }
@@ -113,8 +133,8 @@ class PullRequest extends _Global {
     async updateDescription(dontSave) {
         const descriptionTemplate = this.project.getTemplate('prDescription');
         const newDescription = descriptionTemplate.renderToString({
-            externalURL: this.parentTicket.externalURL,
-            externalURL: this.task.externalURL,
+            externalTicketURL: this.parentTicket.externalURL,
+            externalTaskURL: this.task.externalURL,
             summary: this.summary,
             fileChanges: this.fileChanges
         });
@@ -210,18 +230,19 @@ class PullRequest extends _Global {
         }
     }
 
-    async publishPR() {
+    async publishPR(options) {
         try {
             const published = await this.repoManager.createPullRequest({
                 owner: this.repoManager.userName,
                 repo: this.repo.repoName,
-                title: this.name,
+                title: this.title,
                 body: this.description,
                 head: this.head,
                 base: this.base,
-                labels: this.getSafe('project.prLabels'),
-                reviewers: this.getSafe('project.reviewers')
-            });
+                assignees: this.assignedUsers.map(user => user.gitHubUser),
+                labels: this.getSafe('project.prLabels') || [],
+                reviewers: this.getSafe('project.reviewers') || []
+            }, options);
 
             if (published instanceof Error.Log) {
                 published.consolePrint();
@@ -244,6 +265,23 @@ class PullRequest extends _Global {
         try {
             const deleted = await this.deleteDB();
             return deleted;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async updateVersion(newVersion) {
+        if (!newVersion) return;
+
+        try {
+            const updated = await CRUD.update({collectionName: 'pull_requests', filter: { index: this.index }, data: {
+                version: newVersion,
+                head: this.recommendedBranchName
+            }});
+
+            if (updated.success) {
+                return updated;
+            }
         } catch (err) {
             throw new Error.Log(err);
         }

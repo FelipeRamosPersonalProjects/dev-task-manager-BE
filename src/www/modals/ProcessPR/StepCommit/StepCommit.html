@@ -1,0 +1,28 @@
+<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}## ##{{loadingClass:string}}##" step-id="step-commit">
+    <div class="step-header">
+        <h2>Step 3 - Commit Changes</h2>
+    </div>
+
+    <ul class="user-feedback-wrap">
+        ##{{gettingCurrentChangesFeedback:component}}##
+        ##{{commitingFeedback:component}}##
+        ##{{skippingFeedback:component}}##
+    </ul>
+
+    <form class="question-wrap" js="commit-form">
+        ##{{commitTitle:component}}##
+        ##{{commitDescription:component}}##
+
+        <div class="changes-wrap">
+            <h4>##{{fileChangesMessage:string}}##</h4>
+
+            <ul>
+                ##{{fileChanges:array:CommitFileChange}}##
+            </ul>
+            <div class="buttons-wrap">
+                ##{{nextStepButton:component}}##
+                ##{{createCommitButton:component}}##
+            </div>
+        </div>
+    </form>
+</div>

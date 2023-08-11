@@ -18,6 +18,8 @@ class TaskEdit extends Component {
         this.UID = _id;
         this.collection = taskDoc.getSafe('ModelDB.modelName');
         this.displayName = displayName;
+        this.taskDoc = taskDoc;
+        this.ticketID = ticket._id;
         this.docForm = new DocForm({
             collection: 'tasks',
             wrapperTag: 'div',

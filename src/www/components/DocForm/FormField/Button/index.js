@@ -17,10 +17,12 @@ class Button extends Component {
 
         this.type = type || 'button';
         this.label = label;
-        this.attributes = '';
+        this.attributes = attributes;
         this.classes = classesResult.join(' ');
 
-        Object.entries(attributes || {}).map(([key, value]) => (this.attributes += `${key}=${String(value)} `));
+        if (typeof this.attributes !== 'string') {
+            Object.entries(attributes || {}).map(([key, value]) => (this.attributes += `${key}=${String(value)} `));
+        }
     }
 }
 

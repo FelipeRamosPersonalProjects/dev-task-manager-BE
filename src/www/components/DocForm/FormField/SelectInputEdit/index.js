@@ -13,6 +13,7 @@ class SelectInputEdit extends FormField {
 
         this.options = options;
         this.view = view || 'read';
+        this.css += ' readedit-form float-input';
         this.types = {
             SelectOption
         }

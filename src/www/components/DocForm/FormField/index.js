@@ -6,12 +6,12 @@ class FormField extends Component {
         super(settings);
 
         try {
-            const { fieldName, label, placeholder, currentValue } = Object(settings);
+            const { fieldName, label, placeholder, currentValue, css } = Object(settings);
     
             if (!fieldName) {
                 throw new Error.Log({
-                    name: '',
-                    message: ''
+                    name: 'FIELD_NAME_REQUIRED',
+                    message: `It's required to provide a fieldName param!`
                 });
             }
     
@@ -20,6 +20,11 @@ class FormField extends Component {
             this.label = label || '';
             this.placeholder = placeholder || '';
             this.wrapperTag = this.view === 'create' ? 'div' : 'form';
+            this.css = '';
+
+            if (Array.isArray(css)) {
+                this.css = css.join(' ');
+            }
         } catch (err) {
             throw new Error.Log(err);
         }

@@ -1,3 +1,20 @@
-<h1>##{{displayName:string}}##</h1>
+<div class="header-component">
+    <h1 class="fill-right">##{{displayName:string}}##</h1>
+    
+    <button
+        js="create-pr"
+        data-pruid="##{{UID:string}}##"
+    >
+        CREATE PULL REQUEST
+    </button>
+    <button
+        type="button"
+        js="delete-doc"
+        data-docuid="##{{UID:string}}##"
+        data-collection="##{{collection:string}}##"
+    >Delete</button>
+</div>
 
-##{{docForm:component}}##
+<div class="document-wrap">
+    ##{{docForm:component}}##
+</div>
