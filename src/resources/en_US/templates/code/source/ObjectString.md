@@ -1,3 +1,3 @@
 {
-    ##{{objectProps:array:ObjectProp}}##
+    %{{objectProps:array:ObjectProp}}%
 },

@@ -1,21 +1,21 @@
-<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}## ##{{loadingClass:string}}##" step-id="step-createpr">
+<div class="step-wrap float-input %{{isCurrentClass:string}}% %{{error:string}}% %{{loadingClass:string}}%" step-id="step-createpr">
     <div class="step-header">
         <h2>Step 5 - Changes Description</h2>
     </div>
 
     <ul class="user-feedback-wrap">
-        ##{{skippingFeedback:component}}##
-        ##{{savingDescriptionsFeedback:component}}##
-        ##{{loadingNextFeedback:component}}##
+        %{{skippingFeedback:component}}%
+        %{{savingDescriptionsFeedback:component}}%
+        %{{loadingNextFeedback:component}}%
     </ul>
 
     <form class="question-wrap" js="changes-form">
         <div class="changes-description">
-            ##{{fileChanges:array:FileChange}}##
+            %{{fileChanges:array:FileChange}}%
         </div>
 
         <div class="buttons-wrap">
-            ##{{saveButton:component}}##
+            %{{saveButton:component}}%
         </div>
     </form>
 </div>

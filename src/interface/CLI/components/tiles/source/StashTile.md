@@ -1,3 +1,3 @@
-    (##{{stashIndex:string}}##) 📰  ##{{displayName:string}}##
-    ##{{description:string}}##
+    (%{{stashIndex:string}}%) 📰  %{{displayName:string}}%
+    %{{description:string}}%
 

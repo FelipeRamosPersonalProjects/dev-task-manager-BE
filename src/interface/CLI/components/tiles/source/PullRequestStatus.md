@@ -1,1 +1,1 @@
-    - ##{{displayName:string}}## [##{{status:string}}##]
+    - %{{displayName:string}}% [%{{status:string}}%]

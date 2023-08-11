@@ -1,16 +1,16 @@
 ## 🎟️ Links
-**Ticket:** ##{{externalTicketURL:string}}##
-**Jira Task:** ##{{externalTaskURL:string}}##
+**Ticket:** %{{externalTicketURL:string}}%
+**Jira Task:** %{{externalTaskURL:string}}%
  
 ## 🔍 Brief description
-##{{summary:string}}##
+%{{summary:string}}%
  
 ## 📂 Changes
-##{{fileChanges:array:FileChange}}##
+%{{fileChanges:array:FileChange}}%
  
 ## 🎥 Demonstration
-##{{videos:array:Video}}##
-##{{images:array:Image}}##
+%{{videos:array:Video}}%
+%{{images:array:Image}}%
  
 ## 📑 Metadata/Configurations
 - [ ] I have updated `imports/site_template_support` folder with the proper data and Code Review Assistant is not failing for metadata;

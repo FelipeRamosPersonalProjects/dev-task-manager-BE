@@ -1,12 +1,12 @@
 ### :ticket: Links
-- Ticket: ##{{externalTicketURL:string}}##
-- Jira Task: ##{{externalTaskURL:string}}##
+- Ticket: %{{externalTicketURL:string}}%
+- Jira Task: %{{externalTaskURL:string}}%
 
 ### Bug or Enhancement Description
-##{{summary:string}}##
+%{{summary:string}}%
 
 ### Changes
-##{{fileChanges:array:FileChange}}##
+%{{fileChanges:array:FileChange}}%
 
 ### A picture is worth a thousand words
 {{ picture }}

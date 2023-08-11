@@ -1,4 +1,4 @@
     You have opened Pull Requests:
 
-##{{openedPRs:array:PullRequestStatus}}##
+%{{openedPRs:array:PullRequestStatus}}%
 -------------------------------------------------------------------------------------------------------

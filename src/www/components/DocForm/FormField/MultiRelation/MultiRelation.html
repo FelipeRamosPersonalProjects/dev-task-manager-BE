@@ -1,21 +1,21 @@
-<##{{wrapperTag:string}}##
+<%{{wrapperTag:string}}%
     field
     field-type="multi-relation"
-    name="##{{fieldName:string}}##"
-    ##{{classes:string}}##
-    view="##{{view:string}}##"
-    collection-name="##{{collection:string}}##"
+    name="%{{fieldName:string}}%"
+    %{{classes:string}}%
+    view="%{{view:string}}%"
+    collection-name="%{{collection:string}}%"
 >
-    <h2>##{{label:string}}##</h2>
+    <h2>%{{label:string}}%</h2>
     <ul view="read">
-        ##{{currentValue:array:ListItem}}##
+        %{{currentValue:array:ListItem}}%
     </ul>
     <button type="button" class="edit-btn" view="read">Edit</button>
 
     <div class="checkbox-group" view="edit" relation-input>
-        ##{{options:array:RelationOption}}##
+        %{{options:array:RelationOption}}%
     </div>
 
     <button type="button" class="cancel-btn" view="edit">Cancel</button>
     <button type="submit" view="edit">Save</button>
-</##{{wrapperTag:string}}##>
+</%{{wrapperTag:string}}%>
