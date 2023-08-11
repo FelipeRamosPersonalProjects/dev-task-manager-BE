@@ -1,2 +1,2 @@
--m "##{{summary:string}}##"
+-m "%{{summary:string}}%"
  

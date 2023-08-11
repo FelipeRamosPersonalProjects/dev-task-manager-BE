@@ -1,1 +1,1 @@
-const ##{{variableName:string}}## = require('./##{{fileName:string}}##');
+const %{{variableName:string}}% = require('./%{{fileName:string}}%');

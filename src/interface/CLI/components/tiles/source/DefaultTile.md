@@ -1,2 +1,2 @@
-    ##{{index:string}}##. ##{{displayName:string}}##
+    %{{index:string}}%. %{{displayName:string}}%
 

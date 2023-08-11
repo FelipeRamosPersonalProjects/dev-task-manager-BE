@@ -47,7 +47,7 @@ class StringTemplateBuilder {
             throw new Error.Log('common.missing_params', ['name', 'type']);
         }
 
-        this.result += `##{{${name}:${type}}}##`;
+        this.result += `%{{${name}:${type}}}%`;
         return this;
     }
 

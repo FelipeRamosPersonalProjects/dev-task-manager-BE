@@ -1,1 +1,1 @@
-    📑  ##{{selfIndex:string}}##. ##{{filename:string}}##
+    📑  %{{selfIndex:string}}%. %{{filename:string}}%

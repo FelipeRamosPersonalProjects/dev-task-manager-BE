@@ -1,1 +1,1 @@
-            ##{{propName:string}}##,
+            %{{propName:string}}%,

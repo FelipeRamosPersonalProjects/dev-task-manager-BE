@@ -1,16 +1,16 @@
-##{{Header:component}}##
+%{{Header:component}}%
 
-     Base/Head:                       ##{{base:string}}## -> ##{{head:string}}##
+     Base/Head:                       %{{base:string}}% -> %{{head:string}}%
     --------------------------------------------------------------------------------------
 
-     Pull request name:               ##{{name:string}}##
+     Pull request name:               %{{name:string}}%
     --------------------------------------------------------------------------------------
 
-     Task:                            ##{{externalKey:string}}##
+     Task:                            %{{externalKey:string}}%
     --------------------------------------------------------------------------------------
 
-     Ticket:                          ##{{externalKey:string}}##
+     Ticket:                          %{{externalKey:string}}%
     --------------------------------------------------------------------------------------
 
      File changes:
-     ##{{fileChanges:array:Change}}##
+     %{{fileChanges:array:Change}}%

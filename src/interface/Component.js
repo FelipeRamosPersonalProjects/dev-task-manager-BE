@@ -187,8 +187,8 @@ class Component extends ValidateSchema {
     }
 
     toMarkdown(params) {
-        // Find substrings between ##{{ and }}## and replace by the param value
-        const regex = /##{{(.*?)}}##/g;
+        // Find substrings between %{{ and }}% and replace by the param value
+        const regex = /%{{(.*?)}}%/g;
         const substrings = [];
         let result = this.outputModel;
         let match;
@@ -205,27 +205,27 @@ class Component extends ValidateSchema {
 
             if (type === 'string') {
                 value = this.string(paramValue);
-                toReplaceString = `##{{${sub}}}##`;
+                toReplaceString = `%{{${sub}}}%`;
             }
 
             if (type === 'array') {
                 value = this.array(paramValue, child);
-                toReplaceString = `##{{${sub}}}##`;
+                toReplaceString = `%{{${sub}}}%`;
             }
 
             if (type === 'json') {
                 value = this.json(paramValue);
-                toReplaceString = `##{{${sub}}}##`;
+                toReplaceString = `%{{${sub}}}%`;
             }
 
             if (type === 'date') {
                 value = this.date(paramValue);
-                toReplaceString = `##{{${sub}}}##`;
+                toReplaceString = `%{{${sub}}}%`;
             }
 
             if (type === 'component') {
                 value = paramValue && paramValue.renderToString ? paramValue.renderToString() : ' ';
-                toReplaceString = `##{{${sub}}}##`;
+                toReplaceString = `%{{${sub}}}%`;
             }
 
             result = result.replace(new RegExp(toReplaceString, 'g'), value || '');

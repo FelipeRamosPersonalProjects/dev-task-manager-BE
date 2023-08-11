@@ -1,22 +1,22 @@
-<div class="step-wrap float-input ##{{isCurrentClass:string}}## ##{{error:string}}## ##{{loadingClass:string}}##" step-id="step-publish">
+<div class="step-wrap float-input %{{isCurrentClass:string}}% %{{error:string}}% %{{loadingClass:string}}%" step-id="step-publish">
     <div class="step-header">
         <h2>Step 4 - Publish Branch</h2>
     </div>
 
     <ul class="user-feedback-wrap">
-        ##{{connectingRemoteFeedback:component}}##
-        ##{{skippingFeedback:component}}##
-        ##{{publishingFeedback:component}}##
+        %{{connectingRemoteFeedback:component}}%
+        %{{skippingFeedback:component}}%
+        %{{publishingFeedback:component}}%
     </ul>
 
     <div class="question-wrap">
-        <p>The current branch <b>##{{currentBranch:string}}##</b> is not published on remote yet. You will need to publish it to be able of create the pull request.</p>
+        <p>The current branch <b>%{{currentBranch:string}}%</b> is not published on remote yet. You will need to publish it to be able of create the pull request.</p>
 
         <h4>Would you like to publish it?</h4>
         <div class="buttons-wrap">
-            ##{{skipButton:component}}##
-            ##{{pushButton:component}}##
-            ##{{publishButton:component}}##
+            %{{skipButton:component}}%
+            %{{pushButton:component}}%
+            %{{publishButton:component}}%
         </div>
     </div>
 </div>

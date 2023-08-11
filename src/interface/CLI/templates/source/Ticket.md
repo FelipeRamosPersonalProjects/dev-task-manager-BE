@@ -1,1 +1,1 @@
-##{{Header:component}}##
+%{{Header:component}}%

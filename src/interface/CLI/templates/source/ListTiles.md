@@ -1,2 +1,2 @@
-##{{items:array:Tile}}##
+%{{items:array:Tile}}%
 

@@ -1,24 +1,24 @@
-##{{DashedHeader:component}}##
+%{{DashedHeader:component}}%
 
-    Ticket ID:          ##{{externalKey:string}}##
+    Ticket ID:          %{{externalKey:string}}%
     ---------------------------------------------------------------------------------------
 
-    Task Name:          ##{{title:string}}##
+    Task Name:          %{{title:string}}%
     ---------------------------------------------------------------------------------------
 
-    Task URL:           ##{{externalURL:string}}##
+    Task URL:           %{{externalURL:string}}%
     ---------------------------------------------------------------------------------------
 
-    Ticket URL:         ##{{externalURL:string}}##
+    Ticket URL:         %{{externalURL:string}}%
     ---------------------------------------------------------------------------------------
 
-    Current Version:    v##{{taskVersion:string}}##
+    Current Version:    v%{{taskVersion:string}}%
     ---------------------------------------------------------------------------------------
 
     Description:
-    ##{{description:string}}##
+    %{{description:string}}%
     ---------------------------------------------------------------------------------------
 
     Project:
-    ##{{ProjectTile:component}}##
+    %{{ProjectTile:component}}%
     ---------------------------------------------------------------------------------------

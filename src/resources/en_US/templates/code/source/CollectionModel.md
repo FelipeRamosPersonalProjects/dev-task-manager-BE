@@ -1,24 +1,24 @@
 const _Global = require('@models/maps/_Global');
 
-class ##{{modelName:string}}## extends _Global {
+class %{{modelName:string}}% extends _Global {
     constructor(setup, parent){
-        super({...setup, validationRules: '##{{collectionName:string}}##'}, parent);
+        super({...setup, validationRules: '%{{collectionName:string}}%'}, parent);
         if (!setup || isObjectID(setup)) return;
 
         const {
             /*## ModelParams_Start ##*/
-##{{schemaObj:array:ObjectPropNoValue}}##        } = Object(setup);
+%{{schemaObj:array:ObjectPropNoValue}}%        } = Object(setup);
             /*## ModelParams_End ##*/
         
         try {
             /*## ModelProps_Start ##*/
-##{{schemaObj:array:ThisDeclaration}}##
+%{{schemaObj:array:ThisDeclaration}}%
             this.placeDefault();
             /*## ModelProps_End ##*/
         } catch(err) {
-            throw new Error.Log(err).append('common.model_construction', '##{{modelName:string}}##');
+            throw new Error.Log(err).append('common.model_construction', '%{{modelName:string}}%');
         }
     }
 }
 
-module.exports = ##{{modelName:string}}##;
+module.exports = %{{modelName:string}}%;
