@@ -64,6 +64,112 @@ class StepPublish extends StepModel {
             }
         };
     }
+
+    get feedback() {
+        this.setLoading(false);
+
+        return {
+            publishing: (subscription) => {
+                return {
+                    setSuccess: (state, branchName) => {
+                        if (state) {
+                            this.setFeedback('publishingFeedback', 'success', `The branch "${branchName}" was published successfully!`);
+                        } else {
+                            delete this.publishingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('publishingFeedback', 'error', err.message);
+                        } else {
+                            delete this.publishingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state, branchName) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('publishingFeedback', 'loading', `The branch "${branchName}" is being published...`);
+                        } else {
+                            delete this.publishingFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            skipping: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'success', 'Step skipped! The branch is ready to be published.');
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'error', err.message);
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'loading', 'Skipping step...');
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            loadingNext: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('loadingNextFeedback', 'success', 'Ready!');
+                        } else {
+                            delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('loadingNextFeedback', 'error', err.message);
+                        } else {
+                            delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('loadingNextFeedback', 'loading', 'Loading next step...');
+                        } else {
+                            delete this.loadingNextFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            }
+        }
+    }
 }
 
 module.exports = StepPublish;

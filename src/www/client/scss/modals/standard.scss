@@ -115,11 +115,14 @@
             .step-wrap {
                 margin-bottom: 1rem;
 
-                &:not(.current-step) {
+                &:not(.current-step),
+                &.loading {
                     > * {
                         display: none;
                     }
 
+                    > .user-feedback-wrap,
+                    > .user-feedback,
                     > .step-header {
                         display: block;
                     }

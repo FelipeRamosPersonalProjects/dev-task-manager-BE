@@ -82,22 +82,50 @@ module.exports = async function (req, res) {
         const subscription = socketConnection.getSubscription(subscriptionUID);
         const stepsComponent = subscription && subscription.component;
         const repoManager = doc && doc.repoManager;
+        const stepBegin = stepsComponent && stepsComponent.stepBegin;
+        const feedback = stepBegin && stepBegin.feedback;
 
-        repoManager.connectAPI(req.session.currentUser);
+        try {
+            feedback.repoConnect(subscription).setLoading(true);
+
+            repoManager.connectAPI(req.session.currentUser);
+            feedback.repoConnect(subscription).setSuccess(true);
+        } catch (err) {
+            feedback.repoConnect(subscription).setError(true, err);
+        }
+
         if (switchToBase) {
-            const switched = await repoManager.checkout(doc.base, { bringChanges: true });
+            feedback.switchToBase(subscription).setLoading(true);
 
-            await CRUD.update({
-                collectionName: 'pull_requests',
-                filter: { index: prIndex },
-                data: { $addToSet: { logsHistory: switched.out } }
+            repoManager.checkout(doc.base, { bringChanges: true }).then(async switched => {
+                feedback.switchToBase(subscription).setSuccess(true);
+
+                try {
+                    feedback.updatingDatabase(subscription).setLoading(true);
+    
+                    await CRUD.update({
+                        collectionName: 'pull_requests',
+                        filter: { index: prIndex },
+                        data: { $addToSet: { logsHistory: switched.out } }
+                    });
+    
+                    feedback.updatingDatabase(subscription).setSuccess(true);
+                } catch (err) {
+                    feedback.updatingDatabase(subscription).setError(true, err);
+                }
+            }).catch(err => {
+                feedback.switchToBase(subscription).setError(true, err);
             });
         }
 
         // Getting current branch on local GIT
+        feedback.gettingBranch(subscription).setLoading(true);
         const currentBranch = await doc.repoManager.getCurrentBranch();
         if (currentBranch) {
             stepsComponent.setProps.branchSwitcherGroup({currentBranch});
+            feedback.gettingBranch(subscription).setSuccess(true, currentBranch);
+        } else {
+            feedback.gettingBranch(subscription).setError(true, err);
         }
 
         if (ignoreBranchName || doc.head === currentBranch || doc.base === currentBranch) {

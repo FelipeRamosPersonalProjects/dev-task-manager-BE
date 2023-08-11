@@ -137,3 +137,31 @@ progress {
         }
     }
 }
+
+.user-feedback-wrap {
+    padding-inline-start: 1rem;
+
+    .user-feedback {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        width: 100%;
+
+        &[state=loading] {
+            .icon {
+                display: none;
+            }
+        }
+
+        .spinner-wrap {
+            position: relative;
+            display: inline-flex;
+            background: none;
+
+            .spinner {
+                width: 1.2rem;
+                height: 1.2rem;
+            }
+        }
+    }
+}

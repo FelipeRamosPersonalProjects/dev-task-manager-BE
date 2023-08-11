@@ -21,12 +21,15 @@ module.exports = async function (req, res) {
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
+        const stepCommit = progressModal && progressModal.stepCommit;
+        const feedback = stepCommit && stepCommit.feedback;
 
         if (skip) {
+            feedback.skipping(subscription).setLoading(true);
             progressModal.nextStep.publish(req.session.currentUser).then(done => {
-                subscription.toClient();
+                feedback.skipping(subscription).setSuccess(true);
             }).catch(err => {
-                subscription.toClientError(err);
+                feedback.skipping(subscription).setError(true, err);
             });
 
             return res.status(200).send(Object().toSuccess());
@@ -34,20 +37,22 @@ module.exports = async function (req, res) {
 
         if (repoManager) {
             if (loadChanges) {
+                feedback.gettingCurrentChanges(subscription).setLoading(true);
                 repoManager.currentChanges().then(files => {
                     progressModal.stepCommit.fileChanges = files.changes;
                     progressModal.stepCommit.setButton.loadChanges(false);
                     progressModal.stepCommit.setButton.createCommit(true);
 
-                    subscription.toClient();
+                    feedback.gettingCurrentChanges(subscription).setSuccess(true);
                 }).catch(err => {
-                    subscription.toClientError(err);
+                    feedback.gettingCurrentChanges(subscription).setError(true, err);
                 });
             }
 
             if (commitData) {
                 const { title, description, fileChanges } = Object(commitData);
 
+                feedback.commiting(subscription).setLoading(true);
                 repoManager.commit(title, description, { fileChanges }).then((commited) => {
                     if (commited.error) {
                         return subscription.toClientError(commited);
@@ -55,9 +60,9 @@ module.exports = async function (req, res) {
 
                     return progressModal.nextStep.publish(req.session.currentUser);
                 }).then(() => {
-                    subscription.toClient();
+                    feedback.commiting(subscription).setSuccess(true);
                 }).catch(err => {
-                    subscription.toClientError(err);
+                    feedback.commiting(subscription).setError(true, err);
                 });
             }
         }

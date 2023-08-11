@@ -89,6 +89,112 @@ class StepCommit extends StepModel {
             }
         };
     }
+
+    get feedback() {
+        this.setLoading(false);
+
+        return {
+            commiting: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('commitingFeedback', 'success', 'The branch is ready to be published!');
+                        } else {
+                            delete this.commitingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('commitingFeedback', 'error', err.message);
+                        } else {
+                            delete this.commitingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('commitingFeedback', 'loading', 'Commiting current local changes...');
+                        } else {
+                            delete this.commitingFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            skipping: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'success', 'Step skipped! The branch is ready to be published.');
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'error', err.message);
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('skippingFeedback', 'loading', 'Skipping step...');
+                        } else {
+                            delete this.skippingFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            },
+            gettingCurrentChanges: (subscription) => {
+                return {
+                    setSuccess: (state) => {
+                        if (state) {
+                            this.setFeedback('gettingCurrentChangesFeedback', 'success', `Current changes checked!`);
+                        } else {
+                            delete this.gettingCurrentChangesFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setError: (state, err) => {
+                        if (state) {
+                            this.setFeedback('gettingCurrentChangesFeedback', 'error', err.message);
+                        } else {
+                            delete this.gettingCurrentChangesFeedback;
+                        }
+
+                        subscription.toClient();
+                    },
+                    setLoading: (state) => {
+                        this.setLoading(true);
+
+                        if (state) {
+                            this.setFeedback('gettingCurrentChangesFeedback', 'loading', 'Getting local current changes...');
+                        } else {
+                            delete this.gettingCurrentChangesFeedback;
+                        }
+
+                        subscription.toClient();
+                    }
+                }
+            }
+        }
+    }
 }
 
 module.exports = StepCommit;

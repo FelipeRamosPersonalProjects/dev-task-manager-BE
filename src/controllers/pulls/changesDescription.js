@@ -14,6 +14,8 @@ module.exports = async function (req, res) {
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
+        const stepChangesDescription = progressModal && progressModal.stepChangesDescription;
+        const feedback = stepChangesDescription && stepChangesDescription.feedback;
 
         if (!repoManager) {
             res.status(500).send(new Error.Log({
@@ -22,6 +24,7 @@ module.exports = async function (req, res) {
             }));
         }
 
+        feedback.savingDescriptions(subscription).setLoading(true);
         if (Array.isArray(fileChanges)) {
             prDoc.fileChanges.map(item => {
                 const change = fileChanges.find(file => file.filename === item.filename);
@@ -31,12 +34,21 @@ module.exports = async function (req, res) {
 
             prDoc.updateDB({ filter: { index: prDoc.index }, data: { fileChanges: prDoc.fileChanges }}).then(async (updated) => {
                 if (updated instanceof Error.Log) {
-                    return subscription.toClientError(updated);
+                    return feedback.savingDescriptions(subscription).setError(true, updated)
                 }
 
+                feedback.savingDescriptions(subscription).setSuccess(true);
+                feedback.loadingNext(subscription).setLoading(true);
+
                 await progressModal.nextStep.createPR();
-                subscription.toClient();
-            }).catch(err => subscription.toClientError(err));
+                feedback.loadingNext(subscription).setSuccess(true);
+            }).catch(err => feedback.savingDescriptions(subscription).setError(true, err));
+        } else {
+            feedback.savingDescriptions(subscription).setSuccess(true);
+            feedback.loadingNext(subscription).setLoading(true);
+
+            await progressModal.nextStep.createPR();
+            feedback.loadingNext(subscription).setSuccess(true);
         }
 
         return res.status(200).send(Object().toSuccess());

@@ -1,4 +1,5 @@
 const Component = require('@interface/Component');
+const UserFeedback = require('@www/components/UserFeedback');
 
 class PullRequestStep extends Component {
     constructor(setup) {
@@ -36,9 +37,33 @@ class PullRequestStep extends Component {
         }
     }
 
+    setLoading(state) {
+        try {
+            if (state) {
+                this.loadingClass = 'loading';
+            } else {
+                this.loadingClass = '';
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     removeError() {
         try {
             delete this.error;
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    setFeedback(propName, state, message) {
+        try {
+            if (state) {
+                this[propName] = new UserFeedback({ state, message });
+            } else {
+                delete this[propName];
+            }
         } catch (err) {
             throw new Error.Log(err);
         }

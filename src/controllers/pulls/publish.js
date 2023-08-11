@@ -19,26 +19,32 @@ module.exports = async function (req, res) {
         const progressModal = subscription && subscription.component;
         const prDoc = progressModal && progressModal.prDoc;
         const repoManager = prDoc && prDoc.repoManager;
+        const stepPublish = progressModal && progressModal.stepPublish;
+        const feedback = stepPublish && stepPublish.feedback;
 
         if (skip) {
+            feedback.skipping(subscription).setLoading(true);
             progressModal.nextStep.changesDescription().then(() => {
-                subscription.toClient();
-            }).catch(err => subscription.toClientError(err))
+                feedback.skipping(subscription).setSuccess(true);
+            }).catch(err => feedback.skipping(subscription).setError(true, err))
         }
 
         if (push) {
+            feedback.publishing(subscription).setLoading(true, prDoc.head);
             repoManager.push().then(async (pushed) => {
                 if (pushed.error) {
-                    return subscription.toClientError(pushed);
+                    return feedback.publishing(subscription).setError(true, pushed);
                 }
 
+                feedback.publishing(subscription).setSuccess(true, prDoc.head);
+                feedback.loadingNext(subscription).setLoading(true);
                 const changed = await progressModal.nextStep.changesDescription();
                 if (changed instanceof Error.Log) {
-                    return subscription.toClientError(changed);
+                    return feedback.loadingNext(subscription).setError(true, changed);
                 }
 
-                subscription.toClient();
-            }).catch(err => subscription.toClientError(err))
+                feedback.loadingNext(subscription).setSuccess(true);
+            }).catch(err => feedback.publishing(subscription).setError(true, err))
         }
 
         return res.status(200).send(Object().toSuccess());
