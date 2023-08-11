@@ -8,8 +8,8 @@ class StepPrepare extends StepModel {
         return require.resolve('./StepPrepare.html');
     }
 
-    constructor(settings) {
-        super(settings);
+    constructor(settings, parent) {
+        super(settings, parent);
 
         const { isLoading, error, currentBranch, headBranch } = Object(settings);
         

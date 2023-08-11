@@ -230,7 +230,7 @@ class PullRequest extends _Global {
         }
     }
 
-    async publishPR() {
+    async publishPR(options) {
         try {
             const published = await this.repoManager.createPullRequest({
                 owner: this.repoManager.userName,
@@ -242,7 +242,7 @@ class PullRequest extends _Global {
                 assignees: this.assignedUsers.map(user => user.gitHubUser),
                 labels: this.getSafe('project.prLabels') || [],
                 reviewers: this.getSafe('project.reviewers') || []
-            });
+            }, options);
 
             if (published instanceof Error.Log) {
                 published.consolePrint();

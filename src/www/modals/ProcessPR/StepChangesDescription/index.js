@@ -8,10 +8,10 @@ class StepChangesDescription extends StepModel {
         return require.resolve('./StepChangesDescription.html');
     }
 
-    constructor(settings) {
-        super(settings);
+    constructor(settings, parent) {
+        super(settings, parent);
 
-        const { isLoading, fileChanges } = Object(settings);
+        const { fileChanges } = Object(settings);
 
         this.isLoading = new Spinner();
         this.setButton.save(true);
