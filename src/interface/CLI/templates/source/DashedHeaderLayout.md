@@ -1,3 +1,3 @@
-##{{DashedHeader:component}}##
+%{{DashedHeader:component}}%
 
-##{{Content:component}}##
+%{{Content:component}}%

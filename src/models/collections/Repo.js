@@ -10,6 +10,7 @@ class Repo extends _Global {
         const User = require('./User');
         const Project = require('./Project');
         const PullRequest = require('./PullRequest');
+        const Template = require('./Template');
 
         try {
             const {
@@ -25,7 +26,8 @@ class Repo extends _Global {
                 collaborators,
                 organization,
                 projects,
-                pullRequests
+                pullRequests,
+                templates
             } = Object(setup);
 
             this._parentTask = () => parentTask;
@@ -37,10 +39,12 @@ class Repo extends _Global {
             this.baseBranch = baseBranch;
             this.url = url;
             this.localPath = localPath;
+
             this.collaborators = isCompleteDoc(collaborators) ? collaborators.map(collab => new User(collab)) : [];
             this.projects = isCompleteDoc(projects) ? projects.map(project => new Project(project)) : [];
             this.owner = isCompleteDoc(owner) ? new User(owner) : {};
             this.pullRequests = isCompleteDoc(pullRequests) ? pullRequests.map(pr => new PullRequest(pr)) : [];
+            this.templates = Array.isArray(templates) && !templates.oid() ? templates.map(item => new Template(item)) : [];
 
             if (url) {
                 const separateHost = url.split('https://github.com/');

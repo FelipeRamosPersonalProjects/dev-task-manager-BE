@@ -49,10 +49,12 @@ class SpaceEdit extends Component {
                     currentValue: projects,
                     options: settings.projects
                 }),
-                new TextAreaEdit({
+                new MultiRelation({
+                    view: 'read',
                     fieldName: 'templates',
                     label: 'Templates:',
-                    currentValue: JSON.stringify(templates)
+                    currentValue: templates,
+                    options: settings.templates
                 })
             ]
         });

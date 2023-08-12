@@ -7,6 +7,16 @@ function defaultPopulate() {
         {
             path: 'projects',
             model: 'projects'
+        },
+        {
+            path: 'templates',
+            model: 'templates',
+            populate: [
+                {
+                    path: 'typeComponents',
+                    model: 'templates'
+                }
+            ]
         }
     ];
 

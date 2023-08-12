@@ -11,6 +11,16 @@ function defaultPopulate() {
         {
             path: 'collaborators',
             model: 'users'
+        },
+        {
+            path: 'templates',
+            model: 'templates',
+            populate: [
+                {
+                    path: 'typeComponents',
+                    model: 'templates'
+                }
+            ]
         }
     ];
 

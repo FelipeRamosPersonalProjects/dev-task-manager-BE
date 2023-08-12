@@ -1,1 +1,1 @@
-##{{fileChanges:array:FileChange}}##
+%{{fileChanges:array:FileChange}}%

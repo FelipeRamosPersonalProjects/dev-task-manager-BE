@@ -1,17 +1,17 @@
-<form class="##{{css:string}}##" view="##{{view:string}}##" collection-name="##{{collection:string}}##">
-    <label>##{{label:string}}##</label>
+<form class="%{{css:string}}%" view="%{{view:string}}%" collection-name="%{{collection:string}}%">
+    <label>%{{label:string}}%</label>
 
-    <span view="read">##{{currentValue:string}}##</span>
+    <span view="read">%{{currentValue:string}}%</span>
 
     <input
         class="float-input"
-        type="##{{inputType:string}}##"
-        name="##{{fieldName:string}}##"
-        value="##{{currentValue:string}}##"
+        type="%{{inputType:string}}%"
+        name="%{{fieldName:string}}%"
+        value="%{{currentValue:string}}%"
         step="0.1"
         view="edit"
         field
-        field-type="input-##{{inputType:string}}##"
+        field-type="input-%{{inputType:string}}%"
     />
     <button type="button" class="cancel-btn" view="edit">Cancel</button>
     <button type="submit" view="edit">Save</button>

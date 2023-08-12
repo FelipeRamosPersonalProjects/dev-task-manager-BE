@@ -5,9 +5,6 @@ document.querySelector('.docform').addEventListener('submit', (ev) => {
     
     createDoc({ ev, collection: 'space_desks', dataMiddleware: (data) => {
         data.owner = sessionStorage.getItem('currentUserUID');
-
-        data.templates = JSON.parse(data.templates || '{}');
-
         return data;
     } });
 });

@@ -42,6 +42,16 @@ module.exports = new Collection({
                 relatedField: 'organization',
                 type: 'ObjectId'
             }
+        },
+        {
+            fieldName: 'templates',
+            type: [ObjectId],
+            default: [],
+            ref: 'templates',
+            refConfig: {
+                relatedField: 'organizations',
+                type: 'array-oid'
+            }
         }
     ]
 });

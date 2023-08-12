@@ -6,9 +6,10 @@ const CRUD = require('@CRUD');
 module.exports = async (req, res) => {
     try {
         const projectsQuery = await CRUD.query({collectionName: 'projects'}).defaultPopulate();
+        const templatesQuery = await CRUD.query({collectionName: 'templates'}).defaultPopulate();
         const repoDoc = await CRUD.getDoc({collectionName: 'repos', filter: { index: req.params.index }}).defaultPopulate();
 
-        if (!repoDoc || !projectsQuery) {
+        if (!repoDoc || !projectsQuery || !templatesQuery) {
             res.setHeader('Content-Type', 'text/html');
             return res.status(500).send(new ErrorPage({
                 code: '404',
@@ -17,16 +18,18 @@ module.exports = async (req, res) => {
             }).renderToString());
         }
 
-        if (repoDoc instanceof Error.Log || projectsQuery instanceof Error.Log) {
+        if (repoDoc instanceof Error.Log || projectsQuery instanceof Error.Log || templatesQuery instanceof Error.Log) {
             throw repoDoc;
         }
 
         const projects = projectsQuery.map(item => item.initialize());
+        const templates = templatesQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageID: 'repos/readEditRepo',
             pageTitle: 'Edit Repository',
             body: new ReadEditRepo({
                 projects,
+                templates,
                 repoDoc: repoDoc.initialize()
             })
         });

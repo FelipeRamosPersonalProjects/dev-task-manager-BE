@@ -16,8 +16,7 @@ module.exports = new Collection({
         },
         {
             fieldName: 'title',
-            type: String,
-            required: true
+            type: String
         },
         {
             fieldName: 'remoteID',

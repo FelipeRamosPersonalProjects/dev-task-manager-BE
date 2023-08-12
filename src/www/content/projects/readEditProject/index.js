@@ -29,24 +29,29 @@ class ProjectEdit extends Component {
                     options: spaces
                 }),
                 new InputEdit({
+                    view: 'read',
                     fieldName: 'projectName',
                     label: 'Project Name:',
                     currentValue: projectName
                 }),
                 new InputEdit({
+                    view: 'read',
                     fieldName: 'projectKey',
                     label: 'Project Key:',
                     currentValue: projectKey
                 }),
                 new TextAreaEdit({
+                    view: 'read',
                     fieldName: 'description',
                     label: 'Description:',
                     currentValue: description
                 }),
-                new TextAreaEdit({
+                new MultiRelation({
+                    view: 'read',
                     fieldName: 'templates',
                     label: 'Templates:',
-                    currentValue: JSON.stringify(templates, null, 2)
+                    currentValue: templates,
+                    options: settings.templates
                 }),
                 new MultiRelation({
                     view: 'read',

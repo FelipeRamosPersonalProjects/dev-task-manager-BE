@@ -1,11 +1,11 @@
-<form class="##{{css:string}}##" view="##{{view:string}}##" collection-name="##{{collection:string}}##">
-    <label>##{{label:string}}##</label>
-    <span view="read">##{{currentValue:string}}##</span>
+<%{{wrapperTag:string}}% class="%{{css:string}}%" view="%{{view:string}}%" collection-name="%{{collection:string}}%">
+    <label>%{{label:string}}%</label>
+    <span view="read">%{{currentValue:string}}%</span>
 
-    <select name="##{{fieldName:string}}##" value="##{{currentValue:string}}##" view="edit" field>
-        ##{{options:array:SelectOption}}##
+    <select name="%{{fieldName:string}}%" value="%{{currentValue:string}}%" view="edit" field>
+        %{{options:array:SelectOption}}%
     </select>
 
     <button type="button" class="cancel-btn" view="edit">Cancel</button>
     <button type="submit" view="edit">Save</button>
-</form>
+</%{{wrapperTag:string}}%>

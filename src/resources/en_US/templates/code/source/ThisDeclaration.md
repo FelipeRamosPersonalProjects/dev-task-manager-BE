@@ -1,1 +1,1 @@
-            this.##{{propName:string}}## = ##{{propName:string}}##;
+            this.%{{propName:string}}% = %{{propName:string}}%;

@@ -1,6 +1,6 @@
 const Component = require('@interface/Component');
 const DocForm = require('@www/components/DocForm');
-const { Input, SelectInput, TextArea, SingleRelation } = require('@www/components/DocForm/FormField/fields');
+const { Input, SelectInput, TextArea, MultiRelation } = require('@www/components/DocForm/FormField/fields');
 
 class CreateSpace extends Component {
     get SOURCE_PATH() {
@@ -10,7 +10,7 @@ class CreateSpace extends Component {
     constructor(settings) {
         super(settings);
 
-        const { jiraProjects } = Object(settings);
+        const { jiraProjects, templates } = Object(settings);
 
         this.docForm = new DocForm({
             collection: 'space_desks',
@@ -27,6 +27,11 @@ class CreateSpace extends Component {
                 new TextArea({
                     fieldName: 'templates',
                     label: 'Templates:'
+                }),
+                new MultiRelation({
+                    fieldName: 'templates',
+                    label: 'Templates:',
+                    options: templates
                 })
             ]
         })

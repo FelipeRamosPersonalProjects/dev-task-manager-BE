@@ -7,10 +7,10 @@ class SpaceDesk extends _Global {
 
         const User = require('./User');
         const Project = require('./Project');
-        const TemplateOptions = require('../maps/TemplatesOptions');
+        const Template = require('./Template');
 
         try {
-            const { frontURL, jiraProject, jiraBaseURL, spaceName, owner, projects, templates } = setup || {};
+            const { frontURL, jiraProject, jiraBaseURL, spaceName, owner, projects, templates } = Object(setup);
 
             this.displayName = spaceName;
             this.frontURL = frontURL;
@@ -18,8 +18,8 @@ class SpaceDesk extends _Global {
             this.jiraBaseURL = jiraBaseURL;
             this.jiraProject = jiraProject;
             this.owner = owner && new User(owner);
-            this.projects = Array.isArray(projects) && projects.map(project => new Project(project));
-            this.templates = new TemplateOptions(templates || {});
+            this.projects = Array.isArray(projects) && !projects.oid() ? projects.map(item => new Project(item, this)) : [];
+            this.templates = Array.isArray(templates) && !templates.oid() ? templates.map(item => new Template(item, this)) : [];
 
             this.placeDefault();
         } catch(err) {

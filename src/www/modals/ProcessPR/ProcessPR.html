@@ -1,55 +1,55 @@
-<div class="modal-container large" modal-id="progress-pr" subscription-uid="##{{subscriptionUID:string}}##">
+<div class="modal-container large" modal-id="progress-pr" subscription-uid="%{{subscriptionUID:string}}%">
     <div class="modal-header">
-        <h2 class="long fill-right">##{{title:string}}##</h2>
-        <h2 class="short fill-right">##{{title:string}}##</h2>
+        <h2 class="long fill-right">%{{title:string}}%</h2>
+        <h2 class="short fill-right">%{{title:string}}%</h2>
 
         <button class="minimize-button" js="minimize-modal">_</button>
         <button class="close-button" js="close-modal">X</button>
     </div>
 
     <div class="modal-body">
-        ##{{isLoading:component}}##
+        %{{isLoading:component}}%
 
         <div class="main-display">
             <div class="pr-data data-display vertical">
-                ##{{branchSwitcher:component}}##
+                %{{branchSwitcher:component}}%
 
                 <div class="data-group vertical">
                     <div class="data-group">
                         <div class="data-row float-input">
-                            ##{{base:component}}##
+                            %{{base:component}}%
                         </div>
                         <div class="data-row float-input">
-                            ##{{head:component}}##
+                            %{{head:component}}%
                         </div>
                     </div>
 
                     <div class="data-row">
-                        ##{{ticket:component}}##
+                        %{{ticket:component}}%
                     </div>
 
                     <div class="data-row">
-                        ##{{task:component}}##
+                        %{{task:component}}%
                     </div>
                 </div>
 
                 <div class="data-row vertical">
-                    ##{{project:component}}##
+                    %{{project:component}}%
                 </div>
             </div>
 
             <div class="steps-display float-input">
-                ##{{stepBegin:component}}##
-                ##{{stepPrepare:component}}##
-                ##{{stepCommit:component}}##
-                ##{{stepPublish:component}}##
-                ##{{stepChangesDescription:component}}##
-                ##{{stepCreatePR:component}}##
-                ##{{stepCompleted:component}}##
+                %{{stepBegin:component}}%
+                %{{stepPrepare:component}}%
+                %{{stepCommit:component}}%
+                %{{stepPublish:component}}%
+                %{{stepChangesDescription:component}}%
+                %{{stepCreatePR:component}}%
+                %{{stepCompleted:component}}%
             </div>
         </div>
 
         <h3>Logs History</h3>
-        <div class="prompt">##{{logsHistory:array:Paragraph}}##</div>
+        <div class="prompt">%{{logsHistory:array:Paragraph}}%</div>
     </div>
 </div>

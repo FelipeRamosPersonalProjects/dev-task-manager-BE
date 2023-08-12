@@ -1,15 +1,15 @@
 ---------------------------------------------------------------------------------------------------------------------------------------
 
         Task name:
-        [##{{externalKey:string}}##] ##{{title:string}}##
+        [%{{externalKey:string}}%] %{{title:string}}%
 
         URL:
-        ##{{externalURL:string}}##
+        %{{externalURL:string}}%
 
         Task Branch:
-        ##{{taskBranch:string}}##
+        %{{taskBranch:string}}%
 
         Description:
-        ##{{description:string}}##
+        %{{description:string}}%
 
 ---------------------------------------------------------------------------------------------------------------------------------------

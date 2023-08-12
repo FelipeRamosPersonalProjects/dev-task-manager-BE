@@ -1,1 +1,1 @@
- -m "🗃️ ##{{filename:string}}## -> ##{{description:string}}##"
+ -m "🗃️ %{{filename:string}}% -> %{{description:string}}%"

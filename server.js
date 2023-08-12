@@ -54,6 +54,7 @@ require('@services/database/init').then(async () => {
     app.use('/projects', routes.pages.projects);
     app.use('/repos', routes.pages.repos);
     app.use('/spaces', routes.pages.spaces);
+    app.use('/templates', routes.pages.templates);
     app.use('/user', routes.pages.user);
 
     // Initializing socket server

@@ -43,7 +43,7 @@ module.exports = (url, data) => {
                 throw new Error.Log({
                     status: errorResponse.status,
                     name: errorResponse.statusText,
-                    message: errorData.errorMessages.join('\n')
+                    message: errorData.errorMessages && errorData.errorMessages.join('\n')
                 });
             }
         },
