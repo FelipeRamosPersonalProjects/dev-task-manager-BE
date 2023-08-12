@@ -172,24 +172,11 @@ class ProcessPR extends Component {
                 this.setters.stepChangesDescription(this.prDoc);
             },
             createPR: async () => {
-                const project = this.prDoc && this.prDoc.project;
-                const templates = project && project.templates;
-                const templatePR = templates && templates.prDescription;
-
                 this.stepChangesDescription.resolve();
 
-                if (templatePR) {
-                    this.prDoc.description = templatePR.renderToString({
-                        externalTicketURL: this.prDoc.parentTicket.externalURL,
-                        externalTaskURL: this.prDoc.task.externalURL,
-                        summary: this.prDoc.summary,
-                        fileChanges: this.prDoc.fileChanges
-                    });
-
-                    const updated = await this.prDoc.updateDB({filter: { index: this.prDoc.index }, data: { description: this.prDoc.description }});
-                    if (updated instanceof Error.Log) {
-                        throw updated;
-                    }
+                const updated = await this.prDoc.updateDB({filter: { index: this.prDoc.index }, data: { description: this.prDoc.autoDescription }});
+                if (updated instanceof Error.Log) {
+                    throw updated;
                 }
 
                 this.setters.stepCreatePR({ prDoc: this.prDoc });

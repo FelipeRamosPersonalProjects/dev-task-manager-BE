@@ -6,7 +6,7 @@ class FormField extends Component {
         super(settings);
 
         try {
-            const { fieldName, label, placeholder, currentValue, css } = Object(settings);
+            const { fieldName, label, placeholder, currentValue, css, wrapperTag } = Object(settings);
     
             if (!fieldName) {
                 throw new Error.Log({
@@ -19,7 +19,7 @@ class FormField extends Component {
             this.fieldName = fieldName || '';
             this.label = label || '';
             this.placeholder = placeholder || '';
-            this.wrapperTag = this.view === 'create' ? 'div' : 'form';
+            this.wrapperTag = wrapperTag || (this.view === 'create' ? 'div' : 'form');
             this.css = '';
 
             if (Array.isArray(css)) {

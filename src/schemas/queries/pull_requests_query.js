@@ -10,7 +10,13 @@ function defaultPopulate() {
                     populate: [
                         {
                             path: 'spaceDesk',
-                            model: 'space_desks'
+                            model: 'space_desks',
+                            populate: [
+                                {
+                                    path: 'templates',
+                                    model: 'templates'
+                                }
+                            ]
                         },
                         {
                             path: 'prLabels',
@@ -19,12 +25,26 @@ function defaultPopulate() {
                         {
                             path: 'reviewers',
                             model: 'users'
+                        },
+                        {
+                            path: 'templates',
+                            model: 'templates'
                         }
                     ]
                 },
                 {
                     path: 'repo',
-                    model: 'repos'
+                    model: 'repos',
+                    populate: [
+                        {
+                            path: 'templates',
+                            model: 'templates'
+                        }
+                    ]
+                },
+                {
+                    path: 'ticket',
+                    model: 'tickets'
                 }
             ]
         },

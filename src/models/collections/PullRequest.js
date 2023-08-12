@@ -1,6 +1,7 @@
 const _Global = require('../maps/_Global');
 const CRUD = require('@CRUD');
 const dbHelpers = require('@helpers/database/dbHelpers');
+const Component = require('@interface/Component');
 
 class PullRequest extends _Global {
     constructor(setup, parent){
@@ -63,17 +64,6 @@ class PullRequest extends _Global {
             this.task = !Object(task).oid() && new Task(task, this);
             this.logsHistory = logsHistory || [];
 
-            if (typeof description === 'string') {
-                this.description = description;
-            } else {
-                this.description = description && description.toMarkdown({
-                    externalURL: ticket.externalURL,
-                    externalURL: task.externalURL,
-                    summary: task.description,
-                    fileChanges
-                });
-            }
-
             this.placeDefault();
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'PullRequests');
@@ -81,7 +71,47 @@ class PullRequest extends _Global {
     }
 
     get displayName() {
-        return this.title;
+        if (this.title) {
+            return this.title;
+        }
+
+        const projectTemplates = this.project && this.project.templates;
+        const spaceTemplates = this.project && this.project.spaceDesk && this.project.spaceDesk.templates;
+        let template;
+
+        if (projectTemplates && projectTemplates.length) {
+            const filterTemplates = projectTemplates.filter(item => item.type === 'pr-title');
+            template = filterTemplates.length ? filterTemplates[0].Component : null;
+        } else if (spaceTemplates && spaceTemplates.length) {
+            const filterTemplates = spaceTemplates.filter(item => item.type === 'pr-title');
+            template = filterTemplates.length ? filterTemplates[0].Component : null;
+        }
+
+        if (template instanceof Component) {
+            return template.renderToString(this);
+        }
+    }
+
+    get autoDescription() {
+        if (this.description) {
+            return this.description;
+        }
+
+        const projectTemplates = this.project && this.project.templates;
+        const spaceTemplates = this.project && this.project.spaceDesk && this.project.spaceDesk.templates;
+        let template;
+
+        if (projectTemplates && projectTemplates.length) {
+            const filterTemplates = projectTemplates.filter(item => item.type === 'pr-description');
+            template = filterTemplates.length ? filterTemplates[0].Component : null;
+        } else if (spaceTemplates && spaceTemplates.length) {
+            const filterTemplates = spaceTemplates.filter(item => item.type === 'pr-description');
+            template = filterTemplates.length ? filterTemplates[0].Component : null;
+        }
+
+        if (template instanceof Component) {
+            return template.renderToString(this);
+        }
     }
 
     get recommendedBranchName() {
@@ -108,6 +138,24 @@ class PullRequest extends _Global {
         }
     }
 
+    get externalTicketKey() {
+        if (this.ticket) {
+            return this.ticket.externalKey;
+        }
+    }
+
+    get externalTaskKey() {
+        if (this.task) {
+            return this.task.externalKey;
+        }
+    }
+
+    get taskTitle() {
+        if (this.task) {
+            return this.task.displayName;
+        }
+    }
+
     get repoManager() {
         return this.task && this.task.repo.repoManager;
     }
@@ -131,13 +179,7 @@ class PullRequest extends _Global {
     }
 
     async updateDescription(dontSave) {
-        const descriptionTemplate = this.project.getTemplate('prDescription');
-        const newDescription = descriptionTemplate.renderToString({
-            externalTicketURL: this.parentTicket.externalURL,
-            externalTaskURL: this.task.externalURL,
-            summary: this.summary,
-            fileChanges: this.fileChanges
-        });
+        const newDescription = this.autoDescription;
 
         if (!dontSave) {
             const updatedDescription = await this.updateDB({ data: {
@@ -153,6 +195,7 @@ class PullRequest extends _Global {
             this.description = newDescription;
             return this;
         } else {
+            this.description = newDescription;
             return this;
         }
     }
@@ -235,8 +278,8 @@ class PullRequest extends _Global {
             const published = await this.repoManager.createPullRequest({
                 owner: this.repoManager.userName,
                 repo: this.repo.repoName,
-                title: this.title,
-                body: this.description,
+                title: this.displayName,
+                body: this.autoDescription,
                 head: this.head,
                 base: this.base,
                 assignees: this.assignedUsers.map(user => user.gitHubUser),

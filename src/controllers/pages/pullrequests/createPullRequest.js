@@ -8,6 +8,8 @@ module.exports = async (req, res) => {
     let base;
     let head;
     let title;
+    let summary;
+    let assignedUsers;
 
     try {
         const ticketsQuery = await CRUD.query({collectionName: 'tickets', filter: {
@@ -31,11 +33,11 @@ module.exports = async (req, res) => {
 
         if (task) {
             const currentTask = tasks.find(item => item._id === task);
-            const prTitle = currentTask.project.getTemplate('prTitle');
 
             head = currentTask.nextBranchName;
             base = currentTask.project.baseBranch;
-            title = prTitle.renderToString(currentTask);
+            summary = currentTask.description;
+            assignedUsers = [users.find(item => item._id === userUID)];
         }
 
         const content = new PageTemplate({
@@ -52,7 +54,9 @@ module.exports = async (req, res) => {
                     ticket,
                     base,
                     head,
-                    title
+                    title,
+                    summary,
+                    assignedUsers
                 }
             })
         });

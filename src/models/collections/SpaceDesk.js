@@ -18,8 +18,8 @@ class SpaceDesk extends _Global {
             this.jiraBaseURL = jiraBaseURL;
             this.jiraProject = jiraProject;
             this.owner = owner && new User(owner);
-            this.projects = Array.isArray(projects) && !projects.oid() ? projects.map(item => new Project(item)) : [];
-            this.templates = Array.isArray(templates) && !templates.oid() ? templates.map(item => new Template(item)) : [];
+            this.projects = Array.isArray(projects) && !projects.oid() ? projects.map(item => new Project(item, this)) : [];
+            this.templates = Array.isArray(templates) && !templates.oid() ? templates.map(item => new Template(item, this)) : [];
 
             this.placeDefault();
         } catch(err) {
