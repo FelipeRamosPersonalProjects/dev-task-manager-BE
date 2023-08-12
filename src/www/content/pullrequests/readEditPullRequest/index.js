@@ -38,6 +38,7 @@ class PullRequestEdit extends Component {
                         ticket,
                         task,
                         summary,
+                        description,
                         title,
                         base,
                         head,
@@ -110,6 +111,13 @@ class PullRequestEdit extends Component {
                                 fieldName: 'summary',
                                 label: 'Summary:',
                                 currentValue: summary
+                            }),
+                            new TextAreaEdit({
+                                view: 'read',
+                                fieldName: 'description',
+                                label: 'Description:',
+                                inputType: 'textarea',
+                                currentValue: description
                             }),
                             new MultiRelation({
                                 view: 'read',

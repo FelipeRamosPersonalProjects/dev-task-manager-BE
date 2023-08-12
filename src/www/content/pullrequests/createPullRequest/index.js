@@ -11,7 +11,7 @@ class PullRequestCreate extends Component {
         super(settings);
 
         const { tickets, users, labels, reviewers, tasks, pullRequestDoc } = Object(settings);
-        const { ticket, task, base, head, title } = Object(pullRequestDoc);
+        const { ticket, task, base, head, title, summary, assignedUsers, description } = Object(pullRequestDoc);
 
         this.docForm = new DocForm({
             collection: 'pull_requests',
@@ -50,12 +50,14 @@ class PullRequestCreate extends Component {
                 }),
                 new TextArea({
                     fieldName: 'summary',
-                    label: 'Summary:'
+                    label: 'Summary:',
+                    currentValue: summary
                 }),
                 new MultiRelation({
                     fieldName: 'assignedUsers',
                     label: 'Assigned Users:',
-                    options: users
+                    options: users,
+                    currentValue: assignedUsers
                 }),
                 new MultiRelation({
                     fieldName: 'labels',

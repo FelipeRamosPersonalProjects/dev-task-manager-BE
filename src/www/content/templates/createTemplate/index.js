@@ -17,6 +17,8 @@ class TemplateCreate extends Component {
             collection: 'templates',
             fields: [
                 new TemplateTypeSelector({
+                    view: 'create',
+                    wrapperTag: 'div',
                     fieldName: 'type',
                     label: 'Template Type:'
                 }),
@@ -26,7 +28,8 @@ class TemplateCreate extends Component {
                 }),
                 new TextArea({
                     fieldName: 'body',
-                    label: 'Body:'
+                    label: 'Body:',
+                    inputType: 'textarea'
                 }),
                 new MultiRelation({
                     fieldName: 'spaces',

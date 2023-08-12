@@ -3,6 +3,7 @@ const DiscoveryModel = require('@models/tasks/Discovery');
 const DevelopmentModel = require('@models/tasks/Development');
 const TODOReminder = require('@models/tasks/TODOReminder');
 const InvestigationIssue = require('@models/jira/issues/InvestigationIssue');
+const Component = require('@interface/Component');
 const CRUD = require('@CRUD');
 
 class Task extends _Global {
@@ -71,8 +72,6 @@ class Task extends _Global {
             this.repo = isCompleteDoc(repo) ? new Repo(repo, this) : {};
             this.assignedUsers = Array.isArray(assignedUsers) && !assignedUsers.oid() ? assignedUsers.map(item => new User(item)) : [];
 
-            this.displayName = `[${this.getSafe('ticket.externalKey') || this.cod}] ${this.title}`;
-
             if (this.taskType === 'INVESTIGATION') {
                 this.jiraIssueType = '10051';
                 this.discovery = discovery && new DiscoveryModel(discovery);
@@ -93,6 +92,28 @@ class Task extends _Global {
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Task');
         }
+    }
+    
+    get displayName() {
+        if (this.title && this.title.indexOf(this.ticketUID) === -1) {
+            const projectTemplates = this.project && this.project.templates;
+            const spaceTemplates = this.project && this.project.spaceDesk && this.project.spaceDesk.templates;
+            let template;
+
+            if (projectTemplates && projectTemplates.length) {
+                const filterTemplates = projectTemplates.filter(item => item.type === 'task-title');
+                template = filterTemplates.length ? filterTemplates[0].Component : null;
+            } else if (spaceTemplates && spaceTemplates.length) {
+                const filterTemplates = spaceTemplates.filter(item => item.type === 'task-title');
+                template = filterTemplates.length ? filterTemplates[0].Component : null;
+            }
+    
+            if (template instanceof Component) {
+                return template.renderToString(this);
+            }
+        }
+
+        return this.title;
     }
 
     get repoManager() {

@@ -1,4 +1,5 @@
 const _Global = require('@models/maps/_Global');
+const ComponentModel = require('@interface/Component');
 
 class Template extends _Global {
     constructor(setup, parent){
@@ -39,6 +40,10 @@ class Template extends _Global {
         } catch(err) {
             throw new Error.Log(err).append('common.model_construction', 'Template');
         }
+    }
+
+    get Component() {
+        return new ComponentModel({ outputModel: this.body });
     }
 }
 

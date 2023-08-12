@@ -33,12 +33,14 @@ class StepCommit extends StepModel {
 
             this.commitTitle = new Input({
                 label: 'Title',
-                fieldName: 'commitTitle'
+                fieldName: 'commitTitle',
+                currentValue: this.parent.prDoc.displayName
             });
     
             this.commitDescription = new TextArea({
                 label: 'Description',
-                fieldName: 'commitDescription'
+                fieldName: 'commitDescription',
+                currentValue: this.parent.prDoc.summary
             });
 
             this.fileChanges = changes;

@@ -13,13 +13,13 @@ class StepCreatePR extends StepModel {
         super(settings, parent);
 
         const { isLoading, prDoc } = Object(settings);
-        const { title, description } = Object(prDoc);
+        const { displayName, autoDescription } = Object(prDoc);
 
         this.isLoading = new Spinner();
         this.setButton.create(true);
 
-        this.setTitle(title);
-        this.setDescription(description);
+        this.setTitle(displayName);
+        this.setDescription(autoDescription);
 
         this.types = {
             FileChange

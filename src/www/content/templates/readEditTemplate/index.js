@@ -60,6 +60,7 @@ class TemplateEdit extends Component {
                                 view: 'read',
                                 fieldName: 'body',
                                 label: 'Body:',
+                                inputType: 'textarea',
                                 currentValue: body
                             }),
                             new MultiRelation({

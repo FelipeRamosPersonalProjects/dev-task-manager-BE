@@ -1,3 +1,4 @@
+const SelectInput = require('@www/components/DocForm/FormField/SelectInput');
 const SelectInputEdit = require('@www/components/DocForm/FormField/SelectInputEdit');
 
 class TemplateTypeSelector extends SelectInputEdit {
@@ -8,7 +9,7 @@ class TemplateTypeSelector extends SelectInputEdit {
         const fieldSet = templateCollection.fieldsSet.find(item => item.fieldName === 'type');
         const options = fieldSet.enumLabels || [];
         const currentValueParsed = options.find(item => item.value === currentValue);
-        
+
         super({ ...settings, options, currentValue: currentValueParsed ? currentValueParsed.label : null });
     }
 }
