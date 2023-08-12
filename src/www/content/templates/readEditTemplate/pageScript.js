@@ -55,6 +55,12 @@ window.socketClient.subscribeComponent({
             type: 'list',
             collectionName: 'space_desks',
             filter: {}
+        },
+        {
+            name: 'typeComponents',
+            type: 'list',
+            collectionName: 'templates',
+            filter: {}
         }
     ]
 });

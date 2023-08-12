@@ -14,7 +14,13 @@ function defaultPopulate() {
         },
         {
             path: 'templates',
-            model: 'templates'
+            model: 'templates',
+            populate: [
+                {
+                    path: 'typeComponents',
+                    model: 'templates'
+                }
+            ]
         }
     ];
 

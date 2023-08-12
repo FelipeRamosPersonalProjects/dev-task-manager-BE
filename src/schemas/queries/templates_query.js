@@ -7,6 +7,10 @@ function defaultPopulate() {
         {
             path: 'spaces',
             model: 'space_desks'
+        },
+        {
+            path: 'typeComponents',
+            model: 'templates'
         }
     ];
 

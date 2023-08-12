@@ -11,7 +11,7 @@ class TemplateCreate extends Component {
     constructor(settings) {
         super(settings);
 
-        const { projects, spaces } = Object(settings);
+        const { templates } = Object(settings);
 
         this.docForm = new DocForm({
             collection: 'templates',
@@ -23,6 +23,10 @@ class TemplateCreate extends Component {
                     label: 'Template Type:'
                 }),
                 new Input({
+                    fieldName: 'typeID',
+                    label: 'Type ID:'
+                }),
+                new Input({
                     fieldName: 'title',
                     label: 'Title:'
                 }),
@@ -32,14 +36,9 @@ class TemplateCreate extends Component {
                     inputType: 'textarea'
                 }),
                 new MultiRelation({
-                    fieldName: 'spaces',
-                    label: 'Spaces:',
-                    options: spaces
-                }),
-                new MultiRelation({
-                    fieldName: 'projects',
-                    label: 'Project:',
-                    options: projects
+                    fieldName: 'typeComponents',
+                    label: 'Type Components:',
+                    options: templates
                 })
             ]
         });

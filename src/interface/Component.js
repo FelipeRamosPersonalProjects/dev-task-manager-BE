@@ -147,7 +147,11 @@ class Component extends ValidateSchema {
                 if (childTypeName === 'component') {
                     result += item.renderToString();
                 } else {
-                    result += new Child(item).renderToString();
+                    if (Child instanceof Component) {
+                        result += Child.renderToString(item);
+                    } else {
+                        result += new Child(item).renderToString();
+                    }
                 }
             }
         } else {

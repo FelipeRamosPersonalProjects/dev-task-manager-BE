@@ -17,24 +17,28 @@ class Template extends _Global {
                 frontURL,
                 title,
                 type,
+                typeID,
                 summary,
                 body,
                 author,
                 organizations,
                 spaces,
                 projects,
+                typeComponents
             } = Object(setup);
 
             this.displayName = displayName;
             this.frontURL = frontURL;
             this.title = title;
             this.type = type;
+            this.typeID = typeID;
             this.summary = summary;
             this.body = body;
             this.author = !Object(author).oid() ? new User(author, this) : null;
             this.organizations = Array.isArray(organizations) && !organizations.oid() && organizations.map(item => new Organization(item, this));
             this.spaces = Array.isArray(spaces) && !spaces.oid() && spaces.map(item => new SpaceDesk(item, this));
             this.projects = Array.isArray(projects) && !projects.oid() && projects.map(item => new Project(item, this));
+            this.typeComponents = Array.isArray(typeComponents) && !typeComponents.oid() ? typeComponents.map(item => new Template(item, this)) : [];
 
             this.placeDefault();
         } catch(err) {
@@ -43,7 +47,10 @@ class Template extends _Global {
     }
 
     get Component() {
-        return new ComponentModel({ outputModel: this.body });
+        const types = {};
+
+        this.typeComponents.map(item => (types[item.typeID] = item.Component));
+        return new ComponentModel({ outputModel: this.body, types });
     }
 }
 
