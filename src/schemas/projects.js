@@ -80,8 +80,13 @@ module.exports = new Collection({
         },
         {
             fieldName: 'templates',
-            type: TemplateOptionsMap,
-            default: {}
+            type: [ObjectId],
+            default: [],
+            ref: 'templates',
+            refConfig: {
+                relatedField: 'projects',
+                type: 'array-oid'
+            }
         },
         {
             fieldName: 'reviewers',

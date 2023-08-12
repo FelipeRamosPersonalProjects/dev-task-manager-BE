@@ -11,6 +11,10 @@ function defaultPopulate() {
         {
             path: 'collaborators',
             model: 'users'
+        },
+        {
+            path: 'templates',
+            model: 'templates'
         }
     ];
 

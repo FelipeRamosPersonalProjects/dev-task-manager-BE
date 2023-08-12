@@ -1,13 +1,21 @@
 const PageTemplate = require('@src/www/pages/standardPage');
 const SpaceCreate = require('@src/www/content/spaces/createSpace');
 const ErrorPage = require('@src/www/error');
+const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
+        const templatesQuery = await CRUD.query({ collectionName: 'template' });
+        if (templatesQuery instanceof Error.Log || !templatesQuery) {
+            return res.status(500).send(templatesQuery.toJSON());
+        }
+
+        const templates = templatesQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageID: 'spaces/createSpace',
             pageTitle: 'Create Space',
             body: new SpaceCreate({
+                templates,
                 jiraProjects: req.session.currentUser.jira.projects.values
             })
         });

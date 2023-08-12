@@ -88,6 +88,16 @@ module.exports = new Collection({
                 relatedField: 'repo',
                 type: 'ObjectId'
             }
+        },
+        {
+            fieldName: 'templates',
+            type: [ObjectId],
+            default: [],
+            ref: 'templates',
+            refConfig: {
+                relatedField: 'repos',
+                type: 'array-oid'
+            }
         }
     ]
 });

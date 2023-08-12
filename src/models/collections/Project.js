@@ -12,6 +12,7 @@ class Project extends _Global {
         const Task = require('./Task');
         const Label = require('./Label');
         const User = require('./User');
+        const Template = require('./Template');
 
         try {
             const {
@@ -36,15 +37,17 @@ class Project extends _Global {
             this.projectKey = projectKey;
             this.projectName = projectName;
             this.description = description;
+            this.baseBranch = baseBranch;
             this.urls = urls;
+
             this.tickets = !isObjectID(tickets) ? tickets.map(ticket => new Ticket(ticket)) : [];
             this.tasks = !isObjectID(tasks) ? tasks.map(task => new Task(task)) : [];
             this.repos = !isObjectID(repos) ? repos.map(repo => new Repo(repo)) : [];
             this.spaceDesk = !isObjectID(spaceDesk) ? new SpaceDesk(spaceDesk) : {};
-            this.templates = !isObjectID(templates) && !isObjectID(spaceDesk) ? new TemplateOptions({...templates, ...(Object(spaceDesk).templates)}) : {};
+
             this.reviewers = Array.isArray(reviewers) && !reviewers.oid() ? reviewers.map(item => new User(item)) : [];
-            this.baseBranch = baseBranch;
             this.prLabels = Array.isArray(prLabels) && !prLabels.oid() ? prLabels.map(item => new Label(item)) : [];
+            this.templates = Array.isArray(templates) && !templates.oid() ? templates.map(item => new Template(item)) : [];
 
             this.placeDefault();
         } catch(err) {

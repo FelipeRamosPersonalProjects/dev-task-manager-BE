@@ -8,7 +8,7 @@ class TextArea extends FormField {
     constructor(settings) {
         super(settings);
 
-        this.css += ' readedit-form';
+        this.css += ' readedit-form float-input';
     }
 }
 

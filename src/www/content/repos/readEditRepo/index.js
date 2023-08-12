@@ -11,7 +11,7 @@ class ReadEditRepo extends Component {
         super(settings);
 
         const { repoDoc } = Object(settings);
-        const { _id, displayName, projects, baseBranch, nodeVersion, url, repoName, repoPath } = Object(repoDoc);
+        const { _id, displayName, projects, baseBranch, nodeVersion, url, repoName, repoPath, templates } = Object(repoDoc);
 
         this.UID = _id;
         this.collection = repoDoc.getSafe('ModelDB.modelName');
@@ -51,6 +51,13 @@ class ReadEditRepo extends Component {
                     label: 'Projects:',
                     currentValue: projects,
                     options: settings.projects
+                }),
+                new MultiRelation({
+                    view: 'read',
+                    fieldName: 'templates',
+                    label: 'Templates:',
+                    currentValue: templates,
+                    options: settings.templates
                 })
             ]
         });

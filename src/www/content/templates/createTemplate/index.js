@@ -1,6 +1,7 @@
 const Component = require('@interface/Component');
 const DocForm = require('@www/components/DocForm');
 const { Input, TextArea, MultiRelation } = require('@www/components/DocForm/FormField/fields');
+const TemplateTypeSelector = require('@www/components/TemplateTypeSelector');
 
 class TemplateCreate extends Component {
     get SOURCE_PATH() {
@@ -15,6 +16,18 @@ class TemplateCreate extends Component {
         this.docForm = new DocForm({
             collection: 'templates',
             fields: [
+                new TemplateTypeSelector({
+                    fieldName: 'type',
+                    label: 'Template Type:'
+                }),
+                new Input({
+                    fieldName: 'title',
+                    label: 'Title:'
+                }),
+                new TextArea({
+                    fieldName: 'body',
+                    label: 'Body:'
+                }),
                 new MultiRelation({
                     fieldName: 'spaces',
                     label: 'Spaces:',
@@ -24,14 +37,6 @@ class TemplateCreate extends Component {
                     fieldName: 'projects',
                     label: 'Project:',
                     options: projects
-                }),
-                new Input({
-                    fieldName: 'title',
-                    label: 'Title:'
-                }),
-                new TextArea({
-                    fieldName: 'body',
-                    label: 'Body:'
                 })
             ]
         });

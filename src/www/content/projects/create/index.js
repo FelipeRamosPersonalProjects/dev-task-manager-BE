@@ -1,6 +1,6 @@
 const Component = require('@interface/Component');
 const DocForm = require('@www/components/DocForm');
-const { Input, SelectInput, TextArea, SingleRelation } = require('@www/components/DocForm/FormField/fields');
+const { Input, MultiRelation, TextArea, SingleRelation } = require('@www/components/DocForm/FormField/fields');
 
 class ProjectCreate extends Component {
     get SOURCE_PATH() {
@@ -10,7 +10,7 @@ class ProjectCreate extends Component {
     constructor(settings) {
         super(settings);
 
-        const { spaces } = Object(settings);
+        const { spaces, templates } = Object(settings);
 
         this.docForm = new DocForm({
             collection: 'projects',
@@ -32,9 +32,10 @@ class ProjectCreate extends Component {
                     fieldName: 'description',
                     label: 'Description:'
                 }),
-                new TextArea({
+                new MultiRelation({
                     fieldName: 'templates',
-                    label: 'Templates:'
+                    label: 'Templates:',
+                    options: templates
                 })
             ]
         });

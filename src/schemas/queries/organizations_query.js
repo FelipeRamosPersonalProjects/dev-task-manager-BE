@@ -1,5 +1,10 @@
 function defaultPopulate() {
-    const populateConfig = [];
+    const populateConfig = [
+        {
+            path: 'templates',
+            model: 'templates'
+        }
+    ];
 
     return this.populate(populateConfig);
 }

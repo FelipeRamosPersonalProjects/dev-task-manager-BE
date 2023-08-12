@@ -23,6 +23,10 @@ function defaultPopulate() {
         {
             path: 'reviewers',
             model: 'users'
+        },
+        {
+            path: 'templates',
+            model: 'templates'
         }
     ])
 }

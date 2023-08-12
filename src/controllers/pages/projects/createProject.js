@@ -10,12 +10,19 @@ module.exports = async (req, res) => {
             return res.status(500).send(spacesQuery.toJSON());
         }
 
+        const templatesQuery = await CRUD.query({collectionName: 'templates', filter: {}});
+        if (templatesQuery instanceof Error.Log || !templatesQuery) {
+            return res.status(500).send(templatesQuery.toJSON());
+        }
+
         const spaces = spacesQuery.map(item => item.initialize());
+        const templates = templatesQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageID: 'projects/create',
             pageTitle: 'Create Project',
             body: new ProjectCreate({
-                spaces
+                spaces,
+                templates
             })
         });
     

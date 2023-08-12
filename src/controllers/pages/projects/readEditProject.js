@@ -20,8 +20,10 @@ module.exports = async (req, res) => {
         }
 
         const spacesQuery = await CRUD.query({collectionName: 'space_desks'}).defaultPopulate();
+        const templatesQuery = await CRUD.query({collectionName: 'templates'}).defaultPopulate();
         const reposQuery = await CRUD.query({collectionName: 'repos' }).defaultPopulate();
         const spaces = spacesQuery.map(item => item.initialize());
+        const templates = templatesQuery.map(item => item.initialize());
         const repos = reposQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageID: 'projects/readEditProject',
@@ -29,6 +31,7 @@ module.exports = async (req, res) => {
             body: new ReadEditProject({
                 spaces,
                 repos,
+                templates,
                 projectDoc: projectDoc.initialize()
             })
         });
