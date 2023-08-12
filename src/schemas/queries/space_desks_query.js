@@ -7,6 +7,10 @@ function defaultPopulate() {
         {
             path: 'projects',
             model: 'projects'
+        },
+        {
+            path: 'templates',
+            model: 'templates'
         }
     ];
 

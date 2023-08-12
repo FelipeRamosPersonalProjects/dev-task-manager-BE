@@ -10,7 +10,7 @@ class CreateRepo extends Component {
     constructor(settings) {
         super(settings);
 
-        const { projects } = Object(settings);
+        const { projects, templates } = Object(settings);
 
         this.docForm = new DocForm({
             collection: 'repos',
@@ -39,6 +39,11 @@ class CreateRepo extends Component {
                     fieldName: 'projects',
                     label: 'Project:',
                     options: projects
+                }),
+                new MultiRelation({
+                    fieldName: 'templates',
+                    label: 'Templates:',
+                    options: templates
                 })
             ]
         });

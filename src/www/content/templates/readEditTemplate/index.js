@@ -1,6 +1,7 @@
 const Component = require('@interface/Component');
 const DocForm = require('@www/components/DocForm');
 const { InputEdit, TextAreaEdit, MultiRelation } = require('@www/components/DocForm/FormField/fields');
+const TemplateTypeSelector = require('@src/www/components/TemplateTypeSelector');
 
 class TemplateEdit extends Component {
     get SOURCE_PATH() {
@@ -30,6 +31,7 @@ class TemplateEdit extends Component {
                     const {
                         _id,
                         displayName,
+                        type,
                         title,
                         body,
                         projects,
@@ -42,6 +44,24 @@ class TemplateEdit extends Component {
                         collection: this.collection,
                         wrapperTag: 'div',
                         fields: [
+                            new TemplateTypeSelector({
+                                view: 'read',
+                                fieldName: 'type',
+                                label: 'Template Type:',
+                                currentValue: type
+                            }),
+                            new InputEdit({
+                                view: 'read',
+                                fieldName: 'title',
+                                label: 'Title:',
+                                currentValue: title
+                            }),
+                            new TextAreaEdit({
+                                view: 'read',
+                                fieldName: 'body',
+                                label: 'Body:',
+                                currentValue: body
+                            }),
                             new MultiRelation({
                                 view: 'read',
                                 fieldName: 'projects',
@@ -55,18 +75,6 @@ class TemplateEdit extends Component {
                                 label: 'Spaces:',
                                 options: this.spaces,
                                 currentValue: spaces
-                            }),
-                            new InputEdit({
-                                view: 'read',
-                                fieldName: 'title',
-                                label: 'Title:',
-                                currentValue: title
-                            }),
-                            new TextAreaEdit({
-                                view: 'read',
-                                fieldName: 'body',
-                                label: 'Body:',
-                                currentValue: body
                             })
                         ]
                     });

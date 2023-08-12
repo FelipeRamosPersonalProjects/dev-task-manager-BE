@@ -43,8 +43,13 @@ module.exports = new Collection({
         },
         {
             fieldName: 'templates',
-            type: TemplateOptionsMap,
-            default: {}
+            type: [ObjectId],
+            default: [],
+            ref: 'templates',
+            refConfig: {
+                relatedField: 'spaces',
+                type: 'array-oid'
+            }
         }
     ]
 });

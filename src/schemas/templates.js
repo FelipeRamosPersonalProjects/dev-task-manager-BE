@@ -11,7 +11,23 @@ module.exports = new Collection({
         {
             fieldName: 'author',
             type: ObjectId,
-            ref: 'users'
+            ref: 'users',
+            refConfig: {
+                relatedField: 'myTemplates',
+                type: 'array-oid'
+            }
+        },
+        {
+            fieldName: 'type',
+            type: String,
+            default: 'pr-description',
+            enum: ['ticket-title', 'task-title', 'pr-title', 'pr-description'],
+            enumLabels: [
+                { value: 'ticket-title', label: 'Ticket Title' },
+                { value: 'task-title', label: 'Task Title' },
+                { value: 'pr-title', label: 'Pull Request Title'},
+                { value: 'pr-description', label: 'Pull Request Description'},
+            ]
         },
         {
             fieldName: 'title',
@@ -30,25 +46,41 @@ module.exports = new Collection({
             fieldName: 'organizations',
             type: [ObjectId],
             ref: 'organizations',
-            default: []
+            default: [],
+            refConfig: {
+                relatedField: 'templates',
+                type: 'array-oid'
+            }
         },
         {
             fieldName: 'spaces',
             type: [ObjectId],
             ref: 'space_desks',
-            default: []
+            default: [],
+            refConfig: {
+                relatedField: 'templates',
+                type: 'array-oid'
+            }
         },
         {
             fieldName: 'projects',
             type: [ObjectId],
             ref: 'projects',
-            default: []
+            default: [],
+            refConfig: {
+                relatedField: 'templates',
+                type: 'array-oid'
+            }
         },
         {
-            fieldName: 'category',
-            type: String,
-            default: 'description',
-            enum: ['title', 'description']
+            fieldName: 'repos',
+            type: [ObjectId],
+            ref: 'repos',
+            default: [],
+            refConfig: {
+                relatedField: 'templates',
+                type: 'array-oid'
+            }
         }
     ]
 });

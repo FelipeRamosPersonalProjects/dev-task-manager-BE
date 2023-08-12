@@ -15,7 +15,7 @@ class Template extends _Global {
                 displayName,
                 frontURL,
                 title,
-                category,
+                type,
                 summary,
                 body,
                 author,
@@ -27,7 +27,7 @@ class Template extends _Global {
             this.displayName = displayName;
             this.frontURL = frontURL;
             this.title = title;
-            this.category = category;
+            this.type = type;
             this.summary = summary;
             this.body = body;
             this.author = !Object(author).oid() ? new User(author, this) : null;
