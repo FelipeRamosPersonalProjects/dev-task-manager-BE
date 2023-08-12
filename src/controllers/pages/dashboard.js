@@ -38,6 +38,9 @@ module.exports = async (req, res) => {
     const validationsQuery = await CRUD.query({ collectionName: 'validations', assignedUsers: { $in: [user._id] } }).defaultPopulate();
     const validations = validationsQuery.map(item => item.initialize());
 
+    const templatesQuery = await CRUD.query({ collectionName: 'templates' }).defaultPopulate();
+    const templates = templatesQuery.map(item => item.initialize());
+
     const content = new Page({
         pageTitle: 'Dashboard Page',
         body: new Dashboard({
@@ -48,7 +51,8 @@ module.exports = async (req, res) => {
             spaces,
             repos,
             estimations,
-            validations
+            validations,
+            templates
         })
     });
 

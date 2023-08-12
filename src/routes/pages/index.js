@@ -7,6 +7,7 @@ const validations = require('./validations');
 const projects = require('./projects');
 const repos = require('./repos');
 const spaces = require('./spaces');
+const templates = require('./templates');
 const dashboard = require('./dashboard');
 
 module.exports = {
@@ -19,5 +20,6 @@ module.exports = {
     projects,
     repos,
     spaces,
+    templates,
     user
 };
