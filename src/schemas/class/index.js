@@ -1,47 +1,45 @@
 const GlobalClass = require('./GlobalClass');
 const auth_buckets = require('./AuthBucketsClass');
-const projects = require('./ProjectsClass');
-const tasks = require('./TasksClass');
+const users = require('./UsersClass');
 const repos = require('./ReposClass');
-const organizations = require('./OrganizationsClass');
-const threads = require('./ThreadsClass');
-const space_desks = require('./SpaceDesksClass');
-const logs = require('./LogsClass');
-const labels = require('./LabelsClass');
-const code_reviews = require('./CodeReviewsClass');
-const sf_configs = require('./SfConfigsClass');
+const projects = require('./ProjectsClass');
 const tickets = require('./TicketsClass');
+const tasks = require('./TasksClass');
+const pull_requests = require('./PullRequestsClass');
+const comments = require('./CommentsClass');
+const components = require('./ComponentsClass');
 const estimations = require('./EstimationsClass');
 const validations = require('./ValidationsClass');
-const pull_requests = require('./PullRequestsClass');
-const users = require('./UsersClass');
-const comments = require('./CommentsClass');
-const testing_steps = require('./TestingStepsClass');
-const worklogs = require('./WorklogsClass');
 const stashes = require('./StashesClass');
-const templates = require('./TemplatesClass');
+const space_desks = require('./SpaceDesksClass');
+const organizations = require('./OrganizationsClass');
+const logs = require('./LogsClass');
+const threads = require('./ThreadsClass');
+const worklogs = require('./WorklogsClass');
+const code_reviews = require('./CodeReviewsClass');
+const labels = require('./LabelsClass');
+const sf_configs = require('./SfConfigsClass');
 
 module.exports = {
     GlobalClass,
     auth_buckets,
-    projects,
-    tasks,
+    users,
     repos,
-    organizations,
-    threads,
-    space_desks,
-    logs,
-    labels,
-    code_reviews,
-    sf_configs,
+    projects,
     tickets,
+    tasks,
+    pull_requests,
+    comments,
+    components,
     estimations,
     validations,
-    pull_requests,
-    users,
-    comments,
-    testing_steps,
-    worklogs,
     stashes,
-    templates
+    space_desks,
+    organizations,
+    logs,
+    threads,
+    worklogs,
+    code_reviews,
+    labels,
+    sf_configs
 };

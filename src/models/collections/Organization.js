@@ -1,15 +1,13 @@
 const _Global = require('../maps/_Global');
+const User = require('./User');
+const Repo = require('./Repo');
+const Project = require('./Project');
 
 class Organization extends _Global {
-    constructor(setup, parent){
-        super({...setup, validationRules: 'organizations'}, parent);
-        if (!setup || isObjectID(setup)) return;
-
-        const User = require('./User');
-        const Repo = require('./Repo');
-        const Project = require('./Project');
-        
+    constructor(setup){
         try {
+            super({...setup, validationRules: 'organizations'}, this);
+            if (!setup || isObjectID(setup)) return;
             const { name, owner, repos, projects } = setup || {};
 
             this.name = name;

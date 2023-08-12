@@ -8,8 +8,6 @@ const space_desks = require('./space_desks_query');
 const estimations = require('./estimations_query');
 const validations = require('./validations_query');
 const labels = require('./labels_query');
-const organizations = require('./organizations_query');
-const templates = require('./templates_query');
 const users = require('./users_query');
 
 module.exports = {
@@ -23,7 +21,5 @@ module.exports = {
     estimations,
     validations,
     labels,
-    organizations,
-    templates,
     users
 };

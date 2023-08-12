@@ -1,47 +1,45 @@
 const counters = require('./counters');
 const auth_buckets = require('./auth_buckets');
+const repos = require('./repos');
+const tickets = require('./tickets');
 const projects = require('./projects');
 const tasks = require('./tasks');
-const repos = require('./repos');
-const organizations = require('./organizations');
-const threads = require('./threads');
+const comments = require('./comments');
 const space_desks = require('./space_desks');
+const organizations = require('./organizations');
 const logs = require('./logs');
+const threads = require('./threads');
+const pull_requests = require('./pull_requests');
+const worklogs = require('./worklogs');
 const labels = require('./labels');
 const code_reviews = require('./code_reviews');
+const users = require('./users');
 const sf_configs = require('./sf_configs');
-const tickets = require('./tickets');
+const testing_steps = require('./testing_steps');
+const stashes = require('./stashes');
 const estimations = require('./estimations');
 const validations = require('./validations');
-const pull_requests = require('./pull_requests');
-const users = require('./users');
-const comments = require('./comments');
-const testing_steps = require('./testing_steps');
-const worklogs = require('./worklogs');
-const stashes = require('./stashes');
-const templates = require('./templates');
 
 module.exports = {
     counters,
     auth_buckets,
+    repos,
+    tickets,
     projects,
     tasks,
-    repos,
-    organizations,
-    threads,
+    comments,
     space_desks,
+    organizations,
     logs,
+    threads,
+    pull_requests,
+    worklogs,
     labels,
     code_reviews,
-    sf_configs,
-    tickets,
-    estimations,
-    validations,
-    pull_requests,
     users,
-    comments,
+    sf_configs,
     testing_steps,
-    worklogs,
     stashes,
-    templates
+    estimations,
+    validations
 };
