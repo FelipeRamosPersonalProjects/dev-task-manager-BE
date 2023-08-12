@@ -21,13 +21,23 @@ module.exports = new Collection({
             fieldName: 'type',
             type: String,
             default: 'pr-description',
-            enum: ['ticket-title', 'task-title', 'pr-title', 'pr-description'],
+            enum: ['ticket-title', 'task-title', 'pr-title', 'pr-description', 'custom-template'],
             enumLabels: [
                 { value: 'ticket-title', label: 'Ticket Title' },
                 { value: 'task-title', label: 'Task Title' },
                 { value: 'pr-title', label: 'Pull Request Title'},
                 { value: 'pr-description', label: 'Pull Request Description'},
+                { value: 'custom-template', label: 'Custom Template'}
             ]
+        },
+        {
+            fieldName: 'typeID',
+            type: String,
+            unique: true,
+            default: function () {
+                const UID = String(Math.random() * 100000).split('.')[1];
+                return `Custom${UID}`
+            }
         },
         {
             fieldName: 'title',
@@ -81,6 +91,12 @@ module.exports = new Collection({
                 relatedField: 'templates',
                 type: 'array-oid'
             }
+        },
+        {
+            fieldName: 'typeComponents',
+            type: [ObjectId],
+            ref: 'templates',
+            default: []
         }
     ]
 });

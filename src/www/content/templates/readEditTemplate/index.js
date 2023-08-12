@@ -11,11 +11,10 @@ class TemplateEdit extends Component {
     constructor(settings) {
         super(settings);
         
-        const { templateDoc, projects, spaces } = Object(settings);
+        const { templateDoc, typeComponents } = Object(settings);
 
         this.collection = 'templates';
-        this.projects = projects;
-        this.spaces = spaces;
+        this.typeComponents = typeComponents;
 
         this.setters.templateDoc(templateDoc);
     }
@@ -32,10 +31,10 @@ class TemplateEdit extends Component {
                         _id,
                         displayName,
                         type,
+                        typeID,
                         title,
                         body,
-                        projects,
-                        spaces
+                        typeComponents
                     } = Object(templateDoc || this.templateDoc);
 
                     this.UID = _id;
@@ -52,6 +51,12 @@ class TemplateEdit extends Component {
                             }),
                             new InputEdit({
                                 view: 'read',
+                                fieldName: 'typeID',
+                                label: 'Type ID:',
+                                currentValue: typeID
+                            }),
+                            new InputEdit({
+                                view: 'read',
                                 fieldName: 'title',
                                 label: 'Title:',
                                 currentValue: title
@@ -65,17 +70,10 @@ class TemplateEdit extends Component {
                             }),
                             new MultiRelation({
                                 view: 'read',
-                                fieldName: 'projects',
-                                label: 'Projects:',
-                                options: this.projects,
-                                currentValue: projects
-                            }),
-                            new MultiRelation({
-                                view: 'read',
-                                fieldName: 'spaces',
-                                label: 'Spaces:',
-                                options: this.spaces,
-                                currentValue: spaces
+                                fieldName: 'typeComponents',
+                                label: 'Type Components:',
+                                options: this.typeComponents,
+                                currentValue: typeComponents
                             })
                         ]
                     });

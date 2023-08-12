@@ -4,20 +4,17 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
-        const organizationsQuery = await CRUD.query({collectionName: 'organizations', filter: {}}).defaultPopulate();
-        const projectsQuery = await CRUD.query({collectionName: 'projects', filter: {}}).defaultPopulate();
-        const spacesQuery = await CRUD.query({collectionName: 'space_desks', filter: {}}).defaultPopulate();
+        const organizationsQuery = await CRUD.query({ collectionName: 'organizations' }).defaultPopulate();
+        const templatesQuery = await CRUD.query({ collectionName: 'templates' }).defaultPopulate();
     
         const organizations = organizationsQuery.map(item => item.initialize());
-        const projects = projectsQuery.map(item => item.initialize());
-        const spaces = spacesQuery.map(item => item.initialize());
+        const templates = templatesQuery.map(item => item.initialize());
         const content = new PageTemplate({
             pageID: 'templates/createTemplate',
             pageTitle: 'Create Template',
             body: new CreateTemplate({
                 organizations,
-                projects,
-                spaces
+                templates
             })
         });
     
