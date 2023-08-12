@@ -22,6 +22,7 @@ class MultiRelation extends FormField {
 
             return item;
         }) : [];
+
         this.types = {
             ListItem,
             RelationOption

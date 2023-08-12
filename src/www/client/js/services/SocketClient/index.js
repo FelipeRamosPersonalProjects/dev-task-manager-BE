@@ -70,7 +70,7 @@ class SocketClient {
 
             this.socket.on('subscribe:component:data:' + subsUID, (response) => {
                 const parsedResponse = JSON.parse(response);
-
+                debugger
                 if (parsedResponse.success) {
                     const $component = $wrapper.html(parsedResponse.data);
                     const cb = onData || new Function();
