@@ -43,6 +43,10 @@ progress {
     display: flex;
     justify-content: center;
     width: 100%;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    margin-bottom: 1rem;
 
     .container {
         flex-direction: row;

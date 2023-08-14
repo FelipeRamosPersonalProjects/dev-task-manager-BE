@@ -40,7 +40,7 @@ function handlingScrolls() {
 }
 
 window.socketClient.subscribeComponent({
-    wrapSelector: '.main-content',
+    wrapSelector: '[layout="menu-content-sidebar"] .content',
     path: 'content/pullrequests/readEditPullRequest',
     listeners: ($el) => {
         $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
