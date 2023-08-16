@@ -40,8 +40,8 @@ function handlingScrolls() {
 }
 
 window.socketClient.subscribeComponent({
-    wrapSelector: '[layout="menu-content-sidebar"] .content',
-    path: 'content/pullrequests/readEditPullRequest',
+    wrapSelector: '[layout="menu-content-sidebar"]',
+    path: 'layouts/MenuContentSidebar',
     listeners: ($el) => {
         $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
         $el.on('click', '.edit-btn, .cancel-btn', handleToggleInput);
@@ -50,7 +50,7 @@ window.socketClient.subscribeComponent({
             ev.preventDefault();
 
             toggleProgress();
-            await editField({ ev });
+            await editField({ ev, collectionName: 'pull_requests' });
             toggleProgress();
         });
 
@@ -59,7 +59,7 @@ window.socketClient.subscribeComponent({
             $('[js="status-button"]').map((_, item) => (item.disabled = false));
             ev.target.disabled = true;
 
-            await statusTransition({ ev });
+            await statusTransition({ ev, collectionName: 'pull_requests' });
             toggleProgress();
         });
 
@@ -246,45 +246,13 @@ window.socketClient.subscribeComponent({
                             }
                         });
                     });
-                },
-                dataDependencies: [
-                    {
-                        name: 'prDoc',
-                        type: 'doc',
-                        collectionName: 'pull_requests',
-                        filter: { index }
-                    },
-                    {
-                        name: 'tickets',
-                        type: 'list',
-                        collectionName: 'tickets',
-                        filter: {
-                            assignedUsers: { $in: [ userUID ]}
-                        }
-                    },
-                    {
-                        name: 'tasks',
-                        type: 'list',
-                        collectionName: 'tasks',
-                        filter: {
-                            assignedUsers: { $in: [ userUID ] }
-                        }
-                    },
-                    {
-                        name: 'projects',
-                        type: 'list',
-                        collectionName: 'projects',
-                        filter: {}
-                    }
-                ]
+                }
             });
-
-            $this.data('modal-id', modalID);
         });
     },
     dataDependencies: [
         {
-            name: 'pullRequestDoc',
+            name: 'pullRequest',
             type: 'doc',
             collectionName: 'pull_requests',
             filter: { index }

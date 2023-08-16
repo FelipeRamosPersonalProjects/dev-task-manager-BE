@@ -27,7 +27,6 @@ module.exports = async (req, res) => {
             pageTitle: 'Edit PullRequest',
             body: new MenuContentSidebarLayout({
                 content: new ReadEditPullRequest(),
-                sidebar: new PullRequestSB()
             })
         });
 

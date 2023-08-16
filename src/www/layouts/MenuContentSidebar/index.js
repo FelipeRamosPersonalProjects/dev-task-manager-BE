@@ -1,5 +1,7 @@
 const Component = require('@interface/Component');
 const LeftSideMenu = require('@src/www/menus/LeftSideMenu');
+const PullRequestSB = require('@src/www/sidebars/PullRequestSB');
+const ReadEditPullRequest = require('@src/www/content/pullrequests/readEditPullRequest');
 
 class MenuContentSidebarLayout extends Component {
     get SOURCE_PATH() {
@@ -9,16 +11,31 @@ class MenuContentSidebarLayout extends Component {
     constructor(settings) {
         super(settings);
 
-        const { menu, content, sidebar } = Object(settings);
-        
+        const { menu } = Object(settings);
+
         this.menu = menu || new LeftSideMenu();
-        this.content = content;
-        this.sidebar = sidebar;
+    }
+
+    get setters() {
+        return {
+            content: () => {
+                this.content = new ReadEditPullRequest({
+                    ...this,
+                    pullRequestDoc: this.pullRequest
+                })
+            },
+            sidebar: () => {
+                this.sidebar = new PullRequestSB(this, this)
+            }
+        }
     }
 
     async load() {
         try {
-            debugger;
+            await this.loadDependencies();
+            
+            this.setters.content();
+            this.setters.sidebar();
         } catch (err) {
             throw new Error.Log(err);
         }
