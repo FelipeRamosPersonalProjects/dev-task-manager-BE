@@ -35,17 +35,12 @@ class PullRequestEdit extends Component {
                         _id,
                         status,
                         displayName,
-                        ticket,
-                        task,
                         summary,
                         description,
                         title,
                         base,
                         head,
-                        version,
-                        assignedUsers,
-                        labels,
-                        reviewers
+                        version
                     } = Object(pullRequestDoc || this.pullRequestDoc);
 
                     this.UID = _id;
@@ -66,20 +61,6 @@ class PullRequestEdit extends Component {
                                     statusID: item.statusID,
                                     transitionID: item.jiraID
                                 }))
-                            }),
-                            new SingleRelation({
-                                view: 'read',
-                                fieldName: 'ticket',
-                                label: 'Ticket:',
-                                options: this.tickets,
-                                currentValue: ticket
-                            }),
-                            new SingleRelation({
-                                view: 'read',
-                                fieldName: 'task',
-                                label: 'Task:',
-                                options: this.tasks,
-                                currentValue: task
                             }),
                             new InputEdit({
                                 view: 'read',
@@ -118,27 +99,6 @@ class PullRequestEdit extends Component {
                                 label: 'Description:',
                                 inputType: 'textarea',
                                 currentValue: description
-                            }),
-                            new MultiRelation({
-                                view: 'read',
-                                fieldName: 'assignedUsers',
-                                label: 'Assigned Users:',
-                                options: this.users,
-                                currentValue: assignedUsers
-                            }),
-                            new MultiRelation({
-                                view: 'read',
-                                fieldName: 'labels',
-                                label: 'Labels:',
-                                options: this.labels,
-                                currentValue: labels
-                            }),
-                            new MultiRelation({
-                                view: 'read',
-                                fieldName: 'reviewers',
-                                label: 'Reviewers:',
-                                options: this.reviewers,
-                                currentValue: reviewers
                             })
                         ]
                     });

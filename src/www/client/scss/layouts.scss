@@ -29,3 +29,22 @@
 .fullwidth {
     width: 100%;
 }
+
+[layout="menu-content-sidebar"] {
+    display: flex;
+    gap: 1rem;
+    width: 97%;
+    margin: 0 auto;
+
+    .menu {
+        flex: 0;
+    }
+
+    .content {
+        flex: 3;
+    }
+
+    .sidebar {
+        flex: 1;
+    }
+}

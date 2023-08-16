@@ -1,6 +1,6 @@
 const Component = require('@interface/Component');
 
-class StandardPage extends Component {
+class MenuContentSidebar extends Component {
     get SOURCE_PATH() {
         return require.resolve('./standardPage.html');
     }
@@ -16,4 +16,4 @@ class StandardPage extends Component {
     }
 }
 
-module.exports = StandardPage;
+module.exports = MenuContentSidebar;
