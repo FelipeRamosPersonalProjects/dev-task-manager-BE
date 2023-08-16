@@ -22,10 +22,10 @@ class MenuContentSidebarLayout extends Component {
                 this.content = new ReadEditPullRequest({
                     ...this,
                     pullRequestDoc: this.pullRequest
-                })
+                });
             },
             sidebar: () => {
-                this.sidebar = new PullRequestSB(this, this)
+                this.sidebar = new PullRequestSB(this, this);
             }
         }
     }

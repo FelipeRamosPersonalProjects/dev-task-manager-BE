@@ -2,6 +2,7 @@ const Component = require('@interface/Component');
 const BranchSwitcher = require('@www/components/BranchSwitcher');
 const SingleRelation = require('@www/components/DocForm/FormField/SingleRelation');
 const MultiRelation = require('@www/components/DocForm/FormField/MultiRelation');
+const TicketTile = require('@src/www/tiles/TicketTile');
 
 class PullRequestSB extends Component {
     get SOURCE_PATH() {
@@ -36,13 +37,11 @@ class PullRequestSB extends Component {
     get setters() {
         return {
             ticket: () => {
-                this.ticket = new SingleRelation({
-                    view: 'read',
-                    fieldName: 'ticket',
-                    label: 'Ticket:',
-                    options: this.parent.tickets,
-                    currentValue: this.pullRequest.ticket
-                })
+                const { ticket } = Object(this.pullRequest);
+
+                if (ticket) {
+                    this.ticket = new TicketTile(ticket);
+                }
             },
             task: () => {
                 this.task = new SingleRelation({
