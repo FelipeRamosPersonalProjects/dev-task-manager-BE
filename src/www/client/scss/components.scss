@@ -183,3 +183,42 @@ progress {
         }
     }
 }
+
+.tile-base {
+    .title {
+        text-align: center;
+    }
+
+    label {
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .field-wrap {
+        display: flex;
+        gap: 0.2rem;
+        flex-direction: column;
+        margin-bottom: 1rem;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .value {
+            margin: 0;
+        }
+    }
+}
+
+.buttons-wrap {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    button,
+    a {
+        text-align: center;
+        flex: 1;
+    }
+}
