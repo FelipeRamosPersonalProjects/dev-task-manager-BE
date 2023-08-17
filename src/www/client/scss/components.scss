@@ -210,6 +210,15 @@ progress {
     }
 }
 
+.wrap-parents {
+    display: flex;
+    gap: 1rem;
+
+    > * {
+        flex: 1;
+    }
+}
+
 .buttons-wrap {
     display: flex;
     width: 100%;
