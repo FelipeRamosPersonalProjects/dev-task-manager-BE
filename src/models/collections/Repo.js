@@ -90,6 +90,34 @@ class Repo extends _Global {
         return ticket && ticket.externalKey;
     }
 
+    async openEditor() {
+        try {
+            const { prompt } = this.repoManager;
+
+            if (prompt) {
+                const changed = await this.changeNodeVersion();
+
+                if (changed.success) {
+                    return await prompt.exec(`code ${this.localPath}`);
+                }
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
+    async changeNodeVersion() {
+        try {
+            const { prompt } = this.repoManager;
+
+            if (prompt) {
+                return await prompt.exec(`nvm use ${this.nodeVersion}`);
+            }
+        } catch (err) {
+            throw new Error.Log(err);
+        }
+    }
+
     getProjectTemplate(templateName) {
         const task = this.parentTask;
         const project = task && task.project;

@@ -47,6 +47,8 @@ class Prompt {
                         return reject(new Error.Log(err));
                     }
     
+                    child.kill();
+                    console.log('>> Prompt Killed!');
                     return resolve({
                         success: true,
                         out: stdout,

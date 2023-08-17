@@ -40,7 +40,7 @@ function handlingScrolls() {
 }
 
 window.socketClient.subscribeComponent({
-    wrapSelector: '[layout="menu-content-sidebar"]',
+    wrapSelector: '.main-content',
     path: 'layouts/MenuContentSidebar',
     listeners: ($el) => {
         $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
@@ -74,6 +74,40 @@ window.socketClient.subscribeComponent({
                 },
                 onSuccess: () => handlingScrolls(),
                 onData: () => handlingScrolls(),
+                dataDependencies: [
+                    {
+                        name: 'prDoc',
+                        type: 'doc',
+                        collectionName: 'pull_requests',
+                        filter: { index }
+                    },
+                    {
+                        name: 'tasks',
+                        type: 'list',
+                        collectionName: 'tasks',
+                        filter: {
+                            assignedUsers: { $in: [ userUID ]}
+                        }
+                    },
+                    {
+                        name: 'users',
+                        type: 'list',
+                        collectionName: 'users',
+                        filter: {}
+                    },
+                    {
+                        name: 'labels',
+                        type: 'list',
+                        collectionName: 'labels',
+                        filter: {}
+                    },
+                    {
+                        name: 'reviewers',
+                        type: 'list',
+                        collectionName: 'users',
+                        filter: {}
+                    }
+                ],
                 listeners: ($el) => {
                     $el.on('click', (ev) => {
                         if (ev.target.hasAttribute('modal')) {

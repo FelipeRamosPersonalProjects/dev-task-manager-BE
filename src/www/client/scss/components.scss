@@ -186,7 +186,7 @@ progress {
 
 .tile-base {
     .title {
-        text-align: center;
+        margin-bottom: 1rem;
     }
 
     label {
@@ -215,6 +215,7 @@ progress {
     width: 100%;
     gap: 1rem;
     margin-top: 1.5rem;
+    flex-wrap: wrap;
 
     button,
     a {

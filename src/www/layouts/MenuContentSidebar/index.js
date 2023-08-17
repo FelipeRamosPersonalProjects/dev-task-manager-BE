@@ -18,6 +18,14 @@ class MenuContentSidebarLayout extends Component {
 
     get setters() {
         return {
+            pullRequest: (value) => {
+                if (value) {
+                    this.pullRequest = value;
+                }
+
+                this.setters.content();
+                this.setters.sidebar();
+            },
             content: () => {
                 this.content = new ReadEditPullRequest({
                     ...this,
@@ -34,8 +42,7 @@ class MenuContentSidebarLayout extends Component {
         try {
             await this.loadDependencies();
             
-            this.setters.content();
-            this.setters.sidebar();
+            this.setters.pullRequest();
         } catch (err) {
             throw new Error.Log(err);
         }
