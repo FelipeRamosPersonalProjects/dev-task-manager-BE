@@ -32,7 +32,7 @@
 
 [layout="menu-content-sidebar"] {
     display: flex;
-    gap: 2rem;
+    gap: 3rem;
     width: 97%;
     margin: 0 auto;
 
@@ -41,11 +41,11 @@
     }
 
     .content {
-        flex: 3;
+        flex: 70%;
     }
 
     .sidebar {
-        flex: 1;
+        flex: 30%;
 
         > *:first-child {
             margin-top: 0;

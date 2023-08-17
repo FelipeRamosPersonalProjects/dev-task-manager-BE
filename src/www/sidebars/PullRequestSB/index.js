@@ -4,6 +4,7 @@ const SingleRelation = require('@www/components/DocForm/FormField/SingleRelation
 const MultiRelation = require('@www/components/DocForm/FormField/MultiRelation');
 const TicketTile = require('@www/tiles/TicketTile');
 const TaskTile = require('@www/tiles/TaskTile');
+const RepoTile = require('@www/tiles/RepoTile');
 
 class PullRequestSB extends Component {
     get SOURCE_PATH() {
@@ -28,6 +29,7 @@ class PullRequestSB extends Component {
         this.labels = labels;
         this.reviewers = reviewers;
        
+        this.setters.repo();
         this.setters.ticket();
         this.setters.task();
         this.setters.assignedUsers();
@@ -49,6 +51,14 @@ class PullRequestSB extends Component {
 
                 if (task) {
                     this.task = new TaskTile(task);
+                }
+            },
+            repo: () => {
+                const { task } = Object(this.pullRequest);
+                const { repo } = Object(task);
+
+                if (repo) {
+                    this.repo = new RepoTile(repo);
                 }
             },
             assignedUsers: () => {

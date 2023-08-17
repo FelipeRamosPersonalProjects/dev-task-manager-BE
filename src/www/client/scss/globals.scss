@@ -16,6 +16,7 @@ h3,
 h4,
 h5 {
     margin: 0.2rem 0;
+    font-weight: bold;
 }
 
 h1 {
@@ -43,20 +44,57 @@ p {
     margin: 0.1rem;
 }
 
-
-h1,
-h2,
-h3,
-h4 {
-    font-weight: bold;
-}
-
-button {
+button,
+.button {
     cursor: pointer;
+    border: 0;
+    padding: 0.6rem;
+    background-color: #32474f;
+    color: hsl(197 22% 94% / 1);
+    border-radius: 0.3rem;
+    transition: background-color 200ms;
+    display: inline-block;
+    text-transform: uppercase;
+
+    &:disabled {
+        background-color: hsl(197 22% 90% / 1);
+        color: #32474f;
+    }
+
+    &:hover {
+        background-color: hsl(197, 22%, 40%);
+        color: hsl(197 22% 94% / 1);
+    }
+
+    &.transparent {
+        background-color: transparent;
+        color: #32474f;
+
+        &:hover {
+            background-color: transparent;
+            color: inherit;
+        }
+    }
+
+    &.link {
+        text-decoration: underline;
+    }
+
+    &.stretch {
+        min-width: 100%
+    }
 }
 
 pre {
     text-wrap: balance;
+}
+
+ul {
+    padding-inline-start: 1rem;
+
+    li {
+        margin-bottom: 0.5rem;
+    }
 }
 
 .hide {

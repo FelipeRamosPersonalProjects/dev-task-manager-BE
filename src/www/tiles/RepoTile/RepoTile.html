@@ -1,0 +1,31 @@
+<div class="tile-base float-input">
+    <h3 class="title">Repository</h3>
+
+    <div class="field-wrap">
+        <label>Name:</label>
+        <p class="value">%{{repoName:string}}%</p>
+    </div>
+    <div class="field-wrap">
+        <label>Node Version:</label>
+        <p class="value">%{{nodeVersion:string}}%</p>
+    </div>
+    <div class="field-wrap">
+        <label>Base Branch:</label>
+        <p class="value">%{{baseBranch:string}}%</p>
+    </div>
+    <div class="field-wrap">
+        <label>Local Path:</label>
+        <a href="%{{localPath:string}}%" class="value" target="_target">%{{localPath:string}}%</a>
+    </div>
+    <div class="field-wrap">
+        <label>Remote URL:</label>
+        <a href="%{{url:string}}%" class="value" target="_target">%{{url:string}}%</a>
+    </div>
+
+    <div class="buttons-wrap">
+        %{{openEditorButton:component}}%
+        %{{createPRButton:component}}%
+
+        <a class="button transparent link stretch" href="%{{frontURL:string}}%" target="_target">Open Repository</a>
+    </div>
+</div>

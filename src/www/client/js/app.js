@@ -1,6 +1,7 @@
 import './global.js'
 import '../scss/style.scss';
 import './components/DocPage.script.js';
+import './repository.js';
 
 // Services
 import SocketClient from './services/SocketClient';

@@ -1,5 +1,4 @@
 const Component = require('@interface/Component');
-const Button = require('@www/components/DocForm/FormField/Button');
 
 class TicketTile extends Component {
     get SOURCE_PATH() {
@@ -9,13 +8,11 @@ class TicketTile extends Component {
     constructor(settings) {
         super(settings);
 
-        const { displayName, externalURL } = Object(settings);
+        const { displayName, externalURL, frontURL } = Object(settings);
         
         this.displayName = displayName;
         this.externalURL = externalURL;
-        this.openButton = new Button({
-            label: 'Open Ticket'
-        });
+        this.frontURL = frontURL;
     }
 }
 
