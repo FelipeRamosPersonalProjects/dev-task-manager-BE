@@ -1,7 +1,9 @@
 const Component = require('@interface/Component');
 const workflow = require('@CONFIGS/workflows/pullrequests.workflow');
 const DocForm = require('@www/components/DocForm');
-const { StatusInput, InputEdit, SingleRelation, MultiRelation, TextAreaEdit } = require('@www/components/DocForm/FormField/fields');
+const TicketTile = require('@www/tiles/TicketTile');
+const TaskTile = require('@www/tiles/TaskTile');
+const { StatusInput, InputEdit, TextAreaEdit } = require('@www/components/DocForm/FormField/fields');
 
 class PullRequestEdit extends Component {
     get SOURCE_PATH() {
@@ -21,10 +23,26 @@ class PullRequestEdit extends Component {
         this.reviewers = reviewers;
 
         this.setters.pullRequestDoc(pullRequestDoc);
+        this.setters.task();
+        this.setters.ticket();
     }
 
     get setters() {
         return {
+            ticket: () => {
+                const { ticket } = Object(this.pullRequestDoc);
+
+                if (ticket) {
+                    this.ticket = new TicketTile(ticket);
+                }
+            },
+            task: () => {
+                const { task } = Object(this.pullRequestDoc);
+
+                if (task) {
+                    this.task = new TaskTile(task);
+                }
+            },
             pullRequestDoc: (pullRequestDoc) => {
                 if (pullRequestDoc) {
                     this.pullRequestDoc = pullRequestDoc;
@@ -111,6 +129,8 @@ class PullRequestEdit extends Component {
         try {
             await this.loadDependencies();
             this.setters.pullRequestDoc();
+            this.setters.ticket();
+            this.setters.task();
         } catch (err) {
             throw new Error.Log(err);
         }

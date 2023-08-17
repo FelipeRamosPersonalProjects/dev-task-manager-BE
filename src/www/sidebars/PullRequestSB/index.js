@@ -32,8 +32,6 @@ class PullRequestSB extends Component {
        
         this.setters.repo();
         this.setters.project();
-        this.setters.ticket();
-        this.setters.task();
         this.setters.assignedUsers();
         this.setters.labels();
         this.setters.reviewers();
@@ -41,20 +39,6 @@ class PullRequestSB extends Component {
 
     get setters() {
         return {
-            ticket: () => {
-                const { ticket } = Object(this.pullRequest);
-
-                if (ticket) {
-                    this.ticket = new TicketTile(ticket);
-                }
-            },
-            task: () => {
-                const { task } = Object(this.pullRequest);
-
-                if (task) {
-                    this.task = new TaskTile(task);
-                }
-            },
             repo: () => {
                 const { task } = Object(this.pullRequest);
                 const { repo } = Object(task);
