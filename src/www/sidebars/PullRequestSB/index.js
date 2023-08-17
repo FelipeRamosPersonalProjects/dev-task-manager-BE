@@ -5,6 +5,7 @@ const MultiRelation = require('@www/components/DocForm/FormField/MultiRelation')
 const TicketTile = require('@www/tiles/TicketTile');
 const TaskTile = require('@www/tiles/TaskTile');
 const RepoTile = require('@www/tiles/RepoTile');
+const ProjectTile = require('@src/www/tiles/ProjectTile');
 
 class PullRequestSB extends Component {
     get SOURCE_PATH() {
@@ -30,6 +31,7 @@ class PullRequestSB extends Component {
         this.reviewers = reviewers;
        
         this.setters.repo();
+        this.setters.project();
         this.setters.ticket();
         this.setters.task();
         this.setters.assignedUsers();
@@ -59,6 +61,14 @@ class PullRequestSB extends Component {
 
                 if (repo) {
                     this.repo = new RepoTile(repo);
+                }
+            },
+            project: () => {
+                const { task } = Object(this.pullRequest);
+                const { project } = Object(task);
+
+                if (project) {
+                    this.project = new ProjectTile(project);
                 }
             },
             assignedUsers: () => {
