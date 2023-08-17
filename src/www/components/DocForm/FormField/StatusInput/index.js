@@ -1,4 +1,5 @@
 const FormField = require('..');
+const Button = require('../Button');
 const StatusOption = require('./StatusOption');
 
 class StatusInput extends FormField {
@@ -21,6 +22,11 @@ class StatusInput extends FormField {
 
             return opt;
         });
+
+        this.currentStatusButton = new Button({
+            label: this.currentValue,
+            classes: ['current-status']
+        })
 
         this.types = {
             StatusOption

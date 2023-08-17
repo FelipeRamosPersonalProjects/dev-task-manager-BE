@@ -17,7 +17,7 @@ class StatusOption extends Component {
         this.displayName = displayName;
 
         if (selected) {
-            this.selected = 'disabled'
+            this.selected = 'current-status';
         }
     }
 }

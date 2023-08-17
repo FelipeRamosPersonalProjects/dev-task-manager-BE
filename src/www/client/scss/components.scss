@@ -26,6 +26,17 @@ progress {
         width: 100%;
     }
 
+    &[view="edit"] {
+        .options-wrap button {
+            display: inline;
+
+            &.current-status {
+                background-color: hsl(197 22% 90% / 1);
+                color: #32474f;
+            }
+        }
+    }
+
     .options-wrap {
         display: flex;
         flex-wrap: wrap;
@@ -35,6 +46,11 @@ progress {
             flex: 1;
             min-width: fit-content;
             padding: 1rem;
+            display: none;
+
+            &.current-status {
+                display: inline;
+            }
         }
     }
 }
