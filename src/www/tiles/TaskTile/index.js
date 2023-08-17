@@ -1,9 +1,9 @@
 const Component = require('@interface/Component');
 const Button = require('@www/components/DocForm/FormField/Button');
 
-class TicketTile extends Component {
+class TaskTile extends Component {
     get SOURCE_PATH() {
-        return require.resolve('./TicketTile.html');
+        return require.resolve('./TaskTile.html');
     }
 
     constructor(settings) {
@@ -14,10 +14,10 @@ class TicketTile extends Component {
         this.displayName = displayName;
         this.externalURL = externalURL;
         this.openButton = new Button({
-            label: 'Open Ticket'
+            label: 'Open Task'
         });
     }
 }
 
-module.exports = TicketTile;
+module.exports = TaskTile;
 

@@ -2,7 +2,8 @@ const Component = require('@interface/Component');
 const BranchSwitcher = require('@www/components/BranchSwitcher');
 const SingleRelation = require('@www/components/DocForm/FormField/SingleRelation');
 const MultiRelation = require('@www/components/DocForm/FormField/MultiRelation');
-const TicketTile = require('@src/www/tiles/TicketTile');
+const TicketTile = require('@www/tiles/TicketTile');
+const TaskTile = require('@www/tiles/TaskTile');
 
 class PullRequestSB extends Component {
     get SOURCE_PATH() {
@@ -44,13 +45,11 @@ class PullRequestSB extends Component {
                 }
             },
             task: () => {
-                this.task = new SingleRelation({
-                    view: 'read',
-                    fieldName: 'task',
-                    label: 'Task:',
-                    options: this.parent.tasks,
-                    currentValue: this.pullRequest.task
-                })
+                const { task } = Object(this.pullRequest);
+
+                if (task) {
+                    this.task = new TaskTile(task);
+                }
             },
             assignedUsers: () => {
                 this.assignedUsers = new MultiRelation({
