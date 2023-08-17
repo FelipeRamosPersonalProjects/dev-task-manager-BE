@@ -1,11 +1,10 @@
 const Component = require('@interface/Component');
 const BranchSwitcher = require('@www/components/BranchSwitcher');
-const SingleRelation = require('@www/components/DocForm/FormField/SingleRelation');
 const MultiRelation = require('@www/components/DocForm/FormField/MultiRelation');
-const TicketTile = require('@www/tiles/TicketTile');
-const TaskTile = require('@www/tiles/TaskTile');
 const RepoTile = require('@www/tiles/RepoTile');
 const ProjectTile = require('@src/www/tiles/ProjectTile');
+const workflow = require('@CONFIGS/workflows/pullrequests.workflow');
+const StatusInput = require('@src/www/components/DocForm/FormField/StatusInput');
 
 class PullRequestSB extends Component {
     get SOURCE_PATH() {
@@ -29,6 +28,19 @@ class PullRequestSB extends Component {
         this.users = users;
         this.labels = labels;
         this.reviewers = reviewers;
+        this.status = new StatusInput({
+            label: 'Status:',
+            fieldName: 'status',
+            view: 'read',
+            currentValue: Object(workflow.getStatus(Object(this.pullRequest).status)),
+            options: workflow.statuses.map(item => ({
+                collection: this.collection,
+                docUID: this.pullRequest && this.pullRequest._id,
+                displayName: item.displayName.toUpperCase(),
+                statusID: item.statusID,
+                transitionID: item.jiraID
+            }))
+        }),
        
         this.setters.repo();
         this.setters.project();

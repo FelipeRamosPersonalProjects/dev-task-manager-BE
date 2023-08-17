@@ -54,12 +54,19 @@ window.socketClient.subscribeComponent({
             toggleProgress();
         });
 
-        $el.on('click', '[js="status-button"]', async (ev) => {
+        $el.on('click', '[js="status-button"]', async function (ev) {
+            if ($(this).hasClass('current-status')) {
+                return;
+            }
+    
             toggleProgress();
-            $('[js="status-button"]').map((_, item) => (item.disabled = false));
-            ev.target.disabled = true;
-
-            await statusTransition({ ev, collectionName: 'pull_requests' });
+            const $this = $(this);
+    
+            $this.parents('.options-wrap').find('[js=status-button]').removeClass('current-status');
+            $this.addClass('current-status');
+    
+            await statusTransition({ ev });
+            $this.parents('.status-input').attr('view', 'read');
             toggleProgress();
         });
 

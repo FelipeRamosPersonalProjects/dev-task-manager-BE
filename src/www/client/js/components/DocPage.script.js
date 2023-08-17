@@ -2,7 +2,7 @@ import { statusTransition } from '/src/www/client/js/helpers/docHelpers';
 import { toggleEditInput, $toggleEditInput, handleToggleInputDblclick } from '/src/www/client/js/helpers/tools';
 
 function readEditFormListeners() {
-    const $readEditForms = $('.readedit-form');
+    const $readEditForms = $('.readedit-form, .current-status');
     
     $readEditForms.map(function () {
         const $this = $(this);
@@ -14,19 +14,19 @@ function readEditFormListeners() {
 }
 
 function statusButtonsListeners() {
-    document.querySelectorAll('.readedit-form').forEach(form => {
-        const statusButtons = form.querySelectorAll('[js=status-button]');
+    $('body').on('click', '[js=status-button]:not(.current-status)', async function () {
+        if ($(this).hasClass('current-status')) {
+            return;
+        }
 
-        statusButtons && statusButtons.forEach(button => {
-            button.addEventListener('click', async (ev) => {
-                toggleProgress();
-                statusButtons.forEach(item => (item.disabled = false));
-                ev.target.disabled = true;
-    
-                await statusTransition({ ev });
-                toggleProgress();
-            });
-        });
+        toggleProgress();
+        const $this = $(this);
+
+        $this.parents('.options-wrap').find('[js=status-button]').removeClass('current-status');
+        $this.addClass('current-status');
+
+        await statusTransition({ ev });
+        toggleProgress();
     });
 }
 

@@ -67,19 +67,6 @@ class PullRequestEdit extends Component {
                         collection: this.collection,
                         wrapperTag: 'div',
                         fields: [
-                            new StatusInput({
-                                label: 'Status:',
-                                fieldName: 'status',
-                                view: 'read',
-                                currentValue: Object(workflow.getStatus(status)),
-                                options: workflow.statuses.map(item => ({
-                                    collection: this.collection,
-                                    docUID: this.UID,
-                                    displayName: item.displayName.toUpperCase(),
-                                    statusID: item.statusID,
-                                    transitionID: item.jiraID
-                                }))
-                            }),
                             new InputEdit({
                                 view: 'read',
                                 fieldName: 'base',
