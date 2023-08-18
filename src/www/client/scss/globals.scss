@@ -49,7 +49,7 @@ button,
     cursor: pointer;
     border: 0;
     padding: 0.6rem;
-    background-color: #32474f;
+    background-color: $primary-dark;
     color: hsl(197 22% 94% / 1);
     border-radius: 0.3rem;
     transition: background-color 200ms;
@@ -58,17 +58,17 @@ button,
 
     &:disabled {
         background-color: hsl(197 22% 90% / 1);
-        color: #32474f;
+        color: $primary-dark;
     }
 
     &:hover {
-        background-color: hsl(197, 22%, 40%);
+        background-color: $primary-light;
         color: hsl(197 22% 94% / 1);
     }
 
     &.transparent {
         background-color: transparent;
-        color: #32474f;
+        color: $primary-dark;
 
         &:hover {
             background-color: transparent;

@@ -6,9 +6,9 @@ class FormField extends Component {
         super(settings);
 
         try {
-            const { fieldName, label, placeholder, currentValue, css, wrapperTag } = Object(settings);
+            const { fieldName, label, placeholder, currentValue, css, wrapperTag, attr, notField } = Object(settings);
     
-            if (!fieldName) {
+            if (!fieldName && !notField) {
                 throw new Error.Log({
                     name: 'FIELD_NAME_REQUIRED',
                     message: `It's required to provide a fieldName param!`
@@ -21,10 +21,14 @@ class FormField extends Component {
             this.placeholder = placeholder || '';
             this.wrapperTag = wrapperTag || (this.view === 'create' ? 'div' : 'form');
             this.css = '';
+            this.attr = Object(attr);
+            this.attributesHTML = '';
 
             if (Array.isArray(css)) {
                 this.css = css.join(' ');
             }
+
+            Object.keys(this.attr).map(key => (this.attributesHTML += ` ${key}="${this.attr[key]}"`))
         } catch (err) {
             throw new Error.Log(err);
         }

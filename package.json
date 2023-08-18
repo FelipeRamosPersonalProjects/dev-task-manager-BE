@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node -r dotenv/config ./server.js",
+    "stg": "node -r dotenv/config ./server.js --env=STG",
     "dev": "nodemon -r dotenv/config ./server.js",
     "webpack-dev": "webpack serve --config webpack.config.js --mode=development",
     "webpack-prod": "webpack serve --config webpack.config.js --mode=production",

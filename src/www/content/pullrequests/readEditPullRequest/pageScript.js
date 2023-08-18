@@ -42,7 +42,7 @@ function handlingScrolls() {
 window.socketClient.subscribeComponent({
     wrapSelector: '.main-content',
     path: 'layouts/MenuContentSidebar',
-    listeners: ($el) => {
+    listeners: ($el, res) => {
         $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
         $el.on('click', '.edit-btn, .cancel-btn', handleToggleInput);
 
@@ -70,13 +70,38 @@ window.socketClient.subscribeComponent({
             toggleProgress();
         });
 
+        $el.on('change', '[js="branch-switcher"]', function () {
+            const $this = $(this);
+            const $select = $this.find('select');
+            const switchTo = $select.val() || '';
+            const repoUID = $this.data('repouid') || '';
+            const subscriptionUID = $el.find('[layout]').data('subscription-uid') || '';
+            const socketConnectionID = sessionStorage.getItem('socket_id') || '';
+
+            const ajaxBody = {
+                repoUID,
+                switchTo,
+                subscriptionUID,
+                socketConnectionID
+            };
+
+            $.ajax({
+                url: '/repositories/switch-branch',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(ajaxBody),
+                error: function(error) {
+                    throw error.responseJSON || error;
+                }
+            });
+        });
+
         $el.on('click', '[js="create-pr"]', async function (ev) {
             const $this = $(this);
             const modalID = $this.data('modal-id');
             const modal = await modalCtrl.subscribeModal({
                 path: 'ProcessPR',
                 data: {
-                    promptContent: '<p>Starting job...</p>',
                     stepBegin: { isCurrentClass: true }
                 },
                 onSuccess: () => handlingScrolls(),

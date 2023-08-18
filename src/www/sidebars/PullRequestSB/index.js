@@ -14,13 +14,10 @@ class PullRequestSB extends Component {
     constructor(settings, parent) {
         super(settings);
 
-        const { pullRequest, repoManager, sessionUser, tickets, tasks, users, labels, reviewers } = Object(settings);
-        
-        // repoManager.connectAPI(sessionUser);
+        const { pullRequest, tickets, tasks, users, labels, reviewers } = Object(settings);
 
         this.parent = parent;
         this.collection = 'pull_requests';
-        // this.branchSwitcher = new BranchSwitcher({ currentBranch: repoManager.getCurrentBranch() });
 
         this.pullRequest = pullRequest;
         this.tickets = tickets;
@@ -41,7 +38,7 @@ class PullRequestSB extends Component {
                 transitionID: item.jiraID
             }))
         }),
-       
+
         this.setters.repo();
         this.setters.project();
         this.setters.assignedUsers();
@@ -56,7 +53,7 @@ class PullRequestSB extends Component {
                 const { repo } = Object(task);
 
                 if (repo) {
-                    this.repo = new RepoTile(repo);
+                    this.repo = new RepoTile(repo, this.subscriptionUID);
                 }
             },
             project: () => {
@@ -73,7 +70,8 @@ class PullRequestSB extends Component {
                     fieldName: 'assignedUsers',
                     label: 'Assigned Users:',
                     options: this.parent.users,
-                    currentValue: this.pullRequest.assignedUsers
+                    currentValue: this.pullRequest.assignedUsers,
+                    attr: { padding: 'l' }
                 })
             },
             labels: () => {
@@ -82,7 +80,8 @@ class PullRequestSB extends Component {
                     fieldName: 'labels',
                     label: 'Labels:',
                     options: this.parent.labels,
-                    currentValue: this.pullRequest.labels
+                    currentValue: this.pullRequest.labels,
+                    attr: { padding: 'l' }
                 })
             },
             reviewers: () => {
@@ -91,7 +90,8 @@ class PullRequestSB extends Component {
                     fieldName: 'reviewers',
                     label: 'Reviewers:',
                     options: this.parent.reviewers,
-                    currentValue: this.pullRequest.reviewers
+                    currentValue: this.pullRequest.reviewers,
+                    attr: { padding: 'l' }
                 })
             }
         }

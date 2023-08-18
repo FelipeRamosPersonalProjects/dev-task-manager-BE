@@ -28,6 +28,18 @@ textarea,
     margin-bottom: 1rem;
     padding: 0.7rem;
     font-size: 1rem;
+
+    &[padding="l"] {
+        padding: 2rem;
+    }
+
+    &[padding="l"] {
+        padding: 1.5rem;
+    }
+
+    &[padding="m"] {
+        padding: 1rem;
+    }
 }
 
 .readedit-form {
@@ -108,5 +120,15 @@ textarea,
         font-size: 0.85rem;
         font-weight: bold;
         margin: 0;
+    }
+}
+
+.branch-switcher {
+    .select-input {
+        width: 100%;
+    
+        label {
+            font-size: 1.1rem;
+        }
     }
 }

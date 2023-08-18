@@ -60,15 +60,7 @@ class RepoManager extends GitHubConnection {
 
             if (gitBranches.success) {
                 const branches = this.parseBranchesList(gitBranches.out).filter(item => item.split('/')[0] !== 'remotes');
-                const renderList = new this.toolsCLI.StringBuilder();
-                
-                renderList.newLine();
-                branches.map((item, index) => renderList.text(index + '. ' + item).newLine());
-                renderList.end();
-
-                this.toolsCLI.printTemplate(renderList.result);
-
-                return branches;
+                return branches.filter(item => item && (item.indexOf('*') === -1));
             }
         } catch (err) {
             throw new Error.Log(err);

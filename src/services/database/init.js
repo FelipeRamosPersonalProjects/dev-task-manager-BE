@@ -6,14 +6,21 @@ let dbName = 'dev-desk-development';
 // Initializing collections
 const schemas = require('@schemas');
 
-if (Configs.mode === 'production') {
-    dbName = 'dev-desk';
-}
+process.argv.map(item => {
+    if (item.indexOf('--env') === 0) {
+        const parsed = item.split('=');
 
-if (Configs.mode === 'STG') {
-    dbName = 'dev-desk-STG';
-}
+        if (parsed[1] === 'production') {
+            dbName = 'dev-desk';
+        }
+        
+        if (parsed[1] === 'STG') {
+            dbName = 'dev-desk-STG';
+        }
+    }
+})
 
+console.log('DB Name:', dbName);
 module.exports = new Promise((resolve, reject) => {
     mongoose.set('strictQuery', false);
     mongoose.connect('mongodb://localhost:27017/', {useNewUrlParser: true, useUnifiedTopology: true, dbName }).then(async (connectedDB) => {

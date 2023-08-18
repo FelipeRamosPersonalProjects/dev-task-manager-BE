@@ -7,7 +7,7 @@ import './repository.js';
 import SocketClient from './services/SocketClient';
 
 window.socketClient = new SocketClient({
-    host: 'http://localhost',
+    host: 'http://192.168.15.54',
     port: 5555
 });
 

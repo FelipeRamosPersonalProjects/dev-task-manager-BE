@@ -1,6 +1,15 @@
-<div class="branch-switcher float-input %{{error:string}}%" js="branch-switcher">
-    <label>Current Branch:</label>
-    <h3>%{{currentBranch:string}}%</h3>
+<div
+    class="readedit-form branch-switcher float-input %{{error:string}}%"
+    padding="l"
+    js="branch-switcher"
+    view="read"
+    data-repouid="%{{repoUID:string}}%"
+    data-subscriptionuid="%{{subscriptionUID:string}}%"
+>
+    <label view="read">Current Branch:</label>
+    <h3 view="read">%{{currentBranch:string}}%</h3>
+
+    %{{options:component}}%
 
     %{{errorMessage:component}}%
 </div>
