@@ -1,5 +1,6 @@
 const Component = require('@interface/Component');
 const ErrorMessage = require('../ErrorMessage');
+const SelectInput = require('../DocForm/FormField/SelectInput');
 
 class BranchSwitcher extends Component {
     get SOURCE_PATH() {
@@ -9,10 +10,15 @@ class BranchSwitcher extends Component {
     constructor(settings) {
         super(settings);
 
-        const { currentBranch, error } = Object(settings);
+        const { repoUID, currentBranch, error, repoManager, subscriptionUID } = Object(settings);
         
         this.currentBranch = currentBranch;
+        this.subscriptionUID = subscriptionUID;
+        this.repoUID = repoUID || '';
+        this.repoManager = repoManager;
 
+        this.refresh();
+        
         if (error) {
             this.setError.BAD_BRANCH_NAME();
         }
@@ -44,11 +50,16 @@ class BranchSwitcher extends Component {
         }
     }
 
-    setSuccess() {
-        try {
-            
-        } catch (err) {
-            throw new Error.Log(err);
+    refresh() {
+        if (this.repoManager) {
+            this.currentBranch = this.repoManager.getCurrentBranch();
+            this.branches = this.repoManager.getAllBranches();
+            this.options = new SelectInput({
+                label: 'Switch Branch',
+                notField: true,
+                currentValue: this.currentBranch,
+                options: this.branches.map(item => ({label: item, value: item}))
+            });
         }
     }
 

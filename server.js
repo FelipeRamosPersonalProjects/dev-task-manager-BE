@@ -2,7 +2,6 @@ require('module-alias/register');
 
 const express = require('express');
 const session = require('express-session');
-const sharedSession = require('express-socket.io-session');
 const bodyParser = require('body-parser');
 const https = require('https');
 const app = express();
@@ -58,9 +57,6 @@ require('@services/database/init').then(async () => {
     app.use('/templates', routes.pages.templates);
     app.use('/user', routes.pages.user);
 
-    // Initializing socket server
-    global.socketServer = new SocketServer({hosts: ['http://192.168.15.54']});
-
     if (process.env.ENV_NAME === 'STG' || process.env.ENV_NAME === 'PROD') {
         const SSL_KEY = fs.readFileSync(__dirname + '/cert/ca.key');
         const SSL_CERT = fs.readFileSync(__dirname + '/cert/ca.crt');
@@ -85,6 +81,9 @@ require('@services/database/init').then(async () => {
             console.log('Server connected in http://localhost:80');
         });
     }
+    
+    // Initializing socket server
+    global.socketServer = new SocketServer({ hosts: ['http://192.168.15.54'] });
 }).catch(err => {
     throw err;
 });

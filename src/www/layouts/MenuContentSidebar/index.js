@@ -11,8 +11,9 @@ class MenuContentSidebarLayout extends Component {
     constructor(settings) {
         super(settings);
 
-        const { menu } = Object(settings);
+        const { menu, subscriptionUID } = Object(settings);
 
+        this.subscriptionUID = subscriptionUID;
         this.menu = menu || new LeftSideMenu();
     }
 

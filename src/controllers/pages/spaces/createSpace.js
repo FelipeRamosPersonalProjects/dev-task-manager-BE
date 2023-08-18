@@ -5,7 +5,7 @@ const CRUD = require('@CRUD');
 
 module.exports = async (req, res) => {
     try {
-        const templatesQuery = await CRUD.query({ collectionName: 'template' });
+        const templatesQuery = await CRUD.query({ collectionName: 'templates' });
         if (templatesQuery instanceof Error.Log || !templatesQuery) {
             return res.status(500).send(templatesQuery.toJSON());
         }

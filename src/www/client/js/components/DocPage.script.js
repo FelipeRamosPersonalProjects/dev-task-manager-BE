@@ -2,7 +2,7 @@ import { statusTransition } from '/src/www/client/js/helpers/docHelpers';
 import { toggleEditInput, $toggleEditInput, handleToggleInputDblclick } from '/src/www/client/js/helpers/tools';
 
 function readEditFormListeners() {
-    const $readEditForms = $('.readedit-form, .current-status');
+    const $readEditForms = $('.readedit-form, .current-status, [js="branch-switcher"]');
     
     $readEditForms.map(function () {
         const $this = $(this);
@@ -14,7 +14,7 @@ function readEditFormListeners() {
 }
 
 function statusButtonsListeners() {
-    $('body').on('click', '[js=status-button]:not(.current-status)', async function () {
+    $('body').on('click', '[js=status-button]:not(.current-status)', async function (ev) {
         if ($(this).hasClass('current-status')) {
             return;
         }

@@ -80,9 +80,9 @@ class ProcessPR extends Component {
             },
             prDoc: (value) => {
                 this.prDoc = value || this.prDoc;
-                const { title, summary, base, head, project, ticket, task, logsHistory } = Object(this.prDoc);
+                const { displayName, summary, base, head, project, ticket, task, logsHistory } = Object(this.prDoc);
                 
-                this.title = title;
+                this.displayName = displayName;
                 this.logsHistory = Array.isArray(logsHistory) ? logsHistory.map(text => ({ text })) : [];
                 this.summary = new TextAreaEdit({
                     view: 'read',

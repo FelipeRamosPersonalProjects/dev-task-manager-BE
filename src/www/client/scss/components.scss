@@ -32,7 +32,7 @@ progress {
 
             &.current-status {
                 background-color: hsl(197 22% 90% / 1);
-                color: #32474f;
+                color: $primary-dark;
             }
         }
     }
@@ -61,7 +61,7 @@ progress {
     width: 100%;
     position: sticky;
     top: 0;
-    background: #222;
+    background: $primary-dark;
     color: #f7f7f7;
     margin-bottom: 1rem;
 

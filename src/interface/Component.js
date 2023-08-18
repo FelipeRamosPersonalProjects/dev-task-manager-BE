@@ -70,13 +70,6 @@ class Component extends ValidateSchema {
         }
     }
 
-    updateSubscription() {
-        try {
-        } catch(err) {
-            throw new Error.Log(err);
-        }
-    }
-
     async loadDependencies() {
         try {
             await Promise.all(this.dataDependencies.map(dep => dep.load()));

@@ -1,0 +1,6 @@
+$primary: hsl(215, 32%, 23%);
+$secondary: hsl(213, 25%, 37%);
+$tertiary: hsl(142, 70%, 60%);
+
+$primary-dark: darken($color: $primary, $amount: 5);
+$primary-light: lighten($color: $primary-dark, $amount: 15);

@@ -63,7 +63,7 @@ class SocketClient {
                     const $component = $wrapper.html(parsedResponse.data);
                     const cb = onSuccess || new Function();
 
-                    typeof listeners === 'function' && listeners($component);
+                    typeof listeners === 'function' && listeners($component, response);
                     return cb($component, response);
                 }
             });
