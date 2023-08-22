@@ -17,7 +17,7 @@ class Component extends ValidateSchema {
         this.tools = new ToolsCLI();
 
         try {
-            const { componentName, description, outputModel, types, dataDependencies, subscriptionUID, hide } = setup || {};
+            const { componentName, description, outputModel, types, dataDependencies, subscriptionUID, hide, attr, css } = setup || {};
 
             this.componentName = componentName;
             this.subscriptionUID = subscriptionUID;
@@ -25,6 +25,15 @@ class Component extends ValidateSchema {
             this.outputModel = outputModel;
             this.types = types;
             this.dataDependencies = Array.isArray(dataDependencies) ? dataDependencies.map(item => new DataDependency(item, this)) : [];
+            this.css = '';
+            this.attr = Object(attr);
+            this.attributesHTML = '';
+
+            if (Array.isArray(css)) {
+                this.css = css.join(' ');
+            }
+
+            Object.keys(this.attr).map(key => (this.attributesHTML += ` ${key}="${this.attr[key]}"`));
 
             if (hide) {
                 this.hide = 'hide';

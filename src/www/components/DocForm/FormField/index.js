@@ -28,7 +28,7 @@ class FormField extends Component {
                 this.css = css.join(' ');
             }
 
-            Object.keys(this.attr).map(key => (this.attributesHTML += ` ${key}="${this.attr[key]}"`))
+            Object.keys(this.attr).map(key => (this.attributesHTML += ` ${key}="${this.attr[key]}"`));
         } catch (err) {
             throw new Error.Log(err);
         }
