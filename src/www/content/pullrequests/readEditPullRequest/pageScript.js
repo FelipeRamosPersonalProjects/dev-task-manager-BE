@@ -46,7 +46,7 @@ window.socketClient.subscribeComponent({
         $el.on('dblclick', '.readedit-form', handleToggleInputDblclick);
         $el.on('click', '.edit-btn, .cancel-btn', handleToggleInput);
 
-        $el.on('submit', '.readedit-form', async (ev) => {
+        $el.on('submit', '.readedit-form:not(.comment-input)', async (ev) => {
             ev.preventDefault();
 
             toggleProgress();
@@ -88,6 +88,70 @@ window.socketClient.subscribeComponent({
             $.ajax({
                 url: '/repositories/switch-branch',
                 type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(ajaxBody),
+                error: function(error) {
+                    throw error.responseJSON || error;
+                }
+            });
+        });
+
+        $el.on('submit', '[js="add-comment"]', function (ev) {
+            ev.preventDefault();
+            const $form = $(this);
+            const $input = $form.find('[field]');
+            const prUID = $form.data('pruid');
+            const value = $input.html();
+
+            const ajaxBody = {
+                collectionName: 'comments',
+                data: {
+                    commentType: 'PR',
+                    author: userUID,
+                    body: value,
+                    pullRequest: prUID
+                }
+            };
+
+            $.ajax({
+                url: '/collection/create',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(ajaxBody),
+                error: function(error) {
+                    throw error.responseJSON || error;
+                }
+            });
+        });
+
+        $el.on('submit', '[js="edit-comment"]', function (ev) {
+            ev.preventDefault();
+            const $form = $(this);
+            const $bodyField = $form.find('[field]');
+            const bodyContent = $bodyField.html();
+            
+            let commentIndex = $form.data('commentindex');
+            if (!isNaN(commentIndex)) {
+                commentIndex = Number(commentIndex);
+            } else {
+                throw 'The comment index should be a valid number, but received NaN!';
+            }
+
+            if (!bodyContent) {
+                throw 'Body field is "undefined"!'
+            }
+
+            const ajaxBody = {
+                collectionName: 'comments',
+                filter: { index: commentIndex },
+                data: {
+                    body: bodyContent
+                }
+            };
+
+            $.ajax({
+                url: '/collection/update/document',
+                type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(ajaxBody),
                 error: function(error) {

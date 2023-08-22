@@ -248,3 +248,35 @@ progress {
         flex: 1;
     }
 }
+
+.comments-section {
+    margin-top: 2rem;
+
+    .title {
+        margin-bottom: 1rem;
+    }
+
+    pre {
+        margin: 0;
+        width: 100%;
+    }
+
+    small {
+        opacity: 0.8;
+        font-weight: bold;
+        padding-inline-start: 0.8rem;
+    }
+
+    .comment {
+        margin-bottom: 1rem;
+
+        label {
+            display: none;
+        }
+
+        .comment-input {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+    }
+}

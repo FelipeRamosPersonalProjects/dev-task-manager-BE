@@ -1,9 +1,9 @@
 const Component = require('@interface/Component');
-const workflow = require('@CONFIGS/workflows/pullrequests.workflow');
 const DocForm = require('@www/components/DocForm');
 const TicketTile = require('@www/tiles/TicketTile');
 const TaskTile = require('@www/tiles/TaskTile');
-const { StatusInput, InputEdit, TextAreaEdit } = require('@www/components/DocForm/FormField/fields');
+const { InputEdit, TextAreaEdit } = require('@www/components/DocForm/FormField/fields');
+const CommentsSection = require('@src/www/components/CommentsSection');
 
 class PullRequestEdit extends Component {
     get SOURCE_PATH() {
@@ -25,6 +25,7 @@ class PullRequestEdit extends Component {
         this.setters.pullRequestDoc(pullRequestDoc);
         this.setters.task();
         this.setters.ticket();
+        this.setters.comments();
     }
 
     get setters() {
@@ -108,6 +109,18 @@ class PullRequestEdit extends Component {
                         ]
                     });
                 }
+            },
+            comments: () => {
+                const { _id, comments } = Object(this.pullRequestDoc);
+
+                if (comments) {
+                    this.commentsSection = new CommentsSection({
+                        headTitle: 'Comments',
+                        attr: { 'data-pruid': _id },
+                        css: ['comment-field'],
+                        comments
+                    });
+                }
             }
         };
     }
@@ -118,6 +131,7 @@ class PullRequestEdit extends Component {
             this.setters.pullRequestDoc();
             this.setters.ticket();
             this.setters.task();
+            this.setters.comments();
         } catch (err) {
             throw new Error.Log(err);
         }

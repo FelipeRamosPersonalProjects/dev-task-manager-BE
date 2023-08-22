@@ -84,7 +84,7 @@ export async function editField({ ev, collectionName, redirect, dataMiddleware }
         const pathname = url.pathname.split('/');
         const docIndex = Number(pathname[pathname.length - 1]);
         const collection = collectionName || ev.target.getAttribute('collection-name');
-    
+
         fields.forEach(field => {
             if (field.getAttribute('field-type') === 'input-number') {
                 dataDoc[field.name] = !isNaN(field.value) ? Number(field.value) : 0;
